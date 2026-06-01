@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kitty</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / kitty</div>
+    <section class="hero">
+      <h1>kitty</h1>
+      <p class="lede">kitty 终端配置包。它把 kitty 设计成 tmux 的入口：启动后直接进入 tmux，并确保 Option/Alt、字体、颜色和 Homebrew 路径都符合终端工作流。</p>
+      <div class="meta">
+        <span class="pill">tmux 入口</span>
+        <span class="pill">Option as Alt</span>
+        <span class="pill">Dracula 风格</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装</h2>
+      <pre><code>stow -S kitty</code></pre>
+      <p>安装目标是 <code>~/.config/kitty/kitty.conf</code>。由于默认 shell 是 tmux，更推荐一起安装：</p>
+      <pre><code>stow -S tmux kitty</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>核心配置</h2>
+      <ul>
+        <li><code>allow_remote_control yes</code>，允许远程控制 kitty。</li>
+        <li><code>macos_option_as_alt both</code>，左右 Option 都作为 Alt/Meta。</li>
+        <li>GUI 启动时显式设置 <code>PATH</code>，避免拿不到 Homebrew 命令。</li>
+        <li>默认 shell 是 <code>/opt/homebrew/bin/tmux</code>。</li>
+        <li>字体是 <code>LigaSauceCodePro Nerd Font</code>，字号 <code>14.0</code>。</li>
+        <li>颜色和 tab bar 走 Dracula 风格。</li>
+        <li><code>ctrl+1</code> 到 <code>ctrl+9</code> 切换 kitty tab。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>临时回到普通 shell</h2>
+      <p>如果不想启动即进入 tmux，可以临时注释这一行：</p>
+      <pre><code>shell /opt/homebrew/bin/tmux</code></pre>
+    </section>
+
+    <section class="section callout">
+      <p>这份配置默认 Homebrew 在 <code>/opt/homebrew</code>。Intel Mac、非 Homebrew 安装 tmux，或缺少 Nerd Font 时，都需要对应调整。</p>
+    </section>
+  </main>
+</body>
+</html>

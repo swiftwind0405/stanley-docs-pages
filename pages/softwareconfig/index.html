@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>softwareConfig</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / softwareConfig</div>
+    <section class="hero">
+      <h1>softwareConfig</h1>
+      <p class="lede">按软件原始目录结构保存的配置包。目前核心内容是 Espanso 的文本替换规则，安装位置不是默认 <code>~/.config/espanso</code>，而是文档目录下的归档路径。</p>
+      <div class="meta">
+        <span class="pill">Espanso</span>
+        <span class="pill">文本替换</span>
+        <span class="pill">非默认路径</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装</h2>
+      <pre><code>stow -S softwareConfig</code></pre>
+      <p>主要文件是 <code>~/Documents/SoftwareConfig/Espanso/base.yml</code>。</p>
+    </section>
+
+    <section class="section">
+      <h2>替换规则类型</h2>
+      <ul>
+        <li>箭头符号：<code>;>></code>、<code>;vv</code>、<code>;^^</code>、<code>;&lt;&lt;</code>。</li>
+        <li>Markdown 代码块：<code>;js</code>、<code>;swift</code>。</li>
+        <li>常用联系方式和短句。</li>
+        <li>代码片段：<code>;log</code>、<code>;delay</code>。</li>
+        <li>macOS 按键符号：<code>:cmd</code>、<code>:shift</code>、<code>:ctrl</code>、<code>:alt</code>、<code>:opt</code>。</li>
+        <li>日期时间：<code>;date</code> 输出 <code>YYYY-MM-DD</code>，<code>;now</code> 输出 <code>HH:MM</code>。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>接入 Espanso</h2>
+      <p>确认 Espanso 的配置目录指向或同步到：</p>
+      <pre><code>~/Documents/SoftwareConfig/Espanso</code></pre>
+      <p>如果 Espanso 实际读取默认目录，需要在 Espanso 中配置引用，或手动把 <code>base.yml</code> 放到当前配置目录。</p>
+    </section>
+
+    <section class="section callout">
+      <p>这个文件包含个人联系方式，公开同步前要确认是否适合暴露。</p>
+    </section>
+  </main>
+</body>
+</html>

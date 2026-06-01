@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>yazi</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / yazi</div>
+    <section class="hero">
+      <h1>yazi</h1>
+      <p class="lede">Yazi 文件管理器配置包，覆盖主配置、键位、主题、插件和 Yazi 内使用的 Starship。它把文件浏览、预览、Git 状态、书签、压缩和跳转组织成一个键盘优先的工作流。</p>
+      <div class="meta">
+        <span class="pill">文件管理器</span>
+        <span class="pill">插件化</span>
+        <span class="pill">fzf / zoxide / ripgrep</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装路径</h2>
+      <pre><code>stow -S yazi</code></pre>
+      <p>安装后主要文件在 <code>~/.config/yazi</code>：<code>yazi.toml</code>、<code>keymap.toml</code>、<code>init.lua</code>、<code>theme.toml</code>、<code>package.toml</code>、<code>starship.toml</code> 和 <code>plugins/</code>。</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>主配置</h2>
+        <ul>
+          <li>文件列表比例是 <code>[1, 3, 4]</code>。</li>
+          <li>默认按文件名字母排序，目录优先。</li>
+          <li>默认显示 size linemode。</li>
+          <li>隐藏文件默认不显示。</li>
+          <li>配置 macOS、Linux、Windows 的 open/reveal/edit 规则。</li>
+          <li>图片、视频、PDF、字体、压缩包都有 previewer 或 preloader。</li>
+          <li>Git fetcher 已启用。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>插件和状态栏</h2>
+        <ul>
+          <li><code>yaziline</code> 状态栏。</li>
+          <li><code>starship</code>，使用 <code>~/.config/yazi/starship.toml</code>。</li>
+          <li><code>git</code> 插件显示 Git 状态。</li>
+          <li>右侧状态区显示当前文件 owner/group。</li>
+          <li><code>yamb</code> 书签插件配合 <code>fzf</code>。</li>
+          <li>声明插件还包括 smart-enter、compress 等。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>键位分区</h2>
+      <h3>移动和进入</h3>
+      <ul class="key-list">
+        <li><code>u/e</code>：上/下移动。</li>
+        <li><code>n</code> 或 Left：返回父目录。</li>
+        <li><code>i</code> 或 Enter：smart enter。</li>
+        <li><code>N/I</code>：后退/前进历史。</li>
+        <li><code>gg</code>、<code>G</code>：到顶部/底部。</li>
+      </ul>
+      <h3>选择和文件操作</h3>
+      <ul class="key-list">
+        <li>Space：选择当前项并下移。</li>
+        <li><code>v</code>：进入选择模式。</li>
+        <li><code>yy</code> / <code>dd</code>：复制 / 剪切。</li>
+        <li><code>p p</code> / <code>p P</code>：粘贴 / 覆盖粘贴。</li>
+        <li><code>d D</code>：永久删除。</li>
+        <li><code>T</code> / <code>M</code>：创建文件 / 目录。</li>
+        <li><code>a</code>、<code>A</code>、<code>k</code>、<code>cw</code>：不同方式重命名。</li>
+      </ul>
+      <h3>查找、跳转和插件</h3>
+      <ul class="key-list">
+        <li><code>Ctrl+p</code>：fzf 跳转目录或 reveal 文件。</li>
+        <li><code>z o</code>：zoxide 跳转。</li>
+        <li><code>F</code>：ripgrep 搜内容。</li>
+        <li><code>f</code>、<code>/</code>、<code>?</code>：过滤或查找。</li>
+        <li><code>g h/d/D/c</code>：跳到常用目录。</li>
+        <li><code>g f y</code>：跳到 Yazi 配置目录。</li>
+        <li><code>' a</code>、<code>' '</code>、<code>' r</code>：保存、跳转、删除书签。</li>
+        <li><code>c a</code>：压缩选中文件。</li>
+        <li><code>Ctrl+g</code>：当前目录打开 lazygit。</li>
+      </ul>
+    </section>
+
+    <section class="section callout">
+      <p>需要 <code>yazi</code>，插件管理依赖 <code>ya pkg</code>。推荐安装 <code>fzf</code>、<code>zoxide</code>、<code>ripgrep</code>、<code>fd</code>、<code>starship</code>、<code>lazygit</code>。图片和特殊格式预览可能还需要 <code>magick</code>、<code>mpv</code>、<code>mediainfo</code>、<code>exiftool</code>，图标依赖 Nerd Font。</p>
+    </section>
+  </main>
+</body>
+</html>

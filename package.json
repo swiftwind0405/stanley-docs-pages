@@ -1,0 +1,9 @@
+{
+  "name": "stanley-docs-pages",
+  "private": true,
+  "description": "Static documentation pages for docs.stanleywind.org",
+  "scripts": {
+    "build": "bash scripts/build-cloudflare-pages.sh",
+    "build:pages": "bash scripts/build-cloudflare-pages.sh"
+  }
+}

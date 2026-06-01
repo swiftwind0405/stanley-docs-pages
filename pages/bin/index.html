@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bin</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / bin</div>
+    <section class="hero">
+      <h1>bin</h1>
+      <p class="lede">自定义命令集合，统一安装到 <code>~/.local/bin</code>。zsh 和 bash 包都已经把这个目录加入 <code>PATH</code>，所以这里更像个人工具箱的入口层。</p>
+      <div class="meta">
+        <span class="pill">~/.local/bin</span>
+        <span class="pill">Codex 辅助</span>
+        <span class="pill">tmux 友好</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装</h2>
+      <pre><code>stow -S bin</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>命令地图</h2>
+      <ul>
+        <li><code>agent</code>：薄封装，转发到 <code>~/.config/agent-tracker/bin/agent</code>。</li>
+        <li><code>ai-mem-usage</code>：统计 <code>opencode</code>、<code>dart</code> 相关进程内存，并尝试映射到 tmux pane/window。</li>
+        <li><code>ask</code>：用隔离临时 <code>CODEX_HOME</code> 调用 Codex CLI，支持 prompt 文件和图片。</li>
+        <li><code>nvim-lazy-reset</code>：重置 <code>~/.local/share/nvim/lazy</code> 下所有 lazy.nvim 插件。</li>
+        <li><code>pinchtab-up</code>：检查并启动 PinchTab，优先 daemon，失败后回退后台 server。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>常用命令</h2>
+      <pre><code>agent --help
+ai-mem-usage
+ask --prompt-file prompt.txt
+ask --prompt-file prompt.txt -i screenshot.png
+nvim-lazy-reset
+pinchtab-up</code></pre>
+    </section>
+
+    <section class="section callout">
+      <p><code>nvim-lazy-reset</code> 会丢弃插件目录里的本地改动；<code>ask</code> 依赖 Homebrew 路径下的 Codex 和 <code>~/.codex/auth.json</code>；<code>agent</code> 需要先构建 agent-tracker。</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>raycast-scripts</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / raycast-scripts</div>
+    <section class="hero">
+      <h1>raycast-scripts</h1>
+      <p class="lede">Raycast Script Commands 包，用几个 shell 脚本切换 Claude Code 相关的声音提示状态。状态通过 <code>~/.claude</code> 下的 flag 文件表达。</p>
+      <div class="meta">
+        <span class="pill">Raycast</span>
+        <span class="pill">Claude Code</span>
+        <span class="pill">TTS 控制</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装和接入</h2>
+      <pre><code>stow -S raycast-scripts</code></pre>
+      <p>然后在 Raycast 中添加 Script Commands 目录：</p>
+      <pre><code>~/.config/raycast-scripts</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>脚本职责</h2>
+      <ul>
+        <li><code>claude-code-ring-toggle.sh</code>：切换 ring mode，对应 <code>~/.claude/ring-enabled</code>。</li>
+        <li><code>claude-code-voice-toggle.sh</code>：切换 voice mode，对应 <code>~/.claude/voice-enabled</code>。</li>
+        <li><code>stop-voice-tts.sh</code>：停止所有 <code>say</code> 进程，用来打断系统 TTS。</li>
+      </ul>
+    </section>
+
+    <section class="section callout">
+      <p>ring mode 和 voice mode 互斥：开启 ring mode 时会删除 voice flag。脚本依赖 macOS 的 <code>say</code> 进程名和 Raycast Script Commands 功能。</p>
+    </section>
+  </main>
+</body>
+</html>

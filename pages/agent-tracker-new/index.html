@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>agent-tracker</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / agent-tracker</div>
+    <section class="hero">
+      <h1>agent-tracker</h1>
+      <p class="lede">一个和 tmux 深度联动的 agent 任务、通知和状态追踪工具。这个 dotfiles 包负责把源码、配置、构建脚本和 tmux 辅助脚本放到 <code>~/.config/agent-tracker</code>。</p>
+      <div class="meta">
+        <span class="pill">Go 构建</span>
+        <span class="pill">tmux 通知</span>
+        <span class="pill">和 bin 包配合</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装路径</h2>
+      <pre><code>stow -S agent-tracker</code></pre>
+      <p>安装后重点看这几处：<code>agent-config.json</code> 管键位、设备和状态栏开关；<code>install.sh</code> 构建 <code>tracker-server</code>、<code>tracker-mcp</code> 和 <code>agent</code>；<code>scripts/</code> 提供 tmux 聚焦通知、brew service 安装和测试脚本。</p>
+    </section>
+
+    <section class="section">
+      <h2>典型流程</h2>
+      <ol>
+        <li>先 stow 这个包，把源码和配置链接到 <code>~/.config/agent-tracker</code>。</li>
+        <li>执行 <code>~/.config/agent-tracker/install.sh</code> 构建二进制。</li>
+        <li>需要常驻服务时，再运行 <code>scripts/install_brew_service.sh</code>。</li>
+        <li>同时安装 <code>bin</code> 包，让 <code>~/.local/bin/agent</code> 转发到真正的 agent 可执行文件。</li>
+      </ol>
+      <pre><code>stow -S agent-tracker bin
+~/.config/agent-tracker/install.sh</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>tmux 集成点</h2>
+      <ul>
+        <li>client attached、pane focus、window select 时确认通知。</li>
+        <li>pane 退出时删除对应任务。</li>
+        <li><code>M-s</code> 打开 agent palette，<code>M-m</code> 聚焦最近通知 pane，<code>M-M</code> 回到通知来源 pane。</li>
+        <li>prefix 后按 <code>P</code> 切换通知状态。</li>
+      </ul>
+    </section>
+
+    <section class="section callout">
+      <p>依赖 Go 和 tmux。方向键采用 <code>n/e/u/i</code> 风格，和仓库里的 tmux、yazi、lazygit 键位体系保持一致。</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tmux</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / tmux</div>
+    <section class="hero">
+      <h1>tmux</h1>
+      <p class="lede">这个仓库里最核心的终端工作流配置。它不只是 <code>~/.tmux.conf</code>，还包含 session 管理脚本、状态栏、布局工具、agent tracker 集成和 tmux 专用 Starship 配置。</p>
+      <div class="meta">
+        <span class="pill">核心工作流</span>
+        <span class="pill">状态栏脚本</span>
+        <span class="pill">agent 集成</span>
+        <span class="pill">TPM 插件</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装组合</h2>
+      <pre><code>stow -S tmux</code></pre>
+      <p>只安装 tmux 包可以生效，但它的完整体验依赖 shell、终端、本地命令和 agent tracker，推荐组合是：</p>
+      <pre><code>stow -S zsh tmux kitty bin agent-tracker</code></pre>
+      <p>主要路径：<code>~/.tmux.conf</code>、<code>~/.config/tmux/</code>、<code>~/.config/starship-tmux.toml</code>。</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>基础行为</h2>
+        <ul>
+          <li>prefix 改为 <code>Ctrl+s</code>。</li>
+          <li>默认 shell 为 <code>/bin/zsh</code>。</li>
+          <li>开启 mouse、focus events、true color、extended keys。</li>
+          <li>window 和 pane 从 <code>1</code> 开始编号。</li>
+          <li>copy mode 使用 vi 风格。</li>
+          <li>状态栏每秒刷新，由 <code>tmux-status/left.sh</code> 和 <code>right.sh</code> 生成。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>脚本职责</h2>
+        <ul>
+          <li><code>session_manager.py</code>：维护 session 编号、重命名、移动和 window 迁移。</li>
+          <li><code>open_shell_here.sh</code>：在当前路径打开 shell、window 或 split。</li>
+          <li><code>layout_builder.sh</code>：创建固定方向布局。</li>
+          <li><code>watch_pane.sh</code>：监听 pane 输出并更新状态栏标记。</li>
+          <li><code>restore_agent_*.py</code>：恢复 agent 相关 pane 映射。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>高频快捷键</h2>
+      <h3>无需 prefix</h3>
+      <ul class="key-list">
+        <li><code>Alt+S</code>：当前路径新建 session。</li>
+        <li><code>Alt+O</code>：把当前 pane break 成 window。</li>
+        <li><code>Alt+o</code>：当前路径新建 window。</li>
+        <li><code>Alt+Q</code>：关闭当前 pane。</li>
+        <li><code>Alt+1..9</code>：切换 window。</li>
+        <li><code>Ctrl+1..9</code>、<code>F1..F5</code>：切换 session。</li>
+        <li><code>Alt+n/e/u/i</code>：左/下/上/右切换 pane。</li>
+        <li><code>Alt+N/E/U/I</code>：调整 pane 大小。</li>
+        <li><code>Alt+f</code>：zoom 当前 pane。</li>
+        <li><code>Alt+v</code>：进入 copy mode。</li>
+        <li><code>Alt+l/y</code>：上一个/下一个 window。</li>
+        <li><code>Alt+s/m/M</code>：agent palette、通知 pane、通知来源 pane。</li>
+      </ul>
+      <h3>prefix 后</h3>
+      <ul class="key-list">
+        <li><code>c</code>：新建 session。</li>
+        <li><code>.</code>：重命名 session。</li>
+        <li><code>,</code>：重命名 window。</li>
+        <li><code>u/e/n/i</code>：向上/下/左/右分割 pane。</li>
+        <li><code>1..0</code>：把当前 window 移到指定 session。</li>
+        <li><code>I/N/U/E</code>：layout builder 创建布局。</li>
+        <li><code>Space</code>：切换布局方向。</li>
+        <li><code>C-g</code>：切换 synchronize-panes。</li>
+        <li><code>W</code>：choose-tree。</li>
+        <li><code>P</code>：切换 agent tracker 通知状态。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>copy mode 和插件</h2>
+      <p>copy mode 用 <code>v</code> 开始选择，<code>Ctrl+v</code> 矩形选择，<code>n/e/u/i</code> 移动，<code>y</code> 复制到系统剪贴板，<code>Y</code> 复制到行尾。</p>
+      <p>插件使用 TPM，包括 <code>tmux-plugins/tpm</code>、<code>tmux-resurrect</code> 和 <code>tmux-continuum</code>。默认安装、更新、清理快捷键都改成 <code>M-F12</code>，降低误触概率。</p>
+    </section>
+
+    <section class="section callout">
+      <p>完整体验依赖较新的 tmux、zsh、Python 3、bash、pbcopy/pbpaste、kitty 的 Option-as-Alt 设置，以及已经构建好的 agent-tracker。状态栏脚本在 macOS 上信息最完整。</p>
+    </section>
+  </main>
+</body>
+</html>

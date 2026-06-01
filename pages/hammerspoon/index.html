@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hammerspoon</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / hammerspoon</div>
+    <section class="hero">
+      <h1>hammerspoon</h1>
+      <p class="lede">macOS 自动化配置，放在 <code>~/.hammerspoon</code>。当前重点是应用启动、输入法自动切换、Wi-Fi 场景静音，以及少量调试快捷键。</p>
+      <div class="meta">
+        <span class="pill">macOS 自动化</span>
+        <span class="pill">输入法切换</span>
+        <span class="pill">应用启动</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装</h2>
+      <pre><code>stow -S hammerspoon</code></pre>
+      <p>主要文件是 <code>init.lua</code>、<code>config.lua</code> 和 <code>modules/</code>。安装 Hammerspoon 后执行 Reload Config，之后 Lua 文件变化会自动 reload。</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>启用模块</h2>
+        <ul>
+          <li><code>modules.reload</code>：监听配置变化并自动 reload。</li>
+          <li><code>modules.launcher</code>：用快捷键启动或聚焦应用。</li>
+          <li><code>modules.input</code>：保留输入法切换函数，手动快捷键已注释。</li>
+          <li><code>modules.defaultInput</code>：根据当前 App 自动切换 ABC 或 Squirrel。</li>
+          <li><code>modules.wifi</code>：连接公司 Wi-Fi 时自动静音内置扬声器。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>保留但未启用</h2>
+        <ul>
+          <li><code>modules.window</code>：窗口最大化、全屏、跨屏移动，现在已迁移到 Raycast。</li>
+          <li><code>modules.bluetoothSleep</code>：锁屏关闭蓝牙、解锁打开蓝牙。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>快捷键</h2>
+      <p>应用启动统一使用 <code>command + control + option + shift</code> 加字母：</p>
+      <ul class="key-list">
+        <li><code>G</code>：Google Chrome</li>
+        <li><code>C</code>：Codex</li>
+        <li><code>R</code>：Cursor</li>
+        <li><code>O</code>：Obsidian</li>
+        <li><code>K</code>：kitty</li>
+        <li><code>E</code>：Microsoft Edge</li>
+      </ul>
+      <p>调试键包括 <code>cmd + shift + h</code> 播放测试语音并通知，以及 <code>ctrl + cmd + .</code> 显示当前 App 和输入法 source id。</p>
+    </section>
+
+    <section class="section callout">
+      <p>输入法 source id 写死为 Squirrel 和系统 ABC；<code>workWifi</code>、<code>outputDeviceName</code> 也带有机器/场景假设，换环境后先检查这些值。</p>
+    </section>
+  </main>
+</body>
+</html>

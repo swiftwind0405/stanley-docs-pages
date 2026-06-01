@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Tracker — AI 编程任务的本地调度台</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --surface-2: #f5f5f5;
+      --border: #e0e0e0;
+      --text: #1a1a1a;
+      --text-muted: #555;
+      --accent: #1a73e8;
+      --accent-2: #0d7e3f;
+      --accent-3: #7c3aed;
+      --accent-4: #c05621;
+      --accent-5: #be185d;
+      --code-bg: #f5f5f5;
+      --callout-tip-bg: #eff6ff;
+      --callout-tip-border: #3b82f6;
+      --callout-warn-bg: #fffbeb;
+      --callout-warn-border: #f59e0b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.85;
+      font-size: 16px;
+    }
+
+    /* Reading progress bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      z-index: 1000;
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    /* Header — clean, no hero */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      background: var(--surface);
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    header .subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .badge-row {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+    }
+
+    /* Layout */
+    .page-layout {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* Sticky TOC */
+    nav.toc {
+      position: sticky;
+      top: 4px;
+      z-index: 100;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 2.5rem;
+    }
+    .toc-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toc-toggle h2 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 600;
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+    .toc-toggle .arrow {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    .toc[open] .toc-toggle .arrow { transform: rotate(180deg); }
+    .toc-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      margin-top: 0.75rem;
+    }
+    .toc-list a {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: var(--accent);
+      text-decoration: none;
+      background: rgba(26, 115, 232, 0.06);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .toc-list a:hover {
+      background: rgba(26, 115, 232, 0.12);
+      border-color: rgba(26, 115, 232, 0.2);
+    }
+    .toc-list a.active {
+      background: rgba(26, 115, 232, 0.15);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Section styles */
+    main section {
+      margin-bottom: 3rem;
+      scroll-margin-top: 16px;
+    }
+    main section h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    main section h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    main section h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent-3);
+      margin: 1.5rem 0 0.5rem;
+    }
+    p {
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Feature cards */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+    }
+    .feature-card .feat-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.3rem;
+    }
+    .feature-card h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .feature-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Diagram card */
+    .diagram-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .diagram-card pre {
+      font-family: "SF Mono", "Fira Code", "JetBrains Mono", "Noto Sans Mono CJK SC", monospace;
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.5;
+      margin: 0;
+    }
+    .diagram-card .pane-ai { color: var(--accent-2); font-weight: 600; }
+    .diagram-card .pane-git { color: var(--accent-3); font-weight: 600; }
+    .diagram-card .pane-run { color: var(--accent-4); font-weight: 600; }
+
+    /* Tags */
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.6rem 0;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* File tree */
+    .file-tree {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      font-family: "SF Mono", "Fira Code", "Noto Sans Mono CJK SC", monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+    }
+    .file-tree .dir  { color: var(--accent); font-weight: 600; }
+    .file-tree .file { color: var(--text); }
+    .file-tree .desc { color: var(--text-muted); font-style: italic; font-family: -apple-system, "Noto Sans SC", "PingFang SC", sans-serif; font-size: 0.78rem; }
+
+    /* Code blocks */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.9rem 1.1rem;
+      margin: 0.8rem 0;
+      font-family: "SF Mono", "Fira Code", "Noto Sans Mono CJK SC", monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-block .lang {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.6rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.5;
+    }
+    .code-block code {
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .code-block .cmd { color: var(--accent-2); font-weight: 600; }
+    .code-block .arg { color: var(--accent-4); }
+    .code-block .comment { color: var(--text-muted); font-style: italic; }
+
+    /* Shortcut table */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .shortcut-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .shortcut-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .shortcut-table th {
+      text-align: left;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 0.6rem 1rem;
+      background: var(--surface-2);
+      border-bottom: 2px solid var(--border);
+    }
+    .shortcut-table td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .shortcut-table tr:last-child td { border-bottom: none; }
+    .shortcut-table tbody tr:nth-child(even) { background: var(--surface-2); }
+    kbd {
+      display: inline-block;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      white-space: nowrap;
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    /* Palette list */
+    .palette-list {
+      list-style: none;
+      margin: 1rem 0;
+    }
+    .palette-list li {
+      padding: 0.5rem 1rem;
+      border-left: 3px solid var(--border);
+      margin-bottom: 0.3rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+    .palette-list li:hover {
+      border-left-color: var(--accent);
+    }
+
+    /* Wrapper grid */
+    .wrapper-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.6rem;
+      margin: 1rem 0;
+    }
+    .wrapper-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.7rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .wrapper-item .cmd-name {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-2);
+    }
+    .wrapper-item .desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Flow / timeline */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      margin: 1.5rem 0;
+    }
+    .flow-step {
+      display: flex;
+      align-items: stretch;
+      gap: 0.8rem;
+    }
+    .flow-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 24px;
+      flex-shrink: 0;
+    }
+    .flow-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 0.75rem;
+    }
+    .flow-step:first-child .flow-dot { background: var(--accent-2); }
+    .flow-step:last-child .flow-dot  { background: var(--accent-5); }
+    .flow-connector {
+      flex: 1;
+      width: 2px;
+      background: var(--border);
+    }
+    .flow-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.9rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.88rem;
+      flex: 1;
+      color: var(--text-muted);
+    }
+    .flow-content strong { color: var(--text); }
+
+    /* Callout */
+    .callout {
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .callout-tip {
+      background: var(--callout-tip-bg);
+      border: 1px solid var(--callout-tip-border);
+      border-left: 4px solid var(--callout-tip-border);
+    }
+    .callout-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+    .callout-tip .callout-title { color: var(--callout-tip-border); }
+    .callout p {
+      margin: 0;
+      font-size: 0.88rem;
+    }
+
+    /* Details / collapsible sections */
+    details {
+      margin: 1rem 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+    details summary {
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+      user-select: none;
+      list-style: none;
+    }
+    details summary::before {
+      content: "▸ ";
+      color: var(--text-muted);
+    }
+    details[open] summary::before {
+      content: "▾ ";
+    }
+    details .detail-body {
+      padding: 0 1rem 1rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      header { padding: 1.5rem 1rem; }
+      header h1 { font-size: 1.5rem; }
+      .page-layout { padding: 1.2rem 1rem 3rem; }
+      .features { grid-template-columns: 1fr; }
+      .wrapper-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- Header -->
+  <header>
+    <h1>Agent Tracker</h1>
+    <p class="subtitle">AI 编程任务的本地调度台 —— 把「让 AI 做一个功能」变成可恢复、可跳转、可追踪的 tmux 工作流</p>
+    <div class="badge-row">
+      <span class="badge">🖥 tmux</span>
+      <span class="badge">🤖 AI</span>
+      <span class="badge">📦 Git</span>
+    </div>
+  </header>
+
+  <main class="page-layout">
+
+    <!-- TOC: sticky + collapsible -->
+    <nav class="toc">
+      <details open>
+        <summary class="toc-toggle">
+          <h2>目录导航</h2>
+        </summary>
+        <ul class="toc-list" id="toc-list">
+          <li><a href="#overview">1. 它是什么</a></li>
+          <li><a href="#layout">2. 工作台布局</a></li>
+          <li><a href="#structure">3. 文件结构</a></li>
+          <li><a href="#components">4. 核心组件</a></li>
+          <li><a href="#shortcuts">5. 快捷键</a></li>
+          <li><a href="#palette">6. Agent Palette</a></li>
+          <li><a href="#ai-relation">7. AI 客户端</a></li>
+          <li><a href="#workflow">8. 工作流程</a></li>
+          <li><a href="#flutter">9. Flutter / Web</a></li>
+          <li><a href="#usage">10. 使用指南</a></li>
+        </ul>
+      </details>
+    </nav>
+
+    <!-- 1. Overview -->
+    <section id="overview">
+      <h2><span class="num">1</span> 它是什么</h2>
+      <p><code>agent-tracker</code> 不是 AI 模型，不是 Claude、Codex 或 opencode。它是底层工作台，把以下东西串成一个完整流程：</p>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feat-icon">📂</div>
+          <h4>隔离 Repo 副本</h4>
+          <p>每个功能独立工作目录，不干扰主分支</p>
+        </div>
+        <div class="feature-card">
+          <div class="feat-icon">🪟</div>
+          <h4>标准 tmux 布局</h4>
+          <p>AI / Git / Run 三个 pane，一个 window 搞定</p>
+        </div>
+        <div class="feature-card">
+          <div class="feat-icon">📡</div>
+          <h4>任务状态追踪</h4>
+          <p>active → waiting → completed 状态流转</p>
+        </div>
+        <div class="feature-card">
+          <div class="feat-icon">🔔</div>
+          <h4>通知 &amp; 跳转</h4>
+          <p>状态栏提醒 + 系统通知 + 自动 acknowledge</p>
+        </div>
+        <div class="feature-card">
+          <div class="feat-icon">🎛</div>
+          <h4>Agent Palette</h4>
+          <p>一键调起面板：创建、销毁、切换、管理</p>
+        </div>
+        <div class="feature-card">
+          <div class="feat-icon">♻️</div>
+          <h4>可恢复</h4>
+          <p>工作间持久化，随时 resume 回到上次状态</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Layout -->
+    <section id="layout">
+      <h2><span class="num">2</span> 工作台布局</h2>
+      <p>执行 <code>agent start my-feature</code> 后得到的 tmux window：</p>
+      <div class="diagram-card">
+<pre>
+tmux window: my-feature
+
+┌──────────────────────────────┬─────────────────────┐
+│  <span class="pane-ai">AI pane</span>                      │  <span class="pane-git">Git pane</span>            │
+│  自动进入 agent repo          │  lazygit             │
+│  默认启动 op                  │  看 diff / commit    │
+├──────────────────────────────┼─────────────────────┤
+│                              │  <span class="pane-run">Run pane</span>            │
+│                              │  dev server / flutter│
+│                              │  测试运行             │
+└──────────────────────────────┴─────────────────────┘
+</pre>
+      </div>
+      <p>它会记住的元信息：</p>
+      <div class="tag-list">
+        <span class="tag">agent 名字</span>
+        <span class="tag">原始 repo</span>
+        <span class="tag">工作目录</span>
+        <span class="tag">tmux session/window/pane id</span>
+        <span class="tag">pane 角色分配</span>
+        <span class="tag">任务状态</span>
+        <span class="tag">通知开关</span>
+      </div>
+    </section>
+
+    <!-- 3. File Structure -->
+    <section id="structure">
+      <h2><span class="num">3</span> 文件结构</h2>
+      <p>在 git repo 中启动 agent 后自动创建：</p>
+      <div class="file-tree">
+        <span class="dir">project/</span><br>
+        ├── <span class="file">.agent.yaml</span> <span class="desc">← 当前 repo 的 agent 配置</span><br>
+        └── <span class="dir">.agents/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="dir">my-feature/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">agent.json</span> <span class="desc">← feature、port、device、url 等运行信息</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="dir">logs/</span> <span class="desc">← bootstrap / run 相关日志</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="dir">repo/</span> <span class="desc">← 独立 repo 副本</span>
+      </div>
+    </section>
+
+    <!-- 4. Core Components -->
+    <section id="components">
+      <h2><span class="num">4</span> 核心组件</h2>
+
+      <h3>agent CLI</h3>
+      <p>入口命令位于 <code>~/.config/agent-tracker/bin/agent</code></p>
+      <div class="code-block">
+        <span class="lang">sh</span>
+        <code><span class="cmd">agent</span> <span class="arg">init</span>              <span class="comment"># 初始化 repo</span>
+<span class="cmd">agent</span> <span class="arg">start</span> my-feature  <span class="comment"># 创建新工作间</span>
+<span class="cmd">agent</span> <span class="arg">resume</span> my-feature <span class="comment"># 恢复已有工作间</span>
+<span class="cmd">agent</span> <span class="arg">list</span>              <span class="comment"># 查看所有 agent</span>
+<span class="cmd">agent</span> <span class="arg">destroy</span> my-feature<span class="comment"># 删除工作间</span>
+<span class="cmd">agent</span> <span class="arg">tracker state</span>     <span class="comment"># 查看 tracker 状态</span></code>
+      </div>
+
+      <h3>tracker-server</h3>
+      <p>后台服务，通过 Unix socket 接收事件并广播任务状态：</p>
+      <div class="tag-list">
+        <span class="tag">start_task</span>
+        <span class="tag">finish_task</span>
+        <span class="tag">update_task</span>
+        <span class="tag">acknowledge</span>
+        <span class="tag">delete_task</span>
+        <span class="tag">notify</span>
+        <span class="tag">notifications_toggle</span>
+      </div>
+
+      <details>
+        <summary>tracker state 输出示例</summary>
+        <div class="detail-body">
+          <div class="code-block">
+            <span class="lang">json</span>
+            <code><span class="comment">// agent tracker state 输出示例</span>
+{"kind":"state","message":"Active 0 · Waiting 0 · 5:02PM"}</code>
+          </div>
+        </div>
+      </details>
+
+      <h3>tmux 集成</h3>
+      <p>以下 tmux 事件会自动触发 agent-tracker：</p>
+      <div class="tag-list">
+        <span class="tag">client attached</span>
+        <span class="tag">pane focus in</span>
+        <span class="tag">pane died</span>
+        <span class="tag">select window</span>
+        <span class="tag">session changed</span>
+      </div>
+      <p>所以它能感知你切到了哪个 pane、某个 agent pane 是否已被查看、哪个任务可以自动 acknowledge、状态栏何时刷新。</p>
+    </section>
+
+    <!-- 5. Shortcuts -->
+    <section id="shortcuts">
+      <h2><span class="num">5</span> 快捷键</h2>
+      <div class="table-wrap">
+        <table class="shortcut-table">
+          <thead>
+            <tr><th>快捷键</th><th>功能</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>M-s</kbd></td><td>打开 Agent Palette</td></tr>
+            <tr><td><kbd>M-a</kbd></td><td>聚焦 AI pane</td></tr>
+            <tr><td><kbd>M-g</kbd></td><td>聚焦 Git pane</td></tr>
+            <tr><td><kbd>M-r</kbd></td><td>聚焦 Run pane</td></tr>
+            <tr><td><kbd>M-m</kbd></td><td>跳到最新通知 pane</td></tr>
+            <tr><td><kbd>M-M</kbd></td><td>跳回上一个来源 pane</td></tr>
+            <tr><td><kbd>prefix</kbd> + <kbd>P</kbd></td><td>开关 push notifications</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:0.82rem;"><code>M-</code> = Mac 上的 <kbd>Option</kbd>&emsp;·&emsp;<code>prefix</code> = <kbd>Ctrl-s</kbd></p>
+    </section>
+
+    <!-- 6. Palette -->
+    <section id="palette">
+      <h2><span class="num">6</span> Agent Palette</h2>
+      <p><kbd>M-s</kbd> 打开 tmux popup，日常操作最方便的入口：</p>
+      <ul class="palette-list">
+        <li>🆕 创建 agent</li>
+        <li>🗑 销毁 agent</li>
+        <li>📊 查看 tracker</li>
+        <li>📋 查看 activity</li>
+        <li>✅ 管理 todos</li>
+        <li>↗️ 跳转到 AI / Git / Run pane</li>
+      </ul>
+    </section>
+
+    <!-- 7. AI Relation -->
+    <section id="ai-relation">
+      <h2><span class="num">7</span> 和 AI 客户端的关系</h2>
+      <p><code>agent-tracker</code> 是底座，AI 客户端是上层。本机 wrapper：</p>
+      <div class="wrapper-grid">
+        <div class="wrapper-item">
+          <span class="cmd-name">op</span>
+          <span class="desc">opencode wrapper</span>
+        </div>
+        <div class="wrapper-item">
+          <span class="cmd-name">se</span>
+          <span class="desc">opencode Search agent</span>
+        </div>
+        <div class="wrapper-item">
+          <span class="cmd-name">cl</span>
+          <span class="desc">Claude wrapper</span>
+        </div>
+        <div class="wrapper-item">
+          <span class="cmd-name">co</span>
+          <span class="desc">Codex wrapper</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Workflow -->
+    <section id="workflow">
+      <h2><span class="num">8</span> 理想工作流</h2>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector"></div>
+          </div>
+          <div class="flow-content"><strong>启动 agent</strong> → 你运行 <code>agent start</code></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector"></div>
+          </div>
+          <div class="flow-content"><strong>创建工作台</strong> → agent-tracker 构建 tmux 三 pane 布局</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector"></div>
+          </div>
+          <div class="flow-content"><strong>AI 开始编码</strong> → AI pane 中运行 op / claude / codex</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector"></div>
+          </div>
+          <div class="flow-content"><strong>标记 active</strong> → AI 工作中，状态变为活跃</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector"></div>
+          </div>
+          <div class="flow-content"><strong>完成 / 等待</strong> → AI 完成或需要你响应，标记 waiting / completed</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector"></div>
+          </div>
+          <div class="flow-content"><strong>通知提醒</strong> → tmux 状态栏或系统通知告知你</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line">
+            <div class="flow-dot"></div>
+            <div class="flow-connector" style="background:transparent;"></div>
+          </div>
+          <div class="flow-content"><strong>自动 acknowledge</strong> → 你切到 pane 后自动确认</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Flutter -->
+    <section id="flutter">
+      <h2><span class="num">9</span> Flutter / Web 项目</h2>
+      <p>如果 repo 含 <code>pubspec.yaml</code>，会被识别为 Flutter 项目，默认行为：</p>
+      <div class="features" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+        <div class="feature-card">
+          <h4>🌐 Web Server</h4>
+          <p>device 默认 web-server</p>
+        </div>
+        <div class="feature-card">
+          <h4>🔌 端口分配</h4>
+          <p>从 9100 开始自动分配</p>
+        </div>
+        <div class="feature-card">
+          <h4>📝 agent.json</h4>
+          <p>自动生成运行配置</p>
+        </div>
+        <div class="feature-card">
+          <h4>🛠 Helper Scripts</h4>
+          <p>生成辅助脚本</p>
+        </div>
+      </div>
+      <p>这说明它不是通用 tmux launcher，而是针对 <strong>Flutter/Web + AI 编程流</strong>做过定制。</p>
+    </section>
+
+    <!-- 10. Usage -->
+    <section id="usage">
+      <h2><span class="num">10</span> 使用指南</h2>
+      <div class="code-block">
+        <span class="lang">sh</span>
+        <code><span class="comment"># 第一次在 repo 中使用</span>
+<span class="cmd">agent</span> <span class="arg">init</span>
+
+<span class="comment"># 创建一个新功能工作间</span>
+<span class="cmd">agent</span> <span class="arg">start</span> login-fix
+
+<span class="comment"># 回到已有工作间</span>
+<span class="cmd">agent</span> <span class="arg">resume</span> login-fix
+
+<span class="comment"># 查看已有 agents</span>
+<span class="cmd">agent</span> <span class="arg">list</span>
+
+<span class="comment"># 删除某个 agent</span>
+<span class="cmd">agent</span> <span class="arg">destroy</span> login-fix</code>
+      </div>
+    </section>
+
+    <!-- Mental model callout -->
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 心智模型</div>
+      <p>不要把它理解成「另一个 AI 工具」。更准确的理解：</p>
+      <p style="margin-top:0.5rem; color: var(--text); font-weight: 500;">
+        agent-tracker = AI 编程任务的本地调度台
+      </p>
+      <p style="margin-top:0.2rem;">
+        它管工作区、tmux 布局、任务状态、通知、跳转和恢复；AI 客户端只负责在其中一个 pane 里真正写代码。
+      </p>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Agent Tracker · 本地 AI 编程调度台</p>
+  </footer>
+
+  <!-- Minimal JS: progress bar + TOC scroll highlight -->
+  <script>
+    // Reading progress bar
+    const bar = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+    });
+
+    // TOC active highlight on scroll
+    const tocLinks = document.querySelectorAll('#toc-list a');
+    const sections = [];
+    tocLinks.forEach(a => {
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) sections.push({ el, link: a });
+    });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const item = sections.find(s => s.el === entry.target);
+        if (item) {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('active'));
+            item.link.classList.add('active');
+          }
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    sections.forEach(s => observer.observe(s.el));
+  </script>
+
+</body>
+</html>

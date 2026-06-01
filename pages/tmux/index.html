@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tmux 速查手册</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f5f5f5;
+    --border: #e0e0e0;
+    --text: #1a1a1a;
+    --text-muted: #555;
+    --accent: #1a73e8;
+    --accent-2: #0d7e3f;
+    --accent-3: #7c3aed;
+    --accent-4: #c05621;
+    --accent-5: #be185d;
+    --danger: #dc2626;
+    --kbd-bg: #f0f0f0;
+    --kbd-border: #ccc;
+    --code-bg: #f5f5f5;
+    --callout-tip-bg: #eff6ff;
+    --callout-tip-border: #3b82f6;
+    --callout-warn-bg: #fffbeb;
+    --callout-warn-border: #f59e0b;
+    --callout-danger-bg: #fef2f2;
+    --callout-danger-border: #ef4444;
+    --tag-session-bg: #dbeafe; --tag-session: #1d4ed8;
+    --tag-window-bg: #dcfce7; --tag-window: #15803d;
+    --tag-pane-bg: #ffedd5;   --tag-pane: #c2410c;
+    --tag-copy-bg: #f3e8ff;   --tag-copy: #7c3aed;
+    --tag-agent-bg: #fce7f3;  --tag-agent: #be185d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 16px;
+  }
+
+  /* Reading progress */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    z-index: 200;
+    width: 0%;
+    transition: width 0.1s;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    background: var(--surface);
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .prefix-badge {
+    display: inline-block;
+    background: var(--kbd-bg);
+    border: 1px solid var(--kbd-border);
+    border-radius: 6px;
+    padding: 4px 14px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 0.95rem;
+    color: var(--accent-2);
+    margin-top: 0.5rem;
+  }
+  header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,250,250,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 12px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .search-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 12px;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    width: 160px;
+    transition: all 0.15s;
+  }
+  .search-box::placeholder { color: var(--text-muted); }
+  .search-box:focus { border-color: var(--accent); width: 220px; }
+
+  /* Layout */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* TOC */
+  nav.toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 2rem;
+  }
+  nav.toc details summary {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  nav.toc details summary::before { content: "▸ "; color: var(--text-muted); }
+  nav.toc details[open] summary::before { content: "▾ "; }
+  .toc-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin-top: 0.6rem;
+  }
+  .toc-list a {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    background: rgba(26, 115, 232, 0.06);
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .toc-list a:hover { background: rgba(26, 115, 232, 0.12); border-color: rgba(26, 115, 232, 0.2); }
+  .toc-list a.active { background: rgba(26, 115, 232, 0.15); border-color: var(--accent); font-weight: 600; }
+
+  /* Section */
+  section {
+    margin-bottom: 2.5rem;
+    scroll-margin-top: 56px;
+  }
+  section h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  section h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    padding: 0 2px;
+  }
+  section h2 .badge {
+    font-size: 0.68rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 8px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: auto;
+  }
+  section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-3);
+    margin: 1.2rem 0 0.5rem;
+  }
+  p { color: var(--text-muted); margin-bottom: 0.6rem; }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 8px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.15s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card.custom { border-left: 3px solid var(--accent-3); }
+  .card.default { border-left: 3px solid var(--border); }
+  .card-keys {
+    flex-shrink: 0;
+    min-width: 120px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    align-items: center;
+  }
+  kbd {
+    display: inline-block;
+    background: var(--kbd-bg);
+    border: 1px solid var(--kbd-border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "SF Mono", "Fira Code", "Noto Sans Mono CJK SC", monospace;
+    font-size: 0.8rem;
+    color: var(--text);
+    white-space: nowrap;
+    line-height: 1.6;
+    box-shadow: 0 1px 0 var(--kbd-border);
+  }
+  .card-desc {
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .card-desc .note {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+  .tag-session { background: var(--tag-session-bg); color: var(--tag-session); }
+  .tag-window  { background: var(--tag-window-bg);  color: var(--tag-window); }
+  .tag-pane    { background: var(--tag-pane-bg);     color: var(--tag-pane); }
+  .tag-copy    { background: var(--tag-copy-bg);     color: var(--tag-copy); }
+  .tag-agent   { background: var(--tag-agent-bg);    color: var(--tag-agent); }
+  .tag-src {
+    display: inline-block;
+    font-size: 0.62rem;
+    padding: 0 5px;
+    border-radius: 3px;
+    font-weight: 500;
+    vertical-align: middle;
+    margin-left: 3px;
+  }
+  .tag-custom { background: #f3e8ff; color: var(--accent-3); }
+  .tag-default-src { background: var(--surface-2); color: var(--text-muted); }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 20px; height: 3px; border-radius: 2px; }
+
+  /* Concept grid */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 0.8rem 0;
+  }
+  .concept-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .concept-item .concept-emoji { font-size: 1.8em; display: block; margin-bottom: 0.3rem; }
+  .concept-item .concept-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+  .concept-item .concept-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* Notation table */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 0.8rem 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .notation-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .notation-table thead { position: sticky; top: 0; z-index: 1; }
+  .notation-table th {
+    text-align: left;
+    padding: 8px 14px;
+    background: var(--surface-2);
+    color: var(--accent);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  .notation-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .notation-table td:first-child {
+    font-family: "SF Mono", "Fira Code", monospace;
+    color: var(--accent-2);
+    white-space: nowrap;
+  }
+  .notation-table tr:last-child td { border-bottom: none; }
+  .notation-table tbody tr:nth-child(even) { background: var(--surface-2); }
+
+  /* File tree */
+  .tree {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    font-family: "SF Mono", "Fira Code", "Noto Sans Mono CJK SC", monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin: 0.8rem 0;
+  }
+  .tree .dir { color: var(--accent); font-weight: 600; }
+  .tree .file { color: var(--text); }
+  .tree .desc { color: var(--text-muted); font-style: italic; font-family: -apple-system, "Noto Sans SC", "PingFang SC", sans-serif; font-size: 0.78rem; }
+
+  /* Code blocks */
+  .cmd-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0.6rem 0;
+  }
+  .cmd-block pre {
+    padding: 0.8rem 1rem;
+    font-family: "SF Mono", "Fira Code", "Noto Sans Mono CJK SC", monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    overflow-x: auto;
+    color: var(--text);
+  }
+  .cmd-block .comment { color: var(--text-muted); }
+  .cmd-block .cmd { color: var(--accent-2); font-weight: 600; }
+
+  /* Callouts */
+  .callout {
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin: 0.8rem 0;
+  }
+  .callout-tip {
+    background: var(--callout-tip-bg);
+    border: 1px solid var(--callout-tip-border);
+    border-left: 4px solid var(--callout-tip-border);
+  }
+  .callout-warn {
+    background: var(--callout-warn-bg);
+    border: 1px solid var(--callout-warn-border);
+    border-left: 4px solid var(--callout-warn-border);
+  }
+  .callout-danger {
+    background: var(--callout-danger-bg);
+    border: 1px solid var(--callout-danger-border);
+    border-left: 4px solid var(--callout-danger-border);
+  }
+  .callout-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 0.2rem; }
+  .callout-tip .callout-title { color: var(--callout-tip-border); }
+  .callout-warn .callout-title { color: var(--callout-warn-border); }
+  .callout-danger .callout-title { color: var(--callout-danger-border); }
+  .callout p, .callout li { font-size: 0.88rem; margin: 0; }
+  .callout ul { list-style: none; padding: 0; margin-top: 0.3rem; }
+  .callout ul li { padding: 2px 0; }
+  .callout ul li::before { content: '›'; color: var(--accent); margin-right: 6px; font-weight: 700; }
+
+  /* Config grid */
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin: 0.8rem 0;
+  }
+  .config-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+  }
+  .config-card h4 {
+    font-size: 0.92rem;
+    color: var(--accent-3);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .config-card p, .config-card li {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .config-card ul { list-style: none; padding: 0; }
+  .config-card ul li::before { content: '›'; color: var(--accent); margin-right: 6px; font-weight: 700; }
+
+  /* Deps grid */
+  .deps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    margin: 0.8rem 0;
+  }
+  .dep-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dep-item .dep-icon { font-size: 1.1rem; width: 28px; text-align: center; }
+  .dep-item .dep-name { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.82rem; color: var(--accent-2); }
+  .dep-item .dep-label { font-size: 0.72rem; color: var(--text-muted); }
+  .dep-required { border-left: 3px solid var(--accent-2); }
+  .dep-optional { border-left: 3px solid var(--accent-4); }
+
+  /* FAQ accordion */
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .faq-summary {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    list-style: none;
+    user-select: none;
+  }
+  .faq-summary:hover { background: var(--surface-2); }
+  .faq-summary::-webkit-details-marker { display: none; }
+  .faq-summary::before { content: '▸ '; font-size: 0.7rem; color: var(--accent); }
+  details[open] .faq-summary::before { content: '▾ '; }
+  .faq-body {
+    padding: 0 14px 12px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .faq-body code {
+    background: var(--kbd-bg);
+    border: 1px solid var(--kbd-border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 0.85em;
+    color: var(--accent-2);
+  }
+  .faq-body ul { list-style: none; padding: 0; margin-top: 6px; }
+  .faq-body ul li { padding: 3px 0; }
+  .faq-body ul li::before { content: '›'; color: var(--accent); margin-right: 6px; font-weight: 700; }
+
+  /* No results */
+  .no-results {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 1rem;
+    display: none;
+  }
+  .no-results.visible { display: block; }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* Hidden */
+  .hidden { display: none !important; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    header { padding: 1.5rem 1rem; }
+    header h1 { font-size: 1.5rem; }
+    main { padding: 1.2rem 1rem 3rem; }
+    .cards { grid-template-columns: 1fr; }
+    .card { flex-direction: column; gap: 6px; }
+    .card-keys { min-width: unset; }
+    .config-grid { grid-template-columns: 1fr; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .search-box { width: 100%; }
+    .search-box:focus { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<!-- Header -->
+<header>
+  <h1>⌨️ Tmux 速查手册</h1>
+  <div class="prefix-badge">Prefix = Ctrl + s</div>
+  <p>基于 <code>~/.tmux.conf</code> 实际配置生成。自定义键位与 tmux 默认有较大差异，以本文档为准。</p>
+</header>
+
+<!-- Filter bar -->
+<div class="filter-bar">
+  <input type="text" class="search-box" id="searchBox" placeholder="🔍 搜索快捷键或描述…" autocomplete="off">
+  <button class="filter-btn active" data-filter="all">全部</button>
+  <button class="filter-btn" data-filter="session">Session</button>
+  <button class="filter-btn" data-filter="window">Window</button>
+  <button class="filter-btn" data-filter="pane">Pane</button>
+  <button class="filter-btn" data-filter="copy">Copy / 剪贴板</button>
+  <button class="filter-btn" data-filter="agent">Agent 工作流</button>
+</div>
+
+<main>
+
+<!-- TOC -->
+<nav class="toc">
+  <details open>
+    <summary>目录导航</summary>
+    <ul class="toc-list" id="toc-list">
+      <li><a href="#beginner">0. 新手先看</a></li>
+      <li><a href="#startup">1. 启动 / 退出</a></li>
+      <li><a href="#session">2. Session</a></li>
+      <li><a href="#window">3. Window</a></li>
+      <li><a href="#pane">4. Pane</a></li>
+      <li><a href="#copy-mode">5. Copy Mode</a></li>
+      <li><a href="#agent">6. Agent 工作流</a></li>
+      <li><a href="#plugins">7. 插件 & 恢复</a></li>
+      <li><a href="#overridden">8. 被覆盖的键</a></li>
+      <li><a href="#rare-keys">9. 较少用键</a></li>
+      <li><a href="#commands">10. 常用命令</a></li>
+      <li><a href="#config">11. 配置架构</a></li>
+      <li><a href="#hooks">12. Hook 行为</a></li>
+      <li><a href="#deps">13. 依赖项</a></li>
+      <li><a href="#troubleshooting">14. 排查</a></li>
+      <li><a href="#philosophy">15. 设计理念</a></li>
+    </ul>
+  </details>
+</nav>
+
+<!-- No results -->
+<div class="no-results" id="noResults">🔍 没有匹配的内容</div>
+
+<!-- ======== 0. 新手先看 ======== -->
+<section id="beginner">
+  <h2><span class="num">0</span> 新手先看 <span class="badge">概念 + 记法</span></h2>
+
+  <h3>三层模型</h3>
+  <div class="concept-grid">
+    <div class="concept-item">
+      <span class="concept-emoji">📦</span>
+      <div class="concept-name">Session</div>
+      <div class="concept-desc">一组工作空间<br>一个项目一个 session</div>
+    </div>
+    <div class="concept-item">
+      <span class="concept-emoji">🪟</span>
+      <div class="concept-name">Window</div>
+      <div class="concept-desc">Session 里的标签页<br>类似浏览器 Tab</div>
+    </div>
+    <div class="concept-item">
+      <span class="concept-emoji">🔲</span>
+      <div class="concept-name">Pane</div>
+      <div class="concept-desc">Window 里的分屏<br>每个 Pane 是独立终端</div>
+    </div>
+  </div>
+
+  <div class="tree">
+<span class="dir">tmux server</span>
+└── <span class="dir">session 1：project-a</span>
+    ├── <span class="dir">window 1：editor</span>
+    │   ├── <span class="file">pane 1：nvim</span>
+    │   └── <span class="file">pane 2：shell</span>
+    └── <span class="dir">window 2：server</span>
+        └── <span class="file">pane 1：pnpm dev</span>
+  </div>
+
+  <h3>按键记法</h3>
+  <div class="table-wrap">
+    <table class="notation-table">
+      <thead><tr><th>写法</th><th>含义</th><th>举例</th></tr></thead>
+      <tbody>
+        <tr><td>C-s</td><td>Control + s</td><td>C-s 就是 Ctrl+S</td></tr>
+        <tr><td>M-s</td><td>Meta + s，Mac 上通常是 Option + s</td><td>M-o = Option+O</td></tr>
+        <tr><td>M-S</td><td>Option + Shift + s</td><td>M-L = Option+Shift+L</td></tr>
+        <tr><td>prefix x</td><td>先按 C-s，松开后再按 x</td><td>prefix d = Ctrl+S → d</td></tr>
+        <tr><td>bind -n</td><td>不需要 prefix，直接按就触发</td><td>M-o 直接新建 window</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠ M- 不生效？</div>
+    <p>检查终端是否启用了 <code>Option as Meta</code> / <code>Alt sends escape</code>。</p>
+  </div>
+
+  <h3>这台电脑的配置特点</h3>
+  <div class="callout callout-tip">
+    <ul>
+      <li>Prefix 改成了 <kbd>C-s</kbd>，默认 <kbd>C-b</kbd> 已禁用</li>
+      <li>很多高频操作是 <kbd>Option</kbd> 直连，不需要先按 prefix</li>
+      <li><kbd>n/e/u/i</kbd> 被当作方向键使用：左/下/上/右（Colemak 风格）</li>
+      <li>Session 会被自动编号成 <code>1-xxx</code>、<code>2-xxx</code>，方便用 <kbd>C-1</kbd> / <kbd>F1</kbd> 切换</li>
+      <li>状态栏会显示 Agent 任务、未读、失败、等待问题等状态</li>
+      <li>配了 <code>tmux-resurrect</code> 和 <code>tmux-continuum</code>，每 5 分钟自动保存状态，但自动恢复已关闭</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--accent-3)"></div> 自定义绑定（.tmux.conf）</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--border)"></div> tmux 默认（未被覆盖）</div>
+</div>
+
+<!-- ======== 1. 启动 / 进入 / 退出 ======== -->
+<section id="startup">
+  <h2><span class="num">1</span> 启动 / 进入 / 退出 <span class="badge">最先学会</span></h2>
+
+  <div class="cmd-block"><pre><span class="comment"># 新建默认 session</span>
+<span class="cmd">tmux</span>
+
+<span class="comment"># 新建命名 session</span>
+<span class="cmd">tmux new -s demo</span>
+
+<span class="comment"># 查看已有 session</span>
+<span class="cmd">tmux ls</span>
+
+<span class="comment"># 进入第一个 session</span>
+<span class="cmd">tmux a</span>
+
+<span class="comment"># 进入指定 session</span>
+<span class="cmd">tmux a -t demo</span></pre></div>
+
+  <div class="cards">
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>d</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-default-src">默认</span> Detach — 离开 tmux，里面的命令继续跑</div>
+    </div>
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>:</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-default-src">默认</span> 进入命令行模式 <span class="note">可输入 kill-server 等命令</span></div>
+    </div>
+  </div>
+
+  <div class="cmd-block" style="margin-top:8px;"><pre><span class="comment"># 关闭指定 session</span>
+<span class="cmd">tmux kill-session -t demo</span>
+
+<span class="comment"># 关闭整个 tmux server（所有 session 都会没）</span>
+<span class="cmd">tmux kill-server</span></pre></div>
+</section>
+
+<!-- ======== 2. Session ======== -->
+<section id="session">
+  <h2><span class="num">2</span> Session 管理</h2>
+
+  <div class="cards">
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>M-S</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-custom">自定义</span> 在当前路径新建 session</div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>C-1</kbd> ~ <kbd>C-9</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-custom">自定义</span> 按编号切换 session <span class="note">F1~F5 也可以</span></div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>C-c</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-custom">自定义</span> 新建 session</div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>.</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-custom">自定义</span> 重命名 session <span class="note">覆盖了默认的 move-window</span></div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>l</kbd> / <kbd>y</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-custom">自定义</span> 左 / 右移动当前 session 顺序</div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>1</kbd>~<kbd>0</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-custom">自定义</span> 把当前 window 移动到第 N 个 session <span class="note">覆盖了默认的 select-window</span></div>
+    </div>
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>s</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-default-src">默认</span> 列出 / 切换 session <span class="note">x 可关闭选中项</span></div>
+    </div>
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>$</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-default-src">默认</span> 重命名 session <span class="note">默认绑定仍可用，但习惯上用 prefix . 代替</span></div>
+    </div>
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>D</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-default-src">默认</span> 选择要断开的会话</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 3. Window ======== -->
+<section id="window">
+  <h2><span class="num">3</span> Window 管理</h2>
+
+  <div class="cards">
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>M-o</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 在当前路径新建 window</div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>M-1</kbd> ~ <kbd>M-9</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 切换到当前 session 第 N 个 window</div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>M-l</kbd> / <kbd>M-y</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 上一个 / 下一个 window</div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>M-L</kbd> / <kbd>M-Y</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 当前 session 内左右交换 window 顺序</div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>M-!</kbd> ~ <kbd>M-(</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 把当前 pane 合并到 window 1~9 <span class="note">M-! = :1, M-@ = :2, M-# = :3 …</span></div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>,</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 重命名 window</div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>C-p</kbd> / <kbd>C-n</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 上一个 / 下一个 window <span class="note">默认 p/n 已被重绑</span></div>
+    </div>
+    <div class="card custom" data-cat="window">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>W</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-custom">自定义</span> 打开 choose-tree</div>
+    </div>
+    <div class="card default" data-cat="window">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>c</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-default-src">默认</span> 新建 window</div>
+    </div>
+    <div class="card default" data-cat="window">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>&amp;</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-default-src">默认</span> 关闭当前 window（需确认）</div>
+    </div>
+    <div class="card default" data-cat="window">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>w</kbd></div>
+      <div class="card-desc"><span class="tag tag-window">Window</span><span class="tag-src tag-default-src">默认</span> Window / Session 列表选择</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 4. Pane ======== -->
+<section id="pane">
+  <h2><span class="num">4</span> Pane 管理</h2>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠ 分屏键已重绑</div>
+    <p>默认的 <kbd>prefix "</kbd>（上下分屏）和 <kbd>prefix %</kbd>（左右分屏）仍可用，但自定义的 <kbd>prefix u/e/n/i</kbd> 会继承当前路径，更推荐使用。</p>
+  </div>
+
+  <div class="cards">
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>u</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 上下分屏 — 新 pane 在<strong>上方</strong>（继承路径）</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>e</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 上下分屏 — 新 pane 在<strong>下方</strong>（继承路径）</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>n</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 左右分屏 — 新 pane 在<strong>左侧</strong>（继承路径）</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>i</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 左右分屏 — 新 pane 在<strong>右侧</strong>（继承路径）</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-n</kbd> <kbd>M-e</kbd> <kbd>M-u</kbd> <kbd>M-i</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 按 左/下/上/右 移动焦点</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-a</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 跳到最左 pane</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-g</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 跳到右上 pane</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-r</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 跳到右下 pane</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-N</kbd> <kbd>M-E</kbd> <kbd>M-U</kbd> <kbd>M-I</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 按 左/下/上/右 调整大小（步进 3）</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-f</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 最大化 / 还原</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-O</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 当前 pane 拆成独立 window</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>M-Q</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 关闭当前 pane</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>&gt;</kbd> / <kbd>&lt;</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 向后 / 向前交换 pane</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>|</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> Swap pane</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>S</kbd> / <kbd>V</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 从 choose-tree 选 pane 垂直/水平移入当前 window</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>Space</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 2-pane 场景切换横向 / 纵向布局</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>I</kbd> <kbd>N</kbd> <kbd>U</kbd> <kbd>E</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> 2-pane 基础上向 右/左/上/下 扩展布局</div>
+    </div>
+    <div class="card custom" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>C-g</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-custom">自定义</span> Synchronize-panes 开关 <span class="note">开启时 pane border 变红</span></div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>x</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 关闭当前 pane（需确认）</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>z</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 最大化 / 还原（与 M-f 效果相同）</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>;</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 切换到上一个 pane</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>o</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 切换到下一个 pane</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>q</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 显示 pane 编号，按数字跳转</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>!</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 将当前 pane 移到新 window</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>{</kbd> / <kbd>}</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 向前 / 向后置换 pane</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>t</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 显示时钟</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 5. Copy Mode ======== -->
+<section id="copy-mode">
+  <h2><span class="num">5</span> Copy Mode &amp; 剪贴板 <span class="badge">vi key table</span></h2>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 进入与退出</div>
+    <ul>
+      <li><kbd>M-v</kbd> 进入 copy-mode（无需 prefix）</li>
+      <li><kbd>q</kbd> 或 <kbd>Escape</kbd> 退出 copy-mode</li>
+    </ul>
+  </div>
+
+  <h3>选择 &amp; 复制</h3>
+  <div class="cards" style="margin-bottom:1rem;">
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>v</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 开始选择</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>C-v</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 矩形选择</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>y</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 复制并退出 → tmux buffer + 系统剪贴板</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>Y</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 复制到行尾</div>
+    </div>
+  </div>
+
+  <h3>光标移动（Colemak 风格）</h3>
+  <div class="cards" style="margin-bottom:1rem;">
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>n</kbd> <kbd>i</kbd> <kbd>u</kbd> <kbd>e</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 左 / 右 / 上 / 下 移动光标</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>N</kbd> / <kbd>I</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 行首 / 行尾</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>h</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 跳到下一个词尾</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>U</kbd> / <kbd>E</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 向上 / 向下移动 5 行</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>C-u</kbd> / <kbd>C-e</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 向上 / 向下滚动 5 行</div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>=</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Copy</span> 反向搜索</div>
+    </div>
+  </div>
+
+  <h3>粘贴</h3>
+  <div class="cards">
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>C-S-v</kbd> / <kbd>M-V</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">剪贴板</span><span class="tag-src tag-custom">自定义</span> 从系统剪贴板粘贴 <span class="note">无需 prefix，任何模式下可用</span></div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>p</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Buffer</span><span class="tag-src tag-custom">自定义</span> 粘贴 tmux buffer <span class="note">小写 p，覆盖了默认 previous-window</span></div>
+    </div>
+    <div class="card custom" data-cat="copy">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>b</kbd></div>
+      <div class="card-desc"><span class="tag tag-copy">Buffer</span><span class="tag-src tag-custom">自定义</span> 列出所有 buffer</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 6. Agent 工作流 ======== -->
+<section id="agent">
+  <h2><span class="num">6</span> Agent 工作流 <span class="badge">AI 工作台</span></h2>
+
+  <div class="cards">
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>M-s</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> 打开 Agent palette（弹窗）</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>M-w</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> Watch 当前 pane 命令 <span class="note">再按一次取消 watch</span></div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>M-b</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> 切换当前 window 的 unread 标记</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>M-m</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> 跳到最新通知来源</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>M-M</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> 跳回上一个 origin</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>O</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> 重启当前 opencode pane</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>P</kbd></div>
+      <div class="card-desc"><span class="tag tag-agent">Agent</span> 切换 agent tracker 通知开关</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 7. 插件 & 会话恢复 ======== -->
+<section id="plugins">
+  <h2><span class="num">7</span> 插件 &amp; 会话恢复 <span class="badge">tmux-resurrect + continuum</span></h2>
+
+  <div class="config-grid">
+    <div class="config-card">
+      <h4>📦 TPM (tmux-plugins/tpm)</h4>
+      <ul>
+        <li>插件管理器</li>
+        <li>安装/更新/清理快捷键被统一改成 <kbd>M-F12</kbd></li>
+        <li>基本禁用了默认 TPM 快捷键，避免误触</li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>💾 tmux-resurrect</h4>
+      <ul>
+        <li>保存和恢复 tmux session/window/pane</li>
+        <li>开启了 pane 内容保存</li>
+        <li>存档位置：<code>~/.local/share/tmux/resurrect/</code></li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>♻️ tmux-continuum</h4>
+      <ul>
+        <li>每 5 分钟自动保存 resurrect 状态</li>
+        <li>自动恢复已关闭（<code>@continuum-restore off</code>）</li>
+        <li>启动 tmux 时不会自动恢复</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 手动保存 / 恢复会话</div>
+    <ul>
+      <li><kbd>prefix</kbd> <kbd>C-s</kbd> — 保存当前 tmux 状态（即 Ctrl+S → Ctrl+S）</li>
+      <li><kbd>prefix</kbd> <kbd>C-r</kbd> — 恢复上次保存的状态（即 Ctrl+S → Ctrl+R）</li>
+    </ul>
+    <p style="margin-top:6px;">注意：Prefix 是 <kbd>C-s</kbd>，所以 <code>prefix C-s</code> 实际上是按两次 <kbd>Ctrl+S</kbd>。</p>
+  </div>
+</section>
+
+<!-- ======== 8. 被覆盖的默认键 ======== -->
+<section id="overridden">
+  <h2><span class="num">8</span> 被覆盖 / 移除的默认键 <span class="badge">避免踩坑</span></h2>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">🚫 这些 tmux 默认键已被重绑或禁用</div>
+    <p>按下去不会得到预期的默认行为。</p>
+  </div>
+
+  <div class="cards">
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>n</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">默认：next-window</del> → 现在是<strong>左侧分屏</strong></div>
+    </div>
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>p</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">默认：previous-window</del> → 现在是<strong>paste-buffer</strong></div>
+    </div>
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>l</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">默认：last-window</del> → 现在是<strong>session 左移</strong></div>
+    </div>
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>.</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">默认：move-window</del> → 现在是<strong>重命名 session</strong></div>
+    </div>
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>1</kbd>~<kbd>0</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">默认：select-window N</del> → 现在是<strong>移 window 到 session N</strong> <span class="note">用 M-1~M-9 替代 select-window</span></div>
+    </div>
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>Space</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">默认：next-layout</del> → 现在是<strong>2-pane 横竖切换</strong></div>
+    </div>
+    <div class="card" data-cat="session" style="border-left:3px solid var(--danger);">
+      <div class="card-keys"><kbd>M-p</kbd> / <kbd>M-P</kbd></div>
+      <div class="card-desc"><del style="color:var(--text-muted)">已被 unbind</del> → 无功能</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 9. 较少用键 ======== -->
+<section id="rare-keys">
+  <h2><span class="num">9</span> 较少用快捷键备忘 <span class="badge">按需查阅</span></h2>
+
+  <div class="cards">
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>?</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">帮助</span><span class="tag-src tag-default-src">默认</span> 显示快捷键帮助文档</div>
+    </div>
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>~</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">帮助</span><span class="tag-src tag-default-src">默认</span> 列出提示信息缓存</div>
+    </div>
+    <div class="card default" data-cat="session">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>C-z</kbd></div>
+      <div class="card-desc"><span class="tag tag-session">Session</span><span class="tag-src tag-default-src">默认</span> 挂起当前会话</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>r</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 强制重绘（刷新）</div>
+    </div>
+    <div class="card default" data-cat="pane">
+      <div class="card-keys"><kbd>prefix</kbd> <kbd>C-o</kbd></div>
+      <div class="card-desc"><span class="tag tag-pane">Pane</span><span class="tag-src tag-default-src">默认</span> 旋转 pane</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 10. 常用命令 ======== -->
+<section id="commands">
+  <h2><span class="num">10</span> 常用命令 <span class="badge">终端直接执行</span></h2>
+
+  <h3>📦 Session 管理</h3>
+  <div class="cmd-block"><pre><span class="comment"># 新建名为 demo 的会话</span>
+<span class="cmd">tmux new -s demo</span>
+
+<span class="comment"># 进入/附加会话（默认进入第一个）</span>
+<span class="cmd">tmux a</span>
+
+<span class="comment"># 附加到指定会话</span>
+<span class="cmd">tmux a -t demo</span>
+
+<span class="comment"># 查看所有会话</span>
+<span class="cmd">tmux ls</span>
+
+<span class="comment"># 关闭指定会话</span>
+<span class="cmd">tmux kill-session -t demo</span>
+
+<span class="comment"># 关闭服务器：所有会话都将关闭</span>
+<span class="cmd">tmux kill-server</span></pre></div>
+
+  <h3>🪟 Window / Pane 管理</h3>
+  <div class="cmd-block"><pre><span class="cmd">tmux kill-pane</span>        <span class="comment"># 关闭 pane</span>
+<span class="cmd">tmux kill-window</span>      <span class="comment"># 关闭 window</span></pre></div>
+
+  <h3>ℹ️ 帮助 / 调试</h3>
+  <div class="cmd-block"><pre><span class="cmd">tmux list-keys</span>        <span class="comment"># 列出所有快捷键及对应命令</span>
+<span class="cmd">tmux list-commands</span>    <span class="comment"># 列出所有 tmux 命令及参数</span>
+<span class="cmd">tmux info</span>              <span class="comment"># 输出 session/window/pane 信息</span>
+<span class="cmd">tmux show-hooks -g</span>    <span class="comment"># 查看全局 hook 绑定</span></pre></div>
+
+  <h3>⚙️ 配置</h3>
+  <div class="cmd-block"><pre><span class="comment"># 重新加载 tmux 配置</span>
+<span class="cmd">tmux source-file ~/.tmux.conf</span>
+
+<span class="comment"># 进入命令行模式（在 tmux 内）</span>
+<span class="cmd">&lt;prefix&gt; :</span></pre></div>
+
+  <h3>🔍 排查配置冲突</h3>
+  <div class="cmd-block"><pre><span class="comment"># 查看某个键实际绑定了什么</span>
+<span class="cmd">tmux list-keys | grep 'prefix.*Space'</span>
+
+<span class="comment"># 查看所有自定义脚本绑定</span>
+<span class="cmd">tmux list-keys | grep 'config/tmux'</span>
+
+<span class="comment"># 查看 status line 配置</span>
+<span class="cmd">tmux show -g status-left</span>
+<span class="cmd">tmux show -g status-right</span></pre></div>
+
+  <h3>✅ 验证配置是否加载</h3>
+  <div class="cmd-block"><pre><span class="comment"># 查看主配置是否 source 了自定义脚本</span>
+<span class="cmd">rg -n '\.config/tmux|fzf_panes|tmux-status|session_manager' ~/.tmux.conf</span>
+
+<span class="comment"># 查看当前 tmux 已绑定的自定义快捷键</span>
+<span class="cmd">tmux list-keys | rg 'config/tmux|fzf|agent|session_manager|watch_pane'</span>
+
+<span class="comment"># 查看 hook 是否正常</span>
+<span class="cmd">tmux show-hooks -g | rg 'config/tmux|agent|resurrect|watch'</span></pre></div>
+</section>
+
+<!-- ======== 11. 配置架构 ======== -->
+<section id="config">
+  <h2><span class="num">11</span> 配置架构 <span class="badge">~/.config/tmux/</span></h2>
+
+  <div class="tree">
+<span class="dir">~/.config/tmux/</span>
+├── <span class="file">fzf_panes.tmux</span>        <span class="desc"># fzf 管理所有 pane</span>
+├── <span class="dir">scripts/</span>              <span class="desc"># session/window/pane/AI Agent 脚本</span>
+└── <span class="dir">tmux-status/</span>          <span class="desc"># 状态栏左右两侧 + 图标脚本</span>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 基础设置一览</div>
+    <ul>
+      <li>Prefix：<kbd>C-s</kbd>（替换默认 <kbd>C-b</kbd>）</li>
+      <li>默认 shell：<code>/bin/zsh</code></li>
+      <li>Mouse 始终开启（无 toggle 键）</li>
+      <li>Session / window / pane 编号从 <strong>1</strong> 开始，window 自动重编号</li>
+      <li>history-limit：<strong>10000</strong></li>
+      <li>状态栏每 <strong>1s</strong> 刷新</li>
+      <li>detach-on-destroy <strong>off</strong>：关闭最后一个 window 不会退出 tmux</li>
+      <li>TPM 插件：tmux-resurrect + tmux-continuum（每 5 分钟自动保存）</li>
+    </ul>
+  </div>
+
+  <div class="config-grid">
+    <div class="config-card">
+      <h4>🔍 fzf_panes.tmux</h4>
+      <ul>
+        <li>fzf 列出所有 pane，支持预览</li>
+        <li>跳转、kill、移动、交换 pane</li>
+        <li>维护最近使用 pane 列表 @mru_pane_ids</li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>📋 session_manager.py</h4>
+      <ul>
+        <li>Session 统一命名 <code>数字-label</code></li>
+        <li>按编号切换、重命名</li>
+        <li>左右移动 session 顺序</li>
+        <li>移动 window 到指定 session</li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>📊 left.sh (Status)</h4>
+      <ul>
+        <li>渲染左侧 session 列表</li>
+        <li>当前 session 高亮</li>
+        <li>窄屏时只显示编号</li>
+        <li>显示问题/失败/未读/执行中图标</li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>🤖 right.sh (Status)</h4>
+      <ul>
+        <li>调用 agent-tracker 生成右侧状态</li>
+        <li>显示 AI Agent 运行状态</li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>⭐ pane_starship_title.sh</h4>
+      <ul>
+        <li>用 starship 生成 pane title</li>
+        <li>叠加 opencode 任务状态</li>
+        <li>问题 pending / watching 等指示</li>
+      </ul>
+    </div>
+    <div class="config-card">
+      <h4>👀 watch_pane.sh</h4>
+      <ul>
+        <li>监控当前 pane 中的命令</li>
+        <li>命令结束后设置 unread/failed 状态</li>
+        <li>通过 agent-tracker 发送通知</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 12. Hook 行为 ======== -->
+<section id="hooks">
+  <h2><span class="num">12</span> Hook 行为 <span class="badge">自动触发</span></h2>
+
+  <div class="cards">
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>client-attached</kbd></div>
+      <div class="card-desc">Ack agent-tracker 通知，刷新状态栏</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>pane-focus-in</kbd></div>
+      <div class="card-desc">更新 fzf pane MRU → 通知 agent focus → ack 通知 → 清除 unread/fail → 刷新状态栏</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>pane-died</kbd></div>
+      <div class="card-desc">删除对应 agent-tracker task</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>after-select-window</kbd></div>
+      <div class="card-desc">执行 <code>on-tmux-window-activate.sh</code> → ack 通知 → 清除 unread/fail → 刷新状态栏</div>
+    </div>
+    <div class="card custom" data-cat="agent">
+      <div class="card-keys"><kbd>client-session-changed</kbd></div>
+      <div class="card-desc">切换 session 时通知 agent focus → ack → 清除 unread/fail → 刷新</div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>session-created</kbd></div>
+      <div class="card-desc">调用 <code>session_created.sh</code>，保证 session 编号连续</div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>session-renamed</kbd></div>
+      <div class="card-desc">刷新状态栏</div>
+    </div>
+    <div class="card custom" data-cat="session">
+      <div class="card-keys"><kbd>session-closed</kbd></div>
+      <div class="card-desc">刷新状态栏</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 13. 依赖项 ======== -->
+<section id="deps">
+  <h2><span class="num">13</span> 依赖项</h2>
+
+  <div class="deps-grid">
+    <div class="dep-item dep-required">
+      <div class="dep-icon">🔧</div>
+      <div><div class="dep-name">tmux</div><div class="dep-label">必需 · 核心</div></div>
+    </div>
+    <div class="dep-item dep-required">
+      <div class="dep-icon">🐚</div>
+      <div><div class="dep-name">bash + python3</div><div class="dep-label">必需 · 脚本运行</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">🔍</div>
+      <div><div class="dep-name">fzf</div><div class="dep-label">可选 · pane 管理</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">📝</div>
+      <div><div class="dep-name">jq</div><div class="dep-label">可选 · JSON 处理</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">🚀</div>
+      <div><div class="dep-name">starship</div><div class="dep-label">可选 · pane title</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">📋</div>
+      <div><div class="dep-name">pbcopy / pbpaste</div><div class="dep-label">可选 · macOS 剪贴板</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">🤖</div>
+      <div><div class="dep-name">agent-tracker</div><div class="dep-label">可选 · AI 工作流</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">💾</div>
+      <div><div class="dep-name">tmux-resurrect</div><div class="dep-label">TPM · 会话恢复</div></div>
+    </div>
+    <div class="dep-item dep-optional">
+      <div class="dep-icon">♻️</div>
+      <div><div class="dep-name">tmux-continuum</div><div class="dep-label">TPM · 每 5 分钟自动保存</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== 14. 新手排查 ======== -->
+<section id="troubleshooting">
+  <h2><span class="num">14</span> 新手排查 <span class="badge">常见问题</span></h2>
+
+  <details class="faq-item">
+    <summary class="faq-summary">修改配置后没生效</summary>
+    <div class="faq-body">
+      <p>重新加载配置：</p>
+      <div class="cmd-block"><pre><span class="cmd">tmux source-file ~/.tmux.conf</span></pre></div>
+      <p>如果还是异常，重启 tmux server：</p>
+      <div class="cmd-block"><pre><span class="cmd">tmux kill-server</span>
+<span class="cmd">tmux</span></pre></div>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-summary">M- 快捷键（Option 系列）没反应</summary>
+    <div class="faq-body">
+      <p><code>M</code> 是 Meta，Mac 上通常是 <code>Option</code>。需要在终端里启用：</p>
+      <ul>
+        <li><strong>iTerm2</strong>：Profiles → Keys → Left/Right Option key → <code>Esc+</code></li>
+        <li><strong>Terminal.app</strong>：Profiles → Keyboard → Use Option as Meta key</li>
+        <li><strong>Kitty / Ghostty</strong>：检查 Option/Alt 是否发送 Meta/Escape</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-summary">状态栏右侧为空</summary>
+    <div class="faq-body">
+      <p>右侧依赖 <code>agent-tracker</code>。检查：</p>
+      <div class="cmd-block"><pre><span class="comment"># 检查 agent 可执行文件</span>
+<span class="cmd">test -x ~/.config/agent-tracker/bin/agent && echo "OK" || echo "MISSING"</span>
+
+<span class="comment"># 检查 agent-tracker-server 服务</span>
+<span class="cmd">brew services list | rg agent-tracker</span></pre></div>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-summary">fzf pane 选择器不可用</summary>
+    <div class="faq-body">
+      <p>确认 <code>fzf</code> 已安装：</p>
+      <div class="cmd-block"><pre><span class="cmd">command -v fzf</span></pre></div>
+      <p>当前 <code>.tmux.conf</code> 没有显式绑定打开 <code>fzf_panes.tmux new_window</code> 的快捷键；如果要用，需要额外绑定一个键。</p>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-summary">opencode 恢复失败</summary>
+    <div class="faq-body">
+      <p>脚本里恢复命令是 <code>op -s &lt;session_id&gt;</code>。目前 <code>op</code> 已链接到 <code>opencode</code>，如果以后失效，检查：</p>
+      <div class="cmd-block"><pre><span class="cmd">command -v op</span>
+<span class="cmd">op --help</span></pre></div>
+    </div>
+  </details>
+</section>
+
+<!-- ======== 15. 设计理念 ======== -->
+<section id="philosophy">
+  <h2><span class="num">15</span> 设计理念</h2>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">🎯 这不只是一份 tmux 配置 — 它是一个 AI Coding 工作台</div>
+    <ul>
+      <li>Session 有稳定编号，便于快速跳转和重排</li>
+      <li>Status line 显示各 session/window 的任务状态</li>
+      <li>Pane title 结合 starship 和 opencode 展示上下文</li>
+      <li>长命令或 Agent 任务结束后能显示未读、失败、等待确认</li>
+      <li>通过 tmux-resurrect + continuum 自动保存和恢复 agent 相关 pane</li>
+      <li>Colemak 风格的方向键映射（n/e/u/i = 左/下/上/右）贯穿所有模式</li>
+    </ul>
+    <p style="margin-top:8px;">
+      <strong>最小接入：</strong>只保留 fzf_panes.tmux、剪贴板脚本、session 编号脚本。<br>
+      <strong>完整复刻：</strong>还需安装 agent-tracker、opencode、tmux-resurrect、starship。
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>参考资料：
+    <a href="https://www.flygar.org/2020/03/26/tmux-Best-Practices.html" target="_blank">flygar.org · Tmux Best Practices</a> ·
+    <a href="http://www.ruanyifeng.com/blog/2019/10/tmux.html" target="_blank">阮一峰 · Tmux 使用教程</a>
+  </p>
+  <p style="margin-top:6px; opacity:0.6;">基于 ~/.tmux.conf 实际配置生成</p>
+</footer>
+
+<script>
+// Reading progress bar
+const bar = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+});
+
+// TOC scroll highlight
+const tocLinks = document.querySelectorAll('#toc-list a');
+const tocSections = [];
+tocLinks.forEach(a => {
+  const id = a.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) tocSections.push({ el, link: a });
+});
+const tocObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const item = tocSections.find(s => s.el === entry.target);
+    if (item && entry.isIntersecting) {
+      tocLinks.forEach(l => l.classList.remove('active'));
+      item.link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+tocSections.forEach(s => tocObserver.observe(s.el));
+
+// Category filter + Search
+const filterBtns = document.querySelectorAll('.filter-btn');
+const allCards = document.querySelectorAll('.card');
+const searchBox = document.getElementById('searchBox');
+const noResults = document.getElementById('noResults');
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function applyFilters() {
+  let visibleCount = 0;
+
+  allCards.forEach(card => {
+    const cat = card.dataset.cat || '';
+    const catMatch = currentFilter === 'all' || cat === currentFilter;
+    let searchMatch = true;
+    if (currentSearch) {
+      const text = card.textContent.toLowerCase();
+      searchMatch = currentSearch.split(/\s+/).every(term => text.includes(term));
+    }
+    if (catMatch && searchMatch) {
+      card.classList.remove('hidden');
+      visibleCount++;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  document.querySelectorAll('main > section').forEach(section => {
+    const cards = section.querySelectorAll('.card');
+    if (cards.length === 0) {
+      if (currentSearch) {
+        const text = section.textContent.toLowerCase();
+        const match = currentSearch.split(/\s+/).every(term => text.includes(term));
+        section.classList.toggle('hidden', !match);
+        if (match) visibleCount++;
+      } else {
+        section.classList.remove('hidden');
+      }
+    } else {
+      const vis = section.querySelectorAll('.card:not(.hidden)');
+      section.classList.toggle('hidden', vis.length === 0 && currentSearch !== '');
+    }
+  });
+
+  const legend = document.querySelector('.legend');
+  if (legend) legend.classList.toggle('hidden', currentSearch !== '' && visibleCount === 0);
+
+  noResults.classList.toggle('visible', visibleCount === 0 && currentSearch !== '');
+}
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    applyFilters();
+  });
+});
+
+searchBox.addEventListener('input', (e) => {
+  currentSearch = e.target.value.trim().toLowerCase();
+  if (currentSearch) {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    filterBtns[0].classList.add('active');
+    currentFilter = 'all';
+  }
+  applyFilters();
+});
+
+// / to focus search, Escape to clear
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchBox) {
+    e.preventDefault();
+    searchBox.focus();
+  }
+  if (e.key === 'Escape' && document.activeElement === searchBox) {
+    searchBox.value = '';
+    currentSearch = '';
+    searchBox.blur();
+    applyFilters();
+  }
+});
+</script>
+</body>
+</html>

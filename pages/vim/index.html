@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vim</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / vim</div>
+    <section class="hero">
+      <h1>vim</h1>
+      <p class="lede">Vim 配置包，当前同时保留两套入口：一个较轻量的 <code>~/.vimrc</code>，一个插件更多、历史更完整的 <code>~/.vim/.vimrc</code>。</p>
+      <div class="meta">
+        <span class="pill">双配置入口</span>
+        <span class="pill">Vundle 历史配置</span>
+        <span class="pill">macOS 剪贴板</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装</h2>
+      <pre><code>stow -S vim</code></pre>
+      <p>安装后会有 <code>~/.vimrc</code> 和 <code>~/.vim/.vimrc</code> 两份配置。</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>轻量配置</h2>
+        <ul>
+          <li>leader 是 <code>,</code>。</li>
+          <li>系统剪贴板使用 <code>unnamed</code> 和 <code>unnamedplus</code>。</li>
+          <li><code>Ctrl+S</code> 保存。</li>
+          <li>搜索默认 <code>ignorecase</code>。</li>
+          <li>tab 切换和移动使用 leader 快捷键。</li>
+          <li>insert mode 中模拟部分 Emacs 光标移动。</li>
+          <li>4 空格缩进，开启 undo file。</li>
+          <li>文件编码优先 UTF-8，并兼容 GB 系列编码。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>完整历史配置</h2>
+        <ul>
+          <li>语法高亮、行号、ruler、自动缩进。</li>
+          <li>禁用 backup 和 swapfile。</li>
+          <li><code>jk</code> 退出 insert mode。</li>
+          <li><code>,c</code> 复制到 macOS 剪贴板，<code>,v</code> 从剪贴板粘贴。</li>
+          <li>使用 Vundle 管理插件。</li>
+          <li>包含 Tagbar、NERDTree、vim-airline、nerdcommenter、MatchTagAlways、vim-instant-markdown、indentLine 等插件。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>常用键位</h2>
+      <ul class="key-list">
+        <li><code>Ctrl+s</code>：保存。</li>
+        <li><code>Shift+h/l</code>：切换上一个/下一个 tab。</li>
+        <li><code>,t</code>：新建 tab。</li>
+        <li><code>,e</code>：编辑文件。</li>
+        <li><code>,n</code>：切换行号。</li>
+        <li><code>,r</code>：切换相对行号。</li>
+        <li><code>,h</code>：取消搜索高亮。</li>
+        <li><code>Ctrl+n</code>：完整配置里切换 NERDTree。</li>
+        <li><code>F3</code> 或 <code>Ctrl+t</code>：完整配置里打开 Tagbar。</li>
+      </ul>
+    </section>
+
+    <section class="section callout">
+      <p>完整配置依赖 Vundle 和 <code>ctags</code>，macOS 剪贴板依赖 <code>pbcopy</code>、<code>pbpaste</code>。两份 Vim 配置同时存在时，实际加载哪份取决于启动方式和配置链路，后续可以考虑收敛。</p>
+    </section>
+  </main>
+</body>
+</html>

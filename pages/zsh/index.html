@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>zsh</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / zsh</div>
+    <section class="hero">
+      <h1>zsh</h1>
+      <p class="lede">当前主要 shell 配置包。它把启动流程拆成环境、插件、alias、函数、工具初始化、补全、fzf 和 vi mode，避免所有逻辑挤在一个巨大的 <code>.zshrc</code> 里。</p>
+      <div class="meta">
+        <span class="pill">主力 shell</span>
+        <span class="pill">Antigen / oh-my-zsh</span>
+        <span class="pill">fzf 工作流</span>
+        <span class="pill">vi mode</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装路径</h2>
+      <pre><code>stow -S zsh</code></pre>
+      <p>会安装 <code>~/.zshrc</code>、<code>~/.zshenv</code>、<code>~/.zprofile</code>、<code>~/.antigenrc</code> 和 <code>~/.config/zsh/</code>。</p>
+    </section>
+
+    <section class="section">
+      <h2>加载顺序</h2>
+      <p><code>~/.zshrc</code> 先设置 <code>ZSH_CONFIG_DIR="${ZSH_CONFIG_DIR:-$HOME/.config/zsh}"</code>，然后按下面顺序加载：</p>
+      <ol>
+        <li><code>env.zsh</code></li>
+        <li>如果是非交互 shell，直接返回。</li>
+        <li><code>plugins.zsh</code></li>
+        <li><code>aliases.zsh</code></li>
+        <li><code>functions.zsh</code></li>
+        <li><code>tools.zsh</code></li>
+        <li><code>completion.zsh</code></li>
+        <li><code>fzf.zsh</code></li>
+        <li><code>vi.zsh</code></li>
+      </ol>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>环境层</h2>
+        <ul>
+          <li>配置 Homebrew、Python 3.11、OpenJDK 17、jenv、<code>~/.local/bin</code>、Bun、pnpm、VS Code、Obsidian、Antigravity 等路径。</li>
+          <li>设置 <code>JAVA_HOME</code>，优先 Java 17。</li>
+          <li>设置 <code>EDITOR=vim</code>、<code>LANG</code>、<code>LC_ALL</code>。</li>
+          <li>关闭 Homebrew 自动更新，并配置 bottle 镜像。</li>
+          <li>把 <code>python</code> 和 <code>python3</code> alias 到 <code>python3.11</code>。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>工具层</h2>
+        <ul>
+          <li>Antigen 优先从 <code>/opt/homebrew</code> 加载，失败再回退 <code>/usr/local</code>。</li>
+          <li>读取 <code>~/.antigenrc</code> 初始化 oh-my-zsh 插件。</li>
+          <li>加载 autojump、Google Cloud SDK、Bun completion。</li>
+          <li>懒加载 nvm。</li>
+          <li>初始化 jenv 和 starship。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>fzf 和 vi mode</h2>
+      <p>fzf 默认优先用 <code>fd</code> 作为文件源，失败时用 <code>rg --files</code>。<code>Ctrl+t</code> 选目录并 cd，<code>Ctrl+r</code> 搜历史，<code>Ctrl+p</code> 搜文件并插入命令行，<code>fif &lt;文本&gt;</code> 搜包含文本的文件并预览匹配。</p>
+      <p>vi mode 会根据 insert/normal mode 切换光标形状，<code>Ctrl+v</code> 可编辑当前命令行。</p>
+    </section>
+
+    <section class="section">
+      <h2>常用 alias 和函数</h2>
+      <h3>基础和 Git</h3>
+      <ul class="key-list">
+        <li><code>sz</code>：重新加载 <code>~/.zshrc</code>。</li>
+        <li><code>edit</code>：打开 <code>$EDITOR</code>。</li>
+        <li><code>up</code>、<code>..</code>、<code>...</code>、<code>....</code>：快速返回上级。</li>
+        <li><code>pwdc</code>：打印当前目录并复制到剪贴板。</li>
+        <li><code>cleanDS</code>：删除当前目录下 <code>.DS_Store</code>。</li>
+        <li><code>gs/gp/gc/gd/gb/gl</code>：Git 状态、推送、切换、diff、分支和格式化 log。</li>
+      </ul>
+      <h3>AI、网络和维护</h3>
+      <ul class="key-list">
+        <li><code>cc</code>、<code>cc-opus</code>：Claude Sonnet / Opus，跳过权限确认。</li>
+        <li><code>agy</code>：Antigravity CLI。</li>
+        <li><code>cx</code>：Codex，高 reasoning，bypass approvals and sandbox。</li>
+        <li><code>proxy</code> / <code>unproxy</code>：设置或取消本地代理。</li>
+        <li><code>ipcn</code>、<code>ip</code>：查看公网 IP。</li>
+        <li><code>dns</code>：刷新 DNS cache。</li>
+        <li><code>update</code>：Homebrew、brew cu、mas 更新。</li>
+      </ul>
+      <h3>函数</h3>
+      <ul class="key-list">
+        <li><code>mkd &lt;dir&gt;</code>：创建目录并进入。</li>
+        <li><code>extract &lt;file&gt;</code>：按扩展名解压常见压缩包。</li>
+        <li><code>cleannpm</code>：删除 <code>~/Workspace</code> 下的 <code>node_modules</code>。</li>
+        <li><code>cleanm2</code>：删除 <code>~/.m2</code>。</li>
+        <li><code>myip</code>：显示局域网和外网 IP。</li>
+        <li><code>hittp &lt;port&gt;</code>：启动 Python HTTP server。</li>
+      </ul>
+    </section>
+
+    <section class="section callout">
+      <p>这套 zsh 配置主要面向 macOS 和 Homebrew。推荐依赖包括 <code>antigen</code>、<code>starship</code>、<code>fzf</code>、<code>fd</code>、<code>ripgrep</code>、<code>jenv</code>、<code>autojump</code>、<code>bun</code>、<code>pnpm</code>、<code>nvm</code>。AI alias 带跳过确认参数，使用前确认当前目录和权限边界。</p>
+    </section>
+  </main>
+</body>
+</html>

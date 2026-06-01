@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>lazygit</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / lazygit</div>
+    <section class="hero">
+      <h1>lazygit</h1>
+      <p class="lede">lazygit 的 UI、pager 和键位配置。它把 Git TUI 调成暗色、低确认、带 Nerd Font 图标的高频操作界面，并让方向键风格贴合仓库里的 tmux 和 yazi。</p>
+      <div class="meta">
+        <span class="pill">delta pager</span>
+        <span class="pill">Nerd Font</span>
+        <span class="pill">n/e/u/i 键位体系</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安装</h2>
+      <pre><code>stow -S lazygit</code></pre>
+      <p>配置会落到 <code>~/.config/jesseduffield/lazygit/config.yml</code>。</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>体验取向</h2>
+        <ul>
+          <li>关闭退出确认。</li>
+          <li>Git 自动 fetch。</li>
+          <li>合并时不强制 manual commit。</li>
+          <li>用 <code>delta</code> 作为 pager。</li>
+          <li>关闭 reporting。</li>
+          <li>UI 使用 rounded border、暗色主题和 Nerd Font 图标。</li>
+          <li>顶层按 Return 直接退出。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>关键键位</h2>
+        <ul>
+          <li><code>Alt+u/e</code>：上一项/下一项。</li>
+          <li><code>Alt+n/i</code>：上一个/下一个 block。</li>
+          <li><code>=</code>、<code>-</code>：下一个/上一个搜索结果。</li>
+          <li><code>k</code>：新建。</li>
+          <li><code>o</code>、<code>O</code>：编辑、打开或交互式 rebase。</li>
+          <li><code>l</code>、<code>Ctrl+r</code>：undo/redo。</li>
+          <li><code>M</code>、<code>Ctrl+f</code>、<code>v</code>：diff menu、filter menu、range select。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section callout">
+      <p>需要安装 <code>lazygit</code>。如果没有 <code>delta</code> 或 Nerd Font，diff 和图标显示会降级或失败。</p>
+    </section>
+  </main>
+</body>
+</html>
