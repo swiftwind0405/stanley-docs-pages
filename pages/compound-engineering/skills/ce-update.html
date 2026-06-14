@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-update · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-update</nav>
+    <header class="page-header">
+      <h1>/ce-update</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-update.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-update</code></h1>
+<blockquote>
+<p>检查安装的compound-engineering插件是否是最新的，如果不是则推荐更新命令。仅克劳德代码。</p>
+</blockquote>
+<p><code>ce-update</code> 是<strong>插件版本检查</strong>技能。它将您的 Claude Code 会话加载的版本与 <code>main</code>（市场安装位置）上的 <code>plugin.json</code> 进行比较，并告诉您是否是最新的，如果不是，则为您提供要运行的确切 <code>claude plugin update</code> 命令。</p>
+<p>它是 Claude 代码，只是因为它依赖于插件线束缓存布局 (<code>~/.claude/plugins/cache/&lt;marketplace&gt;/compound-engineering/&lt;version&gt;/...</code>) 进行版本检测。在其他平台上或在 <code>claude --plugin-dir</code> 本地开发下，该技能会识别这种情况并告诉您无需采取任何操作。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>将加载的插件版本与 <code>main</code> 上的 <code>plugin.json</code> 进行比较；如果命令过时，建议更新</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>“更新复合工程”、“CE 是最新的”，或者当 bug 行为表明插件过时时</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>“最新”或带有确切 <code>claude plugin update</code> 命令的 <code>out of date</code> 消息</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>仅克劳德代码 (<code>disable-model-invocation: true</code>)</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>插件版本漂移导致令人困惑的故障模式：</p>
+<ul>
+<li><strong>针对已修复错误的错误报告</strong> — 用户报告了两个版本前已修复的问题，但他们的插件已过时</li>
+<li><strong>技能的行为类似于旧版本</strong> - 用户运行技能并获得与当前文档不匹配的行为</li>
+<li><strong>没有明显的方法来检查</strong> - “我使用的是哪个版本”在克劳德代码中没有明显出现</li>
+<li><strong>错误的更新命令建议</strong> - <code>claude plugin update</code> 发布之前的手动缓存扫描/市场刷新建议</li>
+<li><strong>市场名称混淆</strong> - 该插件以多个市场名称分发（公共安装与内部/团队安装）；对于一半的受众来说，更新命令中的硬编码名称是错误的</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-update</code> 运行聚焦版本探测：</p>
+<ul>
+<li><strong>三个并行脚本</strong> 探测上游版本（从 <code>main</code> HEAD 通过 <code>gh api</code>）、当前加载的版本（来自插件缓存路径）和市场名称（也来自缓存路径）</li>
+<li><strong>与 <code>main</code> HEAD <code>plugin.json</code></strong> 进行比较，而不是最新的 GitHub 发布标签 - 市场从 <code>main</code> 安装，因此只要 <code>main</code> 领先，发布标签就会误报</li>
+<li><strong>哨兵驱动的故障处理</strong> — <code>__CE_UPDATE_VERSION_FAILED__</code>（gh 不可用/速率受限）和 <code>__CE_UPDATE_NOT_MARKETPLACE__</code>（在标准缓存外部加载，例如 <code>claude --plugin-dir</code> 本地开发）是技能识别的明确情况</li>
+<li><strong>推荐的更新命令使用检测到的市场名称</strong>，而不是硬编码的名称 - 适用于公共、内部和团队市场</li>
+<li><strong>仅 Beta 式显式调用</strong> - 不会因散文提及“更新”而自动触发</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 与 <code>main</code> HEAD 比较，而不是释放标签</h3>
+<p>市场从 <code>main</code> HEAD 安装插件内容，而不是从最新版本标签安装。每当 <code>main</code> 位于最后一个标签之前时，与标签进行比较就会出现误报——这是版本之间的正常状态。该技能直接通过 <code>gh api</code> 读取 <code>main</code> 上的 <code>plugins/compound-engineering/.claude-plugin/plugin.json</code>。</p>
+<h3>2. 从技能路径中检测到的市场名称，未硬编码</h3>
+<p>该插件以多个市场名称分发 - <code>compound-engineering-plugin</code> 用于公共安装（根据自述文件），以及用于内部或团队市场的其他名称。对于一半的观众来说，将名称硬编码到更新命令中是错误的。相反，该技能会根据市场缓存布局 (<code>~/.claude/plugins/cache/&lt;marketplace&gt;/compound-engineering/&lt;version&gt;/skills/ce-update</code>) 解析 <code>${CLAUDE_SKILL_DIR}</code> 并从路径中提取市场名称。推荐的 <code>claude plugin update compound-engineering@&lt;marketplace&gt;</code> 命令使用检测到的名称。</p>
+<h3>3. 具有显式哨兵的三个并行探测器</h3>
+<p>三个脚本通过 Bash 工具并行运行：</p>
+<ul>
+<li><code>scripts/upstream-version.sh</code> — 通过 <code>gh api</code> 读取 <code>main</code> 上的 <code>plugin.json</code>；打印版本或 <code>__CE_UPDATE_VERSION_FAILED__</code></li>
+<li><code>scripts/currently-loaded-version.sh</code> — 解析 <code>${CLAUDE_SKILL_DIR}</code> 以获得版本段；打印版本或 <code>__CE_UPDATE_NOT_MARKETPLACE__</code></li>
+<li><code>scripts/marketplace-name.sh</code> — 解析市场细分的 <code>${CLAUDE_SKILL_DIR}</code> ；打印名称或 <code>__CE_UPDATE_NOT_MARKETPLACE__</code></li>
+</ul>
+<p>哨兵使故障模式变得结构化——技能知道上游获取是否失败（不同的恢复）与技能是否在标准缓存之外加载（不同的消息）。</p>
+<h3>4. <code>--plugin-dir</code> 本地开发模式被识别</h3>
+<p>当 <code>scripts/currently-loaded-version.sh</code> 返回 <code>__CE_UPDATE_NOT_MARKETPLACE__</code> 时，两种情况会崩溃为相同的处理：</p>
+<ul>
+<li><code>claude --plugin-dir</code> 本地开发会话（从本地结帐加载的技能，而不是市场缓存）</li>
+<li>非Claude-Code平台（该技能仅限Claude Code）</li>
+</ul>
+<p>该技能告诉用户：“从市场缓存外部加载。使用 <code>claude --plugin-dir</code> 进行本地开发时正常。此会话不执行任何操作。您的市场安装（如果有）不受影响 - 在常规 Claude 代码会话（无 <code>--plugin-dir</code>）中运行 <code>/ce-update</code> 来检查该缓存。”</p>
+<h3>5. 固定窄 <code>allowed-tools</code></h3>
+<p>该技能在 <code>allowed-tools</code> 中声明了三个特定脚本 - <code>Bash(bash *upstream-version.sh)</code>、<code>Bash(bash *currently-loaded-version.sh)</code>、<code>Bash(bash *marketplace-name.sh)</code> - 因此，没有 <code>bypassPermissions</code> 的用户在技能运行时会跳过批准提示。按文件名固定，而不是广泛的 <code>Bash(bash *)</code>。</p>
+<h3>6. 仅 Beta 式显式调用</h3>
+<p><code>disable-model-invocation: true</code> 防止该技能在提及“更新”或版本相关讨论的散文中自动触发。插件更新是用户有意选择的 — 直接调用 <code>/ce-update</code>。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您怀疑技能行为与文档所述不符。您想知道您的插件是否已过时。您调用 <code>/ce-update</code>。</p>
+<p>该技能并行运行三个脚本：</p>
+<ul>
+<li><code>upstream-version.sh</code> 返回 <code>2.42.0</code> （<code>main</code> 上的当前 <code>plugin.json</code>）</li>
+<li><code>currently-loaded-version.sh</code> 返回 <code>2.40.0</code> （从您加载的技能路径解析）</li>
+<li><code>marketplace-name.sh</code> 返回 <code>compound-engineering-plugin</code> （从同一路径解析）</li>
+</ul>
+<p>当前加载≠上游→过时。技能回复：</p>
+<pre><code class="language-文本">复合工程在 v2.40.0 上，但 v2.42.0 可用。
+
+更新为：
+  克劳德插件更新compound-engineering@compound-engineering-plugin
+
+然后重启Claude Code即可应用。
+</code></pre>
+<p>您运行命令，重新启动，下一个会话将具有新版本。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-update</code>：</p>
+<ul>
+<li>你说“更新复合工程”、“ce更新”、“ce是最新的”</li>
+<li>技能的行为与文档描述的不同</li>
+<li>您正在提交错误并希望首先确认您使用的是当前版本</li>
+<li>您即将使用最近添加的功能并想要验证它是否可用</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-update</code>：</p>
+<ul>
+<li>您处于非 Claude-Code 平台上 — 技能停止并显示“无操作”消息；更新通过该平台的机制进行</li>
+<li>您处于 <code>claude --plugin-dir</code> 本地开发会话中 — 该技能识别出这种情况并停止</li>
+<li>您想要检查特定组件版本，而不是整个插件 → 直接读取 <code>plugin.json</code></li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-update</code> 是一个独立的实用程序 - 它不位于链内。当怀疑版本漂移时会调用它：</p>
+<ul>
+<li><strong>来自 <code>/ce-report-bug</code></strong> — 检查版本是错误报告应该建立的第一件事</li>
+<li><strong>直接来自用户</strong>当代理的行为闻起来陈旧时</li>
+</ul>
+<p>输出由用户直接读取——没有下游技能消耗它。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>直接调用：</p>
+<ul>
+<li><code>/ce-update</code> — 运行版本检查</li>
+</ul>
+<p>没有争论。该技能进行探测、比较和报告。如果上游获取失败（gh 不可用或速率受限），它会这样说并停止，而不建议部分答案。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>哨兵</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>__CE_UPDATE_VERSION_FAILED__</code></td>
+<td><code>__CE_UPDATE_VERSION_FAILED__</code> <code>gh api</code> 无法获取上游 <code>plugin.json</code>（gh 不可用，速率受限）— 技能因该消息而停止</td>
+</tr>
+<tr>
+<td><code>__CE_UPDATE_NOT_MARKETPLACE__</code></td>
+<td>技能在 <code>~/.claude/plugins/cache/</code> 外部加载 - 通常是 <code>claude --plugin-dir</code> 本地开发。技能停止并显示“无操作”消息</td>
+</tr>
+</tbody></table>
+<p>脚本（在 <code>scripts/</code> 中）：</p>
+<ul>
+<li><code>upstream-version.sh</code> — <code>gh api</code> 针对 <code>main</code> 上的 <code>plugins/compound-engineering/.claude-plugin/plugin.json</code></li>
+<li><code>currently-loaded-version.sh</code> — 解析 <code>${CLAUDE_SKILL_DIR}</code> 以获得版本段</li>
+<li><code>marketplace-name.sh</code> — 解析市场细分的 <code>${CLAUDE_SKILL_DIR}</code></li>
+</ul>
+<p>所有三个都仅使用 Python 3 stdlib 和 <code>gh</code> — 没有 PyYAML 或其他 deps。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么要与 <code>main</code> HEAD 进行比较，而不是与最新版本标签进行比较？</strong>
+因为市场从 <code>main</code> HEAD 安装插件内容，而不是从发布标签安装。每当 <code>main</code> 位于最后一个标签之前时，与标签进行比较就会出现误报——这是版本之间的正常状态。</p>
+<p><strong>为什么从路径中检测到市场名称？</strong>
+由于该插件以多个市场名称分发 - 公共安装使用 <code>compound-engineering-plugin</code>，内部/团队市场使用其他名称。对于一半的观众来说，将名称硬编码到更新命令中是错误的。从缓存路径中检测它可以保证您所在的市场的推荐正确无误。</p>
+<p><strong>为什么只有克劳德代码？</strong>
+因为版本检测依赖于 Claude Code 插件harness 缓存布局 (<code>~/.claude/plugins/cache/&lt;marketplace&gt;/compound-engineering/&lt;version&gt;/...</code>)。其他平台有自己的更新机制；这项技能遵循那些。当技能检测到它不在标准缓存中时，它会清楚地说明并停止。</p>
+<p><strong>如果 <code>gh api</code> 受到速率限制怎么办？</strong>
+该技能告诉您无法获取上游版本并停止。它不会猜测或推荐部分答案。等待速率限制，或通过 GitHub UI 手动检查版本。</p>
+<p><strong><code>--plugin-dir</code> 本地开发怎么样？</strong>
+该技能识别这种情况（来自路径解析脚本的 <code>__CE_UPDATE_NOT_MARKETPLACE__</code> ）并告诉您：使用 <code>--plugin-dir</code> 时这是正常的，此会话不执行任何操作，您的市场安装（如果有）不受影响。</p>
+<p><strong>为什么不自动调用？</strong>
+<code>disable-model-invocation: true</code> 防止该技能在与插件版本无关的“更新计划”或“这是最新的”之类的散文上触发。更新是用户有意选择的。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-setup.html"><code>ce-setup</code></a> — 安装缺少的依赖项；版本检查的补充</li>
+<li><a href="/compound-engineering/skills/ce-report-bug.html"><code>ce-report-bug</code></a> — 报告错误；应该先建立版本</li>
+<li><a href="/compound-engineering/skills/ce-release-notes.html"><code>ce-release-notes</code></a> — 总结最近的复合工程插件版本</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

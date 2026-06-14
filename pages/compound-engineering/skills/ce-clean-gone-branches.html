@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-clean-gone-branches · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-clean-gone-branches</nav>
+    <header class="page-header">
+      <h1>/ce-clean-gone-branches</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-clean-gone-branches.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-clean-gone-branches</code></h1>
+<blockquote>
+<p>删除已删除远程跟踪分支的本地分支，包括任何关联的工作树。</p>
+</blockquote>
+<p><code>ce-clean-gone-branches</code> 是 <strong>分支卫生</strong> 技能。 PR 合并到上游后，远程跟踪分支就会消失，但本地分支会无限期地存在，从而扰乱 <code>git branch</code> 并增加 <code>git fetch</code> 时间。此技能通过 <code>git fetch --prune</code> + <code>git branch -vv</code> 解析发现那些孤立的本地分支，显示列表，要求确认，然后删除它们 - 包括任何关联的工作树。</p>
+<p>一个简单的高频实用程序。每当您的分支列表感觉嘈杂时就运行它。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>发现远程跟踪分支为 <code>: gone]</code> 的本地分支，然后在确认后删除它们（首先是工作树，然后是分支）</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>“清理分支”、“删除消失的分支”、“修剪本地分支”——定期分支列表卫生</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>删除了工作树，删除了本地分支；没有做出任何承诺</td>
+</tr>
+<tr>
+<td>范围</td>
+<td>整个列表上是或否 - 没有每个分支的选择</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>PR 合并后，本地分支累积：</p>
+<ul>
+<li><strong><code>git branch</code> 变得嘈杂</strong> — 30 多个本地分支机构，大多数代表已交付的工作</li>
+<li><strong><code>git fetch</code> 和制表符完成变得更慢</strong> — 更多参考文献可供枚举</li>
+<li><strong>工作树孤儿</strong> - 附加到长期合并分支的工作树保留其磁盘空间和工具开销</li>
+<li><strong>手动清理很乏味</strong> — <code>git branch -vv | grep gone</code> 然后是 <code>git branch -D</code> ，工作树处理分层在顶部</li>
+<li><strong>自动生成的工作树名称</strong>如 <code>worktree-jolly-beaming-raven</code> 使得不清楚哪些孤儿属于哪个</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-clean-gone-branches</code> 分三个阶段运行清理：</p>
+<ul>
+<li><strong>发现</strong> — <code>git fetch --prune</code> 刷新远程状态，然后解析 <code>git branch -vv</code> 以获得 <code>: gone]</code> 标记</li>
+<li><strong>确认</strong> — 显示完整列表，在整个列表上询问是或否（没有每个分支的选择）</li>
+<li><strong>删除</strong> — 对于每个分支，首先删除其工作树（如果存在），然后删除 <code>git branch -D</code></li>
+</ul>
+<p>一个简单的全有或全无的决定可以让技能保持快速。如果您只想删除一些分支，请拒绝并直接对您真正想要的分支使用 <code>git branch -D</code> 。</p>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 通过 <code>git fetch --prune</code> + <code>: gone]</code> 解析发现</h3>
+<p>该技能首先运行 <code>git fetch --prune</code> 以刷新远程状态的本地知识，然后解析 <code>git branch -vv</code> 以获得跟踪分支显示 <code>: gone]</code> 的分支 - 远程分支已删除的规范信号。如果没有修剪，本地裁判仍然会认为存在陈旧的远程分支；该技能从不依赖于用户最近是否修剪过。</p>
+<h3>2. 工作树感知清理</h3>
+<p>对于计划删除的每个分支，技能会检查 <code>git worktree list</code> 是否有关联的工作树。如果存在并且不是主存储库根，则在删除分支本身之前，首先通过 <code>git worktree remove --force</code> 将其删除。这避免了裸 <code>git branch -D</code> 会遇到的“无法删除分支 - 在工作树中签出”错误。</p>
+<h3>3. 全有或全无确认</h3>
+<p>用户看到完整列表并在整个列表上回答“是”或“否”。该技能<strong>不</strong>提供多选或每分支选择。两个原因：</p>
+<ul>
+<li>列表通常很小（5-20​​ 个分支）；见到他们所有人并说“是”的成本很低</li>
+<li>多选会增加 UI 开销，而这对于例行清理任务来说是无济于事的</li>
+</ul>
+<p>如果用户想要更精细的控制，拒绝并运行 <code>git branch -D &lt;specific-branch&gt;</code> 会很快。</p>
+<h3>4. 实时报告</h3>
+<p>删除时，技能会打印每个操作 - “已删除的工作树：...”、“已删除的分支：...” - 因此用户可以实时看到进度。最终摘要命名了计数。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您已经有一段时间没有清理本地分支机构了。您调用 <code>/ce-clean-gone-branches</code>。</p>
+<p>该技能运行 <code>bash scripts/clean-gone</code>，它通过修剪来获取并解析 <code>git branch -vv</code>。输出： 5 个消失的树枝。</p>
+<pre><code class="language-文本">这些本地分支已从远程删除：
+
+- 壮举/通知静音
+  - 修复/验证重定向
+  - 重构/提取服务
+  - 杂务/升级部门
+  - 实验/新聚类
+
+全部删除吗？ （是/否）
+</code></pre>
+<p>你回答是的。该技能处理每个：</p>
+<ul>
+<li><code>feat/notification-mute</code> 在 <code>.worktrees/feat-notification-mute</code> 有一个工作树。首先删除工作树：✓。删除分支：✓。</li>
+<li><code>fix/auth-redirect</code> 无工作树。删除分支：✓。</li>
+<li>...</li>
+</ul>
+<p>最后总结：</p>
+<pre><code class="language-文本">删除了工作树：.worktrees/feat-notification-mute
+删除的分支：feat/notification-mute
+删除的分支：fix/auth-redirect
+删除的分支：refactor/extract-service
+删除的分支：chore/upgrade-deps
+删除的分支：experiment/new-clustering
+
+清理了5个分支。
+</code></pre>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-clean-gone-branches</code>：</p>
+<ul>
+<li>多个 PR 合并后，您的 <code>git branch</code> 列表变得嘈杂</li>
+<li>你注意到工作树在你不记得的分支上徘徊</li>
+<li>你已经有一段时间没有打扫卫生了；定期卫生已逾期</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-clean-gone-branches</code>：</p>
+<ul>
+<li>您只想直接删除特定分支 → <code>git branch -D &lt;name&gt;</code></li>
+<li>即使远程已消失，您仍想保留本地分支 → 拒绝提示</li>
+<li>您不在配置了远程的工作副本上 → 该技能需要远程来进行比较</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-clean-gone-branches</code> 大部分是独立的——它不位于链内。它在以下情况下被调用：</p>
+<ul>
+<li>多个 PR 已合并，用户想要整理本地状态</li>
+<li>由于死枝上的孤立工作树，工作树创建失败</li>
+<li>用户正准备开始新的工作并希望重新开始</li>
+</ul>
+<hr>
+<h2>使用独立版</h2>
+<p>不带参数直接调用：</p>
+<ul>
+<li><code>/ce-clean-gone-branches</code></li>
+</ul>
+<p>该技能发现、询问和删除。没有标志，没有选择——完整列表上只有“是”或“否”。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>行动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>运行 <code>bash scripts/clean-gone</code> （使用修剪获取，解析 <code>: gone]</code>）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>呈现陈旧分支列表；在整个列表中询问是/否</td>
+</tr>
+<tr>
+<td>3</td>
+<td>对于每个已确认的分支：删除工作树（如果存在），然后 <code>git branch -D</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>发生删除时报告结果；最终总结与计数</td>
+</tr>
+</tbody></table>
+<p>如果脚本输出 <code>__NONE__</code>，则技能报告未找到陈旧分支并停止。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>什么是“消失”的分支？</strong>
+其远程跟踪分支被上游删除的本地分支（通常是因为 PR 合并并且 GitHub 删除了源分支）。 <code>git branch -vv</code> 在此类分支旁边显示 <code>: gone]</code>。</p>
+<p><strong>为什么全有或全无而不是按分支挑选？</strong>
+因为列表通常很小，并且将它们全部查看需要几秒钟。多选 UI 会增加高频任务的阻力。如果您需要手术控制，请拒绝并针对特定分支使用 <code>git branch -D &lt;name&gt;</code>。</p>
+<p><strong>为什么在删除分支之前先删除工作树？</strong>
+因为签出分支（在工作树中）上的 <code>git branch -D</code> 失败。该技能首先删除工作树以避免该错误。</p>
+<p><strong>如果工作树有未提交的更改怎么办？</strong>
+<code>--force</code> 用于 <code>git worktree remove</code>，因此未提交的更改将被丢弃。如果分支已经“消失”（远程合并并删除），您几乎肯定不希望那里存在挥之不去的未提交更改。如果这样做，请拒绝提示并首先手动处理该工作树。</p>
+<p><strong>如果脚本失败或不返回任何分支怎么办？</strong>
+如果不存在消失的分支，则该技能会干净地停止并报告“未找到陈旧的分支”。如果脚本本身出错，技能会显示错误。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a> — 用于创建工作树的同级技能；该技能会在工作树成为孤儿后清理</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

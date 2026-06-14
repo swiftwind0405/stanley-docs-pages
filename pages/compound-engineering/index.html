@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>概览 · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link active" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / compound-engineering</nav>
+    <div class="hero">
+      <h1>Compound Engineering 技能文档</h1>
+      <p>面向使用者的技能介绍：每个斜杠命令的用途、机制、用例与在工程循环中的位置。共 39 个技能。</p>
+    </div>
+    <section class="loop-diagram">
+      <h2>核心工程循环</h2>
+      <pre>   [/ce-ideate]       （可选）「值得探索什么？」
+        │
+        ▼
+┌─→ /ce-brainstorm    「这应该成为什么？」
+│       │
+│       ▼
+│   /ce-plan          「如何达成目标？」
+│       │
+│       ▼
+│   /ce-work          「动手实现。」
+│       │
+│       ▼
+└── /ce-compound      「沉淀所学。」</pre>
+      <p style="margin:.75rem 0 0;font-size:.9rem;color:var(--muted)">
+        <code>/ce-compound</code> 将学习写入 <code>docs/solutions/</code>，供下一轮 <code>/ce-brainstorm</code> 与 <code>/ce-plan</code> 读取——这就是「compound」的含义。
+      </p>
+    </section>
+    
+    <section class="category-card" id="核心循环">
+      <h2>核心循环</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-brainstorm.html">
+            <span class="skill-cmd">/ce-brainstorm</span>
+            <p class="skill-desc">定义某些东西应该变成什么——协作对话、命名间隙透镜、适当大小的需求文档</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-compound.html">
+            <span class="skill-cmd">/ce-compound</span>
+            <p class="skill-desc">通过将您所学到的内容捕获到 `docs/solutions/` 中来关闭循环，以便下一次迭代开始更智能 — bug 跟踪 + 知识跟踪</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-ideate.html">
+            <span class="skill-cmd">/ce-ideate</span>
+            <p class="skill-desc">*可选的第一步*——通过六个概念框架、保证要求、对抗性过滤发现值得探索的强大、合格的方向</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-plan.html">
+            <span class="skill-cmd">/ce-plan</span>
+            <p class="skill-desc">带有护栏的绑定执行——U-ID、测试场景、自动置信度检查；做什么决定，而不是如何编码</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-work.html">
+            <span class="skill-cmd">/ce-work</span>
+            <p class="skill-desc">对照计划的护栏执行——用你面前的代码找出如何通过质量关口的交付</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="循环">
+      <h2>循环</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-compound-refresh.html">
+            <span class="skill-cmd">/ce-compound-refresh</span>
+            <p class="skill-desc">随着时间的推移维护 `docs/solutions/` — 五种结果（保留/更新/合并/替换/删除），交互 + 自动修复模式</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-product-pulse.html">
+            <span class="skill-cmd">/ce-product-pulse</span>
+            <p class="skill-desc">外部反馈循环——关于使用情况、性能、错误、后续行动的单页时间窗口报告；作为时间线保存到 `docs/pulse-reports/`</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-strategy.html">
+            <span class="skill-cmd">/ce-strategy</span>
+            <p class="skill-desc">创建或维护 `STRATEGY.md` — 由 `ce-ideate`、`ce-brainstorm` 和 `ce-plan` 读取的上游锚点作为接地</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="一经请求">
+      <h2>一经请求</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-code-review.html">
+            <span class="skill-cmd">/ce-code-review</span>
+            <p class="skill-desc">使用分层角色代理进行结构化代码审查、置信门控结果、四种模式</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-debug.html">
+            <span class="skill-cmd">/ce-debug</span>
+            <p class="skill-desc">系统地查找根本原因——因果链门、不确定环节预测、智能升级</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-doc-review.html">
+            <span class="skill-cmd">/ce-doc-review</span>
+            <p class="skill-desc">使用平行角色代理审查需求或计划文档 - 一致性、可行性、产品镜头、设计镜头、安全镜头、范围守护者、对抗性</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-optimize.html">
+            <span class="skill-cmd">/ce-optimize</span>
+            <p class="skill-desc">指标驱动的迭代优化循环——三层评估、并行实验、持久性规则</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-simplify-code.html">
+            <span class="skill-cmd">/ce-simplify-code</span>
+            <p class="skill-desc">优化最近更改的代码——三个并行审阅者代理（重用、质量、效率）；行为保存已验证</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="研究与背景">
+      <h2>研究与背景</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html">
+            <span class="skill-cmd">/ce-riffrec-feedback-analysis</span>
+            <p class="skill-desc">将原始 [Riffrec](https://github.com/kieranklaassen/riffrec) 录音转化为结构化反馈 - 通过 `ce-brainstorm` 切换进行快速错误或广泛分析</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-sessions.html">
+            <span class="skill-cmd">/ce-sessions</span>
+            <p class="skill-desc">在 Claude Code、Codex 和 Cursor 中搜索会话历史记录，以获取与问题相关的上下文</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-slack-research.html">
+            <span class="skill-cmd">/ce-slack-research</span>
+            <p class="skill-desc">在 Slack 中搜索解释的组织环境 — 工作空间身份、研究价值评估、横切分析</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="git-工作流程">
+      <h2>Git 工作流程</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-clean-gone-branches.html">
+            <span class="skill-cmd">/ce-clean-gone-branches</span>
+            <p class="skill-desc">删除远程跟踪分支已消失的本地分支，包括任何关联的工作树</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-commit.html">
+            <span class="skill-cmd">/ce-commit</span>
+            <p class="skill-desc">创建一个精心设计的 git 提交 — 约定感知、敏感文件安全、文件级逻辑拆分</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-commit-push-pr.html">
+            <span class="skill-cmd">/ce-commit-push-pr</span>
+            <p class="skill-desc">从工作变更到具有自适应描述的开放 PR — 三种模式（完整工作流程/描述更新/仅描述生成）</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-worktree.html">
+            <span class="skill-cmd">/ce-worktree</span>
+            <p class="skill-desc">使用 `.env` 复制、分支感知开发工具信任和 gitignore 管理在 `.worktrees/&lt;branch&gt;` 创建 git 工作树</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="前端设计">
+      <h2>前端设计</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-frontend-design.html">
+            <span class="skill-cmd">/ce-frontend-design</span>
+            <p class="skill-desc">构建具有真正设计质量的 Web 界面 - 上下文检测、视觉论文预构建、固执己见的默认值、视觉验证</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-polish.html">
+            <span class="skill-cmd">/ce-polish</span>
+            <p class="skill-desc">会话式用户体验优化——启动开发服务器，打开浏览器，一起迭代；自动检测 8 个框架（仅限手动调用）</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="合作">
+      <h2>合作</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-proof.html">
+            <span class="skill-cmd">/ce-proof</span>
+            <p class="skill-desc">通过 [Proof](https://www.proofeditor.ai)、Every 的协作编辑器 — Web API 和 Local Bridge 界面，在 Markdown 上创建、共享和运行人机交互审阅循环</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="工作流程实用程序">
+      <h2>工作流程实用程序</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-demo-reel.html">
+            <span class="skill-cmd">/ce-demo-reel</span>
+            <p class="skill-desc">捕获 PR 描述的视觉证据（GIF、终端录音、屏幕截图）——与测试输出严格分离</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-promote.html">
+            <span class="skill-cmd">/ce-promote</span>
+            <p class="skill-desc">为已发布的功能（X、变更日志、LinkedIn、电子邮件）起草面向用户的公告副本 - 通过可选的 Spiral CLI 进行语音匹配，这是一个精简的编辑和社交专业知识层，没有它，仅草稿</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-release-notes.html">
+            <span class="skill-cmd">/ce-release-notes</span>
+            <p class="skill-desc">查找最近的复合工程插件版本中包含的内容 - 摘要或带有版本引用的具体问题</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-report-bug.html">
+            <span class="skill-cmd">/ce-report-bug</span>
+            <p class="skill-desc">报告复合工程插件中的错误 - 结构化摄入、自动环境收集、GitHub 问题创建</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-resolve-pr-feedback.html">
+            <span class="skill-cmd">/ce-resolve-pr-feedback</span>
+            <p class="skill-desc">并行评估、修复和回复公关审查反馈——包括挑剔</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-setup.html">
+            <span class="skill-cmd">/ce-setup</span>
+            <p class="skill-desc">诊断环境、安装缺少的工具、引导项目本地配置 — 在一个流程中进行交互式入门</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-test-browser.html">
+            <span class="skill-cmd">/ce-test-browser</span>
+            <p class="skill-desc">专门使用 `agent-browser` 对 PR / 受分支影响的页面进行端到端浏览器测试</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-test-xcode.html">
+            <span class="skill-cmd">/ce-test-xcode</span>
+            <p class="skill-desc">使用 XcodeBuildMCP 在模拟器上构建和测试 iOS 应用程序 — 屏幕截图、日志、人工验证</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-update.html">
+            <span class="skill-cmd">/ce-update</span>
+            <p class="skill-desc">根据 `main` 检查已安装的复合工程插件版本并推荐更新命令（仅限克劳德代码）</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="开发框架">
+      <h2>开发框架</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-agent-native-architecture.html">
+            <span class="skill-cmd">/ce-agent-native-architecture<span class="badge">运行时</span></span>
+            <p class="skill-desc">`ce-agent-native-architecture`使用提示原生架构构建 AI 代理</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-dhh-rails-style.html">
+            <span class="skill-cmd">/ce-dhh-rails-style<span class="badge">运行时</span></span>
+            <p class="skill-desc">以 DHH 的 37signals 风格编写 Ruby/Rails 代码</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="自动化和工具">
+      <h2>自动化和工具</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-gemini-imagegen.html">
+            <span class="skill-cmd">/ce-gemini-imagegen<span class="badge">运行时</span></span>
+            <p class="skill-desc">`ce-gemini-imagegen`使用 Google 的 Gemini API 生成和编辑图像</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="测试版实验性">
+      <h2>测试版/实验性</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-dogfood-beta.html">
+            <span class="skill-cmd">/ce-dogfood-beta<span class="badge">运行时</span></span>
+            <p class="skill-desc">`ce-dogfood-beta`活动分支的差异范围浏览器 QA：构建每个更改的详尽测试矩阵，使用代理浏览器驱动应用程序，然后自动修复问题，添加回归测试，并提交每个修复，直到绿色</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/lfg.html">
+            <span class="skill-cmd">/lfg<span class="badge">运行时</span></span>
+            <p class="skill-desc">完全自主的工程工作流程</p>
+          </a>
+      </div>
+    </section>
+
+    <section class="category-card" id="其他技能">
+      <h2>其他技能</h2>
+      <div class="skill-grid">
+        
+          <a class="skill-card" href="/compound-engineering/skills/ce-agent-native-audit.html">
+            <span class="skill-cmd">/ce-agent-native-audit<span class="badge">运行时</span></span>
+            <p class="skill-desc">查看技能详情</p>
+          </a>
+
+          <a class="skill-card" href="/compound-engineering/skills/ce-work-beta.html">
+            <span class="skill-cmd">/ce-work-beta<span class="badge">运行时</span></span>
+            <p class="skill-desc">查看技能详情</p>
+          </a>
+      </div>
+    </section>
+    <p class="footer-note">由 compound-engineering-plugin 仓库中的 <code>docs/skills/*.zh-CN.md</code> 与 <code>SKILL.zh-CN.md</code> 自动生成。运行时权威规范见各技能目录下的 <code>SKILL.md</code>。</p></main>
+  </div>
+</body>
+</html>

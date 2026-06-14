@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-commit-push-pr · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-commit-push-pr</nav>
+    <header class="page-header">
+      <h1>/ce-commit-push-pr</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-commit-push-pr.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-commit-push-pr</code></h1>
+<blockquote>
+<p>从工作变更转变为开放 PR，并提供适应性强、价值优先的描述，随着变更的深入进行扩展。或者重写现有的 PR 描述。或者在不接触 git 的情况下生成描述。</p>
+</blockquote>
+<p><code>ce-commit-push-pr</code> 是 <strong>运输</strong> 技能。三种模式——完整的工作流程、现有 PR 的描述更新、仅描述生成——可以处理“我想发货”的常见形状，而无需强迫您执行不必要的步骤。 PR 描述适应更改的复杂性（而不是千篇一律的模板）并涵盖<strong>完整的 PR 提交范围</strong>，而不仅仅是调用时的工作树差异。</p>
+<p>该技能对一些已经烧毁过去贡献者的具体事情有自己的看法：它从不 <code>git add -A</code>，它在存在时将自然不同的关注点分割成单独的提交，并且它通过临时文件写入 PR 主体（从不通过标准输入管道，它可以默默地生成空的 PR 主体，而 <code>gh</code> 仍然存在 0）。</p>
+<p>复合工程构思链是<code>/ce-ideate → /ce-brainstorm → /ce-plan → /ce-work</code>。 <code>ce-commit-push-pr</code> 是 <code>/ce-work</code> 的第 4 阶段移交目标 — 它生成带有摘要、测试说明、证据（当行为可观察时）和操作验证部分的 PR。当您已经编写了代码并想要发布时，通常也会直接调用它。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>提交、推送和打开 PR——或者只是重写现有 PR 的描述——或者只是生成描述而不接触 git</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>任何时候你想要提交 + PR；重写现有的 PR 描述；起草分支机构的描述</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>开放的 PR（返回 URL）——或更新的 PR 描述——或供您自己申请的打印描述</td>
+</tr>
+<tr>
+<td>接下来是什么？审查公关；准备好后合并</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>从“编写代码”到“公关公开”应该是一步之遥，但它往往会以可预见的方式失败：</p>
+<ul>
+<li><strong>千篇一律的 PR 描述</strong>，不会随着复杂性而扩展 - 一行错误修复和 2,000 行重构获得相同的摘要/测试计划/注释形状</li>
+<li><strong><code>git add -A</code></strong> 清除非预期文件（<code>.env</code>、构建工件、生成的文件）</li>
+<li><strong>描述仅涵盖调用时的工作树差异</strong>，缺少已推送的提交</li>
+<li><strong>通过标准输入管道清空 PR 主体</strong> — <code>--body-file -</code>、heredoc-to-stdin 或 <code>--body &quot;$(cat ...)&quot;</code> 可以默默地生成一个空 PR 主体，而 <code>gh</code> 仍然存在 0 并返回 URL</li>
+<li><strong>约定检测错误</strong> - 即使存储库有自己明确建立的风格，也会回到默认约定</li>
+<li><strong>分支状态惊喜</strong> - 在默认分支上提交，在分离的 HEAD 上创建提交，推送到陈旧的基础</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-commit-push-pr</code> 显式处理每一个：</p>
+<ul>
+<li><strong>三种模式调度</strong> — 完整工作流程/描述更新/仅描述生成</li>
+<li><strong>自适应 PR 描述</strong> — 随变化而变化的深度尺度；一行修复得到了严格的描述，大型重构得到了他们所保证的结构</li>
+<li><strong>文件级别的智能提交拆分</strong> - 自然不同的关注点成为单独的提交（最多 2-3 个），没有 <code>git add -p</code></li>
+<li><strong>分支状态决策树</strong> - 显式处理分离的 HEAD、默认分支、未推送的提交、无上游和现有的 PR 案例</li>
+<li><strong>主体文件安全</strong> — 每个 PR 描述都写入临时文件并通过 <code>--body-file &lt;path&gt;</code> 传递，而不是通过 stdin 传递</li>
+<li><strong>约定检测</strong> - 上下文中的回购约定 &gt; 最近提交历史记录 &gt; 常规提交默认值</li>
+<li><strong>完整 PR 提交范围解析</strong> — 描述涵盖 PR 中的所有提交，而不仅仅是工作树差异</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1.三种模式调度——根据实际需求选择合适的形状</h3>
+<p>该技能预先检测意图并遵循匹配路径：</p>
+<ul>
+<li><strong>完整工作流程</strong> — 提交任何待处理的工作、推送并打开 PR。默认为“发送此”/“创建 PR”/“提交推送 PR”。</li>
+<li><strong>现有 PR 的描述更新</strong> — 刷新、重写或重新聚焦现有 PR 的描述，而无需触及 git 状态。</li>
+<li><strong>仅生成描述</strong> — 生成 PR 描述并将其打印回来，无需提交、推送或应用。由“起草 PR 描述”、“描述此 PR”或单独粘贴 PR URL 触发。</li>
+</ul>
+<p>当不需要时跳过提交/推送/编辑步骤符合人们询问时的实际意思，而不是每次都强制执行完整的工作流程。</p>
+<h3>2. 适应性公关描述——随着变化而扩展</h3>
+<p>PR 描述不是从固定模板呈现的。合成步骤根据变化选择结构和深度：</p>
+<ul>
+<li>一个简单的拼写错误修复得到了一行摘要，没有测试计划，没有注释部分</li>
+<li>中等功能获得摘要+测试计划+相关背景</li>
+<li>大型重构包含总结、动机、关键决策、测试计划、证据、操作说明和风险</li>
+<li>组合读取<strong>完整的 PR 提交范围</strong>（不仅仅是调用时的工作树差异），因此多提交 PR 的描述反映了将落地的每个提交</li>
+</ul>
+<h3>3. 文件级别的智能提交拆分</h3>
+<p>当更改涉及自然不同的关注点（例如，后端模型 + 前端组件 + 文档）时，该技能会创建单独的提交（通常最多 2-3 个），并在文件级别分组。没有 <code>git add -p</code> （交互式块级暂存，可以跨提交分割块并破坏原子性）。当分割不明确时，一次提交就可以了。</p>
+<h3>4.分支状态决策树</h3>
+<p>每个奇怪的分支状态在决策树中都有一个明确的分支：</p>
+<ul>
+<li>Detached HEAD → 询问是否创建功能分支</li>
+<li>在具有未推送提交的默认分支上 → 询问是否创建功能分支</li>
+<li>在默认分支上，全部推送，无 PR →“无功能分支工作”并停止</li>
+<li>功能分支，无上游 → 推送并继续</li>
+<li>功能分支，全部推送，无公开 PR → 跳过提交/推送，生成描述，公开 PR</li>
+<li>功能分支，全部推送，开放PR→报告最新</li>
+</ul>
+<p>没有默认的静默提交，没有意外的重新推送，没有中途丢失上游错误。</p>
+<h3>5. 正文文件安全 — 避免空 PR 正文陷阱</h3>
+<p>每个 PR 描述都会写入带有引用的定界符标记的临时文件，并通过 <code>gh ... --body-file &quot;$BODY_FILE&quot;</code> 传递。该技能明确从不使用 <code>--body-file -</code>、stdin 管道、heredoc-to-stdin 或 <code>--body &quot;$(cat ...)&quot;</code> — 这些包装器可以默默地生成一个空的 PR 正文，而 <code>gh</code> 仍然退出 0 并返回 URL。引用的哨兵可防止主体内的 <code>$VAR</code>、反引号和杂散 <code>EOF</code> 标记被扩展。</p>
+<h3>6. 按优先顺序进行约定检测</h3>
+<p>对于提交消息和 PR 标题：上下文中的存储库约定优先；最近的提交历史记录是下一个信号；常规提交是后备默认值。当使用传统提交和 <code>fix:</code> 与 <code>feat:</code> 似乎都适合时，该技能默认为 <code>fix:</code> （即使通过添加代码实现，修复损坏或丢失行为的更改也是 <code>fix:</code>；<code>feat:</code> 用于用户以前无法完成的功能）。用户可以覆盖。</p>
+<h3>7. 证据整合</h3>
+<p>当更改具有可观察的行为（UI 渲染、CLI 输出、可运行示例的 API 行为、生成的工件）时，该技能会询问是否捕获证据并（如果是）加载 <code>/ce-demo-reel</code> 以捕获 GIF、终端记录或屏幕截图，然后将其作为 <code>## Demo</code> 部分拼接到正文中。分类无证据情况（仅文档、仅降价、仅更改日志、仅 CI/配置、仅测试或纯内部重构）会跳过提示而不询问。代理判断还可以跳过代理编写的且已知不可观察的更改的提示（内部管道、仅类型更改等）。</p>
+<h3>8. 重写前确认现有 PR</h3>
+<p>当该技能在具有开放 PR 的分支上运行并且您希望重写描述时，它会预览 - 新摘要的前两句话加上正文行数 - 并在应用之前要求确认。前两句话吸引了审稿人的大部分注意力。如果被拒绝，您可以将焦点文本传回以进行重新生成，而无需应用任何内容。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您在功能分支上完成了通知静音功能。您调用 <code>/ce-commit-push-pr</code>。</p>
+<p>该技能检测到您位于一个有意义命名的功能分支上，没有上游，并且有四个未提交的文件，涵盖数据库迁移、模型更改、控制器更新和 UI 组件。它从最近的提交（具有范围的常规提交）中获取存储库的约定，并将工作分成两个提交（数据层；UI），在文件级别分组 - 没有交互式块分段。它使用 <code>-u</code> 进行推送。</p>
+<p>它解析 PR 提交范围，读取所有提交的差异（不仅仅是工作树差异），并检测具有可观察 UI 行为的更改。它询问是否采集证据；你说是；它加载 <code>/ce-demo-reel</code> 并获取 GIF。</p>
+<p>组合过程会生成一个标题 (<code>feat(notifications): add per-type mute with TTL</code>) 和一个包含摘要、关键决策、测试计划、演示 GIF 和操作验证部分的正文。它将主体写入带有引用的定界符标记的临时文件并运行 <code>gh pr create --title ... --body-file ...</code>。</p>
+<p>它返回 PR URL。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-commit-push-pr</code>：</p>
+<ul>
+<li>你的代码已经写好了，你想要提交 + PR</li>
+<li>您想要重写现有 PR 的描述（例如，合并到 <code>main</code> 后，原始描述已过时）</li>
+<li>您需要一份 PR 描述草稿，但尚未提交或推送</li>
+<li>您需要自适应描述大小而不是千篇一律的模板</li>
+<li>当您的更改涉及不同的问题时，您需要智能提交拆分</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-commit-push-pr</code>：</p>
+<ul>
+<li>您只想提交而不推送或 PR → <code>/ce-commit</code></li>
+<li>您位于默认分支上，并且想要实际提交 → 手动处理（如果没有显式功能分支创建，此技能不会推送到默认分支）</li>
+<li>PR 的形状很不寻常，需要手工制作 git 工作（交互式 rebase、复杂的历史重写）</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-commit-push-pr</code> 是多种技能的标准运输交接：</p>
+<ul>
+<li><strong><code>/ce-work</code> 第 4 阶段</strong> — 通过计划摘要、关键决策、测试说明、证据背景、操作验证和任何接受的已知残留</li>
+<li><strong><code>/ce-debug</code> 第 4 阶段</strong>（技能所属分支）— 默认为提交和 PR，成功修复后不提示；包括问题跟踪器的自动关闭语法（例如，GitHub 的 <code>Fixes #N</code>，Linear 的 <code>Closes ABC-123</code>）</li>
+<li><strong><code>/ce-compound</code></strong> — 编写学习文档后，可以提交 + 推送以使用新提交更新开放的 PR</li>
+</ul>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能被直接调用的次数多于作为链的一部分调用的次数：</p>
+<ul>
+<li><strong>全面交付</strong> — <code>/ce-commit-push-pr</code> 来自具有未提交或未推送工作的功能分支</li>
+<li><strong>刷新现有 PR 的描述</strong> — <code>/ce-commit-push-pr &quot;update the PR description&quot;</code> 或 <code>/ce-commit-push-pr &quot;include the benchmarking results&quot;</code> （尊重焦点）</li>
+<li><strong>起草描述而不应用</strong> — <code>/ce-commit-push-pr &quot;draft a PR description for this branch&quot;</code> 打印描述供您手动复制或应用</li>
+<li><strong>描述不同的 PR</strong> — <code>/ce-commit-push-pr &lt;PR URL&gt;</code> 解析该 PR 的提交范围</li>
+</ul>
+<p>当技能的模式检测选择错误的路径时，您可以使用与目标模式匹配的措辞明确提示（例如，“只写描述，不要应用它”）。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>当前分支上的完整工作流程</td>
+</tr>
+<tr>
+<td><code>&quot;draft a PR description&quot;</code> / <code>&quot;describe this PR&quot;</code></td>
+<td>仅描述生成；打印回来，未应用</td>
+</tr>
+<tr>
+<td><code>&quot;update the PR description&quot;</code> / <code>&quot;refresh the PR description&quot;</code></td>
+<td>现有 PR 的描述更新</td>
+</tr>
+<tr>
+<td><code>&lt;PR URL or number&gt;</code></td>
+<td>对该 PR 进行操作（仅描述或更新，具体取决于意图）</td>
+</tr>
+<tr>
+<td><code>&quot;...&lt;focus text&gt;&quot;</code></td>
+<td>引导描述组成（例如，“包括基准测试结果”）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么采用自适应描述而不是固定模板？</strong>
+千篇一律的模板让琐碎的 PR 感觉很仪式化，而大型 PR 感觉描述不足。自适应构图根据变化选择结构和深度——一行修复得到严格的描述；大规模的重构得到了它所保证的结构。当描述与更改匹配时，审阅者的工作会更容易。</p>
+<p><strong>为什么使用 body-file 而不是 <code>--body</code> 内联？</strong>
+包装器和标准输入处理可以默默地生成一个空的 PR 正文，而 <code>gh</code> 仍然退出 0 并返回 URL。该技能将每个主体写入带有引用的定界符标记的临时文件，并通过 <code>--body-file &lt;path&gt;</code> 传递。引用的哨兵可防止主体内的 <code>$VAR</code>、反引号和文字 <code>EOF</code> 标记被扩展。</p>
+<p><strong>仅描述和描述更新之间有什么区别？</strong>
+仅描述生成描述并将其打印回来而不触及任何内容（无 <code>gh pr edit</code>，无提交，无推送）。描述更新查找当前分支的现有开放 PR，生成新描述，预览它，要求确认，然后通过 <code>gh pr edit</code> 进行应用。</p>
+<p><strong>它是否支持不同的提交消息约定？</strong>
+是的。 <code>AGENTS.md</code>/<code>CLAUDE.md</code> 中的回购协议优先；最近的提交历史记录是下一个信号；常规提交是后备默认值。使用常规提交时，如果不明确，<code>fix:</code> 与 <code>feat:</code> 默认为 <code>fix:</code>。</p>
+<p><strong>提交签名或挂钩怎么样？</strong>
+该技能尊重您的 git 配置和预提交挂钩。它永远不会通过 <code>--no-verify</code>、<code>--no-gpg-sign</code> 或类似标志来跳过它们。如果挂钩失败，该技能会调查并揭示根本问题。</p>
+<p><strong>我可以获得 PR 草稿吗？</strong>
+使用仅描述模式生成正文，然后使用 <code>gh pr create --draft --title &quot;...&quot; --body-file &quot;...&quot;</code> 进行应用。该技能当前不会在完整工作流程中公开草稿标志。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 第 4 阶段切换目标；标准上游调用者</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 在技能拥有的分支上成功修复后调用此技能</li>
+<li><a href="/compound-engineering/skills/ce-commit.html"><code>ce-commit</code></a> — 仅本地提交同级；当您不想推送或打开 PR 时使用</li>
+<li><a href="/compound-engineering/skills/ce-demo-reel.html"><code>ce-demo-reel</code></a> — 当行为可观察时调用以捕获证据</li>
+<li><a href="/compound-engineering/skills/ce-compound.html"><code>ce-compound</code></a> — 捕获可重用的学习；可以链接回该技能来推送学习文档</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

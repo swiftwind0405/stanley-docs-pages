@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-polish · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-polish</nav>
+    <header class="page-header">
+      <h1>/ce-polish</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-polish.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-polish</code></h1>
+<blockquote>
+<p>启动开发服务器，在浏览器中打开该功能，然后一起迭代 - 你说感觉不对，修复就会发生。</p>
+</blockquote>
+<p><code>ce-polish</code> 是<strong>会话式用户体验优化</strong>技能。它会自动检测您的开发服务器设置（或读取 <code>.claude/launch.json</code>），在后台启动服务器，通过 IDE 的首选机制在浏览器中打开该功能，然后进入紧密的迭代循环：您描述要修复的内容，更改落地，热重载拾取它，重复直到您满意为止。没有清单，没有信封——只是与正在运行的浏览器配对的对话。</p>
+<p>此技能<strong>仅限手动调用</strong> (<code>disable-model-invocation: true</code>)。它仅在您通过斜杠命令显式调用它时才会触发 - 从不自动触发。 Polish 启动一个开发服务器并运行分支的代码，因此它仍然是一个经过深思熟虑的用户选择。框架自动检测范围很广（Rails / Next / Vite / Nuxt / Astro / Remix / SvelteKit / Procfile），但抛光循环故意最小化。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>启动开发服务器，在浏览器中打开该功能，通过对话迭代 UX/视觉打磨</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>对已经可用的功能进行后期用户体验改进；难以提前指定的视觉或交互细化</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>当前分支上已提交的修复（默认情况下无 PR — 之后使用 <code>/ce-commit-push-pr</code>）</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>稳定 - 仅手动调用</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>后期用户体验优化不太适合其他技能：</p>
+<ul>
+<li><strong>实施前审查</strong>不适用 - 该功能已经可以使用，您正在完善感觉</li>
+<li><strong>代码审查</strong>是错误的角度——你不需要静态分析，你需要<em>使用</em>这个东西</li>
+<li><strong>聊天中的静态屏幕截图</strong>是不够的 - 交互、悬停状态、转换、边缘情况数据都需要真实的会话</li>
+<li><strong>写一个抛光计划</strong>是过度设计的——当你列出问题时，你可能已经解决了其中的三个问题</li>
+<li><strong>手动循环</strong> - 启动开发服务器，打开浏览器，将屏幕截图粘贴回聊天中，描述问题，观看修复，刷新 - 太多的切换</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-polish</code> 折叠循环：</p>
+<ul>
+<li><strong>阶段 0</strong> 选择正确的分支（PR 编号、分支名称或当前分支）</li>
+<li><strong>阶段 1</strong> 启动开发服务器（自动检测框架或读取 <code>.claude/launch.json</code>）并在 IDE 的首选浏览器界面中打开该功能</li>
+<li><strong>阶段 2</strong> 是一个对话：您描述要修复的内容，代理进行更改，热重载启动，您继续前进</li>
+</ul>
+<p>没有决策树，没有信封，没有评分标准——只是运行迭代。该技能会完成无聊的部分（解析端口、选择包管理器、路由到框架的启动命令、打开正确的浏览器），因此您可以将时间花在润色上，而不是管道上。</p>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 跨 8 个框架的自动开发服务器检测</h3>
+<p>该技能通过 <code>scripts/detect-project-type.sh</code> 检测项目类型（Rails、Next.js、Vite、Nuxt、Astro、Remix、SvelteKit、Procfile-based）并路由到匹配的配方（<code>references/dev-server-&lt;framework&gt;.md</code>）。每个配方都包含框架的典型启动命令、端口默认值和怪癖。对于未知的项目，技能会询问如何开始。</p>
+<h3>2. <code>.claude/launch.json</code> 覆盖</h3>
+<p>如果项目具有 <code>.claude/launch.json</code>，则技能将使用该配置而不是自动检测 - 您已经告诉技能如何启动项目，因此它不需要猜测。架构记录在 <code>references/launch-json-schema.md</code> 中。</p>
+<h3>3. IDE 感知的浏览器切换</h3>
+<p>该技能通过 env-var 探针 (<code>references/ide-detection.md</code>) 检测主机 IDE（Claude Code、Cursor、VS Code），并使用匹配机制打开开发服务器 URL：Claude Code 的 <code>open</code>、Cursor 的内置浏览器、VS Code 的简单浏览器。适合合适环境的合适表面，无需手动操作。</p>
+<h3>4. 对话式迭代 — 无清单</h3>
+<p>第 2 阶段是抛光循环。用户描述了需要修复的问题；代理人进行变更；开发服务器热重载；用户查看结果并说出下一步。安装 <code>agent-browser</code> 后，代理可以根据请求截取屏幕截图或检查页面。当用户说他们已经完成时，修复就会被提交。</p>
+<blockquote>
+<p>没有清单。没有信封。只是谈话。</p>
+</blockquote>
+<p>这不是懒惰——这是后期抛光的正确形状。固定的清单让工作感觉就像是审计；对话让人感觉像是协作改进。</p>
+<h3>5.带有运行状况探测的后台开发服务器</h3>
+<p>开发服务器在后台启动，输出记录到临时文件中。该技能探测 <code>http://localhost:&lt;port&gt;</code> 长达 30 秒。如果服务器没有启动，它会显示日志的最后 20 行并询问该怎么做，而不是默默等待或继续访问无效的 URL。</p>
+<h3>6. 仅限手动调用</h3>
+<p>前面的 <code>disable-model-invocation: true</code> 可以防止技能自动触发。波兰语是一个经过深思熟虑的用户选择 - 该技能仅在您直接键入 <code>/ce-polish</code> 时才会触发。这可以避免用户在只想查看页面时感到惊讶。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您刚刚完成了通知设置页面。它可以工作，但间距感觉不对，切换状态不太正确，并且空状态副本很干燥。您调用 <code>/ce-polish</code>。</p>
+<p>该技能验证您位于功能分支（不是主分支），检查 <code>.claude/launch.json</code> （无），运行 <code>detect-project-type.sh</code> （检测 <code>next</code>），读取 <code>references/dev-server-next.md</code> 作为启动命令，通过 <code>resolve-package-manager.sh</code> 解析包管理器（pnpm），选择端口3000，并在后台启动 <code>pnpm dev</code>。 4 秒后，<code>localhost:3000</code> 做出响应。该技能会在 Cursor 的内置浏览器中打开它。</p>
+<p>您浏览至 <code>/settings/notifications</code>。您说“切换行之间的间距感觉太紧”。代理找到组件，调整间距，启动热重载。您说“现在切换状态需要更清晰的可供性 - 让关闭状态看起来更明显关闭。”代理更新组件。你浏览空状态并说“这个副本是无菌的，让它变暖。”代理重写副本。</p>
+<p>你很高兴。代理提交修复。您继续使用 <code>/ce-commit-push-pr</code>。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-polish</code>：</p>
+<ul>
+<li>该功能已经可以使用，并且您正在完善用户体验/视觉感觉</li>
+<li>您可以通过“看到”问题来阐明问题，而不是通过预先写下来</li>
+<li>热重载+浏览器端迭代将击败替代方案（聊天→屏幕截图→描述→修复→重复）</li>
+<li>变化集是视觉的：间距、复制、过渡、可供性、空状态、微交互</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-polish</code>：</p>
+<ul>
+<li>该功能尚未构建 → 使用 <code>/ce-work</code></li>
+<li>抛光需要设计规范（Figma 比较、品牌系统对齐）→ 使用 <code>/ce-frontend-design</code> 或专用的设计同步技能</li>
+<li>这项工作是非前端的（API 行为、后端逻辑）——没有什么可浏览的</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-polish</code> 在功能完成后稍后调用：</p>
+<pre><code class="language-text">/ce-work or /ce-debug → feature works → /ce-polish → /ce-commit-push-pr
+</code></pre>
+<p>它在链中没有直接的调用者——当工作需要视觉细化时，抛光是一个有意的用户调用。抛光循环结束后，标准运输交接是 <code>/ce-commit-push-pr</code> 以打开 PR。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能始终独立调用：</p>
+<ul>
+<li><strong>当前分支</strong> — <code>/ce-polish</code></li>
+<li><strong>具体 PR</strong> — <code>/ce-polish 1234</code> （查看 PR）</li>
+<li><strong>特定分支</strong> — <code>/ce-polish feat/notification-settings</code></li>
+</ul>
+<p>当自动检测器未知框架时，技能会询问如何启动项目。将 <code>.claude/launch.json</code> 添加到存储库可以保留下次的答案。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>使用当前分支</td>
+</tr>
+<tr>
+<td><code>&lt;PR number&gt;</code></td>
+<td><code>&lt;PR number&gt;</code>查看 PR（首先探测现有工作树）</td>
+</tr>
+<tr>
+<td><code>&lt;branch name&gt;</code></td>
+<td>查看分行</td>
+</tr>
+</tbody></table>
+<p>支持文件：</p>
+<ul>
+<li><code>.claude/launch.json</code>（项目本地覆盖）— <code>references/launch-json-schema.md</code> 中的架构</li>
+<li>框架配方 — <code>references/dev-server-&lt;rails|next|vite|nuxt|astro|remix|sveltekit|procfile&gt;.md</code></li>
+<li>IDE 检测 — <code>references/ide-detection.md</code></li>
+<li>脚本 — <code>scripts/detect-project-type.sh</code>、<code>scripts/read-launch-json.sh</code>、<code>scripts/resolve-package-manager.sh</code>、<code>scripts/resolve-port.sh</code></li>
+</ul>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么只能手动调用？</strong>
+Polish 启动一个开发服务器并运行已签出分支的代码 - 这是一个副作用操作，应该是经过深思熟虑的选择，而不是当您只是查看页面时模型自动触发的操作。 <code>disable-model-invocation: true</code> 会阻止它触发，除非您显式调用它。当需要时输入 <code>/ce-polish</code> 。</p>
+<p><strong>如果我的框架不在检测列表中怎么办？</strong>
+该技能询问如何开始项目。您可以添加 <code>.claude/launch.json</code> 来保留未来运行的答案。</p>
+<p><strong>没有 <code>agent-browser</code> 是否可以工作？</strong>
+是的 - 第 2 阶段仍然以对话方式进行，代理只是无法根据请求截取屏幕截图或检查页面。热重载+你的眼睛仍然工作正常。如果您希望代理在不描述状态的情况下捕获状态，请安装 <code>agent-browser</code> 。</p>
+<p><strong>非 Claude-Code IDE 怎么样？</strong>
+该技能通过 env-var 探针检测 Cursor 和 VS Code，并使用每个 IDE 的首选浏览器界面。在这些之外，它会回退到 <code>open</code>。框架检测和开发服务器启动与 IDE 无关。</p>
+<p><strong>为什么最后没有创建公关？</strong>
+波兰语通常需要多个会话，并且每次都强制执行 PR 会造成混乱。提交和 PR 是用户通过 <code>/ce-commit-push-pr</code> 进行的单独选择。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 首先构建功能；波兰第二</li>
+<li><a href="/compound-engineering/skills/ce-commit-push-pr.html"><code>ce-commit-push-pr</code></a> — 完善后打开 PR</li>
+<li><a href="/compound-engineering/skills/ce-frontend-design.html"><code>ce-frontend-design</code></a> — 用于从头开始的高质量前端设计（不同范围）</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 当根本原因调查很重要时，用于修复您在抛光过程中发现的错误</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

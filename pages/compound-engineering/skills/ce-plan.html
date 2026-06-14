@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-plan · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-plan</nav>
+    <header class="page-header">
+      <h1>/ce-plan</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-plan.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-plan</code></h1>
+<blockquote>
+<p>建立实施需求的护栏——决策、单元、文件、测试、范围、风险——无需规定实际代码或分步编排。计划捕捉<strong>什么</strong>；执行代理找出<strong>如何</strong>。</p>
+</blockquote>
+<p><code>ce-plan</code> 生成的计划是 <strong>带有执行护栏的决策文档</strong>，而不是实施编排。该计划捕获了已做出的决策、范围内或范围外、存在哪些原子工作单元、每个单元接触哪些文件、必须通过哪些测试场景以及需要缓解哪些风险。它<strong>不</strong>预先编写代码、精确的 API 签名或分步 shell 命令序列 - 这些是供实施代理（<code>ce-work</code>、另一个 AI 代理或人类）确定代码何时位于它们前面。</p>
+<p>这种分离很重要。预先编写实施的计划在实施时往往是错误的：签名无法编译、编排陈旧、微步骤掩盖了真正的决策。捕获护栏的计划可在数周或数月内保持便携性，并尊重实施者在执行时做出的判断。</p>
+<p>它适用于结构有帮助的任何多步骤任务——软件功能、重构、错误修复、研究计划、研究工作流程、活动规划，甚至年度热水箱维护之类的事情。相同的发动机；相同的U-ID稳定性；相同大小的模板。</p>
+<p>这是复合工程构思链的第三步：</p>
+<pre><code class="language-text">/ce-ideate         /ce-brainstorm      /ce-plan             /ce-work
+&quot;What&#39;s worth      &quot;What does this     &quot;What&#39;s needed       &quot;Build it.&quot;
+ exploring?&quot;        need to be?&quot;        to accomplish
+                                        this?&quot;
+</code></pre>
+<p>但它也很独立——许多团队直接通过需求文档、GitHub 问题、PRD、粗略描述或非软件多步骤任务来实现 <code>ce-plan</code>。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>研究上下文，捕获决策和范围，将工作分解为具有稳定 ID 的原子单元，枚举每个单元的测试场景，并通过置信度检查自动加强薄弱部分</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>已准备好需求并需要执行护栏；任务明确时单独计划；非软件多步骤任务（学习计划、研究、维护、活动、旅行）</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td><code>docs/plans/YYYY-MM-DD-NNN-&lt;type&gt;-&lt;name&gt;-plan.md</code> 中的计划</td>
+</tr>
+<tr>
+<td>接下来是什么？ <code>/ce-work</code>，创建跟踪问题，在 Proof 中打开以供审查，或暂停</td>
+<td></td>
+</tr>
+<tr>
+<td>区分</td>
+<td>编排的护栏（做什么，而不是如何）； U-ID（稳定）；原点追踪（R/A/F/AE → U）；每个单元的测试场景；自动加深；多主体研究</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>人类（或没有结构的人工智能）编写的计划往往会以可预测的方式失败：</p>
+<ul>
+<li><strong>重新编号混乱</strong> - 重构单位列表，问题、PR 和对话中的每个引用现在都是错误的</li>
+<li><strong>含糊的测试“场景”</strong> - “测试新行为”没有告诉实施者任何信息</li>
+<li><strong>忘记起源背景</strong> - 头脑风暴决定这是针对特定演员的，但计划从未提及他们</li>
+<li><strong>半解决的问题</strong> - 几个月后计划中的“待定：找出缓存策略”</li>
+<li><strong>实现编排</strong> - 精确的方法签名、微步骤或预先编写的 shell 序列，然后在实际开始时出现错误</li>
+<li><strong>没有深度检查</strong> - 作者没有透露该计划是否有足够的基础来执行</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-plan</code> 将<strong>需要尊重哪些决定</strong>与<strong>如何在代码中满足这些决定</strong>分开：</p>
+<ul>
+<li>计划捕获决策、范围边界、原子单元、文件、测试场景和风险——执行的形式和约束</li>
+<li>它不预先编写代码、精确的 API 签名或逐步的 shell 编排——这些决定在执行时推迟给实施代理</li>
+<li>稳定的 U-ID 可以在重新排序、拆分和删除后幸存下来 - 因此阻止者引用和 PR 提及在整个计划编辑过程中保持有效</li>
+<li>计划决策可追溯到起源（头脑风暴中的 R-ID；测试场景中引用的 AE-ID）</li>
+<li>研究在构建之前并行进行（存储库、学习、框架文档、最佳实践、规范流程）</li>
+<li>编写计划后自动运行信心检查，并派遣有针对性的子代理来加强薄弱环节</li>
+<li>规划时间与实施时间问题明确分开——没有虚假的确定性</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 编排的护栏——做什么，而不是如何</h3>
+<p>计划捕获决策和约束，而不是代码：做出的决策（带有基本原理）、范围边界、工作的原子单元、涉及的文件、必须通过的测试场景以及需要缓解的风险。计划故意排除精确的方法签名、特定于框架的语法、分步 shell 序列以及伪装成实现规范的伪代码。实施代理阅读计划，看到护栏，并找出如何用面前的代码来满足他们的要求。 <strong>决定属于计划；实现选择属于执行时。</strong></p>
+<blockquote>
+<p>为什么？预写实施的计划是脆弱的：预先提交的签名无法编译，编排的步骤变得陈旧，并且它们剥夺了实施者应根据当前上下文做出的判断。坚持护栏的计划在数周的代码更改、实施者（人类或人工智能）以及深化过程中的编辑之间保持可移植性。</p>
+</blockquote>
+<p>这也是同一引擎适用于非软件任务的原因。热水箱维护计划包含决策、单元、等效文件（哪些阀门、哪些手册）、测试场景（“重新填充后验证是否泄漏”）和风险，但没有代码。框架干净地转移。</p>
+<h3>2. U-ID — 实现单元具有稳定、永不重新编号的标识符</h3>
+<p>每个单元的标题为 <code>- U1. **Name**</code>、<code>- U2. **Name**</code> 等。 稳定性规则：在重新排序、拆分或删除后，切勿对现有 ID 重新编号。拆分保留了原始 U-ID 的原始概念；新单位采用下一个未使用的数字；删除会留下间隙（间隙很好，永远不会回填）。</p>
+<p>这很重要，因为 <code>ce-work</code> 跨计划编辑通过 U-ID 引用单元。在深化过程中重新编号会默默地破坏每个阻止者引用、每个引用单元的 PR 描述以及每个下游对话。稳定性规则可以防止此类错误。</p>
+<h3>3. 起源追踪 — 来自整个计划的头脑风暴流程的 R/A/F/AE ID</h3>
+<p>当计划源自 <code>ce-brainstorm</code> 需求文档时，标识符会流经： 需求 (R-ID) 跟踪到计划的需求部分；参与者 (A-ID) 在影响行为或权限时继续前进；关键流程 (F-ID) 引用实现它们的实施单元；验收示例 (AE-ID) 引用了强制执行它们的测试场景 (<code>Covers AE3. &lt;scenario&gt;</code>)。在最终确定之前，原始文档的每个部分都会根据计划进行验证。没有什么会悄然掉落。</p>
+<h3>4. 指定类别中每个单元的测试场景</h3>
+<p>每个功能承载单元都枚举每个适用类别的测试场景 - 快乐路径、边缘情况（边界、空/零、并发）、错误/失败路径（无效输入、下游故障、权限）和集成（仅凭跨层行为模拟无法证明）。每个场景都指定了输入、操作和预期结果——足够具体，实施者不必发明覆盖范围。</p>
+<h3>5.置信度检查和自动深化</h3>
+<p>计划编写完成后，<code>ce-plan</code> 自动根据风险加权奖金对清单进行评分，挑选最薄弱的部分，派遣有针对性的子代理来加强它们（实施单元的正确性审查员、迁移的数据完整性监护人、关键技术决策的架构策略师），并将结果综合回计划中。自动模式直接整合结果；交互模式（当您要求深化现有计划时）呈现接受/拒绝的结果。发现薄弱部分的成本高昂的时刻是在执行期间，而不是在规划期间。</p>
+<h3>6. 并行多主体研究</h3>
+<p>第一阶段始终并行进行本地研究——repo-research-analyst（技术、架构、模式）和学习-researcher（来自<code>docs/solutions/</code>的机构记忆），加上spec-flow-analyzer（标准/深度计划的边缘情况完整性）和可选的Slack研究。然后，外部研究由意图决定，而不是单一的开关：显式请求（“研究竞争对手”、“网络最佳实践”、“哪个库”）始终运行并覆盖强大的本地模式，而隐式信号（薄弱的本地模式或推荐所依赖的未解决的外部选项集）也可以触发它。意图路由代理——框架文档研究员和最佳实践研究员<em>如何构建它</em>（实施指导），网络研究员<em>存在什么选项或现有技术</em>（景观/竞争对手扫描）；混合请求首先运行横向扫描，然后运行候选列表上的文档。</p>
+<h3>7. 通用规划——非软件工作的相同引擎</h3>
+<p>护栏而非编排框架可以干净地跨域传输。真实（非假设）用途包括年度热水箱维护、研究计划、旅行计划、研究工作流程和活动规划。非软件路径会跳过特定于软件的置信度检查，但 U-ID、依赖性排序、范围边界、测试/验证场景以及大小合适的模板均保持不变。</p>
+<p>通用规划还区分了两种<strong>倾向</strong>。 <em>计划寻求</em>任务（旅行、学习课程、活动）产生一个保存的计划——工件就是可交付成果。 <em>寻求答案</em>任务是调查或分析问题（“X 发生的频率如何——这有什么大不了的吗？”、“我们的方法与 Y 相比如何？”），其中<em>答案</em>是可交付成果，没有人想要计划文件。对于这些，<code>ce-plan</code> 不会保释，也不会编写文档：它在聊天中陈述一个简短的、大小合适的攻击计划——既指导代理并向人类展示方法的工作脚手架——然后执行它（研究和综合，而不是编码）并提供答案。该计划是用问题的语言而不是技能的语言来表达的；内部机制保持隐藏，而影响对答案信任的警告总是浮出水面。只有真正微不足道的单一事实查找才能完全跳过计划并得到直接答复。</p>
+<h3>8. 接近高度——交付困难时的计划</h3>
+<p>对于难题，<code>ce-plan</code> 可以回答一个更高的级别：制定一个接地气的<strong>方法计划</strong>（关于<em>如何制作可交付成果</em>的计划）并在提交之前保持在检查点——这是一种获得结构和确定性的方法，而不是零射击脆弱的结果。它是明确输入的（“为计划制定计划”，“先不要写它——计划一下你将如何实现它”），并且很少主动提供——只有当方法确实不稳定<em>并且</em>出错时代价高昂，所以它永远不会成为一个烦恼。在对所提供的输入进行轻微侦察（略读，而不是深入阅读）后，它在聊天中列出了方法，文件可选且可深化。在检查点，您现在运行它或保存它以供以后使用。它绘制的边界是<strong>代码与知识工作</strong>，而不是计划与执行：代码仍然流向 <code>ce-work</code> 的正常路径，而非代码可交付成果被标记为 <code>execution: knowledge-work</code> 并通过 <code>ce-work</code> 的轻量级剥离（或任何代理 - 计划保持可移植）运行。 <code>ce-plan</code> 本身永远不会执行；它会制定进场计划并放手。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您使用 <code>ce-brainstorm</code> 中的需求文档调用 <code>ce-plan</code>。该技能检测来源，将其用作主要输入，并验证是否存在剩余的计划前解决阻止程序。</p>
+<p>它并行调度研究——回购分析师、学习研究员——并在没有外部比较请求的情况下检测强大的本地模式，因此它跳过外部研究（明确的“研究竞争对手”或“来自网络的最佳实践”请求将覆盖它并运行景观或实施指南扫描）。规范流分析器运行到表面边缘情况。源自头脑风暴的范围界定合成呈现出分层的摘要（散文、项目符号或混合，取决于计划深度和最佳沟通内容）加上零个或多个“调用”——另一个合理的代理可能会选择不同的计划时间分叉（例如，“静音状态存储在订阅上，而不是用户上”）。确认或重定向；自动继续跳过仅针对没有值得标记的分叉的轻量级计划触发 - 标准和深度计划始终获得显式检查点。</p>
+<p>计划写好了。然后，置信度检查会自动运行 - 它确定 <code>Risks &amp; Dependencies</code> 在静音泄漏风险方面很薄弱，并且一个单元的测试场景错过了许可边缘情况，派遣数据完整性审核员和正确性审核员，并将他们的发现综合回计划中。该计划标有 <code>deepened:</code> 日期。</p>
+<p>然后文档审查以无头模式运行。由于该计划已设定原点并且不涉及高风险领域，因此成本低廉的最低调度（连贯性+可行性）； <code>safe_auto</code> 修复（一个拼写错误，一个损坏的交叉引用）静默应用。剩余的结果显示为生成后菜单上方的一行摘要 - 例如，<code>Doc review applied 2 fixes. 3 decisions, 1 FYI remain.</code> 菜单显示：启动 <code>/ce-work</code>，运行更深入的文档审查（当剩余可操作的结果时），创建跟踪的问题，在 Proof 中打开以进行 HITL 审查，或暂停。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-plan</code>：</p>
+<ul>
+<li>您已准备好来自 <code>ce-brainstorm</code> 的要求文档</li>
+<li>您有足够清晰的 GitHub 问题、PRD 或功能描述</li>
+<li>这项工作是多步骤的，并受益于排序、依赖顺序和范围边界</li>
+<li>您希望在执行之前枚举测试或验证场景</li>
+<li>您正在选择一个陈旧的计划并希望将其深化（使用“深化计划”或“深化通行证”）</li>
+<li>任务是<strong>非软件但多步骤</strong> - 学习计划、活动、旅行、日常维护、研究工作流程、个人项目</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-plan</code>：</p>
+<ul>
+<li>该任务确实是一步完成的（只需执行即可；或 <code>ce-work</code> 直接执行）</li>
+<li>产品或结果尚未决定 → 首先<code>ce-brainstorm</code></li>
+<li>该错误有已知的根本原因和明显的修复方案 → <code>ce-debug</code> 或只是修复它</li>
+</ul>
+<hr>
+<h2>用作链式工作流程的一部分</h2>
+<pre><code class="language-text">/ce-ideate          (optional)
+   |
+   v
+/ce-brainstorm      (define one direction)
+   |  requirements / brief — R/A/F/AE-IDs in software mode
+   v
+/ce-plan
+   |  guardrails — U-IDs traced to R/A/F/AE-IDs
+   |  test scenarios with AE-link convention (Covers AE&lt;N&gt;)
+   |  scope boundaries preserved (incl. &quot;Outside this product&#39;s identity&quot;)
+   |  confidence-checked and auto-deepened
+   v
+/ce-work            (execute against the guardrails)
+   |  reads U-IDs as the unit of execution
+   |  figures out the actual HOW with code in front of it
+   |  derives progress from git, not plan body
+   v
+/ce-code-review     (optional)
+   |
+   v
+/ce-compound        — capture the learning
+</code></pre>
+<p>从 <code>ce-plan</code> 到 <code>ce-work</code> 的切换是具体的：<code>ce-work</code> 读取 U-ID、文件路径、范围边界和测试场景 — 然后确定实际实现。该计划告诉实施者<strong>当单元完成时必须是真实的</strong>；实施者弄清楚<strong>如何实现它</strong>。这种划分使得计划可以跨实施者和跨时间移植。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>许多人在已经有要做的事情时直接寻求 <code>ce-plan</code> —— 对于软件，同样经常对于非软件多步骤任务。</p>
+<p><strong>软件：</strong></p>
+<ul>
+<li><strong>来自 GitHub 问题</strong> — <code>/ce-plan https://github.com/.../issues/1234</code> （或粘贴问题正文）</li>
+<li><strong>来自 PRD</strong> — 带有 PRD 路径的 <code>/ce-plan</code> ；规划引导程序将其读取为原点</li>
+<li><strong>从一个粗略的想法</strong> - <code>/ce-plan &quot;add background email digest at 8am UTC&quot;</code> 运行引导程序；综合可以让您在研究派遣之前纠正范围</li>
+<li><strong>重新深化现有计划</strong> — <code>/ce-plan deepen the auth-rewrite plan</code> — 交互模式，代理一一呈现调查结果以供接受/拒绝</li>
+<li><strong>跨存储库规划</strong> — 来自不同存储库的 <code>/ce-plan &quot;fix the busyblock bug in cli-printing-press&quot;</code>；跨回购目标公布，计划落地目标的 <code>docs/plans/</code></li>
+</ul>
+<p><strong>非软件（通用规划模式）：</strong></p>
+<ul>
+<li><strong>维护任务</strong> — 年度热水箱维护，并在每个单元进行验证</li>
+<li><strong>学习计划</strong> — 具有先决条件和每单元知识检查的分阶段单元</li>
+<li><strong>旅行计划</strong> — 预订、打包、每日行程、应急范围</li>
+<li><strong>研究工作流程</strong> — 文献收集、综合、起草阶段以及明确的可交付成果</li>
+<li><strong>活动策划</strong> — 场地、供应商、议程、演出当天、后续活动</li>
+<li><strong>个人项目</strong> — 车间扩建、家居装修</li>
+</ul>
+<p>在通用规划模式下，U-ID、依赖顺序、范围边界和正确大小的模板都会保留。跳过软件特定的置信度检查；其他一切都以同样的方式运行。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>询问任务描述</td>
+</tr>
+<tr>
+<td><code>&lt;feature description&gt;</code></td>
+<td><code>&lt;feature description&gt;</code>单独策划；运行引导程序</td>
+</tr>
+<tr>
+<td><code>&lt;requirements doc path&gt;</code></td>
+<td>原产地策划</td>
+</tr>
+<tr>
+<td><code>&lt;plan path&gt;</code></td>
+<td>恢复报价（或深化，如果意图匹配）</td>
+</tr>
+<tr>
+<td><code>deepen the plan</code> / <code>deepening pass</code></td>
+<td>重新深化快速路径（交互模式）</td>
+</tr>
+<tr>
+<td><code>&lt;bug description&gt;</code></td>
+<td>前往 <code>ce-debug</code> 建议菜单的路线</td>
+</tr>
+<tr>
+<td><code>&lt;task in another repo&gt;</code></td>
+<td>跨回购公告，计划落地</td>
+</tr>
+<tr>
+<td><code>output:html</code></td>
+<td>将计划编写为单个独立的 HTML 文件而不是 Markdown。排他性 — 该计划是 <code>.md</code> 或 <code>.html</code>，不能同时使用两者。默认是降价。在 <code>.compound-engineering/config.local.yaml</code> 中设置 <code>plan_output: html</code> 以使 HTML 成为默认值。管道模式（LFG、<code>disable-model-invocation</code>）始终强制降价，以便下游自动化获得稳定的文本形状。</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>计划不是告诉你如何构建东西吗？</strong>
+不在 <code>ce-plan</code> 的框架中。该计划告诉您必须遵守哪些内容——决策、范围、单位、文件、测试、风险。它故意不预先编写代码、精确的 API 签名或逐步的 shell 编排。实施代理通过他们面前的代码找出如何做。这种分离使计划保持可移植性，防止脆弱的预先承诺，并尊重实施者在执行时做出的判断。它还可以让同一个引擎以相同的结构严谨性来计划软件重构、热水箱维护和为期 6 周的学习计划。</p>
+<p><strong>为什么使用 U-ID 而不仅仅是编号单元？</strong>
+当单元被重新排序、拆分或删除时，编号会中断 - 问题、PR 和下游对话中的每个引用都会出错。 U-ID 是稳定的：重新排序将它们保留在适当的位置，拆分保留原始概念上的原始内容，删除留下间隙。因此，<code>ce-work</code> 的阻止程序引用可以跨计划编辑工作。</p>
+<p><strong>为什么置信度检查会自动运行？</strong>
+发现薄弱部分的成本高昂的时刻是在执行期间，而不是在规划期间。自动深化会在研究环境仍然活跃的情况下派遣有针对性的研究——比几周后实施时发现被遗漏的风险时重新研究要便宜得多。</p>
+<p><strong>如果我想保留现有计划并只是进行审核怎么办？</strong>
+使用加深意图快速路径：<code>/ce-plan deepen &lt;plan&gt;</code>。它以交互模式运行——代理一一呈现结果以供接受/拒绝。用户可以对整合哪些更改进行精确控制。</p>
+<p><strong>计划中的实现代码呢？</strong>
+默认情况下不允许。当伪代码和 DSL 语法传达解决方案的<strong>形状</strong>时，它们在高级技术设计中是允许的，明确地构建为<strong>方向指导，而不是实现规范</strong>。精确的方法签名、导入、特定于框架的语法和分步 shell 序列不属于计划。</p>
+<p><strong>它对于非软件计划真的有用吗？</strong>
+是的——而且这种情况越来越普遍。通用规划保留了 U-ID 概念、依赖顺序、正确大小的模板和护栏而非编排框架。实际用途包括热水箱维护、学习计划、旅行计划、研究工作流程和活动计划。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-brainstorm.html"><code>ce-brainstorm</code></a> — 生成成为计划起源的需求文档</li>
+<li><a href="/compound-engineering/skills/ce-ideate.html"><code>ce-ideate</code></a> — 上游“要做什么”构想</li>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 通过 U-ID 执行计划 U-ID</li>
+<li><a href="/compound-engineering/skills/ce-doc-review.html"><code>ce-doc-review</code></a> — 基于角色的计划审查</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — bug 形状的提示在此处路由</li>
+<li><a href="/compound-engineering/skills/ce-strategy.html"><code>ce-strategy</code></a> — 将计划锚定到记录的产品策略</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

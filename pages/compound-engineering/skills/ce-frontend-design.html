@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-frontend-design · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-frontend-design</nav>
+    <header class="page-header">
+      <h1>/ce-frontend-design</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-frontend-design.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-frontend-design</code></h1>
+<blockquote>
+<p>构建具有真正设计质量的 Web 界面，而不是 AI 废话。检测现有的设计系统，有意规划，构建，然后进行视觉验证。</p>
+</blockquote>
+<p><code>ce-frontend-design</code> 是<strong>设计质量</strong>技能。 AI 倾向于通用的 SaaS 美学——白底紫色、Inter 字体、卡片网格英雄、装饰渐变、听起来像是提示语言渗入 UI 的文案。此技能抵消了用户（或现有设计系统）可以覆盖的明确默认值、强制视觉论文和在宣布完成之前进行视觉验证的结构化预构建规划。它适用于对现有应用程序的新建和修改；它会自动检测现有的设计系统，并在存在时使用它。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>检测现有的设计系统，用视觉论文规划设计，用有意的默认值构建，用视觉验证</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>任何前端工作 - 登陆页面、网络应用程序、仪表板、管理面板、组件、交互式体验</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>前端代码匹配现有的设计系统（模块 C）或独特的绿地美学（模块 A 或 B）</td>
+</tr>
+<tr>
+<td>权限等级</td>
+<td>现有系统 &gt; 用户说明 &gt; 技能默认值</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>人工智能生成的前端会折叠成可识别的形状：</p>
+<ul>
+<li><strong>通用 SaaS 美学</strong> — 白底紫色、Inter 字体、卡片网格英雄，每个仪表板看起来都像相同的教程模板</li>
+<li><strong>卡片无处不在</strong>，即使布局不需要它们 - 错误地将默认设置为“结构”</li>
+<li><strong>英雄部分杂乱无章</strong>，包含统计数据、时间表、药丸簇、徽标云 - 太多的东西引人注目</li>
+<li><strong>装饰渐变</strong>代表真实的视觉内容</li>
+<li><strong>提示语言</strong>泄漏到用户界面中——“体验无缝集成”</li>
+<li><strong>模式偏差</strong> — 白底紫色默认；深色模式默认；永不变异</li>
+<li><strong>一无所获</strong>——代理要么忽略现有的设计系统，要么推倒它</li>
+<li><strong>无验证</strong> - 构建页面，声明完成，从不检查它看起来是否正确</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-frontend-design</code> 将前端工作作为具有显式默认值和验证的结构化通道运行：</p>
+<ul>
+<li><strong>第 0 层：上下文检测</strong> — 扫描现有设计标记、组件库、CSS 框架、版式、调色板、动画库；分类为现有系统、部分系统、新建系统或模糊系统</li>
+<li><strong>第 1 层：预构建规划</strong> — 任何代码之前的三个简短陈述（视觉论文、内容计划、交互计划）；用户可以在编写代码之前重定向</li>
+<li><strong>第 2 层：设计指导核心</strong> — 排版、颜色、构图、动作、可访问性、图像的固执己见的默认值；每个都会屈服于现有系统</li>
+<li><strong>上下文模块</strong> — 模块 A（登陆页面）、模块 B（应用程序和仪表板）、模块 C（现有应用程序中的组件；现有应用程序工作的默认值）</li>
+<li><strong>硬规则和反模式</strong> — 可重写的默认值加上真正的质量底线（对比度破坏、焦点状态缺失、语义 div 汤）</li>
+<li><strong>视觉验证</strong> — 使用项目现有的浏览器工具或 <code>agent-browser</code> 进行一次检查，以根据视觉论文进行评估</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 权限层次结构——屈服于现有系统</h3>
+<p>技能中的每条规则都是默认规则，而不是强制规则。优先事项：</p>
+<ol>
+<li><strong>现有设计系统/代码库模式</strong> - 最高优先级，始终受到尊重</li>
+<li><strong>用户的明确指示</strong> — 覆盖技能默认值</li>
+<li><strong>技能默认值</strong> — 适用于新手工作或用户请求指导时</li>
+</ol>
+<p>当使用具有既定模式的现有代码库时，请遵循这些模式。当用户指定相反的方向时，跟随用户。该技能的意见仅在其他任何事情都不适用时才适用。</p>
+<h3>2. 第 0 层：上下文检测 — 显式信号</h3>
+<p>在进行任何设计工作之前，该技能会扫描代码库以查找设计信号：</p>
+<ul>
+<li>设计标记/CSS变量（<code>--color-*</code>、<code>--spacing-*</code>、<code>--font-*</code>）</li>
+<li>组件库（shadcn、MUI、Chakra、Radix、Ant Design、项目特定目录）</li>
+<li>CSS 框架（<code>tailwind.config.*</code>、样式组件主题、CSS 模块）</li>
+<li>版式（<code>@font-face</code>，Google 字体链接）</li>
+<li>调色板（定义的比例、品牌颜色文件、设计令牌导出）</li>
+<li>动画库（Framer Motion、GSAP、anime.js、Motion One、Vue Transition）</li>
+<li>间距/布局模式（一致的比例使用、网格系统）</li>
+</ul>
+<p>根据信号，分类为 <strong>现有系统</strong>（4 个以上信号；遵循它；产生审美意见）、<strong>部分系统</strong>（1-3 个信号；遵循现有信号，对间隙应用默认值）、<strong>未开发</strong>（无信号；适用完整指导）或 <strong>不明确</strong>（询问用户）。</p>
+<h3>3. 第 1 层：预构建规划 — 需要视觉论文</h3>
+<p>在编写代码之前，该技能会编写三个简短的语句：</p>
+<ul>
+<li><strong>视觉论文</strong> - 一句话描述情绪、材料和能量（“干净的编辑感觉，大量的空白，衬线标题，柔和的大地色调”）</li>
+<li><strong>内容计划</strong> — 页面上显示的内容以及顺序（用于着陆的英雄/支持/详细信息/CTA；用于应用程序的主工作区/导航/检查器；组件的状态）</li>
+<li><strong>交互计划</strong> - 2-3 个特定的动作创意（“英雄加载时交错淡入、各部分之间滚动时的视差、卡片悬停时放大” - 不是含糊的“添加动画”）</li>
+</ul>
+<p>这些为用户提供了一个检查点，可以在编写代码之前重定向，此时纠正成本很低。跳过这一步是 AI 最终交付通用 SaaS 模板的方式。</p>
+<h3>4. 三个上下文模块——不同表面的不同模式</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>当</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>A：登陆和营销</strong></td>
+<td>格林菲尔德登陆页面</td>
+<td>英雄（一篇作品，不是仪表板）、支持、细节、最终 CTA。品牌第一，标题第二。 ≤6节。文案：让标题承载；一个简短的支持句子。</td>
+</tr>
+<tr>
+<td><strong>B：应用程序和仪表板</strong></td>
+<td>Greenfield 应用程序/仪表板</td>
+<td>平静的表面层次，强烈的排版和间距，很少的颜色，密集但可读，最少的镀铬。仅当卡<em>是</em>交互时才卡。文案：实用，而非营销。</td>
+</tr>
+<tr>
+<td><strong>C：组件和功能</strong></td>
+<td>现有应用程序（默认）</td>
+<td>匹配现有的视觉语言。继承间距、半径、颜色标记、版式。关注交互质量（清晰的状态、平滑的过渡、明显的可供性）。不要从一个组件引入新的设计系统。</td>
+</tr>
+</tbody></table>
+<p>在现有应用程序中工作时，无论功能如何，都默认使用模块 C。重点不是要脱颖而出，而是要融入其中。</p>
+<h3>5.默认对抗（可覆盖）与始终避免（质量底线）</h3>
+<p>该技能将意见与质量缺陷区分开来：</p>
+<p><strong>默认反对（可覆盖）：</strong></p>
+<ul>
+<li>通用 SaaS 卡片网格作为第一印象</li>
+<li>白底紫色，暗模式偏差</li>
+<li>未开发环境中过度使用的字体（Inter、Roboto、Arial、Space Grotesk、系统默认值）</li>
+<li>英雄部分充斥着统计数据/药丸/徽标</li>
+<li>没有叙事目的的轮播</li>
+<li>多种相互竞争的强调色</li>
+<li>装饰渐变代表真实的视觉内容</li>
+<li>文案听起来像设计评论（“体验无缝集成”）</li>
+<li>分屏英雄，在图像繁忙的一侧带有文字</li>
+</ul>
+<p><strong>始终避免（优质地板）：</strong></p>
+<ul>
+<li>提示语言或人工智能评论泄漏到用户界面中</li>
+<li>对比度不高——图像或背景上的文字无法辨认</li>
+<li>没有可见焦点状态的交互元素</li>
+<li>当存在正确的 HTML 元素时，语义 div 汤</li>
+</ul>
+<p>用户可以覆盖第一个列表。第二个清单是不可协商的——这些都是用户不希望出现的质量问题。</p>
+<h3>6. 目视验证前的石蕊检查</h3>
+<p>在启动视觉验证之前，该技能会要求自己进行快速的自我审查：</p>
+<ul>
+<li>品牌或产品在第一个屏幕上是否清晰可见？</li>
+<li>有没有一个强大的视觉锚点？</li>
+<li>仅扫描标题就能看懂页面吗？</li>
+<li>每个部门都有一份工作吗？</li>
+<li>在使用卡的地方真的有必要吗？</li>
+<li>运动是否改善了层次或氛围，或者只是存在？</li>
+<li>如果所有装饰性阴影都被移除，设计会不会感觉很高级？</li>
+<li>文案听起来是否像产品，而不是提示？</li>
+</ul>
+<p>这些是针对未通过基本易读性和意图测试的运输工作的大门。</p>
+<h3>7. 使用工具偏好级联进行视觉验证</h3>
+<p>实施后，该技能会进行视觉验证——健全性检查，而不是像素完美的审查。工具偏好：</p>
+<ol>
+<li><strong>现有项目浏览器工具</strong> - Playwright、Puppeteer、Cypress 已在 deps 中；使用它</li>
+<li><strong>浏览器 MCP 工具</strong> — 如果可用</li>
+<li><strong><code>agent-browser</code> CLI</strong> — 后备；如果未安装，则显示“运行 <code>/ce-setup</code>”</li>
+<li><strong>心理审查</strong> - 当无法通过浏览器访问时，应用试金石检查作为自我审查，并注意跳过视觉验证</li>
+</ol>
+<p>一次迭代。截取屏幕截图，根据试金石进行评估，修复明显的问题，然后继续。对于多轮迭代细化，<code>ce-design-iterator</code> 代理可以处理该问题。</p>
+<h3>8. 创造力——大胆的方向而非公式</h3>
+<p>对于未开发的工作，该技能明确鼓励致力于大胆的美学方向。可能的色调：极简主义、极简主义、复古未来主义、有机/自然、奢华/精致、俏皮、社论、野兽派、装饰艺术、柔和/柔和、工业——或者发明一些东西。重点不是要变得奇怪；而是要变得奇怪。这是为了避免产生无差别人工智能输出的公式。</p>
+<blockquote>
+<p>将实施复杂性与审美愿景相匹配。极繁主义设计需要带有大量动画的复杂代码。极简主义设计需要克制、精确，并仔细注意间距、排版和微妙的细节。</p>
+</blockquote>
+<hr>
+<h2>简单示例</h2>
+<p>您正在为新产品构建登陆页面，没有现有的存储库约定。您调用 <code>/ce-frontend-design &quot;build a landing page for a notion-style note-taking app&quot;</code>。</p>
+<p>第 0 层：扫描空仓库。格林菲尔德。没有现有的系统可以屈服；完整的指导适用。</p>
+<p>第1层：写三个语句：</p>
+<ul>
+<li><strong>视觉论文</strong>：“安静，深思熟虑，几乎像纸一样 - 温暖的奶油色背景，深墨黑色，衬线标题，柔和的淡入过渡。材质：纸，而不是玻璃。”</li>
+<li><strong>内容策划</strong>：英雄产品名称+一句承诺+软视觉；一项功能深入探讨；来自用户的一句话；最终号召性用语</li>
+<li><strong>交互计划</strong>：英雄文本加载时交错淡入、各部分之间的柔和视差、CTA 按钮上的悬停抬起</li>
+</ul>
+<p>您确认或重定向。一旦获得批准，技能就会建立。模式的模块 A（登陆和营销）。选择衬线显示字体（不是 Inter），使用受限调色板（奶油色、墨水、一种口音），使英雄保持单一构图。</p>
+<p>实施后，该技能将通过石蕊检查，然后使用 <code>agent-browser</code> 进行目视验证。屏幕截图看起来连贯。英雄支持文案中的一句话读起来就像提示语言（“体验毫不费力的思想捕捉”）——违反质量底线。修复了“一款不会妨碍您的笔记应用程序”。重新截图。完毕。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-frontend-design</code>：</p>
+<ul>
+<li>您正在构建登陆页面、应用程序、仪表板或组件，并希望结果看起来与众不同（不是 AI 通用的）</li>
+<li>您想要现有的设计系统检测 - 屈服于现有的，仅对差距应用默认值</li>
+<li>你想要一个结构化的视觉论文优先计划，而不是深入代码</li>
+<li>您需要石蕊检查和目视验证步骤</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-frontend-design</code>：</p>
+<ul>
+<li>工作是非前端的（API、后端、脚本）——范围错误</li>
+<li>您有固定的 Figma 规范并想要精确翻译 — <code>ce-design-iterator</code> 或设计同步代理更适合</li>
+<li>改变是机械性的（文案中的拼写错误、单行 CSS 调整）——矫枉过正</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-frontend-design</code> 通常在前端工作开始时直接调用，但与以下内容互锁：</p>
+<ul>
+<li><strong><code>/ce-work</code> 第 2 阶段</strong> — 实现前端功能时，此技能提供设计通道</li>
+<li><strong><code>/ce-polish</code></strong> — 用于功能发挥作用后的后期用户体验细化；互补而非替代</li>
+<li><strong><code>ce-design-iterator</code> 代理</strong> — 用于超越单次视觉验证过程的多轮迭代细化</li>
+<li><strong><code>ce-design-implementation-reviewer</code> 代理</strong> — 用于根据 Figma 设计验证 UI</li>
+</ul>
+<p>技能的输出是前端代码；下游技能处理提交、公关、润色和审查。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>直接调用：</p>
+<ul>
+<li><strong>绿地着陆</strong> — <code>/ce-frontend-design &quot;build a landing page for X&quot;</code></li>
+<li><strong>应用程序/仪表板</strong> — <code>/ce-frontend-design &quot;build a settings dashboard&quot;</code></li>
+<li><strong>组件</strong> — <code>/ce-frontend-design &quot;build a NotificationToggle component&quot;</code></li>
+<li><strong>修改</strong> — <code>/ce-frontend-design &quot;redesign the pricing page&quot;</code>（现有应用程序；自动检测）</li>
+</ul>
+<p>该技能会自动检测上下文。预构建规划（第 1 层）是用户在代码提交到某个方向之前重定向的检查点。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>目的</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>上下文检测——扫描设计信号；分类为现有/部分/新建/不明确</td>
+</tr>
+<tr>
+<td>1</td>
+<td>预建规划——视觉主题、内容计划、交互计划；用户重定向检查点</td>
+</tr>
+<tr>
+<td>2</td>
+<td>设计指导核心——排版、颜色、构图、动作、可访问性、图像默认值</td>
+</tr>
+<tr>
+<td>模块</td>
+<td>A（登陆）、B（应用程序/仪表板）、C（现有应用程序中的组件 - 现有应用程序工作的默认值）</td>
+</tr>
+<tr>
+<td>验证</td>
+<td>Litmus 检查 → 使用浏览器级联工具进行视觉验证</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么它会屈服于现有的设计系统？</strong>
+因为现有的系统是经过深思熟虑的选择，并且匹配它会产生适合的作品——比破坏一致性的最美丽的绿地设计更好。该技能的意见是为了新领域或填补空白，而不是为了推翻既定模式。</p>
+<p><strong>为什么要三个预构建语句？</strong>
+因为在编写代码之前*发现错误的方向比编写代码之后要便宜得多。三个陈述（论文、内容、互动）都很短——2 分钟内写完，几秒钟内即可重定向。跳过它们就是人工智能最终交付通用模板的方式。</p>
+<p><strong>为什么“默认反对”与“总是避免”？</strong>
+用户可以覆盖的默认值（白底紫色不是质量错误，只是技能在新手中抵抗的默认值）。始终避免的是质量地板（破坏对比度是一个错误，没有用户想要它）。这种分割使用户覆盖干净：用户可以要求白底紫色，但不能要求破坏对比度。</p>
+<p><strong>Figma 像素完美的作品怎么样？</strong>
+范围不同。该技能旨在实现具有自我验证功能的独特、生产级设计。对于像素完美的 Figma 匹配，<code>ce-design-implementation-reviewer</code> 代理或 <code>ce-figma-design-sync</code> 代理是正确的工具。</p>
+<p><strong>我可以进行多轮迭代吗？</strong>
+该技能可以通过一次视觉验证。对于多轮细化，<code>ce-design-iterator</code> 代理负责处理 — <code>/ce-frontend-design</code> 提供基础，迭代器进行完善。</p>
+<p><strong>如果项目有 1-3 个设计信号（部分）怎么办？</strong>
+遵循现有的事物；仅对未检测到约定的区域应用技能默认值。例如，Tailwind 已配置（遵循间距/颜色），但不存在组件库 - 应用技能组件结构指南。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a> — 在前端实现期间调用此技能</li>
+<li><a href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a> — 功能发挥作用后的后期用户体验细化</li>
+<li><a href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a> — 验证设计通过后的实现工作</li>
+<li><a href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a> — 捕获 PR 描述的视觉证据</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

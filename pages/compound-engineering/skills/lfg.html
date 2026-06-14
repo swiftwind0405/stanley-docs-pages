@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>/lfg · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /lfg</nav>
+    <header class="page-header">
+      <h1>/lfg</h1>
+      <div class="page-meta">
+        <span class="source-tag">运行时 SKILL 参考（无独立用户文档页）</span>
+        <span>plugins/compound-engineering/skills/lfg/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><p>重要：您必须按顺序执行以下每个步骤。不要跳过任何必需的步骤。不要跳到编码或实现。计划阶段（步骤 1）必须在任何工作开始之前完成并验证。违反此顺序会产生不良输出。</p>
+<p>调用下面引用的任何技能时，请根据主机平台提供的可用技能列表解析其名称，并使用该确切条目。某些平台在插件命名空间下列出技能（例如 <code>compound-engineering:ce-plan</code>）；其他人列出了裸名。调用不在列表中的简短猜测将会失败 - 在调用技能/任务工具之前始终逐字匹配列出的条目。</p>
+<ol>
+<li>使用 <code>$ARGUMENTS</code> 调用 <code>ce-plan</code> 技能。</li>
+</ol>
+<p>门：停止。如果 ce-plan 报告该任务是非软件任务，无法在管道模式下处理，请停止管道并通知用户 LFG 需要软件任务。否则，验证 <code>ce-plan</code> 工作流是否在 <code>docs/plans/</code> 中生成了计划文件。如果未创建计划文件，请使用 <code>$ARGUMENTS</code> 再次调用 <code>ce-plan</code>。在书面计划出现之前，请勿继续执行步骤 2。 <strong>记录计划文件路径</strong> — 它将在步骤 3 中传递给 ce-code-review。</p>
+<ol start="2">
+<li>调用<code>ce-work</code> 技能。</li>
+</ol>
+<p>门：停止。验证实施工作是否已执行 - 文件的创建或修改超出了计划。如果未更改代码，请勿继续执行步骤 3。</p>
+<ol start="3">
+<li>使用 <code>mode:agent plan:&lt;plan-path-from-step-1&gt;</code> 调用 <code>ce-code-review</code> 技能。</li>
+</ol>
+<p>传递步骤 1 中的计划文件路径，以便 ce-code-review 可以验证需求完整性。阅读该技能发出的<strong>可行的发现</strong>摘要。</p>
+<ol start="4">
+<li><strong>应用并保留审核修复</strong>（在步骤 3 之后、剩余移交之前需要）</li>
+</ol>
+<p>加载 <code>references/review-followup.md</code> 并在那里执行步骤 4（存在更改时机械应用 + 提交/推送）。当合格的审核修复仅保留在未提交的工作树中时，请勿继续执行步骤 5、运行浏览器测试或输出 DONE。</p>
+<ol start="5">
+<li><strong>自主剩余切换</strong>（仅当步骤 3 报告步骤 4 中未应用的一项或多项可操作 <code>downstream-resolver</code> 结果时；在报告 <code>Actionable findings: none.</code> 时跳过）</li>
+</ol>
+<p>不提示用户。这一步包含了自动驾驶合约：残差必须在 DONE 之前变得持久，但代理永远不会停止询问。</p>
+<ol>
+<li>在<strong>非交互模式</strong>加载<code>references/tracker-defer.md</code>。传递步骤 3/4 中剩余的可操作结果（或摘要被截断时的运行工件）。<ol start="2">
+<li>收取结构化回报：<code>{ filed: [...], failed: [...], no_sink: [...] }</code>。</li>
+<li>从结构化返回中编写 <code>## Residual Review Findings</code> markdown 部分：<ul>
+<li>对于 <code>filed</code> 中的每一项：包含严重性、文件：行、标题以及跟踪票证 URL 的链接的项目符号。</li>
+<li>对于 <code>failed</code> 中的每一项：包含严重性、文件：行、标题和失败原因的项目符号（例如 <code>Defer failed: gh returned 401 — tracker unavailable</code>）。</li>
+<li>对于 <code>no_sink</code> 中的每一项：逐字内嵌严重性、文件：行和标题的项目符号，以便 PR 正文或后备文件是持久记录。
+4、检测当前分支的开放PR，不提示：</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<pre><code class="language-bash">      gh pr view --json number,url,body,state
+      ```
+
+5. 如果存在开放的 PR，则直接使用 `gh` 更新；不要加载任何确认驱动的 PR 更新技能。附加或替换当前 PR 正文中的 `## Residual Review Findings` 部分，将新正文写入操作系统临时文件，然后运行：
+
+```bash
+      gh pr edit PR_NUMBER --body-file BODY_FILE
+      ```
+
+6. 如果不存在打开的 PR，请在 `docs/residual-review-findings/&lt;branch-or-head-sha&gt;.md` 处创建一个跟踪后备文件，其中包含组合部分和源 PR 审查运行上下文。仅暂存该文件，使用 `docs(review): record residual review findings` 提交它，然后推送当前分支。如果存在上游，则运行 `git push`。如果不存在上游，则动态解析可写远程：首选 `origin`（如果存在），否则使用 `git remote` 并选择第一个配置的远程。然后运行 ​​`git push --set-upstream &lt;remote&gt; HEAD`。这是耐用的无 PR 水槽。在更新现有 PR 正文或推送此回退文件提交之前，不要输出 DONE。如果两条路径都失败，则停止并报告失败的命令；不要默默地继续。
+
+一旦残差被持久记录，切勿因跟踪器归档失败而阻止 DONE。仅当结果出现在 PR 正文或推送的后备文件中时，`no_sink` 结果才是成功。
+
+6. 使用 `mode:pipeline` 调用 `ce-test-browser` 技能。
+
+7. 调用 `ce-commit-push-pr` 技能。
+
+这将提交所有剩余的更改、推送分支并打开拉取请求。如果步骤 5 已打开 PR（使用 `gh pr view --json number,url,state 2&gt;/dev/null` 检查），请跳过 PR 创建，但仍提交并推送任何未提交的更改。
+
+8. **CI 监视和自动修复循环**（仅当当前分支存在开放 PR 时）
+
+检测PR；如果不存在或 `gh` 不可用，则完全跳过此步骤并继续步骤 9。
+
+```bash
+   gh pr view --json number,url,state
+</code></pre>
+<p>对于最多 <strong>3 次修复迭代</strong>，请重复：</p>
+<p>1.等待CI完成：</p>
+<pre><code class="language-bash">      gh pr checks --watch
+      ```
+
+如果命令退出 0，则所有检查都通过。跳出循环并继续执行步骤 9。
+
+如果它以非零值退出，则一项或多项检查失败。继续(2)。
+
+2. 识别失败的检查并提取其失败日志。使用 `gh pr checks --json name,state,conclusion,workflow,link` 枚举失败，然后针对每个失败检查读取运行日志：
+
+```bash
+      gh run view &lt;run-id&gt; --log-failed
+      ```
+
+其中 `&lt;run-id&gt;` 是从检查的详细信息 URL 或工作流程运行中解析的。
+
+3. 阅读故障日志，确定根本原因，并在工作树中应用修复。不要削弱、跳过或嘲笑失败的断言以使其通过——修复实际问题。如果失败是一个没有修复路径的片状测试，请将其记录为下面的剩余结果，而不是在不更改代码的情况下重试。
+
+4. 仅暂存您更改、提交和推送的文件：
+
+```bash
+      git add &lt;changed-files&gt;
+      git commit -m &quot;fix(ci): &lt;one-line summary of the failure repaired&gt;&quot;
+      git push
+      ```
+
+5. 使用下一次尝试计数器返回迭代 (1)。
+
+GATE：尝试 3 次失败后停止迭代。如果 3 个修复周期后 CI 仍然为红色：
+
+- 编写 `## CI Failures Unresolved` markdown 部分，列出每个剩余的失败检查、失败摘要和运行/检查 URL。
+   - 在 PR 正文中附加或替换此部分，将新正文写入操作系统临时文件，然后运行：
+
+```bash
+     gh pr edit PR_NUMBER --body-file BODY_FILE
+     ```
+
+- 不要继续循环。自动驾驶合约是“让残差持久，然后退出”。继续执行步骤 9。
+
+9. 完成后输出 `&lt;promise&gt;DONE&lt;/promise&gt;`
+
+现在从步骤 1 开始。请记住：先计划，然后工作。永远不要跳过计划。
+</code></pre>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

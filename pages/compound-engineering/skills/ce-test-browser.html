@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-test-browser · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-test-browser</nav>
+    <header class="page-header">
+      <h1>/ce-test-browser</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-test-browser.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-test-browser</code></h1>
+<blockquote>
+<p>在受当前 PR 或分支影响的页面上运行端到端浏览器测试 — 专门使用 <code>agent-browser</code>。</p>
+</blockquote>
+<p><code>ce-test-browser</code> 是<strong>端到端浏览器测试</strong>技能。它将更改的文件映射到可测试的路由，启动（或验证）开发服务器，通过 <code>agent-browser</code> 导航到每个受影响的页面，捕获快照和屏幕截图，执行关键交互，暂停对需要外部交互（OAuth、电子邮件、支付、短信）的流程进行人工验证，并生成结构化测试摘要。 Headed 模式让您可以观看测试运行； headless 速度更快并且在后台运行。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>将更改的文件映射到路线，通过代理浏览器导航每个文件，捕获快照和屏幕截图，要求对外部流程步骤进行人工验证</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>UI 更改后、打开 PR 之前、验证分支或 PR 上的页面行为时</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>每页状态表、控制台错误、人工验证确认、屏幕截图、总体结果（通过/失败/部分）</td>
+</tr>
+<tr>
+<td>模式</td>
+<td>手动（默认；用户控制服务器）、管道（<code>mode:pipeline</code> — 自动启动服务器，扫描空闲端口）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>端对端浏览器测试分散在不同的工具中并且很容易被跳过：</p>
+<ul>
+<li><strong>错误的浏览器工具</strong> — Playwright、Puppeteer、MCP Chrome、IDE 内置；每个的工作方式都不同</li>
+<li><strong>手动测试映射</strong> - 弄清楚“此 PR 影响了哪些路由”是它自己的任务</li>
+<li><strong>服务器编排</strong> - 测试失败，因为开发服务器未运行、端口错误或状态过时</li>
+<li><strong>控制台错误悄然溜过</strong> - 页面呈现良好，但 JS 错误堆积起来却未被注意到</li>
+<li><strong>跳过外部流程</strong> — OAuth、支付、电子邮件发送需要人工；如果没有结构化的停顿，它们就会被标记为“通过”而无需实际检查</li>
+<li><strong>没有工件</strong> - 屏幕截图最终出现在开发人员的文件系统中，而不是 PR 描述中</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-test-browser</code> 作为结构化流程运行端到端测试：</p>
+<ul>
+<li><strong><code>agent-browser</code> 独有</strong> — 一种工具，可预测的行为；永远不会退回到 Chrome MCP 或特定于 IDE 的浏览器工具</li>
+<li><strong>文件到路由映射</strong> 将更改的文件转换为需要测试的 URL</li>
+<li><strong>服务器编排</strong> — 手动模式需要用户启动服务器；管道模式自动启动并扫描空闲端口</li>
+<li><strong>每页测试循环</strong> — 导航、快照、验证元素、执行关键交互、捕获屏幕截图</li>
+<li><strong>人工验证步骤</strong>，适用于需要外部交互的流程</li>
+<li><strong>故障处理询问如何继续</strong> - 立即修复（调试+重新测试）或跳过（继续）</li>
+<li><strong>结构化测试摘要</strong>适合 PR 描述</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. <code>agent-browser</code> 独占</h3>
+<p>该技能强制执行单一浏览器自动化基础：<strong><code>agent-browser</code> CLI</strong>。不是 Chrome MCP，不是 IDE 内置程序，不是替代浏览器控制工具。具体原因：</p>
+<ul>
+<li>可预测的行为——一种工具的怪癖，而不是三种</li>
+<li>相同的命令在有头和无头模式下工作</li>
+<li>所有测试均采用相同的快照/点击/屏幕截图模式</li>
+<li>特定于平台的提示（例如，“在 Claude 代码中，不要使用 <code>mcp__claude-in-chrome__*</code>”）是明确的</li>
+</ul>
+<p>当未安装 <code>agent-browser</code> 时，技能会以 <code>/ce-setup</code> 作为安装路径停止 - 它不会尝试回退。</p>
+<h3>2. 文件到路由映射表</h3>
+<p>将更改的文件映射到需要测试的 URL 是一项重复性任务。该技能带有明确的映射表：</p>
+<table>
+<thead>
+<tr>
+<th>文件图案</th>
+<th>路线</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>app/views/users/*</code></td>
+<td><code>app/views/users/*</code> <code>/users</code>、<code>/users/:id</code>、<code>/users/new</code></td>
+</tr>
+<tr>
+<td><code>app/controllers/settings_controller.rb</code></td>
+<td><code>/settings</code></td>
+</tr>
+<tr>
+<td><code>app/javascript/controllers/*_controller.js</code></td>
+<td>使用 Stimulus 控制器的页面</td>
+</tr>
+<tr>
+<td><code>app/components/*_component.rb</code></td>
+<td>渲染该组件的页面</td>
+</tr>
+<tr>
+<td><code>app/views/layouts/*</code></td>
+<td>所有页面（至少测试主页）</td>
+</tr>
+<tr>
+<td><code>app/assets/stylesheets/*</code></td>
+<td>关键页面上的视觉回归</td>
+</tr>
+<tr>
+<td><code>src/app/*</code> <em>(Next.js)</em></td>
+<td>对应路线</td>
+</tr>
+<tr>
+<td><code>src/components/*</code></td>
+<td>使用这些组件的页面</td>
+</tr>
+</tbody></table>
+<p>这是一个起点，并非详尽无遗——该技能对特定于项目的布局进行判断。</p>
+<h3>3. 两种模式——手动（默认）和管道</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>服务器</th>
+<th>港口</th>
+<th>浏览器默认</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>手动</strong> <em>（默认）</em></td>
+<td>用户启动</td>
+<td>按原样使用首选端口；用户控制</td>
+<td>询问：有头还是无头</td>
+</tr>
+<tr>
+<td><strong>管道</strong> <em>(<code>mode:pipeline</code>)</em></td>
+<td>在后台自动启动</td>
+<td>扫描空闲端口；永远不要认为 3000 是免费的</td>
+<td>默认为无头</td>
+</tr>
+</tbody></table>
+<p>管道模式适用于 LFG 和其他自动运行程序，其中多个代理可能位于同一台机器上，并且可能需要 3000 个代理。</p>
+<h3>4.端口检测级联</h3>
+<p>首选端口来自优先级列表：</p>
+<ol>
+<li>显式参数 (<code>--port 5000</code>)</li>
+<li>项目说明（<code>AGENTS.md</code>、<code>CLAUDE.md</code>）</li>
+<li><code>package.json</code>（开发/启动脚本）
+4.环境文件（<code>.env</code>、<code>.env.local</code>、<code>.env.development</code>）
+5.默认<code>3000</code></li>
+</ol>
+<p>在管道模式下，该技能会验证端口是否确实空闲，如果不空闲则向上扫描。在手动模式下，它按原样使用首选端口 - 用户控制自己的服务器。</p>
+<h3>5. 有头与无头的选择</h3>
+<p>在手动模式下，该技能会询问是否运行 <strong>headed</strong> （可见浏览器，观察测试运行）或 <strong>headless</strong> （更快，在后台运行）。当您迭代棘手的交互并需要查看发生了什么时，头显模式非常有用。无头的日常清扫速度更快。</p>
+<h3>6. 外部流量的人工验证</h3>
+<p>有些流程无法自动化：</p>
+<table>
+<thead>
+<tr>
+<th>流量</th>
+<th>人工验证的要求是什么？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OAuth</td>
+<td>“请使用 [provider] 登录并确认其有效”</td>
+</tr>
+<tr>
+<td>电子邮件</td>
+<td>“检查您的收件箱中是否有测试电子邮件并确认收到”</td>
+</tr>
+<tr>
+<td>付款</td>
+<td>“在沙盒模式下完成测试购买”</td>
+</tr>
+<tr>
+<td>短信</td>
+<td>“验证您收到短信代码”</td>
+</tr>
+<tr>
+<td>外部 API</td>
+<td>“确认[服务]集成正在运行”</td>
+</tr>
+</tbody></table>
+<p>该技能会因阻塞问题而暂停，用户执行该操作，然后回答是（继续）或否（描述问题）。外部流变得明确，而不是默默地跳过。</p>
+<h3>7. 故障处理 — 立即修复或跳过</h3>
+<p>当路线失败（控制台错误、缺少元素、交互中断）时，该技能会捕获错误状态（屏幕截图+重现步骤）并询问：立即修复（调试、建议修复、重新测试）或跳过（继续测试其他页面）。任一路径均有效；选择是明确的。</p>
+<h3>8.结构化测试总结</h3>
+<p>测试完所有路由后，会出现一个 markdown 摘要：</p>
+<ul>
+<li>测试范围（PR/分支）</li>
+<li>服务器网址</li>
+<li>每条路线的状态表（通过/失败/跳过带注释）</li>
+<li>发现控制台错误</li>
+<li>人工验证已完成</li>
+<li>失败（路线+问题描述）</li>
+<li>总体结果（通过/失败/部分）</li>
+</ul>
+<p>适合粘贴到 PR 描述中作为测试证据。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您完成了通知设置页面和布局更改。您调用 <code>/ce-test-browser</code>。</p>
+<p>该技能验证 <code>agent-browser</code> 是否已安装。询问是有头跑还是无头跑——你选择有头跑（你想看）。从 <code>git diff --name-only main...HEAD</code> 确定测试范围：<code>app/views/layouts/application.html.erb</code>、<code>app/views/settings/notifications.html.erb</code>、<code>app/javascript/controllers/notification_toggle_controller.js</code>。</p>
+<p>映射到路由：<code>/</code>（布局更改影响每个页面；测试主页）、<code>/settings/notifications</code>（新页面）以及呈现切换控制器的其他页面。从 <code>bin/dev</code> 配置检测端口 3000；验证用户的开发服务器正在该端口上运行。</p>
+<p>测试每个路由：使用 <code>agent-browser open</code> 打开，为交互元素列表调用 <code>agent-browser snapshot -i</code>，验证呈现的主要内容。截取屏幕截图。练习 <code>/settings/notifications</code> (<code>agent-browser click @e3</code>) 上的切换。</p>
+<p>设置流程包括此应用程序中的 OAuth 登录步骤 - 当测试到达受保护的路线时，技能会暂停以进行人工验证：“请使用 Google 登录并确认重定向正常。”您可以在可见的浏览器上执行此操作；回答是。</p>
+<p>所有路线都经过。摘要表面：测试了 4 条路线，控制台错误 0 次，确认了 1 次人工验证，总体通过。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-test-browser</code>：</p>
+<ul>
+<li>您更改了视图、组件、控制器、布局或样式表，并希望验证页面是否仍然有效</li>
+<li>您想在打开 PR 之前练习实际的 UI</li>
+<li>更改涉及 OAuth、支付或其他需要人机交互验证的外部流程</li>
+<li>您需要 PR 描述的测试证据（每页状态 + 屏幕截图）</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-test-browser</code>：</p>
+<ul>
+<li>更改仅限后端（没有可观察到的浏览器可见行为）</li>
+<li><code>agent-browser</code> 未安装 → 首先运行 <code>/ce-setup</code></li>
+<li>您需要单元/集成测试，而不是 E2E → 使用项目的测试运行程序</li>
+<li>开发服务器无法在本地启动（仅限云设置）→ 使用不同的测试方法</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-test-browser</code> 在链的验证端调用：</p>
+<ul>
+<li><strong><code>/ce-code-review</code> 第 2 层</strong> — 对于影响浏览器的 PR，除了静态审查之外，还可以生成此技能来验证行为</li>
+<li><strong><code>/ce-work</code> 第 3 阶段</strong> — 适合在为 UI 密集型工作打开 PR 之前；测试摘要成为 PR 描述验证叙述的一部分</li>
+</ul>
+<p><code>ce-code-review</code> 的 <code>mode:report-only</code> 是唯一可以在同一检查中与此技能同时安全运行的审核模式 - 其他模式会发生变化，这会干扰正在运行的开发服务器的状态。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能直接起作用：</p>
+<ul>
+<li><strong>当前分支</strong> — <code>/ce-test-browser</code></li>
+<li><strong>具体 PR</strong> — <code>/ce-test-browser 847</code></li>
+<li><strong>特定分支</strong> — <code>/ce-test-browser feature/new-dashboard</code></li>
+<li><strong>自定义端口</strong> — <code>/ce-test-browser --port 5000</code></li>
+<li><strong>管道模式</strong> — <code>/ce-test-browser mode:pipeline</code>（自动启动服务器，扫描空闲端口）</li>
+</ul>
+<p>当开发服务器未在手动模式下运行时，该技能会通知用户正确的启动命令并停止。在管道模式下，技能通过 <code>bin/dev</code>、<code>bin/rails server</code> 或 <code>npm run dev</code> （以项目使用的为准）自动启动。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>测试当前分支的更改</td>
+</tr>
+<tr>
+<td><code>&lt;PR number&gt;</code></td>
+<td><code>&lt;PR number&gt;</code>测试 PR 受影响的路由</td>
+</tr>
+<tr>
+<td><code>&lt;branch name&gt;</code></td>
+<td>测试该分支的受影响路由</td>
+</tr>
+<tr>
+<td><code>current</code></td>
+<td>测试当前分支（显式）</td>
+</tr>
+<tr>
+<td><code>--port &lt;number&gt;</code></td>
+<td>覆盖端口检测</td>
+</tr>
+<tr>
+<td><code>mode:pipeline</code></td>
+<td>自动启动服务器，扫描空闲端口，默认无头</td>
+</tr>
+</tbody></table>
+<p>必需：已安装 <code>agent-browser</code> CLI（如果缺少，请运行 <code>/ce-setup</code>）。本地开发服务器正在运行（手动模式）或可用启动命令（管道模式）。</p>
+<p>技能使用的键 <code>agent-browser</code> 命令：<code>open &lt;url&gt;</code>、<code>snapshot -i</code>（引用为 <code>@e1</code>、<code>@e2</code> 的交互式元素）、<code>click @ref</code>、<code>fill @ref &quot;text&quot;</code>、可见浏览器的 <code>screenshot out.png</code>、<code>screenshot --full</code>、<code>--headed</code> 标志。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么专门使用<code>agent-browser</code>？</strong>
+跨平台和模式的可预测行为。回退到 Chrome MCP 或 IDE 内置意味着三种工具的怪癖而不是一种。技巧很明确：不要在 Claude 代码中使用 <code>mcp__claude-in-chrome__*</code> ；不要替换 Codex 中不相关的浏览工具。</p>
+<p><strong>有头还是无头？</strong>
+当您迭代棘手的交互并需要查看发生了什么时，请前往。当您需要快速进行例行清扫时，无需使用 Headless。手动模式询问；管道模式默认为无头。</p>
+<p><strong>管道模式有何不同？</strong>
+管道模式适用于自动运行程序（LFG，同一台机器上的多代理），可能需要 3000 个。它从首选端口开始扫描空闲端口，在后台自动启动开发服务器，默认为无头，并跳过有头/无头问题。</p>
+<p><strong>如果我的项目布局与文件路由表不匹配怎么办？</strong>
+映射表是一个起点。该技能对特定于项目的布局进行判断。您还可以通过调整测试范围检测来直接测试特定路由 - 例如，通过传递分支名称来检查已知受影响的路由。</p>
+<p><strong>如果开发服务器没有运行怎么办？</strong>
+手动模式会通知您正确的启动命令和停止。管道模式通过 <code>bin/dev</code>、<code>bin/rails server</code> 或 <code>npm run dev</code>（项目检测）自动启动它，并等待最多 30 秒以让服务器启动。</p>
+<p><strong>它可以与 <code>ce-code-review</code> 并发运行吗？</strong>
+仅当代码审查使用 <code>mode:report-only</code> （只读）时。其他审查模式会改变结帐，这会破坏正在运行的开发服务器的状态。将浏览器测试与只读审查配对，或在隔离的工作树中单独运行代码审查。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>ce-code-review</code></a> — 可以为影响浏览器的 PR 生成此技能（使用 <code>mode:report-only</code> 在同一结账上并发运行）</li>
+<li><a href="/compound-engineering/skills/ce-test-xcode.html"><code>ce-test-xcode</code></a> — iOS 模拟器测试的同级技能</li>
+<li><a href="/compound-engineering/skills/ce-demo-reel.html"><code>ce-demo-reel</code></a> — 捕获 PR 描述的视觉证据；测试总结的补充</li>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 可以在第 3 阶段验证期间调用此技能的编排器</li>
+<li><a href="/compound-engineering/skills/ce-setup.html"><code>ce-setup</code></a> — 安装 <code>agent-browser</code> 和其他依赖项</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

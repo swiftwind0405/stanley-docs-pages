@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-product-pulse · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-product-pulse</nav>
+    <header class="page-header">
+      <h1>/ce-product-pulse</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-product-pulse.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-product-pulse</code></h1>
+<blockquote>
+<p>生成有关用户体验和产品性能的时间窗口脉冲报告 - 使用情况、质量、错误、值得调查的信号。每次一页。</p>
+</blockquote>
+<p><code>ce-product-pulse</code> 是<strong>观察循环</strong>技能。它查询给定时间窗口（24 小时、7 天、1 小时等）的产品数据源，并生成涵盖使用情况、性能、错误和后续情况的单页报告。该报告将用户体验的可浏览时间线保存到 <code>docs/pulse-reports/</code> 中——团队对产品在世界上实际表现的工作记忆。</p>
+<p>复合工程构思链是<code>/ce-ideate → /ce-brainstorm → /ce-plan → /ce-work</code>。 <code>ce-product-pulse</code> <strong>关闭外环</strong> - 一旦功能发布，来自实际使用的脉冲表面信号会反馈到构思（“什么值得探索？”）和头脑风暴（“这需要是什么？”）。与作为上游锚点的 <code>ce-strategy</code> 和捕获学习的 <code>ce-compound</code> 相结合，该链成为一个反馈系统而不是单向管道。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>查询某个时间窗口的分析、跟踪、支付（以及可选的只读数据库）；生成单页报告</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>“运行脉搏”、每周回顾、发布日检查、“我们做得怎么样”、<code>/ce-product-pulse 7d</code></td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>保存到 <code>docs/pulse-reports/YYYY-MM-DD_HH-MM.md</code> 的报告；聊天要点浮出水面</td>
+</tr>
+<tr>
+<td>接下来是什么？ <code>/ce-ideate</code> 或 <code>/ce-brainstorm</code> 的表面后续行动；使用本机工具调查特定问题</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>大多数“我们怎么样？”报告会以可预见的方式失败：</p>
+<ul>
+<li><strong>仪表板蔓延</strong> — 6 个工具中的 40 个指标；没有人读其中的任何内容</li>
+<li><strong>阈值剧院</strong> — 基于与产品实际操作范围不匹配的猜测阈值的红/黄/绿颜色编码</li>
+<li><strong>因摄取滞后而陈旧</strong> — 最近 15 分钟的分析报告不足，所以“刚刚发生了什么？”答案是错误的</li>
+<li><strong>PII 渗入报告</strong> — 电子邮件、帐户 ID、消息内容最终出现在保存的文件和 Slack 线程中</li>
+<li><strong>变异副作用</strong> — 一种“报告生成”工具，会意外写入数据库或标记事件</li>
+<li><strong>无内存</strong> — 脉冲存在于聊天中，而不是存储在磁盘上；你无法比较上周和本周</li>
+<li><strong>无锚点</strong> — 脉冲衡量的是所检测到的内容，而不是策略所说的重要内容</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-product-pulse</code> 作为具有显式不变量的结构化观察通道运行：</p>
+<ul>
+<li><strong>单页输出</strong>（30-40行）——无序扩张是注意力的敌人</li>
+<li><strong>像创始人一样阅读</strong>——没有门槛，没有红/黄/绿；目前的数字，读者判断</li>
+<li><strong>15 分钟尾随缓冲区</strong> — 每个查询的上限是 <code>now - 15m</code> 以避免摄取滞后报告不足</li>
+<li><strong>保存的报告中没有 PII</strong> — 电子邮件、帐户 ID、消息内容不会出现在磁盘中</li>
+<li><strong>只读不变性</strong> — 每个数据源都以只读方式查询；如果配置了数据库，则连接必须是只读的（面试拒绝读写凭证）</li>
+<li><strong>策略种子</strong> — 当 <code>STRATEGY.md</code> 存在时，采访会读取它并从中播种指标；数据源设置连接连接以实际衡量策略所说的重要内容</li>
+<li><strong>通过保存的报告进行内存</strong> — 每次运行都会写入 <code>docs/pulse-reports/</code>，因此过去的脉冲是可浏览的时间线</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 单页限制 — 30-40 行，硬</h3>
+<p>该报告仅限于四个部分（标题、使用情况、系统性能、后续内容）和 30-40 行目标。薄的部分保持薄；部分不会被填充以填充空间。这种限制迫使报告揭示重要的内容，而不是可用的内容。</p>
+<h3>2.“像创始人一样阅读”——没有门槛</h3>
+<p>该技能从不给事物贴上“好”或“坏”的标签。它呈现数字并让读者做出判断。硬编码的阈值（例如，“p95 &gt; 500ms 是红色”）会造成戏剧效果——它们是阈值设置者的猜测，而不是有关产品的信号。创始人了解脉搏，知道他们的产品什么是正常的；技能尊重这一点。</p>
+<h3>3.战略种子面试</h3>
+<p>当 <code>STRATEGY.md</code> 存在时，首次运行设置会在提出问题之前读取它。它显示种子产品名称和关键指标列表，访谈连接数据源以实际衡量这些指标。结果是：脉冲报告了策略所说的重要内容，而不是巧合的工具。当不存在策略文档时，该技能会明确指出并从头开始运行设置。</p>
+<h3>4.只读不变量</h3>
+<p>该技能永远不会改变产品、数据库或任何外部系统。唯一的写入是附加到 <code>.compound-engineering/config.local.yaml</code> （gitignored，机器本地）和报告文件 (<code>docs/pulse-reports/...</code>) 的脉冲设置。 MCP 和其他数据源工具以只读方式调用；如果工具提供写入模式，则不会使用它们。</p>
+<p>特别是对于数据库访问，访谈<strong>拒绝</strong>读写凭据，并向用户指出替代方案（只读副本、BI 视图、快照导出）。数据库访问是可选的；许多产品仅通过分析+追踪来完成脉搏。</p>
+<h3>5. 15 分钟尾随缓冲区</h3>
+<p>许多分析和跟踪工具都存在摄取延迟 - 查询最多 <code>now</code> 会低估最新事件。每个查询窗口的上限是 <code>now - 15m</code>。对于 <code>24h</code> 窗口，技能查询 <code>[now - 24h - 15m, now - 15m]</code>。缓冲区对读者来说是不可见的，但消除了“为什么脉冲显示过去一小时内有零个事件？”的常见来源。困惑。</p>
+<h3>6. 保存的不含 PII 的报告</h3>
+<p>保存的报告仅包含计数分布和匿名注释，不包含用户电子邮件、帐户 ID 或消息内容。启用可选质量评分（AI 产品）时，低分会话会收到描述故障模式的简短匿名注释，而不是消息文本。这使得保存的报告可以安全地提交、共享或浏览，而无需担心隐私问题。</p>
+<h3>7.并行+串行查询调度</h3>
+<p>第 2.1 阶段并行调度分析、跟踪和支付查询（不同的工具，无共享负载），然后串行运行只读数据库查询（一次一个，有范围，无全表扫描）。这种分割可以防止生产数据库上的意外负载，同时仍然有效地使用可用的挂钟预算。</p>
+<h3>8. 智能指标推回</h3>
+<p>访谈将 SMART 条（具体、可衡量、可操作、相关、及时）应用于用户提出的每个指标、事件和信号。虚荣指标被推迟；模糊的指标变得更加清晰。结果是一个产生信号而不是噪音的配置。</p>
+<h3>9. 可选的质量评分和纪律</h3>
+<p>对于人工智能产品，可以选择对采样会话进行质量评分（在定义的维度上为 1-5）。纪律：正常会话默认为 4 或 5；保留 1-3 用于明确的故障模式（错误答案、用户陷入困境、错误出现）。如果全部得分为 3，则该标准太严格；如果全部都打5分，那就太松了。报告所载的是分数分布，而不是会话内容。</p>
+<h3>10. 通过保存的报告进行记忆</h3>
+<p>每个脉冲都会写入 <code>docs/pulse-reports/YYYY-MM-DD_HH-MM.md</code>（当地时间）。过去的脉冲是可重复的、可扩散的和一次性的——团队对产品表现的工作记忆。保存的报告文件夹被设计为工作内存，而不是数据仓库。在 100 份报告之后，时间线是一个真正的工件，您可以滚动浏览。</p>
+<hr>
+<h2>简单示例</h2>
+<p>现在是星期一早上。您想了解周末的情况。您运行<code>/ce-product-pulse 72h</code>。</p>
+<p>该技能检测到这是一个已配置的项目（<code>pulse_product_name</code> 在 <code>.compound-engineering/config.local.yaml</code> 中设置），因此它会跳过采访并直接进入第 2 阶段。它应用 15 分钟的尾随缓冲区：<code>[Friday 5:45pm — Monday 8:45am]</code>。</p>
+<p>阶段 2.1 并行调度：PostHog 查询（主要参与事件计数、价值实现、完成率）、Sentry 查询（按类别分类的错误计数、延迟 p50/p95/p99、主要错误签名）、Stripe 查询（新客户、流失、收入增量）。然后，只读数据库查询串行运行（按层的活动用户计数的小范围查询）。</p>
+<p>阶段 2.2 对 10 个会话进行质量评分采样（您的产品是 AI；已启用质量评分）。分布返回：7×5、2×4、1×2——其中一个会话出现了明显错误的答案。</p>
+<p>阶段 2.3 填充报告模板：标题（3 行）、使用部分（参与度、价值、完成度、质量样本）、系统性能（延迟、前 5 个错误及一行解释）、后续（质量失败的会话值得调查；一个错误模式每周都在攀升）。</p>
+<p>该报告写入 <code>docs/pulse-reports/2026-05-04_08-45.md</code>。聊天中显示头条新闻和热门后续内容。您看到后续内容，决定使用 <code>/ce-debug</code> 调查攀爬错误模式。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-product-pulse</code>：</p>
+<ul>
+<li>您想要用户在一段时间内（24 小时、7 天、发布后）体验的快照</li>
+<li>发射刚刚发生，您想要 1 小时或 4 小时检查早期信号</li>
+<li>团队每周进行一次“我们做得怎么样”回顾</li>
+<li>您希望在不盯着四个仪表板的情况下展示构思或调试的后续内容</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-product-pulse</code>：</p>
+<ul>
+<li>您正在对特定问题进行深入调查 → 使用本机工具（Sentry、PostHog 等）</li>
+<li>您需要实时警报 → 那是监控，而不是脉冲</li>
+<li>你想知道“发布了什么” → 那是 git log + PR 列表，而不是脉冲（脉冲是关于用户体验和系统性能，而不是变更日志内容）</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-product-pulse</code> 关闭外部反馈循环：</p>
+<pre><code class="language-text">                    /ce-strategy ──┐
+                                    ↓ (key metrics seed pulse)
+   ↗── /ce-product-pulse ──────────┐
+   │       (followups)             ↓ (signals feed into)
+   │                          /ce-ideate → /ce-brainstorm → /ce-plan → /ce-work
+   │                                                                      ↓
+   └──────────────────────────────────────────────────── shipped ─────────┘
+                       (the pulse measures what shipped, in production)
+</code></pre>
+<p>在已配置的项目中：</p>
+<ul>
+<li><code>STRATEGY.md</code>（来自 <code>/ce-strategy</code>）播种要测量的指标</li>
+<li><code>/ce-product-pulse</code> 生成报告并提出后续行动</li>
+<li>后续反馈到 <code>/ce-ideate</code> （值得探索的内容）、<code>/ce-debug</code> （有问题的内容）或 <code>/ce-brainstorm</code> （下一步要构建的内容）</li>
+</ul>
+<p>脉冲不会取代仪表板、跟踪或分析 - 它将它们整合到单页阅读中，以便团队可以将注意力集中在少数重要的事情上，而不是从四个来源重新得出“发生了什么”。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能通过回溯窗口直接调用：</p>
+<ul>
+<li><strong>默认 24 小时</strong> — <code>/ce-product-pulse</code></li>
+<li><strong>特定窗口</strong> — <code>/ce-product-pulse 7d</code>、<code>/ce-product-pulse 1h</code>（启动检查）、<code>/ce-product-pulse 30d</code></li>
+<li><strong>重新配置</strong> — <code>/ce-product-pulse setup</code>（或 <code>reconfigure</code>、<code>edit config</code>）重新运行采访</li>
+<li><strong>首次运行</strong> — 没有配置的 <code>/ce-product-pulse</code> 会触发设置采访，然后是脉冲</li>
+</ul>
+<hr>
+<h2>输出工件</h2>
+<pre><code class="language-text">docs/pulse-reports/YYYY-MM-DD_HH-MM.md  (local time)
+</code></pre>
+<p>四个部分（目标总共 30-40 行）：</p>
+<ul>
+<li><strong>标题</strong> — 2-3 行总结窗口</li>
+<li><strong>使用</strong> — 主要参与、价值实现、完成、质量样本分发（启用时）</li>
+<li><strong>系统性能</strong> — 延迟 (p50/p95/p99) 和排名前 5 的错误（按计数）并附有一行解释</li>
+<li><strong>后续行动</strong> — 1-5 件值得调查的事情</li>
+</ul>
+<p>过去的报告作为可浏览的时间线保留在文件夹中。该文件夹旨在进行 grep、diff 和偶尔的修剪，而不是进行管理。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>使用配置中的 <code>pulse_lookback_default</code> （或 <code>24h</code> 如果未设置）</td>
+</tr>
+<tr>
+<td><code>24h</code>、<code>48h</code>、<code>72h</code>、<code>7d</code>、<code>30d</code>、<code>1h</code></td>
+<td>追踪时间窗口</td>
+</tr>
+<tr>
+<td><code>setup</code> / <code>reconfigure</code> / <code>edit config</code></td>
+<td>无论配置状态如何，都重新运行采访</td>
+</tr>
+</tbody></table>
+<p>配置位于 <code>.compound-engineering/config.local.yaml</code> （gitignored，计算机本地）中的 <code>pulse_*</code> 键下：产品名称、主要事件、值事件、完成事件、质量评分、质量维度、分析源、跟踪源、支付源、启用数据库、每个指标源覆盖、待处理指标、排除指标、默认回溯。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么报告中没有阈值？</strong>
+因为除非针对特定产品进行校准，否则阈值是戏剧性的，并且针对每个指标进行校准比脉冲本身需要更多的工作。创始人了解脉搏，知道什么是正常的——报告尊重这一点。如果数字看起来有误，读者就会注意到；如果没有，他们就不会。</p>
+<p><strong>为什么要有 15 分钟的尾随缓冲区？</strong>
+大多数分析和跟踪工具都存在摄取滞后——过去 15 分钟的事件报告不足。如果没有缓冲区，每个“刚刚发生了什么？”脉冲会低估最近的活动。缓冲区是不可见的，但消除了常见的混乱来源。</p>
+<p><strong>为什么数据库访问是只读的？</strong>
+因为“生成报告”工具永远不会意外地改变生产数据。采访拒绝了读写凭证并指出了替代方案（读取副本、BI 视图、快照导出）。许多产品完全无需数据库访问即可完成脉冲 — 分析 + 跟踪就足够了。</p>
+<p><strong>为什么报告是单页的？</strong>
+蔓延是注意力的敌人。包含 40 个指标的仪表板会导致注意力蔓延；一页包含正确的四个部分，迫使读者注意到重要的事情。如果您需要更多深度，本机工具仍然存在。</p>
+<p><strong>与 <code>STRATEGY.md</code> 有什么关系？</strong>
+首次运行访谈会从 <code>STRATEGY.md</code>（如果存在）中播种产品名称和关键指标。脉搏衡量的是战略所说的重要内容，而不是巧合的工具。当不存在策略文档时，技能会记录该文档并从头开始运行设置。</p>
+<p><strong>是否支持调度？</strong>
+是的 - 首次运行设置可以通过线束的可用调度原语（存在的插件 <code>schedule</code> 技能，或平台本机选项，如 cron/GitHub Actions）设置重复脉冲。日程安排永远不会自动进行；它需要明确的确认。</p>
+<p><strong>非 Claude-Code 平台怎么样？</strong>
+该技能适用于任何具有只读数据源工具的平台。配置的预解析是特定于线束的（Claude Code 通过 <code>!</code> 反引号读取它），但其余部分与平台无关。采访从不安排内联 - 它交给线束暴露的任何安排原语。</p>
+<hr>
+<p>＃＃ 了解更多</p>
+<p>“像创始人一样阅读”的姿势和单页限制是经过深思熟虑的。包含 40 个指标的仪表板会导致注意力蔓延；一页包含正确的四个部分，迫使读者注意到重要的事情。保存的报告文件夹被设计为工作记忆——过去的脉冲是可查询的、可区分的和一次性的。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-strategy.html"><code>ce-strategy</code></a> — 播种脉冲测量的指标</li>
+<li><a href="/compound-engineering/skills/ce-ideate.html"><code>ce-ideate</code></a> — 浮出信号的常见后续目标</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 脉冲表面错误模式的常见后续目标</li>
+<li><a href="/compound-engineering/skills/ce-brainstorm.html"><code>ce-brainstorm</code></a> — 当脉冲跟进在修复之前需要澄清范围时</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-riffrec-feedback-analysis · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-riffrec-feedback-analysis</nav>
+    <header class="page-header">
+      <h1>/ce-riffrec-feedback-analysis</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-riffrec-feedback-analysis.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-riffrec-feedback-analysis</code></h1>
+<blockquote>
+<p>将原始 <a href="https://github.com/kieranklaassen/riffrec">Riffrec</a> 录音转化为结构化产品反馈 - 对于短捕获的快速错误报告，对于较长捕获的广泛分析，并在出现需求时移交给 <code>ce-brainstorm</code>。</p>
+</blockquote>
+<p><code>ce-riffrec-feedback-analysis</code> 是<strong>产品反馈消耗</strong>技能。 Riffrec 是一个单独的捕获工具，可记录同步屏幕+语音+事件会话并发出 <code>riffrec-*.zip</code> 包。这项技能是消费方面：它分析这些捆绑包（或任何视频/音频/会议记录文件），根据长度和意图在三个路径之间进行路由，并为录音中实际内容生成正确的工件。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>分析 Riffrec zip（或视频/音频/注释文件），路由到设置/快速错误/广泛分析路径，生成结构化反馈工件</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td><code>riffrec-*.zip</code> 出现在聊天中；共享视频、音频或会议记录文件作为反馈；用户询问如何捕获和共享 Riffrec 会话</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>快速：一份简洁的错误报告。广泛：需求分析 + 移交给 <code>/ce-brainstorm</code></td>
+</tr>
+<tr>
+<td>三条路</td>
+<td>设置（尚未记录）、快速错误报告（约 60 秒内，单个问题）、广泛分析（较长、多个问题）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>原始用户反馈记录不会自动简化为结构化输入：</p>
+<ul>
+<li><strong>长录音会被忽略</strong> - 12 分钟的演练过于密集，无法在不进行预处理的情况下进行操作</li>
+<li><strong>多问题录音崩溃为单一修复</strong> - 录音涵盖 4 个不同的问题，但只有第一个引起注意</li>
+<li><strong>转录中音频细微差别</strong> - 用户所说的内容不如他们试图做的事情重要；原始转录本没有表达其意图</li>
+<li><strong>隐私泄露</strong> — 原始屏幕截图和磁盘上的音频被意外提交</li>
+<li><strong>没有通往建设的桥梁</strong> - 反馈存在，但没有任何东西可以将其转化为头脑风暴或计划</li>
+<li><strong>设置摩擦</strong> — 用户想要分享反馈，但不知道如何安装捕获工具</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-riffrec-feedback-analysis</code> 运行具有三个路径的路由流：</p>
+<ul>
+<li><strong>安装路径</strong> — 当用户还没有录制并询问如何安装/捕获/共享时，这将显示 Riffrec 安装指南和捕获说明</li>
+<li><strong>快速错误报告</strong> - 简短记录，单一问题，“只是转录”意图 → 一份简洁的错误报告，没有完整的工件集</li>
+<li><strong>广泛的分析</strong> - 更长的记录或多个问题 → 带屏幕截图的结构化分析、需求形状的输出、强制移交到 <code>/ce-brainstorm</code></li>
+</ul>
+<p>该技能默认将原始录音、音频块、zip 内容和提取的屏幕截图仅保存在本地，不会自动提交。当可追溯性很重要并且没有敏感数据时，可以提交文本工件（分析摘要、问题分析）。</p>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 基于长度+意图的三路径路由</h3>
+<p>路径是根据输入实际保证的内容来选择的，而不是通过标志来选择：</p>
+<ul>
+<li><strong>安装</strong> — 用户尚未录制，询问如何安装 Riffrec、捕获会话或分享反馈。该技能加载 <code>references/install-riffrec.md</code> 并遍历它。</li>
+<li><strong>快速错误报告</strong> - 大约 60 秒内，单个问题，或用户明确要求“快速”、“小”或“仅转录”。输出是一份简明的错误报告；该技能会跳过完整的神器集和头脑风暴交接。</li>
+<li><strong>广泛的分析</strong> - 更长、多个问题/需求/工作流程演练，或者用户想要需求材料。输出是带有屏幕截图的完整结构化分析；该技能<strong>始终延续到<code>/ce-brainstorm</code></strong>。</li>
+</ul>
+<p>当输入不明确时（到达的 zip 没有上下文），该技能会在选择之前检查记录长度和事件计数。如果仍然不清楚，它会询问用户。</p>
+<h3>2.原始工件的隐私默认设置</h3>
+<p>默认情况下，原始录音、音频块、zip 内容、会话转储和提取的屏幕截图帧仅保留在本地。除非用户明确询问并确认隐私是可接受的，否则不会提交 <code>raw/</code> 和 <code>frames/</code> 目录。文本/元数据工件（分析摘要、问题分析、源清单）可以在需要可追溯性时提交，并且它们不包含敏感数据。</p>
+<p>提交文档中的存储库相对屏幕截图路径确保后续代理可以在没有绝对本地路径的情况下打开证据。</p>
+<h3>3. 单个分析器入口点 — 接受多个输入形状</h3>
+<p>所有非设置路径共享一个入口点：<code>python scripts/analyze_riffrec_zip.py /path/to/input</code>。接受的输入：</p>
+<ul>
+<li>Riffrec <code>.zip</code> 捆绑包</li>
+<li><code>.mp4</code> / <code>.mov</code> / <code>.webm</code> 视频</li>
+<li><code>.m4a</code> / <code>.mp3</code> / <code>.wav</code> 音频文件</li>
+<li>会议记录 <code>.md</code></li>
+</ul>
+<p>这就是使该技能超越 Riffrec 的有用之处——任何记录的反馈都适合相同的管道。</p>
+<h3>4. 上下文感知输出位置</h3>
+<p>在具有 <code>docs/brainstorms/</code> 的存储库中，默认输出目录为 <code>docs/brainstorms/riffrec-feedback/</code>，因此分析将到达下游技能（<code>ce-brainstorm</code>、<code>ce-plan</code>）期望找到需求材料的位置。快速路径覆盖临时位置，因此不会因单问题错误报告而污染存储库。</p>
+<h3>5. 用于广泛分析的复合工程输出格式</h3>
+<p>扩展路径以 <code>references/compound-engineering-feedback-format.md</code> 中记录的复合工程反馈格式生成输出 - 其结构可作为原始输入干净地馈送到 <code>/ce-brainstorm</code> 中。多个问题/要求/观察结果被分开，每个问题/需求/观察结果都有相关的屏幕截图帧和时间戳。头脑风暴收到的是一个起点，而不是一份文字记录。</p>
+<h3>6. 强制 <code>ce-brainstorm</code> 切换以进行广泛分析</h3>
+<p>分析落地后，扩展路径始终会继续进入 <code>/ce-brainstorm</code>。录音记录了<em>用户的经历</em>；头脑风暴澄清了<em>要采取什么应对措施</em>。如果没有交接，分析结果就会保存在磁盘上，没有人知道如何处理它。</p>
+<p>快速路径跳过了交接——单个错误报告就是它自己的可交付成果。</p>
+<h3>7. 延迟引用加载</h3>
+<p>该技能仅加载所选路径的参考：<code>install-riffrec.md</code> 用于设置，<code>quick-bug-report.md</code> 用于快速，<code>extensive-analysis.md</code> 用于广泛。其他参考文献保持未读状态，从而使技能的运行时上下文保持较小。</p>
+<hr>
+<h2>简单示例</h2>
+<p>队友在您的聊天中分享了 <code>riffrec-2026-05-04-checkout-flow.zip</code>。你把它拖进去。</p>
+<p>该技能检测 Riffrec zip，运行分析器来检查长度和事件计数：8 分钟、47 个事件、触摸了多个不同的 UI 表面。它会进行<strong>广泛的分析</strong>。</p>
+<p>分析器提取：同步语音记录、事件边界处的屏幕捕获帧、带有时间戳的事件日志。它确定了 4 个不同的问题：(1) “立即购买”CTA 隐藏在移动设备上，(2) 表单验证未显示内嵌错误，(3) 确认电子邮件主题行不清楚，(4) 令人困惑的“等等，为什么跳过第 3 步？”表明流量间隙的时刻。</p>
+<p>它在 <code>docs/brainstorms/riffrec-feedback/2026-05-04-checkout-flow-analysis.md</code> 处针对每个问题、相关帧和时间戳生成结构化分析。原始录制仅保留在本地。</p>
+<p>该技能以分析为起点加载 <code>/ce-brainstorm</code>。头脑风暴明确首先要解决哪个问题、成功是什么样子，并生成需求文档。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-riffrec-feedback-analysis</code>：</p>
+<ul>
+<li><code>riffrec-*.zip</code> 到达，您想要对其采取行动</li>
+<li>有人分享视频、音频或会议记录作为产品反馈</li>
+<li>用户询问如何安装 Riffrec 或捕获会话以获取反馈</li>
+<li>长演练记录需要成为 <code>/ce-brainstorm</code> 的结构化输入</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-riffrec-feedback-analysis</code>：</p>
+<ul>
+<li>反馈仅为文本且简短 - 只需将其直接粘贴到 <code>/ce-brainstorm</code> 中</li>
+<li>录制用于调试会话，而不是反馈 - 直接处理错误</li>
+<li>您只想转录没有进一步结构的音频 - 使用转录工具，而不是此技能</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p>该技能是链的<strong>前门入口点</strong>：</p>
+<pre><code class="language-text">recording → /ce-riffrec-feedback-analysis → (extensive) → /ce-brainstorm → /ce-plan → /ce-work
+                                          → (quick)     → bug report (standalone)
+                                          → (setup)     → instructions for capturing
+</code></pre>
+<p>广泛的路径始终延续到 <code>/ce-brainstorm</code>，因此捕获的反馈成为下游技能可以使用的真正工件。快速路径会自行生成完整的工件（错误报告），而无需进行头脑风暴。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能通常通过 Riffrec zip 或其他输入文件直接调用：</p>
+<ul>
+<li><strong>Riffrec zip</strong> — <code>/ce-riffrec-feedback-analysis riffrec-2026-05-04-checkout-flow.zip</code></li>
+<li><strong>视频文件</strong> — <code>/ce-riffrec-feedback-analysis demo.mp4</code></li>
+<li><strong>音频文件</strong> — <code>/ce-riffrec-feedback-analysis voice-memo.m4a</code></li>
+<li><strong>会议记录</strong> — <code>/ce-riffrec-feedback-analysis meeting-notes.md</code></li>
+<li><strong>设置问题</strong> — <code>/ce-riffrec-feedback-analysis &quot;how do I install riffrec&quot;</code>（无输入文件；到设置路径的路由）</li>
+</ul>
+<p>当输入不明确时（到达的 zip 没有上下文，或者路径路由信号混合），该技能会在选择之前检查长度和事件计数 - 并询问是否仍然不清楚。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;file path&gt;</code></td>
+<td><code>&lt;file path&gt;</code>分析文件 — Riffrec zip、视频、音频或会议记录</td>
+</tr>
+<tr>
+<td>设置意图（“如何安装”、“如何捕获”）</td>
+<td>路由至安装路径及安装说明</td>
+</tr>
+<tr>
+<td>长度 + 从输入推断的意图</td>
+<td>通往快速或广泛路径的路线</td>
+</tr>
+</tbody></table>
+<p>分析器：<code>scripts/analyze_riffrec_zip.py</code>。复合工程输出格式：<code>references/compound-engineering-feedback-format.md</code>。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>什么是 Riffrec？</strong>
+一个单独的捕获工具（<a href="https://github.com/kieranklaassen/riffrec">github.com/kierranklaassen/riffrec</a>），记录同步屏幕+语音+事件会话并发出 <code>riffrec-*.zip</code>。该技能是消耗方——它不捕获，而是分析捕获。</p>
+<p><strong>我必须使用 Riffrec 才能使用此技能吗？</strong>
+不需要。分析仪还接受视频（<code>.mp4</code>、<code>.mov</code>、<code>.webm</code>）、音频（<code>.m4a</code>、<code>.mp3</code>、<code>.wav</code>）和会议记录（<code>.md</code>）。 Riffrec 只是提供了一个带有同步事件时间戳的结构化 zip，可以产生更丰富的分析。</p>
+<p><strong>为什么扩展路径总是继续到 <code>/ce-brainstorm</code>？</strong>
+因为录音记录了用户的经历——这是证据，而不是决定。如果不继续进行头脑风暴，分析结果就会作为带有屏幕截图的记录保存在磁盘上，没有人知道要构建什么来响应。交接使反馈变得可行。</p>
+<p><strong>Why is the quick path different?</strong>
+A 30-second recording showing a single bug doesn&#39;t need the full artifact set or a brainstorm — the bug report itself is the deliverable. The user already knows what&#39;s wrong; the skill produces a concise report and stops.</p>
+<p><strong>什么是本地化，什么是承诺？</strong>
+原始录音、音频、zip 内容、帧默认保留在本地 — 隐私第一。当可追溯性很重要且内容安全时，可以提交文本工件（分析摘要、错误报告）。提交的文档中的存储库相对路径让后续代理可以引用本地屏幕截图，而无需绝对路径。</p>
+<p><strong>如果输入不明确怎么办？</strong>
+该技能首先检查长度和事件计数。如果仍然不清楚，它会询问用户哪条路径适用。提出一个问题比走错路更好。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-brainstorm.html"><code>ce-brainstorm</code></a> — 广泛的分析输出直接进入头脑风暴</li>
+<li><a href="/compound-engineering/skills/ce-plan.html"><code>ce-plan</code></a> — 头脑风暴的下游；接收来自录制的需求文档</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 当快速路径错误报告有明确的根本原因需要调查时</li>
+<li><a href="https://github.com/kieranklaassen/riffrec">Riffrec</a> — 捕获端工具（单独的项目）</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

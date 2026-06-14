@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>括号内有空格的符号数组 · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-dhh-rails-style</nav>
+    <header class="page-header">
+      <h1>/ce-dhh-rails-style</h1>
+      <div class="page-meta">
+        <span class="source-tag">运行时 SKILL 参考（无独立用户文档页）</span>
+        <span>plugins/compound-engineering/skills/ce-dhh-rails-style/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><p>&lt;目标&gt;
+将 37signals/DHH Rails 约定应用于 Ruby 和 Rails 代码。此技能提供从分析生产 37signals 代码库 (Fizzy/Campfire) 和 DHH 的代码审查模式中提取的全面领域专业知识。
+&lt;/目标&gt;</p>
+<p>&lt;基本原则&gt;</p>
+<h2>核心理念</h2>
+<p>“最好的代码是你不写的代码。第二好的代码是明显正确的代码。”</p>
+<p><strong>香草导轨足够了：</strong></p>
+<ul>
+<li>服务对象的丰富领域模型</li>
+<li>自定义操作的 CRUD 控制器</li>
+<li>对水平代码共享的担忧</li>
+<li>记录为状态而不是布尔列</li>
+<li>数据库支持的一切（无 Redis）</li>
+<li>在获取宝石之前构建解决方案</li>
+</ul>
+<p><strong>他们刻意避免的：</strong></p>
+<ul>
+<li>devise（自定义〜150行验证）</li>
+<li>pundit/cancancan（模型中的简单角色检查）</li>
+<li>sidekiq（Solid Queue 使用数据库）</li>
+<li>redis（一切数据库）</li>
+<li>view_component（部分工作正常）</li>
+<li>GraphQL（REST 和 Turbo 就足够了）
+-factory_bot（装置更简单）</li>
+<li>rspec（Minitest 附带 Rails）</li>
+<li>Tailwind（带有图层的原生 CSS）</li>
+</ul>
+<p><strong>发展理念：</strong></p>
+<ul>
+<li>交付、验证、优化 - 原型质量代码到生产环境中进行学习</li>
+<li>解决根本原因，而不是症状</li>
+<li>写入时操作优于读取时计算</li>
+<li>ActiveRecord 验证的数据库约束</essential_principles></li>
+</ul>
+<p>&lt;摄入量&gt;
+你在做什么？</p>
+<ol>
+<li><strong>控制器</strong> - REST 映射、关注点、Turbo 响应、API 模式</li>
+<li><strong>模型</strong> - 关注点、状态记录、回调、范围、PORO</li>
+<li><strong>视图和前端</strong> - Turbo、Stimulus、CSS、部分</li>
+<li><strong>架构</strong> - 路由、多租户、身份验证、作业、缓存</li>
+<li><strong>测试</strong> - Minitest、固定装置、集成测试</li>
+<li><strong>宝石和依赖项</strong> - 使用什么与避免什么</li>
+<li><strong>代码审查</strong> - 根据 DHH 风格审查代码</li>
+<li><strong>一般指导</strong> - 理念和惯例</li>
+</ol>
+<p><strong>指定一个数字或描述您的任务。</strong>
+&lt;/摄入量&gt;</p>
+<p>&lt;路由&gt;</p>
+<table>
+<thead>
+<tr>
+<th>回应</th>
+<th>参考阅读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1、控制器</td>
+<td><code>references/controllers.md</code></td>
+</tr>
+<tr>
+<td>2、型号</td>
+<td><code>references/models.md</code></td>
+</tr>
+<tr>
+<td>3、视图、前端、涡轮、刺激、CSS</td>
+<td><code>references/frontend.md</code></td>
+</tr>
+<tr>
+<td>4、架构、路由、auth、job、缓存</td>
+<td><code>references/architecture.md</code></td>
+</tr>
+<tr>
+<td>5、测试、测试、Minitest、夹具</td>
+<td><code>references/testing.md</code></td>
+</tr>
+<tr>
+<td>6、gem、依赖、库</td>
+<td><code>references/gems.md</code></td>
+</tr>
+<tr>
+<td>7、回顾</td>
+<td>阅读所有参考资料，然后查看代码</td>
+</tr>
+<tr>
+<td>8、一般任务</td>
+<td>根据上下文阅读相关参考资料</td>
+</tr>
+</tbody></table>
+<p><strong>阅读相关参考资料后，将模式应用到用户的代码中。</strong>
+&lt;/路由&gt;</p>
+<p>&lt;快速参考&gt;</p>
+<h2>命名约定</h2>
+<p><strong>动词：</strong> <code>card.close</code>、<code>card.gild</code>、<code>board.publish</code>（不是 <code>set_style</code> 方法）</p>
+<p><strong>谓词：</strong> <code>card.closed?</code>、<code>card.golden?</code>（源自相关记录的存在）</p>
+<p><strong>关注点：</strong> 描述能力的形容词（<code>Closeable</code>、<code>Publishable</code>、<code>Watchable</code>）</p>
+<p><strong>控制器：</strong> 与资源匹配的名词 (<code>Cards::ClosuresController</code>)</p>
+<p><strong>范围：</strong></p>
+<ul>
+<li><code>chronologically</code>、<code>reverse_chronologically</code>、<code>alphabetically</code>、<code>latest</code></li>
+<li><code>preloaded</code>（标准急切加载名称）</li>
+<li><code>indexed_by</code>、<code>sorted_by</code>（参数化）</li>
+<li><code>active</code>、<code>unassigned</code>（业务术语，不是 SQL 相关术语）</li>
+</ul>
+<h2>休息映射</h2>
+<p>创建新资源而不是自定义操作：</p>
+<pre><code>POST /cards/:id/close    → POST /cards/:id/closure
+DELETE /cards/:id/close  → DELETE /cards/:id/closure
+POST /cards/:id/archive  → POST /cards/:id/archival
+</code></pre>
+<h2>Ruby 语法首选项</h2>
+<p>``红宝石</p>
+<h1>括号内有空格的符号数组</h1>
+<p>before_action :set_message, 仅: %i[ 显示编辑更新销毁 ]</p>
+<h1>私有方法缩进</h1>
+<p>  私人的
+    def 设置消息
+      @message = Message.find(params[:id])
+    结束</p>
+<h1>条件语句的无表达式情况</h1>
+<p>案例
+当 params[:before]. 存在时？
+  messages.page_before(params[:before])
+否则
+  消息.last_page
+结束</p>
+<h1>快速失败的 Bang 方法</h1>
+<p>@message = Message.create!(参数)</p>
+<h1>简单条件的三元数</h1>
+<p>@room.direct？ ？ @room.users : @message.mentionees</p>
+<pre><code>
+## 关键模式
+
+**作为记录说明：**
+```ruby
+Card.joins(:closure)         # closed cards
+Card.where.missing(:closure) # open cards
+```
+
+**当前属性：**
+```ruby
+belongs_to :creator, default: -&gt; { Current.user }
+```
+
+**模型授权：**
+```ruby
+class User &lt; ApplicationRecord
+  def can_administer?(message)
+    message.creator == self || admin?
+  end
+end
+```
+&lt;/快速参考&gt;
+
+&lt;参考索引&gt;
+## 领域知识
+
+`references/` 中的所有详细模式：
+
+|文件|主题 |
+|------|--------|
+| `references/controllers.md` | `references/controllers.md` REST 映射、关注点、Turbo 响应、API 模式、HTTP 缓存 |
+| `references/models.md` |关注点、状态记录、回调、范围、PORO、授权、广播 |
+| `references/frontend.md` | Turbo Streams、刺激控制器、CSS 层、OKLCH 颜色、部分 |
+| `references/architecture.md` |路由、身份验证、作业、当前属性、缓存、数据库模式 |
+| `references/testing.md` | Minitest、夹具、单元/集成/系统测试、测试模式 |
+| `references/gems.md` |他们使用什么与避免什么、决策框架、Gemfile 示例 |
+&lt;/参考索引&gt;
+
+&lt;成功标准&gt;
+在以下情况下，代码遵循 DHH 风格：
+- 控制器映射到资源上的 CRUD 动词
+- 模型使用对水平行为的关注
+- 状态是通过记录而不是布尔值来跟踪的
+- 没有不必要的服务对象或抽象
+- 数据库支持的解决方案优于外部服务
+- 测试使用 Minitest 和固定装置
+- Turbo/Stimulus 交互性（无繁重的 JS 框架）
+- 具有现代功能的原生 CSS（图层、OKLCH、嵌套）
+- 授权逻辑存在于用户模型上
+- 作业是调用模型方法的浅层包装器
+&lt;/成功标准&gt;
+
+&lt;制作人员&gt;
+基于 [Marc Köhlbrugge](https://x.com/marckohlbrugge) 的 [非官方 37signals/DHH Rails 风格指南](https://github.com/marckohlbrugge/unofficial-37signals-coding-style-guide)，通过对 Fizzy 代码库的 265 个拉取请求进行深入分析而生成。
+
+**重要免责声明：**
+- LLM 生成的指南 - 可能包含不准确之处
+- Fizzy 的代码示例已获得 O&#39;Saasy 许可证的许可
+- 不隶属于 37signals，也不受 37signals 认可
+&lt;/学分&gt;
+</code></pre>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

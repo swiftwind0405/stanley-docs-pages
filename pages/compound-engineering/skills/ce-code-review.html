@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-code-review · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-code-review</nav>
+    <header class="page-header">
+      <h1>/ce-code-review</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-code-review.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-code-review</code></h1>
+<blockquote>
+<p>使用分层角色代理、置信门控结果和合并/重复数据删除管道进行结构化代码审查。</p>
+</blockquote>
+<p><code>ce-code-review</code> 是<strong>深度代码审查</strong>技能。它分析差异（PR、分支或当前更改），为实际涉及的内容选择正确的审阅者角色，并行分派它们，然后将其发现合并并删除重复项到单个报告中。每个发现都带有严重性 (P0-P3)、表示后续形状的自动修复类（<code>gated_auto</code>、<code>manual</code>、<code>advisory</code>）以及所有者。在交互模式下，审查会应用安全的、经过验证的修复程序，并在工作树干净时提交它们（它从不推送）；在 <code>mode:agent</code> 中，它报告并调用者应用。</p>
+<p>复合工程构思链是<code>/ce-ideate → /ce-brainstorm → /ce-plan → /ce-work</code>。 <code>ce-code-review</code> 是 <code>/ce-work</code> 的 <strong>第 2 层升级</strong> 目标 - 针对敏感表面、大差异或显式深度审查请求自动调用，但也可以在您想要对当前分支或特定 PR 进行结构化审查时直接调用。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>根据差异内容选择审阅者角色，并行分派它们，通过置信门控和自动修复路由将结果合并到一份报告中</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>在为敏感/大型工作打开 PR 之前；要求明确的深入审查；线束没有内置 <code>/review</code></td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>结构化的调查结果报告；在交互模式下，它还应用安全、经过验证的修复（应用部分），当您的树干净时将它们作为 <code>fix(review):</code> 提交提交 - 或者如果树脏了（它从不推送），则将它们留给您的提交</td>
+</tr>
+<tr>
+<td>模式</td>
+<td>交互式（默认 — 应用安全修复）和 <code>mode:agent</code> （JSON；仅报告，调用者应用）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>通才代码审查会以可预见的方式提示崩溃：</p>
+<ul>
+<li><strong>表面层面的发现</strong> - “考虑添加测试”，但没有指定要测试的内容</li>
+<li><strong>差异的错误发现</strong> - 有关仅文档更改的安全反馈、有关拼写错误修复的性能反馈</li>
+<li><strong>无严重性校准</strong> — 每个发现都被视为关键，淹没了实际的 P0</li>
+<li><strong>无置信度校准</strong> — 推测性“可能是错误”与已验证的缺陷相同</li>
+<li><strong>一次通过一个模型的推理</strong> - 单个审阅者对最后一次训练最严重的内容有偏见</li>
+<li><strong>没有结构化的后续行动</strong> - 结果最终出现在聊天中；无记录、无修复队列、无残留处理</li>
+<li><strong>在错误结帐时改变操作</strong> — 在另一个代理并行运行测试时对共享结帐运行审查会产生未定义的结果</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-code-review</code> 将审查作为具有显式门的结构化管道来运行：</p>
+<ul>
+<li><strong>差异感知角色选择</strong> — 4 个始终在线的审阅者 + 2 个 CE 始终在线的代理，以及针对差异实际涉及的内容选择的横切和特定于堆栈的角色</li>
+<li><strong>平行人物调度</strong> - 每个评论者都专注于其镜头；结果并行返回</li>
+<li><strong>置信门控合成</strong> — 结果合并、重复数据删除、促进跨角色协议以及按自动修复类别进行路由</li>
+<li><strong>严重程度 (P0-P3) + 自动修复类别</strong> — 将紧急性与操作所有权分开</li>
+<li><strong>两种模式</strong> - 交互（默认；应用安全验证修复本身）和 <code>mode:agent</code>（JSON 机器切换；仅报告，调用者应用）</li>
+<li><strong>调用者拥有的应用 + 剩余工作门</strong> — 在 <code>mode:agent</code> 中，调用者（例如 <code>/ce-work</code>）应用修复并运行剩余工作门（接受/归档票据/继续/停止）；在交互模式下，审查将其应用的修复提交到干净的树上，并且它从不推送</li>
+<li><strong>快速审查短路</strong> — 遵循线束原生 <code>/review</code> 进行光通行证；多代理仅在有保证时运行</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 差异感知角色选择</h3>
+<p>一个小的配置更改会触发 6 个审阅者（4 个始终在线 + 2 个 CE 始终在线）。带有迁移的 Rails 身份验证功能可能会触发 10。该技能决定哪些角色适合差异：</p>
+<ul>
+<li><strong>始终开启（每次审核）</strong> — <code>ce-correctness-reviewer</code>、<code>ce-testing-reviewer</code>、<code>ce-maintainability-reviewer</code>、<code>ce-project-standards-reviewer</code>、<code>ce-agent-native-reviewer</code>、<code>ce-learnings-researcher</code></li>
+<li><strong>横切条件</strong> - 安全性、性能、API 合约、数据迁移、可靠性、对抗性、先前评论 - 仅当差异涉及其关注点时才选择每个条件</li>
+<li><strong>特定于堆栈的条件</strong> — Julik 前端竞赛、Swift/iOS — 仅当匹配的运行时域被触及时。结构质量（复杂性删除、千行回归、意大利面条）存在于始终在线的可维护性角色中。</li>
+<li><strong>CE 条件（迁移）</strong> — <code>ce-deployment-verification-agent</code> 用于有风险的迁移差异；架构漂移和迁移安全由 <code>data-migration</code> 角色处理</li>
+</ul>
+<p>角色选择是代理判断，而不是关键字匹配。指令散文文件（Markdown 技能、JSON 模式）是产品代码，但会跳过以运行时为中心的审阅者（对抗性、竞赛）——它们不适用。</p>
+<h3>2. 严重性 (P0-P3) 和自动修复类别是正交的</h3>
+<p>严重性答案<strong>紧急</strong>（P0=严重损坏，P3=用户自行决定）。自动修复类是关于后续形状的<strong>信号</strong>（不申请权限）：</p>
+<ul>
+<li><code>gated_auto</code> → 存在具体的 <code>suggested_fix</code> — 一个明确的申请候选者</li>
+<li><code>manual</code> → 需要设计输入或移交的可操作工作</li>
+<li><code>advisory</code> → 仅报告输出（经验教训、推出说明、残余风险）</li>
+</ul>
+<p>综合拥有最终路线。 Persona 提供的路由元数据是输入，而不是最后的决定 - 分歧默认为更保守的路由。某个发现是否真正得到应用是一个判断调用（交互式审查的第 5c 阶段，或 <code>mode:agent</code> 中的调用者），而不是类的函数。</p>
+<h3>3. 两种模式——人视模式和机器切换模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>当</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>交互式</strong> <em>（默认）</em></td>
+<td>直接用户调用</td>
+<td>降价报告；审查应用安全的、经过验证的修复程序本身（阶段 5c → 应用部分），推翻它不同意的发现，并在您的树干净时将它们作为独立的 <code>fix(review):</code> 提交提交（或者如果树脏了则将它们留给您的提交）。从不强迫</td>
+</tr>
+<tr>
+<td><strong><code>mode:agent</code></strong></td>
+<td><code>mode:agent</code>（别名 <code>mode:headless</code>）</td>
+<td>一个 JSON 对象；仅报告 - 审查不会改变任何内容，并且调用者（例如 <code>/ce-work</code>）应用调查结果并拥有剩余工作门</td>
+</tr>
+</tbody></table>
+<p>该技能永远不会切换分支：PR/分支参数选择审查<em>范围</em>（无需签出即可进行差异），而不是允许变异。交互式应用就地编辑当前结帐；要根据另一个参考检查当前结帐，请传递 <code>base:&lt;ref&gt;</code>。</p>
+<h3>4. 快速回顾短路</h3>
+<p>当用户请求“快速”、“快速”或“轻量”审查时，技能将遵循线束本机代码审查（例如，克劳德代码中的 <code>/review</code> ），而不是调度多代理管道。这尊重意图——有时正确的工具是较轻的工具。编程调用者 (<code>mode:agent</code>) 绕过短路并始终运行完整的管道。</p>
+<h3>5. 综合管道 — 合并、重复数据删除、升级、路由</h3>
+<p>所有派出的角色返回后，合成：</p>
+<ul>
+<li>Validates each finding against the schema</li>
+<li>Anchors to the actual diff (drops findings about lines that don&#39;t exist or aren&#39;t in scope)</li>
+<li>Deduplicates across personas (same issue surfaced by multiple reviewers)</li>
+<li><strong>Promotes confidence on cross-persona agreement</strong> (two reviewers spotting the same issue raises priority)</li>
+<li>Resolves contradictions (different personas disagree about what to do)</li>
+<li>Routes by tier — applied fixes, gated/manual, FYI</li>
+</ul>
+<p>输出是一份具有经过校准的严重性、证据引用和明确所有权的报告，而不是每个审阅者的原始输出的简单列表。</p>
+<p>综合还构建了<strong>主题分类组</strong>（<code>grouping:auto</code>，默认值）：当发现的问题涉及不同的问题时，相关的问题会被分组在一个简短的主题下——共享的根本原因、重叠的修复路径、解决多个发现的一个设计决策——因此包含 20 个发现的审查看起来像是少数几个主题，而不是 20 个独立的项目。组是一个分类镜头，而不是重组：结果保持其稳定的 <code>#</code> 和严重性表，组引用它们 (<code>#2, #3</code>)，并且 <code>mode:agent</code> JSON 在 <code>triage_groups</code> 字段中携带相同的组 - 每个发现的镜头，而不是应用队列，因此调用者仅在将每个组过滤到可操作的子集。通过 <code>grouping:off</code> 获得平面报告，或通过 <code>grouping:always</code> 对小评论进行分组。</p>
+<h3>6. 计划发现需求验证</h3>
+<p>当 diff 有关联计划 (<code>docs/plans/*.md</code>) 时，技能会发现它（通过 <code>plan:</code> 参数、PR 正文链接或从分支名称自动发现）并读取其需求部分 + 实现单元。然后综合验证差异是否确实满足这些要求——捕获代码看起来不错但与计划所说的它应该做的不匹配的情况。</p>
+<h3>7. 剩余工作门</h3>
+<p>When autofix mode runs and the in-skill fixer can&#39;t resolve everything, the residual work doesn&#39;t just disappear into chat. The Residual Actionable Work summary lists each unresolved finding with stable numbering, severity, file:line, title, and autofix class. Callers (e.g., <code>/ce-work</code> Phase 3.4) read this summary and present user options: apply now, file tickets, accept with durable sink, or stop.</p>
+<h3>8. 受保护的文物</h3>
+<p>复合工程管道工件（<code>docs/brainstorms/*</code>、<code>docs/plans/*.md</code>、<code>docs/solutions/*.md</code>）受到保护——审阅者删除或忽略它们的发现在综合过程中被丢弃。这些是管道所依赖的决策工件；审阅者不应该对它们进行垃圾收集。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您可以通过包含数据库迁移的 Rails 身份验证更改在功能分支上调用 <code>/ce-code-review</code>。</p>
+<p>该技能检测到您位于功能分支（尚未有 PR），从 <code>origin/HEAD</code>（或存在开放 PR 时的 PR 元数据）解析基础，并计算差异。第 2 阶段读取提交消息并写入 2-3 行意图摘要。第 2b 阶段从分支名称中自动发现 <code>docs/plans/</code> 中的计划并读取其要求（R1-R8、U1-U6）。</p>
+<p>第 3 阶段选择审核者：6 个始终在线的审核者，以及安全性（涉及身份验证）、可靠性（令牌清理的后台作业）、数据迁移（存在迁移文件）以及迁移有风险时的部署验证代理。一共七八个审稿人，并行派遣。</p>
+<p>全部返回后，综合将 23 个原始发现合并为 14 个不同的发现。其中三个是干净、可逆的修复（拼写错误、重命名、死代码删除），审查适用并验证自身（阶段 5c → 应用部分）。六个是用于身份验证表面的 <code>gated_auto</code> — 审查适用的具体候选人，将它们显着标记为绿色但无法验证（身份验证）以供您审查。其中两个是 <code>manual</code>（部署进行/不进行清单项目）。其中三个是<code>advisory</code>（仅供参考）。每项发现都有固定的证据和稳定的数字。</p>
+<p>您浏览 6 个封闭的调查结果，应用 4 个，推迟 1 个通过跟踪器进行后续跟踪，并拒绝 1 个并指出伤害。最终验证运行；报告已保存。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-code-review</code>：</p>
+<ul>
+<li>您即将为敏感或大型工作（身份验证、付款、迁移、公共 API）打开 PR</li>
+<li>您的安全带缺少内置 <code>/review</code>，但您仍然需要进行真正的审查</li>
+<li>您需要结构化处理剩余工作，而不仅仅是聊天中倾倒的结果</li>
+<li>您明确想要更深入的、多角色的通行证（例如，“彻底审查此内容”）</li>
+<li>另一项技能正在升级（<code>/ce-work</code> 阶段 3.3 第 2 层，<code>/ce-optimize</code> 阶段 4.3）</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-code-review</code>：</p>
+<ul>
+<li>您想要快速简单地检查一下 - 您的安全带的内置 <code>/review</code> 是正确的；短路处理这个</li>
+<li>更改是微不足道的（拼写错误、格式设置、依赖项冲突） - 第 1 级审核就足够了</li>
+<li>您想要修复发现的错误，而不是审查代码 → 使用 <code>/ce-debug</code></li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-code-review</code> 从多个技能中调用作为深度审查路径：</p>
+<ul>
+<li><strong><code>/ce-work</code> 阶段 3.3</strong> — 对于敏感表面、≥400 行 + 漫反射、≥1,000 行或明确的彻底审查请求，升级至 <code>ce-code-review mode:agent</code>； ce-work 然后应用研究结果</li>
+<li><strong><code>/ce-work</code> 阶段 3.4 剩余工作门</strong> — 读取返回的剩余可操作工作摘要 <code>ce-code-review</code> 并呈现用户选项</li>
+<li><strong><code>/ce-optimize</code> Phase 4.3</strong> — 在合并之前针对累积优化分支差异运行</li>
+<li><strong><code>/ce-doc-review</code></strong> — 文档（需求、计划）而非代码的同级技能</li>
+</ul>
+<p>第 1 层（harness-native <code>/review</code>）处理大多数情况； <code>ce-code-review</code> 是第 2 层升级。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能可以直接在任何起始状态下发挥作用：</p>
+<ul>
+<li><strong>当前分支</strong> — <code>/ce-code-review</code></li>
+<li><strong>特定 PR</strong> — <code>/ce-code-review 1234</code> 或 <code>/ce-code-review &lt;PR URL&gt;</code></li>
+<li><strong>特定分支</strong> — <code>/ce-code-review feat/notification-mute</code></li>
+<li><strong>使用基本参考</strong> — <code>/ce-code-review base:abc1234</code> 或 <code>base:origin/main</code> （跳过范围检测；针对该参考进行审查）</li>
+<li><strong>有计划</strong> — <code>/ce-code-review plan:docs/plans/.../plan.md</code> 用于明确的需求验证</li>
+</ul>
+<p>并发使用注意事项： <code>mode:agent</code> 仅用于报告并且永远不会发生变化，因此在同一结帐时与浏览器测试一起使用是安全的。交互模式可能会对工作树应用修复，因此请避免针对其他代理正在积极使用的签出运行它。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>审查当前分支（从 <code>origin/HEAD</code> 或 PR 元数据检测基础）</td>
+</tr>
+<tr>
+<td><code>&lt;PR number or URL&gt;</code></td>
+<td>评论 PR 而不检查它（读取元数据 + 远程差异）</td>
+</tr>
+<tr>
+<td><code>&lt;branch name&gt;</code></td>
+<td>评论该分支而不检查它（远程/本地参考差异）</td>
+</tr>
+<tr>
+<td><code>base:&lt;sha-or-ref&gt;</code></td>
+<td>跳过范围检测；对照该参考审核当前结帐</td>
+</tr>
+<tr>
+<td><code>plan:&lt;path&gt;</code></td>
+<td>加载需求验证计划</td>
+</tr>
+<tr>
+<td><code>mode:agent</code></td>
+<td>JSON机器切换；仅报告（调用者申请）。 <code>mode:headless</code> 是一个已弃用的别名； <code>mode:report-only</code> 被忽略</td>
+</tr>
+<tr>
+<td><code>grouping:auto</code> / <code>grouping:off</code> / <code>grouping:always</code></td>
+<td>对发现结果进行主题分类分组（默认 <code>auto</code>：当发现结果跨越不同问题时进行分组）。仅演示 — 永远不会更改审阅者选择、合并逻辑或应用行为</td>
+</tr>
+</tbody></table>
+<p>冲突的模式标志（或冲突的分组标志）会因错误而停止执行。将 <code>base:</code> 与 PR/分支目标组合也会出错 — 通过其中之一。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么不直接使用线束的内置 <code>/review</code>？</strong>
+当它是正确的工具时就使用它——快速审查短路明确地遵循它。 <code>ce-code-review</code> 适用于您需要差异感知角色选择、具有校准严重性的结构化结果、自动修复路由和剩余工作处理的情况。这是较重的工具；当工作需要时就去做。</p>
+<p><strong>它如何决定派遣哪些角色？</strong>
+代理对实际差异的判断——而不是关键字匹配。每次审核都会运行 4 个始终在线 + 2 个 CE 始终在线角色。当涉及到他们的关注点时，就会添加横切和特定于堆栈的角色（例如，如果身份验证文件发生更改，则安全；存在迁移或架构转储文件时，添加 <code>ce-data-migration-reviewer</code> ）。指令散文文件会跳过以运行时为中心的审阅者（对抗性的、竞赛的）。</p>
+<p><strong>交互式（默认）和 <code>mode:agent</code> 之间有什么区别？</strong>
+交互式是面向人的模式：一个降价报告，审查应用安全的、经过验证的修复本身（应用部分），并在你的树干净时提交它们（如果树脏了，则将它们留给你的提交）；它从不推动。 <code>mode:agent</code> 是机器切换：一个 JSON 对象，仅报告 — 审查不会改变任何内容，并且调用者（例如 <code>/ce-work</code>）根据自己的条件应用结果。 <code>mode:headless</code> 是 <code>mode:agent</code> 的已弃用别名。</p>
+<p><strong>什么是剩余工作门？</strong>
+调用者拥有的步骤（不是审核技能的一部分）：在 <code>mode:agent</code> 中，调用者（通常是 <code>/ce-work</code>）应用它可以应用的内容，然后呈现它不应用的结果并询问用户：立即应用、提交票证、使用持久接收器接受或停止。 “接受”需要真正持久的记录（PR 描述中的已知残留，或 <code>docs/residual-review-findings/&lt;sha&gt;.md</code>）——调查结果不能消失在聊天中。</p>
+<p><strong>为什么它从不切换结帐？</strong>
+该技能永远不会运行 <code>git checkout</code>/<code>switch</code> — 通过 PR/分支选择审查<em>范围</em>，而不是允许改变树（它在不检查的情况下比较远程/本地引用）。交互模式可以“应用”当前结帐的修复（可逆编辑），但它永远不会切换分支。要根据不同的引用查看当前结帐，请传递 <code>base:&lt;ref&gt;</code>。</p>
+<p><strong>它可以与浏览器测试同时运行吗？</strong>
+<code>mode:agent</code> 仅用于报告并且永远不会改变，因此它与并发测试一起是安全的。交互模式可能会对工作树应用修复，因此请避免针对其他代理正在积极使用的签出运行它。</p>
+<p><strong>它支持非软件工作吗？</strong>
+不——该技能与 git、代码审查人员和 PR 环境紧密结合。对于文档（要求、计划），请使用 <code>/ce-doc-review</code> 代替。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 主要上游调用者；在第 3.3 阶段升级到 <code>ce-code-review</code></li>
+<li><a href="/compound-engineering/skills/ce-doc-review.html"><code>ce-doc-review</code></a> — 文档（需求、计划）而非代码的同级技能</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 当根本原因调查很重要时，用于修复审查期间发现的错误</li>
+<li><a href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>ce-resolve-pr-feedback</code></a> — 在 PR 开放后处理传入的审阅者评论</li>
+<li><a href="/compound-engineering/skills/ce-simplify-code.html"><code>ce-simplify-code</code></a> — 在审核之前由 <code>ce-work</code> 调用；补充，而不是替代</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

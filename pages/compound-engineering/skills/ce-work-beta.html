@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>工作执行命令 · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-work-beta</nav>
+    <header class="page-header">
+      <h1>/ce-work-beta</h1>
+      <div class="page-meta">
+        <span class="source-tag">运行时 SKILL 参考（无独立用户文档页）</span>
+        <span>plugins/compound-engineering/skills/ce-work-beta/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>工作执行命令</h1>
+<p>高效执行工作，同时保持质量和精加工功能。</p>
+<p>＃＃ 介绍</p>
+<p>该命令采用工作文档（计划或规范）或描述工作的简单提示，并系统地执行它。重点是通过快速了解需求、遵循现有模式并始终保持质量来<strong>交付完整的功能</strong>。</p>
+<p><strong>Beta 推出说明：</strong> 当您想要试用 Codex 授权时，请手动调用 <code>ce-work-beta</code>。在测试期间，规划和工作流程切换保持稳定的 <code>ce-work</code> 以避免双路径编排复杂性。</p>
+<h2>输入文档</h2>
+<p><input_document> #$ARGUMENTS </input_document></p>
+<h2>参数解析</h2>
+<p>解析 <code>$ARGUMENTS</code> 以获得以下可选标记。在将剩余部分解释为计划文件路径或裸提示之前，先剥离每个已识别的标记。</p>
+<table>
+<thead>
+<tr>
+<th>代币</th>
+<th>示例</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>delegate:codex</code></td>
+<td><code>delegate:codex</code> <code>delegate:codex</code></td>
+<td>激活 Codex 授权模式以执行计划</td>
+</tr>
+<tr>
+<td><code>delegate:local</code></td>
+<td><code>delegate:local</code></td>
+<td>即使在配置中启用了委派，也要停用委派</td>
+</tr>
+</tbody></table>
+<p>所有标记都是可选的。如果不存在，则返回到下面的解决链。</p>
+<p><strong>模糊激活：</strong> 还可以识别命令性委托意图短语，例如“使用 codex”、“委托给 codex”、“codex 模式”或“委托模式”等价于 <code>delegate:codex</code>。在提示中仅提及“codex”（例如，“修复 codex 转换器错误”）不得激活委托——只有明确的委托意图才会触发它。</p>
+<p><strong>模糊停用：</strong> 还将“无代码”、“本地模式”、“标准模式”等短语识别为相当于 <code>delegate:local</code>。</p>
+<h3>设置解析链</h3>
+<p>从参数中提取令牌后，使用以下优先级链解析委托状态：</p>
+<ol>
+<li><strong>参数标志</strong> -- 当前调用中的 <code>delegate:codex</code> 或 <code>delegate:local</code> （最高优先级）</li>
+<li><strong>配置文件</strong> -- 从下面的配置块中提取设置。 <code>work_delegate</code> 的值 <code>codex</code> 激活委派； <code>false</code> 停用。</li>
+<li><strong>硬默认</strong> -- <code>false</code>（委托关闭）</li>
+</ol>
+<p><strong>配置（预先解决）：</strong>
+!<code>cat &quot;$(git rev-parse --show-toplevel 2&gt;/dev/null)/.compound-engineering/config.local.yaml&quot; 2&gt;/dev/null || echo &#39;__NO_CONFIG__&#39;</code></p>
+<p>If the block above contains YAML key-value pairs, extract values for the keys listed below.
+If it shows <code>__NO_CONFIG__</code>, the file does not exist — all settings fall through to defaults.
+If it shows an unresolved command string, read <code>.compound-engineering/config.local.yaml</code> from the repo root using the native file-read tool (e.g., Read in Claude Code, read_file in Codex). If the file does not exist, all settings fall through to defaults.</p>
+<p>如果任何设置具有无法识别的值，则转为该设置的硬默认值。对于没有硬默认值的可选设置（<code>work_delegate_model</code>、<code>work_delegate_effort</code>），无法识别或无法解析的值会解析为 <strong>unset</strong> — 相应的标志在 <code>codex exec</code> 调用中被省略，因此 Codex 从 <code>~/.codex/config.toml</code> 解析。切勿将无效值替换为 CLI 标志。</p>
+<p>配置键：</p>
+<ul>
+<li><code>work_delegate</code> -- <code>codex</code> 或默认 <code>false</code></li>
+<li><code>work_delegate_consent</code> -- <code>true</code> 或默认 <code>false</code></li>
+<li><code>work_delegate_sandbox</code> -- <code>yolo</code> （默认）或 <code>full-auto</code></li>
+<li><code>work_delegate_decision</code> -- <code>auto</code> （默认）或 <code>ask</code></li>
+<li><code>work_delegate_model</code> -- 要使用的 Codex 模型。可选 — 当未设置或不可解析时，遵循用户的 <code>~/.codex/config.toml</code> 默认值。 Passthrough — 任何非空字符串都被视为有效；只有 YAML 解析失败或空值才会解析为取消设置。</li>
+<li><code>work_delegate_effort</code> -- <code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code> 或 <code>xhigh</code> 之一。可选 - 当取消设置或设置为此枚举之外的值时，解析为取消设置并遵循用户的 <code>~/.codex/config.toml</code> 默认值。</li>
+</ul>
+<p>存储已解析的状态以供下游消费：</p>
+<ul>
+<li><code>delegation_active</code> -- 布尔值，委托模式是否开启</li>
+<li><code>delegation_source</code> -- <code>argument</code> 或 <code>config</code> 或 <code>default</code> -- 授权是如何解决的（环境卫士使用它来决定通知的详细程度）</li>
+<li><code>sandbox_mode</code> -- <code>yolo</code> 或 <code>full-auto</code> （来自配置或默认 <code>yolo</code>）</li>
+<li><code>consent_granted</code> -- 布尔值（来自配置 <code>work_delegate_consent</code>）</li>
+<li><code>delegate_model</code> -- 配置中的字符串，或未设置（遵循 Codex 配置）</li>
+<li><code>delegate_effort</code> -- 来自配置的字符串，或未设置（遵循 Codex 配置）。每批次工作量选择的下限；没有直接传递到 <code>codex exec</code>。</li>
+<li><code>effective_effort</code> -- 每批次派生值 (<code>default | medium | high | xhigh</code>)，在每批次之前根据 <code>delegate_effort</code> 计算，并根据 <code>references/codex-delegation-workflow.md</code> 选取级别（“每批次工作量”）。提供 <code>codex exec</code> 调用来代替 <code>delegate_effort</code>。</li>
+</ul>
+<hr>
+<h2>执行工作流程</h2>
+<h3>阶段 0：输入分类</h3>
+<p>根据 <code>&lt;input_document&gt;</code> 中提供的内容确定如何继续。</p>
+<p><strong>计划文档</strong>（输入是现有计划或规范的文件路径）：首先读取计划的元数据 - Markdown 计划的 YAML frontmatter，或 HTML 计划的可见标题文本（两种格式都带有相同的字段）。如果它带有 <code>execution: knowledge-work</code>，则这是一个 <strong>非代码计划</strong> - 阅读 <code>references/non-code-execution.md</code> 并遵循该剥离，而不是此工作流程的其余部分。否则（该字段不存在或 <code>execution: code</code>）→ 跳到阶段 1 并运行正常的代码生命周期。 （标记检查位于此处，位于计划文档处理内部，因为检测标记需要已有文件；下面的“裸提示”不受影响。）</p>
+<p><strong>裸提示</strong>（输入是工作描述，而不是文件路径）：</p>
+<ol>
+<li><strong>Scan the work area</strong></li>
+</ol>
+<ul>
+<li>根据提示识别可能更改的文件<ul>
+<li>查找这些区域的现有测试文件（搜索导入、引用或与实现文件共享名称的测试/规范文件）</li>
+<li>注意受影响地区的当地模式和惯例</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li><p><strong>评估复杂性和路线</strong></p>
+<table>
+<thead>
+<tr>
+<th>Complexity</th>
+<th>Signals</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Trivial</strong></td>
+<td>1-2 files, no behavioral change (typo, config, rename)</td>
+<td>Proceed to Phase 1 step 2 (environment setup), then implement directly — no task list, no execution loop. Apply Test Discovery if the change touches behavior-bearing code</td>
+</tr>
+<tr>
+<td><strong>Small / Medium</strong></td>
+<td>Clear scope, under ~10 files</td>
+<td>Build a task list from discovery. Proceed to Phase 1 step 2</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>Cross-cutting, architectural decisions, 10+ files, touches auth/payments/migrations</td>
+<td>Inform the user this would benefit from <code>/ce-brainstorm</code> or <code>/ce-plan</code> to surface edge cases and scope boundaries. Honor their choice. If proceeding, build a task list and continue to Phase 1 step 2</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<hr>
+<h3>第 1 阶段：快速启动</h3>
+<ol>
+<li><strong>阅读计划并澄清</strong> <em>（如果从阶段 0 到达且仅有提示，则跳过）</em></li>
+</ol>
+<ul>
+<li>完整阅读工作文件<ul>
+<li>将计划视为决策工件，而不是执行脚本</li>
+<li>如果计划包含 <code>Implementation Units</code>、<code>Work Breakdown</code>、<code>Requirements</code>（或旧版 <code>Requirements Trace</code>）、<code>Files</code>、<code>Test Scenarios</code> 或 <code>Verification</code> 等部分，请将这些部分用作主要来源材料执行</li>
+<li>检查每个实现单元上的 <code>Execution note</code> — 这些携带该单元的计划执行状态信号（例如，测试优先或表征优先）。创建任务时请注意它们。</li>
+<li>检查 <code>Deferred to Implementation</code> 或 <code>Implementation-Time Unknowns</code> 部分 - 这些是规划者在执行过程中故意留给您解决的问题。在开始之前记下它们，以便它们告知您的方法，而不是在任务中让您感到惊讶</li>
+<li>检查 <code>Scope Boundaries</code> 部分 - 这些是明确的非目标。如果实施开始将您拉向相邻的工作，请回头参考它们</li>
+<li>查看计划中提供的任何参考资料或链接</li>
+<li>如果用户在此会话中明确要求 TDD、测试优先或表征优先执行，请尊重该请求，即使计划没有 <code>Execution note</code></li>
+<li>如果有任何不清楚或不明确的地方，请立即提出澄清问题</li>
+<li>如果需要澄清上述问题，请获得用户对已解决答案的批准。如果不需要澄清，则无需单独的批准步骤即可继续 - 计划范围是计划的权威，无需重新协商</li>
+<li><strong>不要跳过这个</strong> - 现在提出问题比构建错误的东西更好</li>
+<li><strong>不要在执行过程中编辑计划主体。</strong> 计划是一个决策工件；进度存在于 git 提交和任务跟踪器中，而不是计划中。 <code>ce-work</code> 不会改变计划——它是否是从 git 派生的，没有记录在文档中。旧版计划可能在单位标题或 <code>status:</code> 字段上包含 <code>- [ ]</code> / <code>- [x]</code> 标记 - 将其作为状态忽略；每个单元的完成情况是在执行期间通过读取当前文件状态来确定的。</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li><strong>设置环境</strong></li>
+</ol>
+<p>首先，检查当前分支：</p>
+<pre><code class="language-bash">   current_branch=$(git 分支 --show-current)
+   default_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2&gt;/dev/null | sed &#39;s@^refs/remotes/origin/@@&#39;)
+
+# 如果远程 HEAD 未设置则回退
+   if [ -z &quot;$default_branch&quot; ];然后
+     default_branch=$(git rev-parse --verify origin/main &gt;/dev/null 2&gt;&amp;1 &amp;&amp; echo &quot;main&quot; || echo &quot;master&quot;)
+   菲
+</code></pre>
+<p><strong>如果已经在功能分支</strong>（不是默认分支）：</p>
+<p>首先，检查分支名称是否<strong>有意义</strong> - 像 <code>feat/crowd-sniff</code> 或 <code>fix/email-validation</code> 这样的名称可以告诉未来的读者该作品的内容。自动生成的工作树名称（例如 <code>worktree-jolly-beaming-raven</code>）或其他不透明名称则不会。</p>
+<p>如果分支名称无意义或自动生成，建议在继续之前重命名它：</p>
+<pre><code class="language-bash">git branch -m &lt;meaningful-name&gt;
+</code></pre>
+<p>   从计划标题或工作描述中得出新名称（例如 <code>feat/crowd-sniff</code>）。将重命名作为推荐选项，同时继续按原样进行。</p>
+<p>然后问：“继续处理 <code>[current_branch]</code>，还是创建一个新分支？”</p>
+<ul>
+<li>如果继续（无论是否重命名），请继续执行步骤 3</li>
+<li>如果创建新的，请按照下面的选项 A 或 B 操作</li>
+</ul>
+<p><strong>如果在默认分支上</strong>，选择如何继续：</p>
+<p><strong>选项A：创建一个新分支</strong></p>
+<pre><code class="language-bash">git pull origin [default_branch]
+git checkout -b feature-branch-name
+</code></pre>
+<p>   根据工作使用有意义的名称（例如 <code>feat/user-authentication</code>、<code>fix/email-validation</code>）。</p>
+<p><strong>选项 B：使用工作树（建议用于并行开发）</strong></p>
+<pre><code class="language-bash">skill: ce-worktree
+# The skill will create a new branch from the default branch in an isolated worktree
+</code></pre>
+<p><strong>选项 C：在默认分支上继续</strong></p>
+<ul>
+<li>需要明确的用户确认</li>
+<li>仅在用户明确表示“是的，提交到 [default_branch]”后才继续</li>
+<li>未经明确许可，切勿直接提交到默认分支</li>
+</ul>
+<p><strong>建议</strong>：在以下情况下使用工作树：</p>
+<ul>
+<li>您想要同时处理多个功能</li>
+<li>你想在实验时保持默认分支干净</li>
+<li>您打算经常在分行之间切换</li>
+</ul>
+<ol start="3">
+<li><p><strong>Create Task List</strong> <em>(skip if Phase 0 already built one, or if Phase 0 routed as Trivial)</em></p>
+<ul>
+<li>Use the platform&#39;s task tracking tool (<code>TaskCreate</code>/<code>TaskUpdate</code>/<code>TaskList</code> in Claude Code, <code>update_plan</code> in Codex, or the equivalent on other harnesses) to break the plan into actionable tasks</li>
+<li>Derive tasks from the plan&#39;s implementation units, dependencies, files, test targets, and verification criteria</li>
+<li>When the plan defines U-IDs for Implementation Units, preserve the unit&#39;s U-ID as a prefix in the task subject (e.g., &quot;U3: Add parser coverage&quot;). This keeps blocker references, deferred-work notes, and final summaries anchored to the same identifier the plan uses, so progress and traceability remain unambiguous across plan edits</li>
+<li>Carry each unit&#39;s <code>Execution note</code> into the task when present</li>
+<li>For each unit, read the <code>Patterns to follow</code> field before implementing — these point to specific files or conventions to mirror</li>
+<li>Use each unit&#39;s <code>Verification</code> field as the primary &quot;done&quot; signal for that task</li>
+<li>Do not expect the plan to contain implementation code, micro-step TDD instructions, or exact shell commands</li>
+<li>Include dependencies between tasks</li>
+<li>Prioritize based on what needs to be done first</li>
+<li>Include testing and quality check tasks</li>
+<li>Keep tasks specific and completable</li>
+</ul>
+</li>
+<li><p><strong>选择执行策略</strong></p>
+</li>
+</ol>
+<p><strong>委派路由门：</strong> 如果 <code>delegation_active</code> 为 true 并且输入是计划文件（不是简单的提示），请阅读 <code>references/codex-delegation-workflow.md</code> 并遵循其预委派检查和委派决策流程。如果所有检查都通过并且委派继续进行，则强制<strong>串行执行</strong>并使用工作流的批处理执行循环直接进入第 2 阶段。如果任何检查禁用委派，请参阅下面的标准策略表。如果委派处于活动状态，但输入只是一个简单的提示（无计划文件），请将 <code>delegation_active</code> 设置为 false，并附上简短说明：“Codex 委派需要计划文件 - 使用标准模式。”并继续下面的标准策略选择。</p>
+<p>创建任务列表后，根据计划的大小和依赖结构决定如何执行：</p>
+<table>
+<thead>
+<tr>
+<th>战略</th>
+<th>何时使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>内嵌</strong></td>
+<td>1-2 个小任务，或在飞行中需要用户交互的任务。 <strong>默认为裸提示工作</strong> — 裸提示很少产生足够的结构化上下文来证明子代理调度的合理性</td>
+</tr>
+<tr>
+<td><strong>系列子代理</strong></td>
+<td>3 个以上任务之间存在依赖关系。每个子代理都会获得一个专注于一个单元的新上下文窗口 - 防止许多任务中的上下文退化。需要计划单元元数据（目标、文件、方法、测试场景）</td>
+</tr>
+<tr>
+<td><strong>并行子代理</strong></td>
+<td>通过并行安全检查的 3 个以上任务（如下）。同时调度独立单元，在其先决条件完成后运行依赖单元。需要计划单元元数据</td>
+</tr>
+</tbody></table>
+<p>   <strong>Parallel Safety Check</strong> — required before choosing parallel dispatch:</p>
+<ol>
+<li>从每个候选单元的 <code>Files:</code> 部分构建文件到单元的映射（创建、修改和测试路径）<ol start="2">
+<li>检查交集 — 任何出现 2 个以上单位的文件路径都意味着重叠</li>
+<li><strong>如果发现重叠且工作树隔离不可用</strong>：降级为串行子代理。记录原因（例如，“单元 2 和 4 共享 <code>config/routes.rb</code> — 使用串行调度”）。串行子代理仍然提供上下文窗口隔离，而无需共享目录写入竞争。</li>
+<li><strong>如果发现重叠并且工作树隔离可用</strong>：并行调度仍然是安全的 - 子代理独立工作，并且重叠表面作为可预测的合并冲突，编排器通过下面的批处理后流程进行处理。记录预测的重叠，以便批处理后流程知道哪些合并会发生冲突。</li>
+</ol>
+</li>
+</ol>
+<p>即使没有文件重叠，共享协调器工作目录的并行子代理也会面临 git 索引争用（并发暂存/提交会损坏索引）和测试干扰（并发测试运行会获取彼此正在进行的更改）。工作树隔离消除了两者；下面的共享目录后备约束可以缓解这些问题。</p>
+<p><strong>子代理隔离</strong> — 为每个并行子代理提供自己的工作树：</p>
+<ul>
+<li><strong>Claude 代码（<code>Agent</code> 工具）：</strong> 通过 <code>isolation: &quot;worktree&quot;</code> 和 <code>run_in_background: true</code>。该工具在其自己的分支上的 <code>.claude/worktrees/agent-&lt;id&gt;</code> 下创建每个子代理工作树。在依赖它之前验证 <code>.claude/worktrees/</code> 是否被 gitignored。</li>
+<li><strong>其他平台</strong>没有内置工作树隔离（例如，Codex <code>spawn_agent</code>、Pi <code>subagent</code>）：子代理共享协调器的目录。</li>
+</ul>
+<p><strong>子代理调度</strong>使用可用的子代理或任务生成机制。对于每个单位，给出子代理：</p>
+<ul>
+<li>完整的计划文件路径（用于整体上下文）</li>
+<li>特定单元的目标、文件、方法、执行说明、模式、测试场景和验证</li>
+<li>与该单元相关的任何已解决的延迟问题</li>
+<li>在编写测试之前检查单元的测试场景是否涵盖所有适用类别（快乐路径、边缘情况、错误路径、集成）并补充差距的说明</li>
+</ul>
+<p><strong>共享目录后备约束</strong> — 仅在工作树隔离不可用时适用：</p>
+<ul>
+<li>指示每个子代理：“不要暂存文件 (<code>git add</code>)、创建提交或运行项目测试套件。编排器在所有并行单元完成后处理测试、暂存和提交。”</li>
+<li>这些约束可防止并发子代理之间的 git 索引争用和测试干扰。</li>
+<li>工作树隔离处于活动状态时，忽略这些约束 — 子代理可以在自己的工作树分支内暂存、提交和运行其单元的测试。</li>
+</ul>
+<p><strong>权限模式：</strong> 调度子代理时省略 <code>mode</code> 参数，以便应用用户配置的权限设置。不要传递 <code>mode: &quot;auto&quot;</code> — 它会覆盖用户级设置，例如 <code>bypassPermissions</code>。</p>
+<p>   <strong>After each subagent completes (serial mode):</strong></p>
+<ol>
+<li>Review the subagent&#39;s diff — verify changes match the unit&#39;s scope and <code>Files:</code> list</li>
+<li>Run the relevant test suite to confirm the tree is healthy</li>
+<li>If tests fail, diagnose and fix before proceeding — do not dispatch dependent units on a broken tree</li>
+<li>Update the task list (do not edit the plan body — progress is carried by the commit)</li>
+<li>Dispatch the next unit</li>
+</ol>
+<p><strong>批处理中的所有并行子代理完成后（工作树隔离模式）：</strong></p>
+<ol>
+<li>等待当前并行批次中的每个子代理完成。</li>
+<li>对于每个已完成的子代理，按依赖顺序：检查工作树与协调器分支的差异。如果子代理没有提交自己的工作，则将其暂存并提交到该工作树内。</li>
+<li>按依赖顺序将每个子代理的分支合并到协调器的分支中。 <strong>如果出现合并冲突，则中止合并（<code>git merge --abort</code>）并针对现在合并的树连续重新分派冲突单元</strong> - 手动解决默默地选择一方并放弃一个单元的意图。 （并行安全检查的预测重叠在这里表现为冲突，而不是共享目录模式下的静默数据丢失。）</li>
+<li>每次合并后，运行相关的测试套件。如果测试失败，请在合并下一个分支之前进行诊断和修复。</li>
+<li>更新任务列表（进度由合并提交承载）。</li>
+<li>合并后，移除每个子代理的工作树并删除其分支。使用子代理结果中返回的绝对路径和分支名称。<ul>
+<li>首先解锁工作树 - 线束锁定每个子代理工作树：<code>git worktree unlock &lt;absolute-path&gt;</code></li>
+<li>删除工作树：<code>git worktree remove &lt;absolute-path&gt;</code></li>
+<li>删除分支：<code>git branch -d &lt;branch-name&gt;</code>（默认情况下，该分支的寿命比工作树长，如果不清理，则会作为孤儿累积；<code>-d</code> 小写拒绝删除未合并的分支，这就是我们想要的安全性 - 如果失败，请在强制之前进行调查）</li>
+</ul>
+</li>
+<li>调度下一批独立单元，或下一个从属单元。</li>
+</ol>
+<p><strong>批处理中的所有并行子代理完成后（共享目录后备）：</strong></p>
+<ol>
+<li>等待当前并行批次中的每个子代理完成，然后再对其任何结果采取行动</li>
+<li>交叉检查发现的文件冲突：比较批次中所有子代理修改的实际文件（而不仅仅是其声明的 <code>Files:</code> 列表）。子代理可能会创建或修改计划期间未预期的文件 - 这是预期的，因为计划描述的是<em>什么</em>而不是<em>如何</em>。仅当同一批中的 2 个以上子代理修改同一文件时，冲突才会产生影响。在共享工作目录中，只有最后编写者的版本会幸存 - 其他单元对该文件的更改都会丢失。如果检测到冲突：首先提交所有单元中的所有非冲突文件，然后为共享文件串行重新运行受影响的单元，以便每个单元都建立在对方提交的工作的基础上</li>
+<li>对于每个已完成的单元，按依赖顺序：检查差异、运行相关测试套件、仅暂存该单元的文件，并使用从单元目标派生的常规消息进行提交</li>
+<li>如果在提交单元更改后测试失败，请在提交下一个单元之前进行诊断和修复
+   5.更新任务列表（不要编辑计划主体——进度由刚刚所做的提交承载）</li>
+<li>调度下一批独立单元，或下一个依赖单元</li>
+</ol>
+<h3>第 2 阶段：执行</h3>
+<ol>
+<li><strong>任务执行循环</strong></li>
+</ol>
+<p>对于按优先级顺序排列的每个任务：</p>
+<pre><code>   while (tasks remain):
+     - Mark task as in-progress
+     - Read any referenced files from the plan or discovered during Phase 0
+     - **If the unit&#39;s work is already present and matches the plan&#39;s intent** (files exist with the expected capability, or the unit&#39;s `Verification` criteria are already satisfied by the current code), the work has likely shipped on a prior branch or session. Verify it matches, mark the task complete, and move on. Do not silently reimplement.
+     - Look for similar patterns in codebase
+     - Find existing test files for implementation files being changed (Test Discovery — see below)
+     - If delegation_active: branch to the Codex Delegation Execution Loop
+       (see `references/codex-delegation-workflow.md`)
+     - Otherwise: implement following existing conventions
+     - Add, update, or remove tests to match implementation changes (see Test Discovery below)
+     - Run System-Wide Test Check (see below)
+     - Run tests after changes
+     - Assess testing coverage: did this task change behavior? If yes, were tests written or updated? If no tests were added, is the justification deliberate (e.g., pure config, no behavioral change)?
+     - Mark task as completed
+     - Evaluate for incremental commit (see below)
+</code></pre>
+<p>当一个单位带有 <code>Execution note</code> 时，请尊重它。对于测试优先的单元，在实施该单元之前编写失败的测试。对于特征优先的单元，在更改之前捕获现有行为。对于没有 <code>Execution note</code> 的单位，请务实地进行。</p>
+<p>执行姿势的护栏：</p>
+<ul>
+<li>当测试优先时，不要在同一步骤中编写测试和实现</li>
+<li>在实施修复或功能之前，不要跳过验证新测试是否失败</li>
+<li>当进行测试优先时，不要过度实现超出当前行为切片的内容</li>
+<li>跳过琐碎的重命名、纯配置和纯样式工作的测试优先原则</li>
+</ul>
+<p><strong>测试发现</strong> - 在对文件实施更改之前，查找其现有测试文件（搜索导入、引用或与实施文件共享命名模式的测试/规范文件）。当计划指定测试场景或测试文件时，从那里开始，然后检查计划可能未枚举的其他测试覆盖范围。对实现文件的更改应该伴随相应的测试更新——新行为的新测试、更改行为的修改测试、删除行为的删除或更新测试。</p>
+<p><strong>测试场景完整性</strong> — 在为包含功能的单元编写测试之前，请检查计划的 <code>Test scenarios</code> 是否涵盖适用于该单元的所有类别。如果类别缺失或场景模糊（例如，“正确验证”而没有命名输入和预期结果），请在编写测试之前从单元自身的上下文中进行补充：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>何时适用</th>
+<th>如果缺失如何导出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>幸福之路</strong></td>
+<td>始终适用于具有特征的单元</td>
+<td>阅读该单元的核心输入/输出对的目标和方法</td>
+</tr>
+<tr>
+<td><strong>边缘情况</strong></td>
+<td>当单元具有有意义的边界（输入、状态、并发）时</td>
+<td>识别边界值、空/零输入和并发访问模式</td>
+</tr>
+<tr>
+<td><strong>错误/失败路径</strong></td>
+<td>当单元出现故障模式时（验证、外部调用、权限）</td>
+<td>枚举单元应拒绝的无效输入、应强制执行的权限/身份验证拒绝以及应处理的下游故障</td>
+</tr>
+<tr>
+<td><strong>整合</strong></td>
+<td>当单元跨层时（回调、中间件、多服务）</td>
+<td>识别跨层链并编写一个无需模拟即可执行它的场景</td>
+</tr>
+</tbody></table>
+<p><strong>系统范围的测试检查</strong> - 在将任务标记为完成之前，暂停并询问：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>该怎么办</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>**运行时会触发什么？**回调、中间件、观察者、事件处理程序 - 从您的更改中跟踪两个级别。</td>
+<td>阅读实际代码（不是文档），了解您接触的模型上的回调、请求链中的中间件、<code>after_*</code> 挂钩。</td>
+</tr>
+<tr>
+<td><strong>我的测试是否运用了真正的链？</strong> 如果每个依赖项都被模拟，则测试证明您的逻辑<em>独立</em>工作 - 它没有说明交互。</td>
+<td>至少编写一个通过完整回调/中间件链使用真实对象的集成测试。交互层没有模拟。</td>
+</tr>
+<tr>
+<td><strong>失败会留下孤立状态吗？</strong> 如果您的代码在调用外部服务之前保留状态（数据库行、缓存、文件），那么当服务失败时会发生什么？重试是否会产生重复项？</td>
+<td>用真实的物体追踪故障路径。如果在有风险的调用之前创建状态，请测试故障是否已清除或重试是否幂等。</td>
+</tr>
+<tr>
+<td><strong>还有哪些其他接口公开了这一点？</strong> Mixins、DSL、替代入口点（Agent、Chat 与 ChatMethods）。</td>
+<td>Grep 查找相关类中的方法/行为。如果需要奇偶校验，请立即添加，而不是后续添加。</td>
+</tr>
+<tr>
+<td><strong>错误策略是否跨层一致？</strong> 重试中间件 + 应用程序回退 + 框架错误处理 - 它们是否冲突或造成双重执行？</td>
+<td>列出每一层的具体错误类别。验证您的救援列表是否与下层实际提出的内容相匹配。</td>
+</tr>
+</tbody></table>
+<p><strong>何时跳过：</strong> 叶节点更改时没有回调、没有状态持久性、没有并行接口。如果更改纯粹是附加的（新的辅助方法、新的视图部分），则检查需要 10 秒，答案是“没有任何触发，跳过”。</p>
+<p>**当这最重要时：**涉及回调模型、回退/重试错误处理或通过多个接口公开的功能的任何更改。</p>
+<ol start="2">
+<li><strong>增量提交</strong></li>
+</ol>
+<p>完成每个任务后，评估是否创建增量提交：</p>
+<table>
+<thead>
+<tr>
+<th>Commit when...</th>
+<th>Don&#39;t commit when...</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Logical unit complete (model, service, component)</td>
+<td>Small part of a larger unit</td>
+</tr>
+<tr>
+<td>Tests pass + meaningful progress</td>
+<td>Tests failing</td>
+</tr>
+<tr>
+<td>About to switch contexts (backend → frontend)</td>
+<td>Purely scaffolding with no behavior</td>
+</tr>
+<tr>
+<td>About to attempt risky/uncertain changes</td>
+<td>Would need a &quot;WIP&quot; commit message</td>
+</tr>
+</tbody></table>
+<p><strong>启发式：</strong>“我可以编写一条提交消息来描述完整的、有价值的更改吗？如果可以，请提交。如果消息是“WIP”或“部分 X”，请等待。”</p>
+<p>如果计划有实施单元，请使用它们作为提交边界的起始指南 - 但根据您在实施过程中发现的内容进行调整。如果一个单元比预期大，则可能需要多次提交，或者小型相关单元可能会合并在一起。使用每个单元的目标来告知提交消息。</p>
+<p><strong>提交工作流程：</strong></p>
+<pre><code class="language-bash"># 1.验证测试是否通过（使用项目的测试命令）
+# 示例：bin/rails 测试、npm 测试、pytest、go 测试等。
+
+# 2. 仅暂存与该逻辑单元相关的文件（不是 `git add .`）
+git add &lt;与该逻辑单元相关的文件&gt;
+
+# 3. 使用常规消息提交
+git commit -m“壮举（范围）：此单元的描述”
+</code></pre>
+<p><strong>处理合并冲突：</strong> 如果在变基或合并过程中出现冲突，请立即解决。增量提交使冲突解决变得更容易，因为每次提交都很小且重点突出。</p>
+<p>   <strong>Note:</strong> Incremental commits use clean conventional messages without attribution footers. The final Phase 4 commit/PR includes the full attribution.</p>
+<p><strong>并行子代理模式：</strong> 提交所有权按隔离模式分割（请参阅第 1 阶段第 4 步）：</p>
+<ul>
+<li>**工作树隔离：**子代理可以在自己的工作树分支内暂存和提交；编排器在批处理后按依赖顺序合并这些分支。</li>
+<li>**共享目录后备：**子代理不提交；在整个并行批处理完成后，编排器会暂存并提交每个单元。</li>
+</ul>
+<ol start="3">
+<li><strong>遵循现有模式</strong></li>
+</ol>
+<ul>
+<li>该计划应引用类似的代码 - 首先阅读这些文件<ul>
+<li>完全匹配命名约定</li>
+<li>尽可能重用现有组件</li>
+<li>遵循项目编码标准（请参阅 AGENTS.md；仅当存储库仍保留兼容性垫片时才使用 CLAUDE.md）</li>
+<li>如有疑问，请 grep 查找类似的实现</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li><strong>持续测试</strong></li>
+</ol>
+<ul>
+<li>在每次重大更改后运行相关测试<ul>
+<li>不要等到结束才进行测试</li>
+<li>立即修复故障</li>
+<li>添加新行为的新测试，更新更改行为的测试，删除已删除行为的测试</li>
+<li>**使用模拟的单元测试单独证明逻辑。与真实对象的集成测试证明这些层可以协同工作。**如果您的更改涉及回调、中间件或错误处理 - 您两者都需要。</li>
+</ul>
+</li>
+</ul>
+<ol start="5">
+<li><strong>随心所欲地简化</strong></li>
+</ol>
+<p>完成一组相关的实现单元（或每 2-3 个单元）后，检查最近更改的文件以寻找简化机会 - 合并重复的模式、提取共享帮助程序并提高代码重用和效率。这在使用子代理时尤其有价值，因为每个代理都在隔离的上下文中工作，并且无法看到跨单元出现的模式。</p>
+<p>不要在每个单元之后都进行简化——早期的模式可能看起来重复，但在后面的单元中故意有所不同。等待自然相边界或当您注意到累积的复杂性时。</p>
+<p>如果 <strong><code>ce-simplify-code</code></strong> 可用，请在阶段边界调用它（特别是在阶段 3 之前，当差异 &gt;=30 行时）。否则，请自行检查更改的文件以获得重用和整合的机会。</p>
+<ol start="6">
+<li><strong>Figma 设计同步</strong>（如果适用）</li>
+</ol>
+<p>对于 Figma 设计的 UI 工作：</p>
+<ul>
+<li>按照设计规范实施组件<ul>
+<li>迭代使用 ce-figma-design-sync 代理进行比较</li>
+<li>修复发现的视觉差异</li>
+<li>重复直到实现与设计匹配</li>
+</ul>
+</li>
+</ul>
+<ol start="7">
+<li><strong>前端设计指南</strong>（如果适用）</li>
+</ol>
+<p>对于没有 Figma 设计的 UI 任务——其中实现涉及视图、模板、组件、布局或页面文件，创建用户可见的路线，或者计划包含显式 UI/前端/设计语言：</p>
+<ul>
+<li>在实施之前加载 <code>ce-frontend-design</code> 技能<ul>
+<li>遵循其检测、指导和验证流程</li>
+<li>如果该技能生成了验证屏幕截图，则它满足第 4 阶段的屏幕截图要求 - 无需单独捕获。如果技能退回到心理审查（无法访问浏览器），则第 4 阶段的屏幕截图仍然适用</li>
+</ul>
+</li>
+</ul>
+<ol start="8">
+<li><strong>跟踪进度</strong><ul>
+<li>完成任务时保持任务列表更新</li>
+<li>注意任何阻碍或意外发现</li>
+<li>如果范围扩大则创建新任务</li>
+<li>让用户了解主要里程碑</li>
+<li>当计划为实施单元定义 U-ID 时，或者计划或原始文档带有稳定的 R-ID（以及可选的 A/F/AE ID）时，请在阻止程序、延期工作说明、任务摘要和最终验证中引用它们，而不是例行状态更新。 U-ID 跨计划编辑锚定单元； R/A/F/AE 在头脑风暴计划交接中锚定产品意图。使用计划提供的 ID，不要发明计划未提供的 ID。这样可以保留可追溯性，而不会将信号隐藏在噪声之下。</li>
+</ul>
+</li>
+</ol>
+<h3>第 3-4 阶段：质量检查和收尾工作</h3>
+<p>When all Phase 2 tasks are complete and execution transitions to quality check, read <code>references/shipping-workflow.md</code> for the full shipping workflow: quality checks, code review, final validation, PR creation, and notification.</p>
+<hr>
+<h2>法典委托模式</h2>
+<p>当参数解析后 <code>delegation_active</code> 为 true 时，请阅读 <code>references/codex-delegation-workflow.md</code> 以了解完整的委托工作流程：预检查、批处理、提示模板、执行循环和结果分类。</p>
+<hr>
+<h2>关键原则</h2>
+<h3>快速启动，执行更快</h3>
+<ul>
+<li>一开始就得到澄清，然后执行</li>
+<li>不要等待完全理解 - 提出问题并行动</li>
+<li>目标是<strong>完成功能</strong>，而不是创建完美的流程</li>
+</ul>
+<h3>计划是你的指南</h3>
+<ul>
+<li>工作文档应引用类似的代码和模式</li>
+<li>加载这些参考文献并遵循它们</li>
+<li>不要重新发明 - 匹配现有的</li>
+</ul>
+<h3>边走边测试</h3>
+<ul>
+<li>在每次更改后运行测试，而不是在最后运行测试</li>
+<li>立即修复故障</li>
+<li>持续测试可防止出现重大意外</li>
+</ul>
+<h3>质量是内置的</h3>
+<ul>
+<li>遵循现有模式</li>
+<li>为新代码编写测试</li>
+<li>在推送之前运行 linting</li>
+<li>当第 1 层可用或第 2 层标准匹配时进行审查（请参阅 <code>shipping-workflow.md</code>）</li>
+</ul>
+<h3>提供完整的功能</h3>
+<ul>
+<li>在继续之前标记所有已完成的任务</li>
+<li>不要让功能完成 80%</li>
+<li>已发布的已完成功能胜过未发布的完美功能</li>
+</ul>
+<h2>要避免的常见陷阱</h2>
+<ul>
+<li><strong>分析瘫痪</strong> - 不要想太多，阅读计划并执行</li>
+<li><strong>跳过澄清问题</strong> - 现在就问，而不是在构建错误的东西之后</li>
+<li><strong>忽略计划参考</strong> - 该计划有链接是有原因的</li>
+<li><strong>最后测试</strong> - 持续测试或稍后受苦</li>
+<li><strong>忘记跟踪进度</strong> - 随时更新任务状态或忘记已完成的工作</li>
+<li><strong>80% 完成综合症</strong> - 完成功能，不要过早继续</li>
+<li><strong>无故跳过审核</strong> — 在可用时使用第 1 层；仅根据 <code>shipping-workflow.md</code> 中的标准升级到第 2 级；当两者都被跳过时记录</li>
+<li><strong>将计划重新划分为人工时间阶段</strong> - 计划的实施单位定义执行范围。不要估计每个单元的工时、提出多日细分或要求用户为“本次会话”选择单元的子集。代理以代理速度执行，上下文窗口压力通过子代理调度（第 1 阶段第 4 步）解决，而不是通过分阶段会话解决。如果计划文件输入对于单次执行来说确实太大，请明确说明并建议用户返回 <code>/ce-plan</code> 以缩小范围 - 不要发明会话阶段作为解决方法。对于裸提示输入，Phase 0 的大型路由已经可以处理超大的工作</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

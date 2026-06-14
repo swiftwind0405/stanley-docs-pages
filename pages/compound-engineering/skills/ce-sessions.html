@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-sessions · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-sessions</nav>
+    <header class="page-header">
+      <h1>/ce-sessions</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-sessions.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-sessions</code></h1>
+<blockquote>
+<p>在 Claude Code、Codex 和 Cursor 中搜索并询问有关您的编码代理会话历史记录的问题。</p>
+</blockquote>
+<p><code>ce-sessions</code> 是 <strong>会话历史记录搜索</strong> 技能。它是一个面向用户的瘦入口点，它调度 <code>ce-session-historian</code> 在所有三个主要编码工具（Claude Code、Codex、Cursor）中搜索会话文件，以获取与您的问题相关的上下文 - 您所做的工作、之前尝试过的内容、如何调查问题、最近发生的事情、做出的决定。</p>
+<p>当记忆衰退时，当在新的会话中继续工作时，当您怀疑“我们以前尝试过这个但我不记得结果”时，或者当重建导致当前状态的路径时，这很有用。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>在 Claude Code / Codex / Cursor 中搜索您的会话历史记录，以获取与问题相关的上下文</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>“这周我们做了什么？”、“我之前尝试过什么？”、“X 是如何被调查的？”、“特工对 Y 做了什么决定？”</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>相关发现的综合摘要——尝试了什么、什么不起作用、关键决策、相关背景</td>
+</tr>
+<tr>
+<td>跨平台</td>
+<td>从 <code>~/.claude/projects/</code>、<code>~/.codex/sessions/</code>、<code>~/.cursor/projects/</code> 读取会话</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>默认情况下，编码代理会话历史记录是短暂的：</p>
+<ul>
+<li><strong>记忆在会话之间逐渐消失</strong> - 即使先前的上下文高度相关，新的会话也开始冷淡</li>
+<li><strong>重复调查</strong> — 相同的假设被测试两次，因为第一次会议的阴性结果被忘记了</li>
+<li><strong>交叉线束失明</strong> - Codex 中的工作不会显示给 Claude Code 代理，即使在同一个存储库上也是如此</li>
+<li><strong>分支范围的上下文丢失</strong> - 两周前在同一分支上的讨论如果没有工具就无法访问</li>
+<li><strong>知道它发生了还不够</strong> — 知道“我们尝试过这个”而没有<em>结果</em>仍然会导致重试</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-sessions</code> 调度 <code>ce-session-historian</code> — 一个专门的代理，它读取所有三个线束平台上的会话文件，应用时间和存储库过滤器，提取与用户问题相关的结果，并合成结构化摘要：</p>
+<ul>
+<li>之前尝试过什么</li>
+<li>什么不起作用（以及为什么）</li>
+<li>关键决策</li>
+<li>相关背景</li>
+</ul>
+<p>代理在工作目录之外（在线束会话文件目录中）运行，编排器级别的工具通常无法访问该目录 - 这就是为什么这是委托而不是内联处理的原因。</p>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1.跨线束会话读取</h3>
+<p><code>ce-session-historian</code> 从代理可能留下上下文的所有三个位置读取：</p>
+<ul>
+<li><code>~/.claude/projects/</code>（克劳德代码）</li>
+<li><code>~/.codex/sessions/</code>（法典）</li>
+<li><code>~/.cursor/projects/</code>（光标）</li>
+</ul>
+<p>如果您昨天使用了 Codex，今天使用了 Claude Code，则此技能会找到昨天的上下文。单线束工具则不然。</p>
+<h3>2. 问题驱动的综合，而不是原始成绩单转储</h3>
+<p>代理不会返回会话内容的平面列表。它通过结构化部分综合针对用户问题的调查结果：</p>
+<ul>
+<li><strong>之前尝试过什么</strong> — 接近代理尝试过的方法，并得出结果</li>
+<li><strong>什么不起作用</strong> — 失败的假设及其原因</li>
+<li><strong>关键决定</strong> — 在之前的会议中做出的选择和推理</li>
+<li><strong>相关上下文</strong> — 与问题相关的相邻发现</li>
+</ul>
+<p>如果不存在相关的先前会议，摘要会明确说明而不是捏造调查结果。</p>
+<h3>3.分支感知过滤</h3>
+<p>该技能预先解析当前的 git 分支并将其传递给代理，以便会话搜索可以过滤到在同一分支上完成的工作 - 通常是在接手工作或重建最近的上下文时最相关的工作。预解析使用 <code>!</code> 反引号机制：如果它解析为普通分支名称，则将其传入；如果它返回文字命令字符串（解析失败），则它会被省略，并且代理会在运行时派生分支。</p>
+<h3>4. 瘦编排器，代理完成工作</h3>
+<p>这项技能本身是一个很薄弱的切入点——它的作用是问“你想知道什么？”如果没有提出问题，则派遣历史学家。历史学家负责实际的搜索、时间过滤、文本解析和合成。这使得面向用户的表面很小，而繁重的工作则由专业代理完成。</p>
+<h3>5.时间窗口控制</h3>
+<p>历史学家接受问题本身的时间提示（“最近”、“上周”、“自 auth 重构以来”、明确的日期）。它将这些解析为实时窗口并在过滤会话时应用它们。默认窗口是有限的，因此代理不会读取每个会话文件 - 相关性优先于召回。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您正在着手开发两周前开始的一项功能。您不太记得您选择的是按订阅静音状态还是按用户静音状态，并且您需要在继续之前进行确认。您调用 <code>/ce-sessions &quot;did we decide where notification mute state lives?&quot;</code>。</p>
+<p>该技能预先解析分支 (<code>tmchow/notification-mute</code>) 并调度 <code>ce-session-historian</code> 以及问题、当前工作目录和分支提示。</p>
+<p>历史学家在过去 30 天内跨所有三个线束位置搜索该分支上的会话。它发现：4 个 Claude Code 会话，1 个 Codex 会话。它会仔细阅读它们，寻找有关静音状态问题的证据。它返回一个摘要：</p>
+<ul>
+<li><strong>关键决策：</strong> “在 2026 年 4 月 22 日的每个会话中，按订阅静音状态 (notification_subscription.mute_until) 而不是按用户确定。理由：按用户将强制对所有通知类型进行全局静音；用户希望按类型进行控制。”</li>
+<li><strong>相关上下文：</strong>“早期会话考虑了一个带有 subscription_id 外键的单独 <code>mutes</code> 表。被拒绝，因为生命周期与订阅本身相同。”</li>
+</ul>
+<p>你已经有了答案。从上次中断的地方继续，恢复之前的决策上下文。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-sessions</code>：</p>
+<ul>
+<li>您正在开始工作，需要了解之前决定/尝试过的内容</li>
+<li>新会话无法看到先前会话学到的内容</li>
+<li>你怀疑“我们以前尝试过这个，但我不记得了”</li>
+<li>您正在重建导致当前状态的路径</li>
+<li>问题是“我们什么时候决定 X”或“我们如何调查 Y”</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-sessions</code>：</p>
+<ul>
+<li>上下文存在于提交的代码或文档中，而不是代理会话中 → 只需阅读代码/文档</li>
+<li>您想要一般会话元数据（计数、时间戳、大小）而无需语义搜索 → 直接从 <code>plugins/compound-engineering/skills/ce-sessions/scripts/</code> 运行 <code>discover-sessions.sh</code> 和 <code>extract-metadata.py</code></li>
+<li>问题是关于您记得很清楚的单个特定会话 - 直接打开会话文件</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-sessions</code> 大多数情况下是独立调用的，但与其他技能互锁：</p>
+<ul>
+<li><strong><code>/ce-compound</code> 第 1 阶段（完整模式）</strong> — 有选择地通过平台的技能调用原语调用 <code>ce-sessions</code>，以搜索先前会话中的相关上下文，将结果折叠到新学习的“无效内容”部分中</li>
+<li><strong><code>/ce-debug</code> Triage</strong> — 事先尝试意识；当用户指示失败的尝试时，在调查之前询问“您已经尝试过什么”可以避免重复已知失败的方法</li>
+</ul>
+<p>该技能是跨 Claude Code、Codex 和 Cursor 进行会话搜索的规范入口点；其他技能在需要会话历史记录上下文时通过平台的技能调用原语调用它。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>大多数使用是直接的：</p>
+<ul>
+<li><strong>有一个问题</strong> — <code>/ce-sessions &quot;did we decide where notification mute state lives?&quot;</code></li>
+<li><strong>毫无疑问</strong> — <code>/ce-sessions</code> 询问“您想了解您的会话历史记录的哪些内容？”</li>
+<li><strong>有时间限制</strong> — 问题可以包含时间提示（“最近”、“上周”、“自 auth 重构以来”）</li>
+<li><strong>主题限制</strong> — 问题可以命名主题、文件或功能（“如何测试迁移”、“我们为 N+1 查询尝试了什么”）</li>
+</ul>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>问“你想知道什么？”</td>
+</tr>
+<tr>
+<td><code>&lt;question&gt;</code></td>
+<td><code>&lt;question&gt;</code>直接问题搜索历史记录</td>
+</tr>
+<tr>
+<td><code>&lt;topic&gt;</code></td>
+<td>收集背景信息的主题</td>
+</tr>
+</tbody></table>
+<p>该技能会预先解析当前的 git 分支，并在解析干净后将其用于分支过滤。协调器从问题中选择时间窗口；默认值是有限制的（7 天）。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>它可以跨 Claude Code、Codex 和 Cursor 使用吗？</strong>
+是 — <code>ce-sessions</code> 从 <code>~/.claude/projects/</code>、<code>~/.codex/sessions/</code> 和 <code>~/.cursor/projects/</code> 读取。交叉线束工作出现。</p>
+<p><strong>如果没有相关的先前会话，它会返回什么？</strong>
+摘要中的“没有相关的先前会话”消息。该技能不会编造调查结果来填充摘要。</p>
+<p><strong>它如何过滤相关性？</strong>
+该技能使用问题来驱动相关性过滤器——首先是存储库、分支和时间窗口，如果分支没有出现任何结果，则进行关键字匹配。最多五场深入探讨的会议；其余的被跳过。综合子代理仅读取预先提取的框架/错误文件，而不读取原始会话 JSONL。</p>
+<p><strong>为什么存在这个技能而不是直接派遣历史学家代理？</strong>
+如果没有给出问题，面向用户的界面应该提出正确的问题，并且编排器在脚本调用可移植工作的主上下文中处理分支预解析、扫描窗口选择、深入选择和每会话提取。仅综合的 <code>ce-session-historian</code> 子代理接收预先提取的文件路径并生成散文结果 - 根据设计，它本身无法运行发现管道。</p>
+<p><strong>它可以从我不在的机器上读取会话吗？</strong>
+不。它仅读取本地会话文件 — <code>~/.claude/projects/</code> 等。其他计算机上的会话无法访问。</p>
+<p><strong>它适用于非软件问题吗？</strong>
+该技能不关心主题 - 它会搜索会话文件中的任何内容。如果您已将代理用于非软件工作并希望了解相关历史记录，则此技能很有效。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-compound.html"><code>ce-compound</code></a> — 在完整模式捕获期间调用 <code>ce-sessions</code> （选择加入）以丰富先验上下文</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 先前尝试意识使用类似的上下文；当信号存在时询问用户之前失败的尝试</li>
+<li><code>plugins/compound-engineering/skills/ce-sessions/scripts/</code> — ce-sessions 调用的底层脚本（<code>discover-sessions.sh</code>、<code>extract-metadata.py</code>、<code>extract-skeleton.py</code>、<code>extract-errors.py</code>）；当需要原始元数据或提取输出时可以直接运行，无需编排</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

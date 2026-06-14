@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gemini 图像生成 (Nano Banana Pro) · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-gemini-imagegen</nav>
+    <header class="page-header">
+      <h1>/ce-gemini-imagegen</h1>
+      <div class="page-meta">
+        <span class="source-tag">运行时 SKILL 参考（无独立用户文档页）</span>
+        <span>plugins/compound-engineering/skills/ce-gemini-imagegen/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Gemini 图像生成 (Nano Banana Pro)</h1>
+<p>使用 Google 的 Gemini API 生成和编辑图像。必须设置环境变量 <code>GEMINI_API_KEY</code>。</p>
+<h2>默认模型</h2>
+<table>
+<thead>
+<tr>
+<th>型号</th>
+<th>分辨率</th>
+<th>最适合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>gemini-3-pro-image-preview</code></td>
+<td><code>gemini-3-pro-image-preview</code> 1K-4K</td>
+<td>所有图像生成（默认）</td>
+</tr>
+</tbody></table>
+<p><strong>注意：</strong> 始终使用此 Pro 型号。仅在明确要求时才使用不同的模型。</p>
+<h2>快速参考</h2>
+<h3>默认设置</h3>
+<ul>
+<li><strong>型号：</strong> <code>gemini-3-pro-image-preview</code></li>
+<li><strong>分辨率：</strong> 1K（默认，选项：1K、2K、4K）</li>
+<li><strong>纵横比：</strong> 1:1（默认）</li>
+</ul>
+<h3>可用的宽高比</h3>
+<p><code>1:1</code>、<code>2:3</code>、<code>3:2</code>、<code>3:4</code>、<code>4:3</code>、<code>4:5</code>、<code>5:4</code>、<code>9:16</code>、 <code>16:9</code>、<code>21:9</code></p>
+<h3>可用分辨率</h3>
+<p><code>1K</code>（默认）、<code>2K</code>、<code>4K</code></p>
+<h2>核心 API 模式</h2>
+<pre><code class="language-蟒蛇">导入操作系统
+从谷歌导入genai
+来自 google.genai 导入类型
+
+客户端 = genai.Client(api_key=os.environ[&quot;GEMINI_API_KEY&quot;])
+
+# 基本生成（1K，1:1 - 默认）
+响应 = client.models.generate_content(
+    型号=“gemini-3-pro-image-preview”，
+    content=[&quot;此处提示您&quot;],
+    config=types.GenerateContentConfig(
+        response_modalities=[&#39;文本&#39;, &#39;图像&#39;],
+    ),
+）
+
+对于response.parts中的部分：
+    如果部分.文本：
+        打印（部分.文本）
+    elif 部分.inline_data：
+        图像 = 部分.as_image()
+        image.save(&quot;输出.png&quot;)
+</code></pre>
+<h2>自定义分辨率和宽高比</h2>
+<pre><code class="language-蟒蛇">来自 google.genai 导入类型
+
+响应 = client.models.generate_content(
+    型号=“gemini-3-pro-image-preview”，
+    内容=[提示],
+    config=types.GenerateContentConfig(
+        response_modalities=[&#39;文本&#39;, &#39;图像&#39;],
+        image_config=类型.ImageConfig(
+            aspect_ratio=&quot;16:9&quot;, # 宽格式
+            image_size=&quot;2K&quot; # 更高分辨率
+        ),
+    ）
+）
+</code></pre>
+<h3>分辨率示例</h3>
+<pre><code class="language-蟒蛇"># 1K（默认）- 速度快，适合预览
+image_config=types.ImageConfig(image_size=&quot;1K&quot;)
+
+# 2K - 平衡的质量/速度
+image_config=types.ImageConfig(image_size=&quot;2K&quot;)
+
+# 4K - 最高质量，速度较慢
+image_config=types.ImageConfig(image_size=&quot;4K&quot;)
+</code></pre>
+<h3>纵横比示例</h3>
+<pre><code class="language-蟒蛇"># 正方形（默认）
+image_config=types.ImageConfig(aspect_ratio=&quot;1:1&quot;)
+
+# 横向宽
+image_config=types.ImageConfig(aspect_ratio=&quot;16:9&quot;)
+
+#超广角全景
+image_config=types.ImageConfig(aspect_ratio=&quot;21:9&quot;)
+
+# 肖像
+image_config=types.ImageConfig(aspect_ratio=&quot;9:16&quot;)
+
+# 照片标准
+image_config=types.ImageConfig(aspect_ratio=&quot;4:3&quot;)
+</code></pre>
+<h2>编辑图像</h2>
+<p>传递带有文本提示的现有图像：</p>
+<pre><code class="language-蟒蛇">从 PIL 导入图像
+
+img = Image.open(&quot;输入.png&quot;)
+响应 = client.models.generate_content(
+    型号=“gemini-3-pro-image-preview”，
+    content=[&quot;为该场景添加日落&quot;, img],
+    config=types.GenerateContentConfig(
+        response_modalities=[&#39;文本&#39;, &#39;图像&#39;],
+    ),
+）
+</code></pre>
+<h2>多轮细化</h2>
+<p>使用聊天进行迭代编辑：</p>
+<pre><code class="language-蟒蛇">来自 google.genai 导入类型
+
+聊天 = client.chats.create(
+    型号=“gemini-3-pro-image-preview”，
+    config=types.GenerateContentConfig(response_modalities=[&#39;TEXT&#39;, &#39;IMAGE&#39;])
+）
+
+response = chat.send_message(&quot;为&#39;Acme Corp&#39;创建徽标&quot;)
+# 保存第一张图片...
+
+response = chat.send_message(&quot;使文本加粗并添加蓝色渐变&quot;)
+# 保存优化后的图像...
+</code></pre>
+<h2>提示最佳实践</h2>
+<h3>逼真的场景</h3>
+<p>包括相机详细信息：镜头类型、灯光、角度、情绪。</p>
+<blockquote>
+<p>“逼真的特写肖像，85mm 镜头，柔和的黄金时段光线，浅景深”</p>
+</blockquote>
+<h3>风格化艺术</h3>
+<p>明确指定样式：</p>
+<blockquote>
+<p>“卡哇伊风格的快乐小熊猫贴纸，粗体轮廓，卡通阴影，白色背景”</p>
+</blockquote>
+<h3>图像中的文本</h3>
+<p>明确字体样式和位置：</p>
+<blockquote>
+<p>“使用干净的无衬线、黑白、咖啡豆图案的文本‘Daily Grind’创建徽标”</p>
+</blockquote>
+<h3>产品模型</h3>
+<p>描述照明设置和表面：</p>
+<blockquote>
+<p>“工作室照明的抛光混凝土产品照片，三点柔光箱设置，45 度角”</p>
+</blockquote>
+<h2>高级功能</h2>
+<h3>Google 搜索基础</h3>
+<p>根据实时数据生成图像：</p>
+<pre><code class="language-python">response = client.models.generate_content(
+    model=&quot;gemini-3-pro-image-preview&quot;,
+    contents=[&quot;Visualize today&#39;s weather in Tokyo as an infographic&quot;],
+    config=types.GenerateContentConfig(
+        response_modalities=[&#39;TEXT&#39;, &#39;IMAGE&#39;],
+        tools=[{&quot;google_search&quot;: {}}]
+    )
+)
+</code></pre>
+<h3>多个参考图像（最多 14 个）</h3>
+<p>组合来自多个来源的元素：</p>
+<pre><code class="language-python">response = client.models.generate_content(
+    model=&quot;gemini-3-pro-image-preview&quot;,
+    contents=[
+        &quot;Create a group photo of these people in an office&quot;,
+        Image.open(&quot;person1.png&quot;),
+        Image.open(&quot;person2.png&quot;),
+        Image.open(&quot;person3.png&quot;),
+    ],
+    config=types.GenerateContentConfig(
+        response_modalities=[&#39;TEXT&#39;, &#39;IMAGE&#39;],
+    ),
+)
+</code></pre>
+<h2>重要提示：文件格式和媒体类型</h2>
+<p><strong>关键：</strong> Gemini API 默认返回 JPEG 格式的图像。保存时，始终使用 <code>.jpg</code> 扩展名以避免媒体类型不匹配。</p>
+<pre><code class="language-蟒蛇"># 正确 - 使用 .jpg 扩展名（Gemini 返回 JPEG）
+image.save(&quot;输出.jpg&quot;)
+
+# 错误 - 将导致“图像与媒体类型不匹配”错误
+image.save(&quot;output.png&quot;) # 创建带有 PNG 扩展名的 JPEG！
+</code></pre>
+<h3>转换为 PNG（如果需要）</h3>
+<p>如果您特别需要 PNG 格式：</p>
+<pre><code class="language-蟒蛇">从 PIL 导入图像
+
+# 使用 Gemini 生成
+对于response.parts中的部分：
+    如果部分.inline_data：
+        img = 部分.as_image()
+        # 通过以显式格式保存转换为 PNG
+        img.save(&quot;输出.png&quot;, 格式=&quot;PNG&quot;)
+</code></pre>
+<h3>验证图像格式</h3>
+<p>使用 <code>file</code> 命令检查实际格式与扩展名：</p>
+<pre><code class="language-bash">file image.png
+# If output shows &quot;JPEG image data&quot; - rename to .jpg!
+</code></pre>
+<h2>注释</h2>
+<ul>
+<li>所有生成的图像都包含 SynthID 水印</li>
+<li>Gemini 默认返回 <strong>JPEG 格式</strong> - 始终使用 <code>.jpg</code> 扩展名</li>
+<li>仅图像模式 (<code>responseModalities: [&quot;IMAGE&quot;]</code>) 不适用于 Google 搜索接地</li>
+<li>对于编辑，以对话方式描述更改 - 模型理解语义屏蔽</li>
+<li>默认为 1K 分辨率以提高速度；当质量至关重要时使用 2K/4K</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

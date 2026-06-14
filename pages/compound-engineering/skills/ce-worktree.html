@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-worktree · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-worktree</nav>
+    <header class="page-header">
+      <h1>/ce-worktree</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-worktree.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-worktree</code></h1>
+<blockquote>
+<p>在 <code>.worktrees/&lt;branch&gt;</code> 下创建一个 git 工作树，并使用 <code>git worktree add</code> 单独无法处理的特定于分支的设置 — <code>.env</code> 复制、具有分支感知安全性的开发工具信任、gitignore 管理。</p>
+</blockquote>
+<p><code>ce-worktree</code> 是<strong>隔离结账</strong>技能。普通 <code>git worktree add</code> 创建工作树，但跳过大多数项目需要的每次签出设置：不遵循 <code>.env</code> 文件，<code>mise</code>/<code>direnv</code> 配置不受信任（因此钩子会阻止提示），并且 <code>.worktrees/</code> 不会被 gitignored。此技能可以为您处理这些问题，并使用安全规则来防止不受信任的 PR 审查分支自动信任用户未见过的 <code>.envrc</code> 内容。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>创建 <code>.worktrees/&lt;branch&gt;</code>，从主存储库复制 <code>.env*</code>，使用安全规则信任 <code>mise</code>/<code>direnv</code> 配置，将 <code>.worktrees</code> 添加到 <code>.gitignore</code></td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>审查 PR，同时保持主要结帐自由；并行运行多个功能；保持默认分支干净</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>位于 <code>.worktrees/&lt;branch-name&gt;</code> 的工作树准备好 <code>cd</code> 进入</td>
+</tr>
+<tr>
+<td>跳过时间</td>
+<td>适合主结账分支的单任务工作</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>简单的 <code>git worktree add</code> 给你留下一棵工作树，它已经“技术上”检查过，但实际上已损坏：</p>
+<ul>
+<li><strong><code>.env*</code> 文件不遵循</strong> — 新工作树没有 <code>.env</code>，因此开发服务器会失败或回退到脆弱的默认值</li>
+<li><strong><code>mise</code>/<code>direnv</code> 配置不受信任</strong> — 每个 <code>cd</code> 进入工作树都会在信任提示下阻塞，从而减慢代理流程</li>
+<li><strong>审查分支上的危险 <code>.envrc</code> 自动信任</strong> - 在 PR 审查工作树上天真地运行 <code>direnv allow</code> 会信任贡献者放入 <code>.envrc</code> 中的任何内容，这可能是 direnv 无法验证的源文件</li>
+<li><strong><code>.worktrees/</code> 不在 <code>.gitignore</code></strong> 中 - 主检出中的每个 <code>git status</code> 显示工作树目录为未跟踪</li>
+<li><strong>主结帐受到干扰</strong> — <code>git worktree add origin/&lt;branch&gt;</code> 可能最终会以用户意想不到的方式改变主结帐的状态</li>
+<li><strong>神秘的自动生成的分支名称</strong>，例如某些工具中的 <code>worktree-jolly-beaming-raven</code> ，模糊了工作树的实际用途</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-worktree</code> 将工作树创建作为结构化通道运行：</p>
+<ul>
+<li>在 <code>.worktrees/&lt;branch&gt;</code> 创建工作树（位置一致，绝不随机）</li>
+<li>复制 <code>.env</code>、<code>.env.local</code>、<code>.env.test</code> 等（跳过 <code>.env.example</code>）</li>
+<li>信任具有分支感知安全规则的 <code>mise</code>/<code>direnv</code> 配置 - 永远不会自动信任修改后的配置，永远不会在 PR 审查分支上使用 <code>direnv allow</code></li>
+<li>将 <code>.worktrees</code> 添加到 <code>.gitignore</code>（如果尚未存在）</li>
+<li>获取 <code>from-branch</code> 而不是检查它 - 主存储库保持不受干扰</li>
+<li>为上游调用者提供清晰的命名指导（<code>feat/crowd-sniff</code>、<code>fix/email-validation</code>，从不随机）</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 分支感知开发工具信任</h3>
+<p>对 <code>mise</code>/<code>direnv</code> 的信任按基本分支划分：</p>
+<table>
+<thead>
+<tr>
+<th>基地支部</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>可信基础</strong> (<code>main</code>、<code>develop</code>、<code>dev</code>、<code>trunk</code>、<code>staging</code>、<code>release/*</code>)</td>
+<td>与该分支进行比较的配置；未更改的配置自动信任； <code>direnv allow</code> 允许</td>
+</tr>
+<tr>
+<td><strong>其他分支</strong>（专题、公关审查）</td>
+<td>与默认分支进行比较的配置； <code>direnv allow</code> 无论如何都会跳过，因为 <code>.envrc</code> 可以源文件 direnv 无法验证</td>
+</tr>
+</tbody></table>
+<p>这种分裂的存在是因为审查分支通常包含来自外部贡献者的代码。自动信任他们的 <code>.envrc</code> 与自动运行他们的安装脚本是同样的错误 - 你不会，所以技能不会。</p>
+<p><strong>修改后的配置永远不会被自动信任。</strong> 当配置与基础配置不同时，技能会打印手动信任命令并等待用户首先查看差异。</p>
+<h3>2. <code>.env*</code> 传播并跳过 <code>.env.example</code></h3>
+<p>大多数项目需要工作树中的 <code>.env</code>、<code>.env.local</code>、<code>.env.test</code> 等来运行任何内容。该技能从主存储库复制所有 <code>.env*</code> 文件，<strong>除了 <code>.env.example</code></strong> （这是已提交的模板，而不是用户的本地机密）。创建后，工作树可以运行依赖于环境状态的开发服务器、测试或脚本，而无需手动设置。</p>
+<h3>3.不打扰主要结账</h3>
+<p>具有远程引用的 <code>git worktree add</code> 的行为有所不同，具体取决于本地分支是否存在。普通使用可能会意外地检查主存储库中的某些内容，或者因令人困惑的错误而失败。此技能<strong>获取</strong> <code>from-branch</code> 而不是检查它 - 新的工作树是从远程引用创建的，但主要检查保持在原来的位置。</p>
+<h3>4.一致位置：<code>.worktrees/&lt;branch&gt;</code></h3>
+<p>工作树转到 <code>.worktrees/&lt;branch&gt;</code> — 无一例外。可预测 <code>cd</code> 快捷方式、可预测清理、可预测扫描工作树的工具。带斜杠的分支名称 (<code>feat/login</code>) 成为所有主要文件系统都支持的目录路径 (<code>.worktrees/feat/login</code>)。</p>
+<h3>5. <code>.worktrees</code> 的自动-<code>.gitignore</code></h3>
+<p>如果 <code>.worktrees</code> 尚未存在于 <code>.gitignore</code> 中，则该技能会将其添加。如果没有这个，主结帐中的每个 <code>git status</code> 都会将工作树目录显示为嘈杂的未跟踪条目。有了它，该目录对于主结帐中的 git 操作是不可见的。</p>
+<h3>6. 上游调用者的命名指南</h3>
+<p>当 <code>/ce-work</code> 或 <code>/ce-code-review</code> 调用此技能时，它们会传递从工作描述派生的有意义的分支名称（<code>feat/crowd-sniff</code>、<code>fix/email-validation</code>）。该技能明确不鼓励自动生成的神秘名称 - 它们掩盖了工作树的用途，并使以后的清理变得更加困难。</p>
+<h3>7. 没有用于读取/列出/删除的包装器 - 只需使用 <code>git</code></h3>
+<p>其他工作树操作（列表、删除、切换）不会获得包装器。该技能明确告诉您直接使用 <code>git worktree list</code>、<code>git worktree remove .worktrees/&lt;branch&gt;</code>、<code>cd .worktrees/&lt;branch&gt;</code>、<code>cd &quot;$(git rev-parse --show-toplevel)&quot;</code>。包装裸 git 命令不会增加任何价值，还会增加维护负担——技能集中在设置很重要的部分。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您正在开始开发通知静音功能，并希望将其与您的主要结账功能（该功能正在进行中）隔离。您调用 <code>/ce-worktree feat/notification-mute</code>。</p>
+<p>该技能运行 <code>bash scripts/worktree-manager.sh create feat/notification-mute</code>。默认值：<code>from-branch</code> 是 <code>origin/main</code>。从获取的 <code>origin/main</code> 创建 <code>.worktrees/feat/notification-mute</code>。复制您的 <code>.env</code>、<code>.env.local</code>、<code>.env.test</code>。检测到您有 <code>.mise.toml</code> 与 <code>main</code> 匹配；自动信任，因为基础分支是 <code>main</code> 并且配置未更改。 <code>.worktrees</code> 已在您的 <code>.gitignore</code> 中，因此无需编辑。</p>
+<p>输出：</p>
+<pre><code class="language-文本">创建工作树：.worktrees/feat/notification-mute
+复制的 .env 文件：.env、.env.local、.env.test
+可信 .mise.toml（匹配 main，允许自动信任）
+
+切换方式： cd .worktrees/feat/notification-mute
+</code></pre>
+<p>您<code>cd .worktrees/feat/notification-mute</code>，运行<code>bin/dev</code>，然后开始工作 - 没有环境设置，没有信任提示，不会干扰主结账中的其他功能。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-worktree</code>：</p>
+<ul>
+<li>您正在审查 PR，并希望保持主要结帐免费以用于正在进行的工作</li>
+<li>您正在并行运行多个功能，并且不想通过 <code>git checkout</code> 进行上下文切换</li>
+<li>您希望保持默认分支不受正在进行状态的影响</li>
+<li>技能（<code>ce-work</code>、<code>ce-code-review</code>）提供工作树作为选项</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-worktree</code>：</p>
+<ul>
+<li>该工作是单任务，适合主结帐中的一个分支 - 工作树开销超过产量</li>
+<li>你已经在工作树中 - 嵌套工作树不是该技能设计的目的</li>
+<li>存储库没有 <code>.env</code> 文件或开发工具配置 - 简单的 <code>git worktree add</code> 就足够了</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-worktree</code> 从链技能中调用作为其并行隔离选项：</p>
+<ul>
+<li><strong><code>/ce-work</code> 阶段 1.2</strong> — 开始工作时，用户可以在主结账中选择工作树（推荐用于并行功能）而不是分支</li>
+<li><strong><code>/ce-code-review</code></strong> — 用于在单独结账时与浏览器测试同时审查 PR</li>
+<li><strong><code>/ce-debug</code></strong> — 在调查除当前分支之外的分支上的 bug 且不影响正在进行的工作时</li>
+</ul>
+<p>上游调用者传递有意义的分支名称；该技能需要 <code>feat/...</code>、<code>fix/...</code>、<code>refactor/...</code> 形状 - 而不是自动生成的随机名称。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>直接调用：</p>
+<ul>
+<li><code>/ce-worktree feat/notification-mute</code> — 从默认分支创建</li>
+<li><code>/ce-worktree fix/email-validation develop</code> — 从不同的基础创建</li>
+</ul>
+<p>其他工作树操作（列表、删除、切换）直接使用 <code>git</code> ：</p>
+<pre><code class="language-bash">git worktree list                          # list worktrees
+git worktree remove .worktrees/&lt;branch&gt;    # remove a worktree
+cd .worktrees/&lt;branch&gt;                     # switch to a worktree
+cd &quot;$(git rev-parse --show-toplevel)&quot;      # return to main checkout
+</code></pre>
+<p>要将 <code>.env*</code> 复制到没有它们创建的现有工作树中，请从主存储库运行（而不是从工作树内部运行，因为带有斜杠的分支名称会混淆相对路径）：</p>
+<pre><code class="language-bash">cp .env* .worktrees/&lt;branch&gt;/
+</code></pre>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;branch-name&gt;</code></td>
+<td><code>&lt;branch-name&gt;</code>从默认分支创建工作树</td>
+</tr>
+<tr>
+<td><code>&lt;branch-name&gt; &lt;from-branch&gt;</code></td>
+<td>从指定的基创建工作树</td>
+</tr>
+</tbody></table>
+<p>默认值：</p>
+<ul>
+<li><code>from-branch</code> 默认为 origin 的默认分支（或者 <code>main</code> 如果无法解析）</li>
+<li>新分支在 <code>origin/&lt;from-branch&gt;</code> 创建（如果远程不可用，则在本地引用创建）</li>
+</ul>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么需要单独的工作树技能而不只是 <code>git worktree add</code>？</strong>
+因为每次结帐设置很重要 - <code>.env</code> 复制、<code>mise</code>/<code>direnv</code> 信任、<code>.gitignore</code> 管理。普通的 <code>git worktree add</code> 会给你留下一棵无法运行的树。</p>
+<p><strong>为什么在审核分支上跳过 <code>direnv allow</code>？</strong>
+因为 <code>.envrc</code> 可以获取 direnv 未验证的其他文件。自动信任外部贡献者的 <code>.envrc</code> 与自动运行其安装脚本是同样的错误。该技能会在检查分支上跳过 <code>direnv allow</code> 并打印手动命令 - 您检查差异，然后在适当的情况下信任。</p>
+<p><strong>如果创建工作树时没有 <code>.env*</code> 文件怎么办？</strong>
+从主存储库运行 <code>cp .env* .worktrees/&lt;branch&gt;/</code> （不是从工作树内部运行，因为分支名称通常包含斜杠，会混淆内部的相对路径）。</p>
+<p><strong>如何清理工作树？</strong>
+<code>cd &quot;$(git rev-parse --show-toplevel)&quot;</code> 离开工作树，然后 <code>git worktree remove .worktrees/&lt;branch&gt;</code>。如果分支在上游被删除， <code>/ce-clean-gone-branches</code> 会一起处理工作树和分支清理。</p>
+<p><strong>为什么是 <code>.worktrees/&lt;branch&gt;</code> 而不是其他地方？</strong>
+可预测性。扫描工作树、制表符补全、分支到路径查找的工具都受益于一个规范位置。该目录是 gitignored，因此不会污染 git 状态。</p>
+<p><strong>它适用于远程尚不存在的分支吗？</strong>
+是的 - 新分支是在解析的基础引用本地创建的。该技能会获取当前的 <code>origin/&lt;from-branch&gt;</code> ，但不需要新的分支名称已存在于远程设备上。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a> — 当用户为并行功能选择工作树模式时，在阶段 1.2 调用此技能</li>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a> — 建议与浏览器测试同时进行审查的工作树</li>
+<li><a href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a> — 当远程跟踪分支消失时一起清理工作树和分支</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

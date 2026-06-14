@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-promote · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-promote</nav>
+    <header class="page-header">
+      <h1>/ce-promote</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-promote.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-promote</code></h1>
+<blockquote>
+<p>将已发布的功能转变为可复制粘贴、面向用户的公告副本 - 就在工程工作流程中。默认情况下与螺旋无关；安装 Spiral CLI 后进行语音匹配。</p>
+</blockquote>
+<p><code>ce-promote</code> 是 <strong>发布后消息传递</strong> 技能。功能合并后，它会计算出发布的内容，选择正确的渠道，并起草公告副本 - X 帖子或线程、单行变更日志简介、LinkedIn 帖子、电子邮件、博客介绍、简短的演示脚本。它无需安装任何内容即可生成良好的副本，并在存在并经过验证时使用 <a href="https://www.npmjs.com/package/@every-env/spiral-cli">Spiral CLI</a> 进行品牌语音匹配的草稿。</p>
+<p>它只是草稿。它从不发布、发布、提交或打开 PR——发送副本是人为行为。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>总结已发货内容、选择渠道、起草公告文案并提交审核</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>功能发布后，您希望在工作流程中起草面向用户的消息</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>可复制粘贴的草稿，按频道标记 - 绝不是自动发布</td>
+</tr>
+<tr>
+<td>螺旋</td>
+<td>可选增强功能：CLI 就绪时语音匹配草稿；否则提供一次设置，然后使用编辑和社交专业知识的精简层起草</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>消息传递通常需要等待单独的营销通行证，因此它落后于船舶 - 并且最了解用户价值的工程师并不是编写副本的人。当公告文案是临时编写的时，它倾向于人工智能告诉（“我们很高兴宣布……”）、主题标签垃圾邮件和实施言论，而不是用户价值。</p>
+<h2>解决方案</h2>
+<p><code>ce-promote</code> 在发货时根据发货上下文起草副本：</p>
+<ul>
+<li><strong>从自由格式的描述或合并的 PR、差异、变更日志和最近的提交中得出发布的内容</strong> - 然后总结<em>面向用户的价值</em>，而不是代码。</li>
+<li><strong>明智地选择渠道</strong>（默认情况下是 X 帖子 + 变更日志简介）并根据用户的要求和变更的需要进行扩展。</li>
+<li>**准备好后，通过 Spiral 起草配音副本；如果没有，则提供一次设置（登录或安装），并且在下降时利用编辑和社交媒体基础知识的精简层来自行起草强大的特定于渠道的副本。</li>
+<li><strong>呈现草稿供审阅</strong> - 可复制粘贴，按频道标记，从未发布。</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. Spiral 作为一种微妙的、可选的增强——绝不是依赖</h3>
+<p>Spiral 被检测为三种状态 (<code>which spiral</code> + <code>spiral auth status --json</code>)：就绪、已安装但未授权或不存在。准备就绪后，草稿将与用户的品牌进行语音匹配，并保留到他们的 Spiral 帐户（每个草稿都带有一个用于调整的网络应用程序 <code>url</code>）。未准备好时，该技能会提供<strong>一次</strong>设置 - 如果已安装但未经身份验证，代理将运行 <code>spiral login</code> 并共享登录链接（您在浏览器中批准 - API 密钥永远不会触及代理）；如果缺少，则指向一步安装命令 - 拒绝总是好的：它会退回到编辑和社交媒体专业知识的精简层，自行起草强大的副本，并记录选择退出，这样就不会再烦人了。无论有或没有螺旋，该技能都同样有用。</p>
+<h3>2. 多通道/提示词陷阱已编码</h3>
+<p>Spiral 的多通道行为是短语驱动的，而不是标记驱动的，并且它具有技能明确处理的锋利优势：</p>
+<ul>
+<li><strong>一个频道的 N 个变体</strong> → 要求“3 个推文选项”，<em>避免</em>提示词（<code>campaign</code>、<code>across</code>、<code>multi-channel</code>、<code>everywhere</code>、<code>cross-post</code>），并传递 <code>--num-drafts 3</code>。一个杂散的提示词会触发战役模式并将输出折叠为一个草稿，默默地忽略 <code>--num-drafts</code>。</li>
+<li><strong>真正的跨渠道集</strong> → 在提示中命名渠道； Spiral 返回每个通道的一组草稿 — 它决定计数，通常是几个 — 并且 <code>--num-drafts</code> 被忽略。一次调用即可生成整个跨通道集。</li>
+</ul>
+<h3>3. 仅限草稿 — 发帖始终由人工完成</h3>
+<p>该技能从不发布、安排、发布、提交或打开 PR。输出始终是可供审阅的草稿。这使得人们能够参与到一个向外且难以逆转的动作中。</p>
+<h3>4. 用户价值高于实施</h3>
+<p>“发布了什么”摘要描述了用户现在可以做什么以及他们为什么关心——而不是使之成为可能的序列化器或端点。直接起草禁止人工智能告诉、清嗓子和标签垃圾邮件，并将长度/音调与每个频道相匹配。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您可以合并 PR，添加一键 CSV 导出。</p>
+<p><strong>单通道变化：</strong> <code>/ce-promote 3 tweet options for the new one-click CSV export</code> → 技能总结了值，然后（螺旋路径）运行 <code>spiral write &quot;3 tweet options for one-click CSV export&quot; --instant --num-drafts 3 --json</code> ，没有提示词，或者（无螺旋路径）直接写入三个不同的推文。所有这三个都以可复制粘贴块的形式呈现。</p>
+<p><strong>跨通道集合：</strong> <code>/ce-promote draft a launch across X, LinkedIn, and email</code> → (螺旋路径) <code>spiral write &quot;announcing one-click CSV export — a launch across X, LinkedIn, and email&quot; --instant --json</code> 返回每个通道的一组草稿(螺旋决定计数)； （无螺旋路径）该技能直接起草一篇 X 帖子、一篇 LinkedIn 帖子和一封电子邮件。每份返回的草稿都按通道标记并准备复制。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-promote</code>：</p>
+<ul>
+<li>一项功能刚刚发布，您希望在上下文消失之前起草公告</li>
+<li>您需要通过一个提示进行跨渠道文案（推文 + LinkedIn + 电子邮件）</li>
+<li>您想要语音匹配的副本并安装了 Spiral</li>
+</ul>
+<p>在以下情况下跳过它：</p>
+<ul>
+<li>没有提供任何面向用户的内容（内部重构、仅 CI、仅测试）</li>
+<li>您只需要内部发行说明 - 使用 <code>/ce-release-notes</code> 作为插件发行历史记录</li>
+</ul>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>派生来自 PR/diff/changelog/commits 的内容；起草默认通道集</td>
+</tr>
+<tr>
+<td><code>&lt;description&gt;</code></td>
+<td><code>&lt;description&gt;</code>对发货内容的自由形式描述，用作事实来源</td>
+</tr>
+<tr>
+<td><code>&lt;channels&gt;</code></td>
+<td>例如，“一条推文和一条 LinkedIn 帖子”、“3 个推文选项”、“跨 X、LinkedIn 和电子邮件发布”</td>
+</tr>
+</tbody></table>
+<p>详细的 Spiral CLI 机制位于技能的 <code>references/spiral-cli.md</code> 中。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-release-notes.html"><code>ce-release-notes</code></a> — 插件的内部发布历史记录（不同受众：开发人员，而不是最终用户）</li>
+<li><a href="/compound-engineering/skills/ce-demo-reel.html"><code>ce-demo-reel</code></a> — 捕获 PR 已发布功能的视觉证据（配对以及公告副本附带的视觉效果）</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

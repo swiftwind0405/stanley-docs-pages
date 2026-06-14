@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-setup · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-setup</nav>
+    <header class="page-header">
+      <h1>/ce-setup</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-setup.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-setup</code></h1>
+<blockquote>
+<p>在一个交互式流程中诊断您的环境、安装缺少的工具并引导项目本地配置。</p>
+</blockquote>
+<p><code>ce-setup</code> 是 <strong>入职</strong> 技能。它诊断已安装的内容、缺少的内容、插件版本是什么、存在哪些存储库本地配置，并为缺少的部分提供指导安装。在首次安装、升级插件后、对技能声称工具不可用进行故障排除时或在将新存储库加入到复合工程之前运行它。</p>
+<p>仅 Beta 风格显式调用 (<code>disable-model-invocation: true</code>) — 不会自动触发。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>运行环境诊断，通过安装命令显示缺少的工具/技能，引导 <code>.compound-engineering/config.local.yaml</code>，可选择添加 <code>.gitignore</code> 条目</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>首次安装，升级后健康检查，“为什么这个技能说 X 没有安装？”，新的仓库上线</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>已确认安装的报告，或缺少工具的指导安装流程，以及引导的本地配置</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>仅显式调用</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>复合工程依赖于多个外部 CLI 和每个存储库的配置，很容易跳过：</p>
+<ul>
+<li><strong>工具依赖项</strong> — <code>agent-browser</code>、<code>gh</code>、<code>jq</code>、<code>vhs</code>、<code>silicon</code>、<code>ffmpeg</code>、<code>ast-grep</code> — 每个安装命令都不同，并非全部都很明显</li>
+<li><strong>技能依赖性</strong> — 某些技能依赖于其他特工技能（例如 <code>ast-grep</code> 技能）；知道需要哪些以及将它们安装在哪里是不透明的</li>
+<li><strong>插件版本漂移</strong> - 旧安装的插件与当前文档的行为不同；用户未经检查就针对已修复的错误提交错误报告</li>
+<li><strong>每个存储库配置</strong> — <code>.compound-engineering/config.local.yaml</code> 用于机器本地设置；如果没有引导，像 <code>ce-product-pulse</code> 这样的技能每次运行都会问同样的问题</li>
+<li><strong>过时的遗留配置</strong> — <code>compound-engineering.local.md</code> 是旧格式；挥之不去的文件会导致混乱</li>
+<li><strong>Gitignore 陷阱</strong> — <code>.compound-engineering/config.local.yaml</code> 应该被 gitignored（机器本地），但并非总是如此；用户不小心泄露了秘密</li>
+<li><strong>手动设置非常繁琐</strong> — 一次安装 7 个工具，并为每个工具提供正确的命令，这很麻烦</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-setup</code> 将安装程序作为结构化诊断然后修复流程运行：</p>
+<ul>
+<li><strong>阶段 1：诊断</strong> — 运行 <code>bash scripts/check-health</code> 一次；一次性报告工具/技能安装状态、插件版本、存储库本地 CE 配置状态</li>
+<li><strong>第 2 阶段：修复</strong>（仅当存在问题时）：<ul>
+<li>解决存储库本地清理问题（删除过时的 <code>compound-engineering.local.md</code> 如果存在）</li>
+<li>Bootstrap <code>.compound-engineering/config.local.yaml</code>（提供从模板创建，提供 <code>.gitignore</code> 条目）</li>
+<li>为缺少的工具和技能提供指导安装（多选，全部预选）</li>
+<li>一次运行一个安装命令，在继续之前验证每个命令</li>
+</ul>
+</li>
+<li><strong>最终总结</strong> — 报告已安装/跳过，并推荐 <code>/ce-update</code> 如果 Claude Code</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 单次诊断通过</h3>
+<p>该技能运行<strong>一个</strong>检查脚本，该脚本处理所有 CLI 工具、代理技能、存储库本地 CE 文件和 <code>.gitignore</code> 指导。无需对每个工具进行手动检查，无需重复询问。输出是一个彩色报告，可以向用户显示。如果一切都已安装，则无需进行存储库本地清理，并且本地配置存在且被 gitignored — 该技能将打印成功消息并停止。</p>
+<h3>2. 存储库本地配置引导</h3>
+<p><code>.compound-engineering/config.local.yaml</code> 是机器本地设置所在的位置（使用哪些工具、工作流程如何运行、脉冲设置）。技能：</p>
+<ul>
+<li>始终从模板刷新 <code>.compound-engineering/config.local.example.yaml</code> （已提交；可用设置的队友参考）</li>
+<li>如果丢失则创建 <code>.compound-engineering/config.local.yaml</code> 一次（gitignored；实际的本地设置，全部注释掉 - 仅选择需要的内容）</li>
+<li>如果尚未涵盖，则建议将 <code>.compound-engineering/*.local.yaml</code> 添加到 <code>.gitignore</code></li>
+</ul>
+<p>示例（已提交）和本地（gitignored）之间的划分是存储库中机器本地配置的规范模式。引导它意味着未来的技能不必如此。</p>
+<h3>3. 多选安装并预先选择所有内容</h3>
+<p>当工具或技能缺失时，技能会将它们呈现为多选，并带有<strong>所有预选项目</strong>。用户可以取消选择他们不想要的任何内容。项目分组在 <code>Tools:</code> 和 <code>Skills:</code> 下，因此很清楚每个目标运行时。已安装的项目将被完全省略。</p>
+<h3>4. 在继续之前验证每个安装</h3>
+<p>运行每个安装命令后，技能会验证实际安装的工具：</p>
+<ul>
+<li>对于 CLI 工具：<code>command -v &lt;tool&gt;</code></li>
+<li>对于代理技能：<code>npx skills list --global --json | jq -r &#39;.[].name&#39; | grep -qx &lt;skill-name&gt;</code>（如果 <code>npx</code> 可用），否则检查 <code>~/.claude/skills/&lt;skill-name&gt;</code> / <code>~/.agents/skills/&lt;skill-name&gt;</code> / <code>~/.codex/skills/&lt;skill-name&gt;</code> 路径</li>
+</ul>
+<p>如果验证成功，则报告成功。如果失败，项目 URL 将显示为后备，并且技能将继续到下一个依赖项而不是阻止。</p>
+<h3>5. 旧版 <code>compound-engineering.local.md</code> 清理</h3>
+<p>该技能检测存储库根目录中是否存在过时的 <code>compound-engineering.local.md</code> 。如果是，则说明该文件已过时（审查代理选择现在是自动的，计算机本地状态已移至 <code>.compound-engineering/config.local.yaml</code>）并询问是否删除。用户控制清理；该技能不会默默地删除存储库文件。</p>
+<h3>6. 用于 Claude 代码检测的预解析插件根</h3>
+<p>该技能使用预解析（技能加载时的 <code>!</code> 反引号）来捕获 <code>${CLAUDE_PLUGIN_ROOT}</code>。如果它解析为绝对路径，则这是克劳德代码，该技能建议使用 <code>/ce-update</code> 进行升级。如果它无法解析（空、文字标记或非 Claude 线束），则忽略 <code>/ce-update</code> 引用。无需猜测平台。</p>
+<h3>7. 仅显式调用</h3>
+<p><code>disable-model-invocation: true</code> 防止该技能在提及“设置”或安装讨论的散文中自动触发。安装程序是用户有意选择的 — 直接调用 <code>/ce-setup</code>。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您刚刚安装了复合工程并想要验证所有设置。您调用 <code>/ce-setup</code>。</p>
+<p>该技能宣布“复合工程 - 检查您的环境...”并运行 <code>bash scripts/check-health --version 3.4.1</code>。</p>
+<p>诊断报告：</p>
+<pre><code class="language-文本">工具：
+  🟢 代理浏览器 🟡 gh（未安装） 🟢 jq 🟡 vhs（未安装）
+  🟢 硅 🟢 ffmpeg 🟡 ast-grep （未安装）
+
+技能：
+  🟡 ast-grep（未安装）
+
+配置：
+  ❌ 未找到.compound-engineering/config.local.yaml
+</code></pre>
+<p>该技能检测到 3 个缺失工具、1 个缺失技能、无本地配置。它遍历：</p>
+<ol>
+<li>Bootstrap 配置：“为此项目设置本地配置文件？（y/n）”——你说是。将模板复制到 <code>.compound-engineering/config.local.yaml</code>。提议将 <code>.compound-engineering/*.local.yaml</code> 添加到 <code>.gitignore</code> — 添加它。</li>
+<li>安装缺少的工具：“选择要安装的工具（全部预先选择）：[x] gh、[x] vhs、[x] ast-grep、[x] ast-grep Skill”—保留所有选择。</li>
+<li>对于每个：显示安装命令、请求批准、运行、验证。 <code>gh</code> 通过 Homebrew 安装成功。 <code>vhs</code> 成功。 <code>ast-grep</code> 成功。 <code>ast-grep</code> 技能通过 <code>npx skills add ...</code> 安装。</li>
+</ol>
+<p>最后总结：</p>
+<pre><code class="language-文本">✅ 复合工程设置完成
+
+安装：gh、vhs、ast-grep (CLI)、ast-grep (技能)
+   配置： ✅
+
+运行 /ce-update 以获取最新的插件版本。
+   随时运行 /ce-setup 进行重新检查。
+</code></pre>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-setup</code>：</p>
+<ul>
+<li>您刚刚第一次安装了复合工程</li>
+<li>您升级了插件并想要确认依赖项仍然匹配</li>
+<li>一项技能抱怨“X未安装”并且您想要修复它</li>
+<li>您正在加入一个新的存储库并想要引导 <code>.compound-engineering/config.local.yaml</code></li>
+<li>自从您检查以来已经有一段时间了，您想要一份健康状况快照</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-setup</code>：</p>
+<ul>
+<li>您尚未通过软件包管理器的身份验证（这无济于事）</li>
+<li>您只想安装一个特定工具并知道它的命令 - 直接安装更快</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-setup</code> 大部分是独立的——它不位于链内。这是一个设置实用程序：</p>
+<ul>
+<li>当其他技能出现“X未安装”错误并且用户运行<code>ce-setup</code>来修复时调用</li>
+<li>定期调用作为健康检查</li>
+<li>在加入新仓库或新机器之前调用</li>
+</ul>
+<p>运行后，用户通常会继续 <code>/ce-update</code> （仅限克劳德代码）进行插件版本检查，或者他们最初尝试运行的任何技能。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>直接调用：</p>
+<ul>
+<li><code>/ce-setup</code></li>
+</ul>
+<p>该技能进行诊断，通过安装命令、引导配置来显示缺失的部分。没有参数，没有标志——诊断过程驱动一切。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>相</th>
+<th>步骤</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. 诊断</td>
+<td>确定插件版本、运行健康检查脚本、评估结果</td>
+</tr>
+<tr>
+<td>2.修复</td>
+<td>解决存储库本地问题（删除过时的 <code>compound-engineering.local.md</code>），引导 <code>.compound-engineering/config.local.yaml</code>，为缺少的依赖项提供安装</td>
+</tr>
+<tr>
+<td>决赛</td>
+<td>总结报告；如果使用克劳德代码，建议使用 <code>/ce-update</code></td>
+</tr>
+</tbody></table>
+<p>所需工具列表（默认值；因存储库而异）：<code>agent-browser</code>、<code>gh</code>、<code>jq</code>、<code>vhs</code>、<code>silicon</code>、<code>ffmpeg</code>、<code>ast-grep</code>。所需技能：<code>ast-grep</code>（当存在于存储库的需求中时）。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>什么是 <code>compound-engineering.local.md</code> 以及为何删除它？</strong>
+旧的计算机本地配置格式，已替换为 <code>.compound-engineering/config.local.yaml</code>。该技能会检测过时的文件，进行解释，并在删除之前询问。现在可以通过 <code>ce-code-review</code> 自动选择审核代理； <code>compound-engineering.local.md</code> 中的手动选择不再适用。</p>
+<p><strong>为什么 <code>.compound-engineering/config.local.yaml</code> 被忽略？</strong>
+因为它携带机器本地设置（工具首选项、脉冲配置等），不应污染队友的设置。提交的 <code>.compound-engineering/config.local.example.yaml</code> 显示可用的内容；每个用户都在本地选择加入。</p>
+<p><strong>如果工具安装但验证失败怎么办？</strong>
+该技能将项目 URL 显示为后备并继续到下一个依赖项。验证失败不会阻止安装过程的其余部分。</p>
+<p><strong>我可以有选择地跳过我不想要的工具吗？</strong>
+是的。多重选择会预先选择所有缺失的项目，但您可以在确认之前取消选择任何内容。该技能仅安装选定的内容。</p>
+<p><strong>为什么只是显式调用？</strong>
+<code>disable-model-invocation: true</code> 防止在散文中提及“设置”或“安装”时自动触发。设置是一个用户故意的操作——将其作为询问其他事情的副作用来运行会令人惊讶。</p>
+<p><strong>它可以在非 Claude-Code 平台上运行吗？</strong>
+是的 - 诊断和安装流程在任何地方都有效。最后的 <code>/ce-update</code> 建议仅出现在 Claude Code 上（其中缓存布局启用版本检测）；其他平台无需该线路即可获得其余流程。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a> — 检查插件版本并推荐更新命令（仅限 Claude 代码）</li>
+<li><a href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a> — 取决于 <code>agent-browser</code>，其中 <code>ce-setup</code> 安装</li>
+<li><a href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a> — 取决于 <code>vhs</code> / <code>silicon</code> / <code>ffmpeg</code>，全部由 <code>ce-setup</code> 安装</li>
+<li><a href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a> — 使用 <code>.compound-engineering/config.local.yaml</code> 来 <code>ce-setup</code> 引导</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

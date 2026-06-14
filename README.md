@@ -14,6 +14,15 @@ scripts/
 
 `pages/<slug>/index.html` is the source for each published page.
 
+`pages/compound-engineering/` is generated from the [compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) repo:
+
+```bash
+# in compound-engineering-plugin checkout
+bun run docs:build-skills-site:stanley
+```
+
+Set `STANLEY_DOCS_PAGES` if your stanley-docs-pages checkout is not at `~/Workspace/projects/stanley-docs-pages`.
+
 ## Build
 
 ```bash

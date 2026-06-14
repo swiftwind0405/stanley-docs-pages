@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-slack-research · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-slack-research</nav>
+    <header class="page-header">
+      <h1>/ce-slack-research</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-slack-research.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-slack-research</code></h1>
+<blockquote>
+<p>在 Slack 中搜索解释的组织环境 — 塑造当前任务的决策、约束和讨论弧。研究摘要，而不是原始消息列表。</p>
+</blockquote>
+<p><code>ce-slack-research</code> 是<strong>组织上下文检索</strong>技能。它派遣 <code>ce-slack-researcher</code> 在 Slack 中搜索与主题相关的上下文，然后通过横切分析和研究价值评估综合研究摘要，而不是简单的消息命中列表。在计划、头脑风暴或团队已经讨论过某些内容并且代理需要上下文才能提出合理建议的任何任务时非常有用。</p>
+<p>与 <code>slack:find-discussions</code> （一种不同的技能，返回单个消息结果而不进行综合）不同：此技能<strong>解释</strong>发现的内容。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>搜索 Slack 的主题并返回综合研究摘要，其中包含工作空间身份、价值评估、主题发现和横切分析</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>在计划或集思广益之前，当“我们之前在 Slack 中讨论过这个问题”时，首先了解上下文，然后继续</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>摘要：工作空间标识符、研究价值评估（高/中/低/无）、按主题组织的发现、横切分析</td>
+</tr>
+<tr>
+<td>关键对比</td>
+<td><code>ce-slack-research</code> 综合； <code>slack:find-discussions</code> 返回原始消息命中</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>Slack 是一种团队拥有但很少使用的工作记忆：</p>
+<ul>
+<li><strong>决定隐藏在旧线程中</strong> - “我们在二月份决定了 X 关于定价”是在一个没人记得的频道中</li>
+<li><strong>约束存在于私下对话中</strong> - 功能范围缩小的原因不在规范中，而是在 DM 中</li>
+<li><strong>原始搜索返回噪音</strong> — <code>slack:find-discussions</code> 找到消息，但不会告诉您如何处理它们</li>
+<li><strong>错误的工作空间风险</strong> - 搜索错误的 Slack 实例会产生听起来自信但不相关的上下文</li>
+<li><strong>讨论弧丢失</strong> - 单个线程可能会持续 3 天；一条消息点击并不能显示对话的进展情况</li>
+<li><strong>没有价值评估</strong> - 谈话有结论吗？投机？决定了吗？如果没有这个信号，代理就无法适当地权衡结果</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-slack-research</code> 通过研究型管道运行 Slack 搜索：</p>
+<ul>
+<li><strong>工作空间标识符浮出水面</strong> — 用户可以在阅读结果之前验证是否搜索了正确的 Slack 实例</li>
+<li><strong>研究价值评估</strong> — 高/中/低/无，并有理由</li>
+<li><strong>按主题组织的调查结果</strong> — 不是平面消息列表；按来源渠道和日期的内容进行聚类</li>
+<li><strong>跨领域分析</strong> — 跨结果的模式，而不仅仅是每条消息的摘要</li>
+<li><strong>单发派遣</strong> — 该技能是一个薄弱的切入点； <code>ce-slack-researcher</code> 执行实际工作（MCP 发现、搜索执行、线程读取、综合）</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 综合，而非搜索</h3>
+<p>代理不返回匹配的消息。它返回一个具有结构的摘要：</p>
+<ul>
+<li><strong>工作区标识符</strong> — 搜索了哪个 Slack 工作区（以便用户可以纠正错误）</li>
+<li><strong>研究价值评估</strong> — 研究结果实际上有多大用处，并有理由：<ul>
+<li><strong>高</strong> — 与主题相关的结论性决定或严格限制</li>
+<li><strong>中等</strong> — 与主题相关但不是结论性的上下文</li>
+<li><strong>低</strong> — 无关的提及或微弱的信号</li>
+<li><strong>无</strong> — 没有相关发现；该话题尚未讨论</li>
+</ul>
+</li>
+<li><strong>按主题组织的调查结果</strong> - 具有源渠道和日期的集群</li>
+<li><strong>横切分析</strong> - 每个消息视图错过的发现的模式</li>
+</ul>
+<h3>2.工作区身份验证</h3>
+<p>Slack 搜索中的一个常见失败模式是搜索错误的工作区并获得确信不相关的结果。该技能首先显示工作区标识符，以便用户可以验证是否搜索到了正确的 Slack 实例。如果代理连接到个人 Slack 工作空间而不是公司工作空间，那么就会在摘要将任何人引入歧途之前捕获它。</p>
+<h3>3. 具有合理性的研究价值评估</h3>
+<p>研究结果并不同样有用。一个达成共识的、已决定的产品问题与一个投机性的周末切题的权重不同。代理评估语料库并解释评级 - “高：2026 年 3 月 12 日在 #proj-billing 中明确决定，有三位批准者”或“低：#general 中一次提及；未积极讨论主题”。</p>
+<h3>4. Slack 搜索修饰符直通</h3>
+<p>输入可以是关键字、自然语言问题，或包含 Slack 搜索修饰符：</p>
+<ul>
+<li>频道提示：<code>in:#proj-reverse-trial</code></li>
+<li>日期过滤器：<code>after:2026-03-01</code>、<code>before:2026-04-15</code></li>
+<li>短语搜索、排除等。</li>
+</ul>
+<p>代理提取主题并根据输入的任何形式制定搜索。</p>
+<h3>5. 瘦编排器，代理完成工作</h3>
+<p>该技能本身是一个简单的入口点，如果没有给出主题，则询问主题，然后分派 <code>ce-slack-researcher</code>。该代理处理 MCP 发现、搜索执行、线程读取和综合。这使得面向用户的表面很小，而繁重的工作则由专业代理完成。</p>
+<h3>6. 与原始搜索 Slack 工具不同</h3>
+<p><code>slack:find-discussions</code>（不同的技能）返回适合“最近有人提到 X 吗？”的单独消息结果。 <code>ce-slack-research</code> 返回适合“团队对 X 有何看法，有什么证据？”的解释上下文。区别很重要——使用错误的工具会带来噪音。</p>
+<h3>7. 故障模式清晰地浮出水面</h3>
+<p>如果 Slack 不可用（MCP 未连接或身份验证已过期），代理会清楚地报告该情况，并且技能会中继该消息。它不会尝试其他研究方法或假装进行过搜索。如果用户想要其他地方的上下文，那就是不同的调用。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您即将计划免费试用功能。在撰写头脑风暴之前，您想知道团队已经讨论过什么。您调用 <code>/ce-slack-research &quot;free trial in #proj-reverse-trial&quot;</code>。</p>
+<p>该技能会调度 <code>ce-slack-researcher</code> 以及主题、通道范围和隐式最近窗口。该代理连接到配置的 Slack 工作区，在 <code>#proj-reverse-trial</code> 中运行有针对性的搜索，扩展相关线程并综合结果。</p>
+<p>摘要返回：</p>
+<ul>
+<li><strong>工作空间：</strong> <code>every.slack.com</code></li>
+<li><strong>研究价值：</strong> <strong>高</strong> — 与免费试用范围相关的多项决策和限制</li>
+<li><strong>调查结果：</strong><ul>
+<li><strong>试用长度：</strong> 在 30 天因漏斗数据太长而被拒绝后决定 14 天默认（2026 年 3 月 12 日线程中的决定，三名批准者）</li>
+<li><strong>转换门：</strong> 软付费墙优于硬付费墙；未解决该门是在注册时触发还是在首次使用后触发</li>
+<li>**试用期间的定价：**一致“不显示定价” - 出现在三个不同的线程中</li>
+</ul>
+</li>
+<li><strong>跨领域分析：</strong> 该团队始终倾向于转换保护（试用期间不定价，软门），但尚未在转换门时序上达成共识。这是值得在头脑风暴中解决的实时问题。</li>
+</ul>
+<p>现在，在调用 <code>/ce-brainstorm</code> 之前，您已经拥有了真实的组织上下文。头脑风暴从“试用期为 14 天、软付费墙、没有可见的定价——大门什么时候启动？”开始。而不是从头开始。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-slack-research</code>：</p>
+<ul>
+<li>您即将计划或集思广益团队在 Slack 中讨论过的事情</li>
+<li>存储库/文档对决定保持沉默，但团队显然做出了决定</li>
+<li>存在约束（“我们不能使用该供应商”），但其基本原理是在某个线程中</li>
+<li>您需要解释上下文，而不是原始消息命中</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-slack-research</code>：</p>
+<ul>
+<li>您想要原始消息命中 → 使用 <code>slack:find-discussions</code></li>
+<li>上下文在代码或文档中→改为阅读它们</li>
+<li>该主题太新，尚无 Slack 历史记录</li>
+<li>您没有配置 Slack 工具 → 首先设置 Slack MCP</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p>当组织环境很重要时，<code>ce-slack-research</code> 插入规划和头脑风暴的上游：</p>
+<ul>
+<li><strong>在 <code>/ce-brainstorm</code></strong> 之前 — 收集 Slack 上下文，以便头脑风暴的压力测试问题能够扎根于真正的事先讨论</li>
+<li><strong>在 <code>/ce-plan</code></strong> 之前 — 当工作涉及团队在其他地方做出的决定时，首先浮出该决定</li>
+<li><strong>从内部 <code>/ce-plan</code> 阶段 1.1</strong> — 通过“检测到 Slack 工具；要求我在 Slack 中搜索组织上下文”选择加入</li>
+<li><strong>从内部 <code>/ce-brainstorm</code> 阶段 1.1</strong> — 通过相同的表面图案选择加入</li>
+<li><strong>从内部 <code>/ce-ideate</code> 第 1 阶段</strong> — 选择加入松弛研究以实现构思基础步骤</li>
+</ul>
+<p>当链技能检测到 Slack 工具时，它们就会显示可用性，但不会自动调度——用户选择加入。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>大多数使用是直接的：</p>
+<ul>
+<li><strong>主题</strong> — <code>/ce-slack-research free trial</code></li>
+<li><strong>问题</strong> — <code>/ce-slack-research &quot;What did we say about free trial recently?&quot;</code></li>
+<li><strong>频道范围</strong> — <code>/ce-slack-research free trial in:#proj-reverse-trial</code></li>
+<li><strong>日期过滤</strong> — <code>/ce-slack-research onboarding flow after:2026-03-01</code></li>
+<li><strong>没有争论</strong> — <code>/ce-slack-research</code> 询问要研究什么主题</li>
+</ul>
+<p>该技能接受您的主题自然呈现的任何形式——关键字、问题，带或不带 Slack 搜索修饰符。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>询问要研究什么主题</td>
+</tr>
+<tr>
+<td><code>&lt;topic or question&gt;</code></td>
+<td><code>&lt;topic or question&gt;</code>搜索和综合</td>
+</tr>
+<tr>
+<td><code>&lt;topic&gt; in:#channel</code></td>
+<td>频道范围搜索</td>
+</tr>
+<tr>
+<td><code>&lt;topic&gt; after:YYYY-MM-DD</code></td>
+<td>日期过滤搜索</td>
+</tr>
+</tbody></table>
+<p>如果未配置 Slack 工具，代理会报告不可用，并且技能会中继消息。没有尝试其他研究方法。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>这和 <code>slack:find-discussions</code> 有什么区别？</strong>
+<code>slack:find-discussions</code> 返回单个消息结果 - 对于“最近有人提到 X 吗？”很有用<code>ce-slack-research</code> 解释和综合 — 对于“团队如何看待 X，有什么证据？”很有用。使用正确的工具来解决问题。</p>
+<p><strong>为什么它会显示工作区标识符？</strong>
+因为搜索错误的 Slack 工作区会产生与自信无关的结果，并且用户通常无法仅从结果中判断。显示工作区标识可以让用户在阅读摘要之前捕获错误的工作区情况。</p>
+<p><strong>研究价值评估是什么意思？</strong>
+对研究结果实际有用程度的判断。 <strong>高</strong>=结论性决策/强约束。 <strong>中等</strong> = 与主题相关但不是结论性的。 <strong>低</strong> = 信号弱。 <strong>无</strong> = 该主题尚未得到有意义的讨论。理由解释了评级。</p>
+<p><strong>它可以搜索私人DM吗？</strong>
+取决于配置的 Slack MCP 公开的内容。该技能没有自己的访问权限——它使用 MCP 允许的任何内容。对于私有内容，请确保 MCP 具有正确的范围。</p>
+<p><strong>如果工作空间不合适怎么办？</strong>
+该技能首先显示工作区标识符，以便用户可以根据需要验证并重新调用不同的工作区标识符。如果配置了多个工作区，代理会选择连接的工作区；用户消除歧义。</p>
+<p><strong>没有 Slack MCP 也能工作吗？</strong>
+不会。如果无法访问 Slack 工具，代理会清楚地报告不可用性，并且技能会转发该信息。这项技能不会退回到其他研究方法——否则会产生错误的结果。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-brainstorm.html"><code>ce-brainstorm</code></a> — 在阶段 1.1 约束检查期间选择加入松弛研究</li>
+<li><a href="/compound-engineering/skills/ce-plan.html"><code>ce-plan</code></a> — 在 1.1 阶段本地研究期间选择加入松弛研究</li>
+<li><a href="/compound-engineering/skills/ce-ideate.html"><code>ce-ideate</code></a> — 在接地期间选择加入松弛研究</li>
+<li><code>slack:find-discussions</code> — 用于原始消息搜索的单独 <code>slack</code> 插件中的同级技能；互补而非替代</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

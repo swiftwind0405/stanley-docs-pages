@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>/ce-agent-native-architecture · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-agent-native-architecture</nav>
+    <header class="page-header">
+      <h1>/ce-agent-native-architecture</h1>
+      <div class="page-meta">
+        <span class="source-tag">运行时 SKILL 参考（无独立用户文档页）</span>
+        <span>plugins/compound-engineering/skills/ce-agent-native-architecture/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><p>&lt;概述&gt;</p>
+<h2>代理原生架构</h2>
+<p>代理本机应用程序将代理视为一等公民。功能是由代理使用循环操作的工具实现的结果，而不是用代码编写的函数。为 Claude Code 提供支持的相同架构可以为应用程序提供远远超出编码范围的支持。</p>
+<p><strong>五项核心原则：</strong></p>
+<ol>
+<li><strong>奇偶校验</strong> — 用户可以通过 UI 执行的任何操作，代理都可以通过工具实现。</li>
+<li><strong>粒度</strong>——工具是原子原语；特征是即时定义的结果。要改变行为，编辑散文，而不是代码。</li>
+<li><strong>可组合性</strong> — 新功能=新提示，而不是新代码。原子工具+奇偶校验使这成为可能。</li>
+<li><strong>紧急能力</strong> — 代理完成您未明确设计的任务。开放式请求揭示了潜在需求。</li>
+<li><strong>随着时间的推移而改进</strong> - 应用程序通过累积上下文（例如 <code>context.md</code> 文件）和提示改进而变得更好，而无需交付代码。</li>
+</ol>
+<p>要深入了解这些原则如何转化为架构模式，请阅读 <code>references/architecture-patterns.md</code>。
+&lt;/概述&gt;</p>
+<p>&lt;摄入量&gt;</p>
+<h2>您需要代理本机架构的哪些方面的帮助？</h2>
+<ol>
+<li><strong>设计架构</strong> - 从头开始规划一个新的代理原生系统</li>
+<li><strong>文件和工作区</strong> - 文件作为通用接口，共享工作区模式</li>
+<li><strong>工具设计</strong> - 原始工具、动态能力发现、CRUD完备性</li>
+<li><strong>领域工具</strong> - 何时添加领域工具与保留基元</li>
+<li><strong>执行模式</strong> - 完成信号、部分完成、上下文限制</li>
+<li><strong>系统提示</strong> - 定义坐席行为、判断标准</li>
+<li><strong>上下文注入</strong> - 将运行时应用程序状态注入代理提示中</li>
+<li><strong>操作对等</strong> - 确保代理可以做用户可以做的所有事情</li>
+<li><strong>自我修改</strong> - 使智能体能够安全地自我进化</li>
+<li><strong>产品设计</strong> - 渐进披露、潜在需求、审批模式</li>
+<li><strong>移动模式</strong> - iOS 存储、后台执行、检查点/恢复</li>
+<li><strong>测试</strong> - 测试代理本机应用程序的功能和奇偶校验</li>
+<li><strong>重构</strong> - 使现有代码更加代理原生</li>
+<li><strong>审查/清单</strong> - 架构清单、反模式、成功标准</li>
+</ol>
+<p>选择一个数字或描述您想要的内容。等待响应后再继续。
+&lt;/摄入量&gt;</p>
+<p>&lt;路由&gt;</p>
+<table>
+<thead>
+<tr>
+<th>回应</th>
+<th>阅读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1、“设计”、“建筑”、“规划”</td>
+<td><code>references/architecture-patterns.md</code>，然后应用 <code>references/checklists.md</code></td>
+</tr>
+<tr>
+<td>2、“文件”、“工作空间”、“文件系统”</td>
+<td><code>references/files-universal-interface.md</code> 和 <code>references/shared-workspace-architecture.md</code></td>
+</tr>
+<tr>
+<td>3、“工具”、“mcp”、“原始”、“增删改查”</td>
+<td><code>references/mcp-tool-design.md</code></td>
+</tr>
+<tr>
+<td>4、“域名工具”、“何时添加”</td>
+<td><code>references/from-primitives-to-domain-tools.md</code></td>
+</tr>
+<tr>
+<td>5、“执行”、“完成”、“循环”</td>
+<td><code>references/agent-execution-patterns.md</code></td>
+</tr>
+<tr>
+<td>6、“提示”、“系统提示”、“行为”</td>
+<td><code>references/system-prompt-design.md</code></td>
+</tr>
+<tr>
+<td>7、“上下文”、“注入”、“运行时”、“动态”</td>
+<td><code>references/dynamic-context-injection.md</code></td>
+</tr>
+<tr>
+<td>8、“比价”、“ui操作”、“能力图”</td>
+<td><code>references/action-parity-discipline.md</code></td>
+</tr>
+<tr>
+<td>9、“自我修改”、“进化”、“git”</td>
+<td><code>references/self-modification.md</code></td>
+</tr>
+<tr>
+<td>10、“产品”、“进步”、“认可”、“潜在需求”</td>
+<td><code>references/product-implications.md</code></td>
+</tr>
+<tr>
+<td>11、“移动”、“ios”、“android”、“后台”、“检查点”</td>
+<td><code>references/mobile-patterns.md</code></td>
+</tr>
+<tr>
+<td>12、“测试”、“测试”、“验证”、“验证”</td>
+<td><code>references/agent-native-testing.md</code></td>
+</tr>
+<tr>
+<td>13、“重构”、“现有”、“迁移”</td>
+<td><code>references/refactoring-to-prompt-native.md</code></td>
+</tr>
+<tr>
+<td>14、“审查”、“审核”、“反模式”、“清单”、“成功标准”</td>
+<td><code>references/checklists.md</code></td>
+</tr>
+</tbody></table>
+<p>阅读参考资料后，将这些模式应用到用户的特定上下文中。
+&lt;/路由&gt;</p>
+<p>&lt;参考索引&gt;</p>
+<h2>参考文件</h2>
+<p><strong>核心模式：</strong></p>
+<ul>
+<li><code>references/architecture-patterns.md</code> — 事件驱动、统一编排器、代理到 UI；五项原则全面覆盖</li>
+<li><code>references/files-universal-interface.md</code> — 为什么文件、组织、context.md</li>
+<li><code>references/mcp-tool-design.md</code> — 工具设计、动态能力发现、CRUD</li>
+<li><code>references/from-primitives-to-domain-tools.md</code> — 何时将原语升级为领域工具</li>
+<li><code>references/agent-execution-patterns.md</code> — 完成信号、部分完成、上下文限制</li>
+<li><code>references/system-prompt-design.md</code> — 作为提示、判断标准的功能</li>
+</ul>
+<p><strong>学科：</strong></p>
+<ul>
+<li><code>references/dynamic-context-injection.md</code> — 运行时上下文注入</li>
+<li><code>references/action-parity-discipline.md</code> — 能力映射、奇偶校验工作流程</li>
+<li><code>references/shared-workspace-architecture.md</code> — 共享数据空间、UI 集成</li>
+<li><code>references/product-implications.md</code> — 渐进披露、潜在需求、批准</li>
+<li><code>references/agent-native-testing.md</code> — 测试结果、奇偶校验测试</li>
+<li><code>references/checklists.md</code> — 架构清单、反模式、成功标准</li>
+</ul>
+<p><strong>特定于平台：</strong></p>
+<ul>
+<li><code>references/mobile-patterns.md</code> — iOS 存储、检查点/恢复、成本意识</li>
+<li><code>references/self-modification.md</code> — 基于 Git 的演变，护栏</li>
+<li><code>references/refactoring-to-prompt-native.md</code> — 迁移现有代码
+&lt;/参考索引&gt;</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

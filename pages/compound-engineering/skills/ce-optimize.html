@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-optimize · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-optimize</nav>
+    <header class="page-header">
+      <h1>/ce-optimize</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-optimize.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-optimize</code></h1>
+<blockquote>
+<p>运行指标驱动的迭代优化循环——定义可衡量的目标，构建测量脚手架，运行尝试多种方法的并行实验，不断改进，向最佳方向收敛。</p>
+</blockquote>
+<p><code>ce-optimize</code> 是<strong>测量驱动的实验</strong>技能。它适用于正确改变不明显的问题，您可以生成几个看似合理的变体，您有一个可重复的测量工具，并且“更好”可以表示为硬指标或法学硕士作为法官的评估。该技能定义目标、构建测量循环、在并行工作树（或通过 Codex）中运行实验、保持胜利、恢复损失，并将每个结果保存到磁盘，以便数小时的运行能够在上下文压缩和崩溃中幸存下来。</p>
+<p>受到 Karpathy 的自动研究的启发，针对多文件代码更改和非 ML 领域进行了推广。实际用途包括聚类质量、搜索相关性、构建性能、提示质量、延迟调整，以及优化目标从系统实验而不是猜测和检查中受益的任何地方。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>定义优化规范，建立基线，针对门和/或 LLM 法官进行并行实验测量，保持最佳状态，迭代直到停止标准触发</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>集群、搜索、提示、构建性能——任何可衡量的结果，其中正确的改变并不明显，许多方法都值得尝试</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>一个 <code>optimize/&lt;spec-name&gt;</code> git 分支，其中合并了保留的实验，以及 <code>.context/compound-engineering/ce-optimize/&lt;spec-name&gt;/</code> 中的实验日志和策略摘要</td>
+</tr>
+<tr>
+<td>接下来是什么？ <code>/ce-code-review</code> 累积差异； <code>/ce-compound</code> 捕捉获胜策略；创建公关</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>对于优化型问题，常见的故障模式：</p>
+<ul>
+<li><strong>猜测并检查</strong> — 尝试一项更改、测量、调整；从未见过更广阔的设计空间</li>
+<li><strong>优化代理，而不是目标</strong> - 改进实际上与质量无关的硬指标（集群计数、响应长度）</li>
+<li><strong>丢失结果</strong> — 几个小时的运行崩溃、上下文压缩、结果仅存在于聊天中并且消失了</li>
+<li><strong>症状超过根本原因</strong> - 修复改进了指标，但不能概括，因为它调整了不稳定的代理</li>
+<li><strong>简并解决方案</strong> — “100% 准确度”，因为算法将所有内容分组到一个桶中</li>
+<li><strong>当并行可以工作时按顺序</strong> - 当工作树隔离可以并行测试五个时，一次运行一个实验</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-optimize</code> 将实验作为具有显式门的结构化循环运行：</p>
+<ul>
+<li><strong>规范驱动</strong> — YAML 规范定义了指标、门、范围、测量命令和停止标准（或者该技能可以帮助您交互式地编写一个标准）</li>
+<li><strong>三层评估</strong> - 退化门（廉价，困难）→ LLM 作为法官（当质量需要语义理解时）→ 诊断（记录，非门控）</li>
+<li><strong>持久性纪律</strong> — 磁盘上的实验日志是事实的来源；在下一个实验开始之前，每个结果都会被写入并验证</li>
+<li><strong>工作树隔离的并行实验</strong> - 独立变体在自己的工作树中同时运行，每个变体都在自己的分支上</li>
+<li><strong>文件不相交的亚军精选</strong> - 涉及不同文件的多个获奖实验被组合并重新测量，以找到复合改进</li>
+<li><strong>策略摘要</strong> — 将每批的压缩学习内容输入到下一批的假设生成中</li>
+<li><strong>崩溃恢复</strong> - 工作树中的每个实验 <code>result.yaml</code> 标记可在任何类型的中断后恢复</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 三层评估——退化门、判断、诊断</h3>
+<p><code>ce-optimize</code> 不是单一指标，而是分三层评估每个实验：</p>
+<ul>
+<li><strong>退化门</strong>（硬、便宜、快）——在支付昂贵的评估费用之前捕获明显损坏的解决方案。示例：“1 个集群中的所有项目”、“0% 测试通过率”。先跑；如果任何一个门出现故障，请跳过其余的门。</li>
+<li><strong>LLM-as-judge</strong>（定性工作的实际优化目标）- 样本输出，根据评分标准对其进行评分，汇总。这就是当“更好”需要语义理解时循环优化的内容。</li>
+<li><strong>诊断</strong>（记录，非门控）——分布统计、计数、时间、成本。对于理解“为什么”判断分数发生变化而不污染优化信号很有用。</li>
+</ul>
+<p>三层方法可以防止最常见的故障：优化不跟踪真实质量的代理。</p>
+<h3>2. 法学硕士作为定性输出的评判</h3>
+<p>对于聚类、搜索相关性或提示质量等硬指标误导的问题，该技能使用分层抽样和标题来评估输出：</p>
+<ul>
+<li><strong>分层抽样</strong> - 对输出空间进行分桶（例如，“按大小排序”、“中范围”、“小集群”、“单例”），在所有桶中进行采样，以便法官看到具有代表性的质量</li>
+<li><strong>评分标准驱动的评分</strong> — 1-5 级，带有具体的级别描述；用于诊断值的补充字段（<code>distinct_topics</code>、<code>outlier_count</code>）</li>
+<li><strong>单例评估</strong> - 当覆盖范围很重要时，单独对单例进行采样以捕获误报（应该分组的项目）</li>
+<li><strong>成本上限</strong> — <code>max_total_cost_usd</code> 限制法官总支出；无上限支出需要明确的用户批准</li>
+</ul>
+<h3>3.持久性纪律——磁盘是真理的来源</h3>
+<p>多小时运行不能信任内存中的状态。该技能强制实施六个强制性磁盘检查点（CP-0 到 CP-5）：保存规范、记录基线、写入假设待办事项、测量后<strong>立即</strong>附加每个实验结果、带有策略摘要的批次摘要、最终状态。每次写入后，都会读回文件进行验证——静默写入失败会被捕获，而不是传播。</p>
+<blockquote>
+<p><strong>如果您生成结果表而不首先将这些结果写入磁盘，则会出现错误。</strong> 对话上下文适用于用户；实验日志文件是为了持久性。</p>
+</blockquote>
+<h3>4.工作树隔离中的并行实验</h3>
+<p>对于独立假设，该技能会在其自己的分支上创建每个实验工作树。每个子代理都是独立工作的；合并按依赖顺序连续发生；当协调器显式处理合并冲突时，预测的重叠会出现。没有共享目录 git 索引争用，并发实验之间没有测试干扰。</p>
+<p>当工作树隔离不可用（某些平台）时，执行会回退到串行子代理 - 正确性相同，并行性较低。</p>
+<h3>5. 文件不相交亚军精选</h3>
+<p>一批完成后，技能会根据改进程度对实验进行排名。最好的保留在优化分支上。然后，通过保留的实验检查亚军的<strong>文件级不相交</strong> - 如果亚军触及完全不同的文件，则会将其挑选到新的基线上并重新测量。如果综合测量结果确实更好，则保留；否则将恢复为“单独有前途但组合中立/有害”日志条目。每批次最多可配置上限。</p>
+<h3>6. 策略摘要——压缩学习驱动假设生成</h3>
+<p>每批之后，策略摘要都会写入磁盘：尝试的类别以及成功/失败计数、关键学习、探索前沿（未尝试的类别）、当前最佳指标。下一批的假设生成会读取摘要（而不是代理的记忆）——保持循环由积累的证据而不是新近度偏差引导。</p>
+<h3>7. 崩溃恢复和继续</h3>
+<p>每个实验都会在测量后、协调器更新主日志之前立即在其工作树中写入 <code>result.yaml</code> 标记。在恢复时（阶段 0.4），该技能会扫描工作树以查找尚未记录在日志中的标记，并恢复任何已测量但未记录的实验。优化分支继续存在；磁盘上的实验日志仍然存在；您可以从上次停下的地方继续。</p>
+<h3>8. 第二阶段之前的硬门</h3>
+<p>第 1 阶段是一个硬门 - 该技能建立基线指标，验证测量工具，运行并行性就绪性探测，检查工作树预算，并在任何实验调度之前显示判断成本估算（或标记无上限支出）以获得明确批准。没有意外的成本或失控的循环。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您希望提高通知分类功能的聚类质量。当前的方法将所有内容分为 12 个集群；有些看起来很弱。</p>
+<p>您调用 <code>/ce-optimize &quot;clustering quality on notification categorization&quot;</code>。该技能检测到这是定性的 - 建议 <code>type: judge</code> 因为集群计数等硬指标会优化误导性代理。引导您定义分层采样（按大小、中范围、小集群以及单例）、标题（1-5 以及具体级别描述）和门（<code>solo_pct &lt;= 0.95</code>、<code>max_cluster_size &lt;= 500</code>）。建议首次运行使用串行模式和 4 次迭代上限。</p>
+<p>第 1 阶段在基线上运行测量工具，为先前的优化上下文调度 <code>ce-learnings-researcher</code>，运行并行性探测，并在给出判断成本估计的情况下请求明确批准。你批准。</p>
+<p>第 2 阶段生成 18 个假设（信号提取、嵌入、算法、参数调整类别）。一个人需要一种新的依赖；您批量批准。</p>
+<p>第三阶段分批进行。每个实验都有自己的工作树，应用更改，运行测量工具，首先评估简并门（便宜），对分层样本运行判断（当门通过时），立即将结果写入磁盘，然后进行评估。每批次最好的合并到优化分支；文件不相交的亚军是经过精心挑选和重新测量的。</p>
+<p>经过4次迭代，判断分数提高了1.2分，三个实验合并到保留分支中。第 4 阶段显示完成后选项：代码审查、通过 <code>/ce-compound</code> 捕获制胜策略，或创建 PR。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-optimize</code>：</p>
+<ul>
+<li>正确的改变并不是显而易见的</li>
+<li>您可以生成几个看似合理的变体</li>
+<li>您有一个可重复的测量工具（或者可以构建一个）</li>
+<li>“更好”可以表示为硬指标或法学硕士作为法官的评估</li>
+<li>优化目标存在代理游戏风险（定性输出、退化解决方案）</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-optimize</code>：</p>
+<ul>
+<li>你已经知道正确的改变——就去做吧</li>
+<li>这一改变是一次性的，无法进行测量</li>
+<li>“更好”无法一致地衡量或判断——优化需要一个信号</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-optimize</code> 是它自己的循环，但它与链互锁：</p>
+<ul>
+<li><strong>由头脑风暴或计划触发</strong> - 当工作是“让 X 变得更好”而不是“构建 X 新”时，头脑风暴或计划通常会将优化呈现为正确的形状</li>
+<li><strong>在阶段 0.3 期间调用 <code>ce-learnings-researcher</code></strong> 咨询 <code>docs/solutions/</code> 以获得类似主题的先前优化工作</li>
+<li><strong>在第 4.3 阶段移交给 <code>/ce-code-review</code></strong> — 在合并之前审查累积差异（基线到最终）</li>
+<li><strong>移交给 <code>/ce-compound</code></strong> 将获胜策略记录为机构学习</li>
+</ul>
+<p>分支 (<code>optimize/&lt;spec-name&gt;</code>) 和实验日志将在第 4 阶段保留 — 您可以稍后恢复、审核或扩展优化。</p>
+<hr>
+<h2>使用独立版</h2>
+<p><code>ce-optimize</code> 通常是独立的 - 长时间运行的优化是它自己的活动：</p>
+<ul>
+<li><strong>来自规范</strong> — <code>/ce-optimize path/to/spec.yaml</code> （使用 <code>references/example-hard-spec.yaml</code> 或 <code>references/example-judge-spec.yaml</code> 作为起点）</li>
+<li><strong>根据描述</strong> — <code>/ce-optimize &quot;reduce build time by 30%&quot;</code> 引导您以交互方式编写规范</li>
+<li><strong>恢复现有运行</strong> — <code>/ce-optimize &lt;spec-name&gt;</code> 检测现有分支并提供恢复与全新启动</li>
+</ul>
+<p>有关该技能的用途、何时使用硬指标与 LLM 作为法官的友好概述以及启动提示示例，请参阅 <code>references/usage-guide.md</code>。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>求优化目标</td>
+</tr>
+<tr>
+<td><code>&lt;spec.yaml path&gt;</code></td>
+<td><code>&lt;spec.yaml path&gt;</code>加载并验证规范，从阶段 0 开始运行</td>
+</tr>
+<tr>
+<td><code>&lt;description&gt;</code></td>
+<td>逐步完成交互式规范创建</td>
+</tr>
+</tbody></table>
+<p>规范架构：<code>references/optimize-spec-schema.yaml</code>。实验日志架构：<code>references/experiment-log-schema.yaml</code>。规范示例：<code>references/example-hard-spec.yaml</code>（硬指标）、<code>references/example-judge-spec.yaml</code>（法学硕士作为法官）。</p>
+<p>对于首次运行，建议起始点：<code>execution.mode: serial</code>、<code>max_concurrent: 1</code>、<code>max_iterations: 4</code>、<code>max_hours: 1</code>。对于判断模式：<code>sample_size: 10</code>、<code>batch_size: 5</code>、<code>max_total_cost_usd: 5</code>。一旦测量安全带可信，就将其拧紧。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>我什么时候应该使用硬指标而不是LLM作为法官？</strong>
+客观目标的硬指标，其中越高/越低显然更好（构建时间、测试通过率、延迟）。法学硕士作为定性目标的判断，其中人类审阅者需要查看输出以说“这更好”（聚类质量、搜索相关性、提示质量）。当对定性工作有疑问时，请使用判断——仅硬指标就可以优化误导性代理。</p>
+<p><strong>为什么有六个磁盘检查点？</strong>
+因为该技能需要运行数小时，并且上下文随时可能丢失。每个检查点都会写入文件并将其读回以进行验证 - 静默写入失败不会传播。最重要的是 CP-3（每个实验结果在测量后立即附加，然后再评估下一个）。</p>
+<p><strong>什么是退化门？</strong>
+一种廉价、严格、快速的检查，可以发现明显损坏的解决方案。 “1 个集群中的所有项目”是集群的退化门 - 它在某些硬指标上得分完美，但显然是错误的。盖茨先行；如果有任何失败，则实验将被拒绝，而无需支付昂贵的法官评估费用。</p>
+<p><strong>如果我的优化需要新的依赖项怎么办？</strong>
+假设生成阶段收集所有独特的新依赖项，并在循环开始之前请求批量批准。未经批准的部门的假设将被跳过并在总结时重新提出。</p>
+<p><strong>它可以在 Codex 而不是子代理上运行吗？</strong>
+是的 — <code>execution.backend: codex</code> 通过 <code>codex exec</code> 将每个实验分派到 Codex 沙箱。如果 Codex 沙箱在当前上下文中不可用（已在 Codex 沙箱内，没有对 <code>.git</code> 的写入权限），则回退到子代理分派。</p>
+<p><strong>运行后会保留什么？</strong>
+保留所有保留实验提交的优化分支 (<code>optimize/&lt;spec-name&gt;</code>)。实验日志和策略摘要保留在 <code>.context/compound-engineering/ce-optimize/&lt;spec-name&gt;/</code> 中，用于本地恢复和审核（<code>.context/</code> 被 gitignored，因此它们不会随分支一起传输）。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>ce-code-review</code></a> — 用于审查累积差异的阶段 4.3 移交</li>
+<li><a href="/compound-engineering/skills/ce-compound.html"><code>ce-compound</code></a> — 将制胜策略视为机构学习</li>
+<li><a href="/compound-engineering/skills/ce-worktree.html"><code>ce-worktree</code></a> — 如果您想在优化循环之外设置隔离，则手动创建工作树</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

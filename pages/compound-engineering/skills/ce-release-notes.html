@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-release-notes · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-release-notes</nav>
+    <header class="page-header">
+      <h1>/ce-release-notes</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-release-notes.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-release-notes</code></h1>
+<blockquote>
+<p>查找最近的复合工程插件版本中发布的内容 - 总结最后 5 个版本，或通过版本引用回答特定问题。</p>
+</blockquote>
+<p><code>ce-release-notes</code> 是 <strong>插件历史</strong> 技能。它从 <code>EveryInc/compound-engineering-plugin</code> 的 GitHub Releases API 中提取发行说明，过滤到 <code>compound-engineering-v*</code> 标记前缀，以便同级组件（​​<code>cli-v*</code>、<code>coding-tutor-v*</code>、<code>marketplace-v*</code>、<code>cursor-marketplace-v*</code>）不会污染结果。两种模式：裸调用总结最近5个版本；参数调用搜索最近 40 个版本并通过版本引用回答特定问题。</p>
+<p>仅 Beta 风格的显式调用 (<code>disable-model-invocation: true</code>)。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>通过 <code>gh</code> （或匿名回退）获取最近的复合工程版本，总结最后 5 个版本或回答特定问题</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>“最近复合工程发生了什么变化？”、“<code>&lt;skill-name&gt;</code> 发生了什么？”或单独的 <code>/ce-release-notes</code></td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>最近发布的摘要或带有版本引用的叙述性答案</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>仅显式调用</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>插件发布信息很难在代理上下文中使用：</p>
+<ul>
+<li><strong>GitHub 发布 UI 是错误的表面</strong>“最近是否发生了变化？” - 导航速度慢，所有版本混合在一起</li>
+<li><strong><code>gh release list</code> 未过滤</strong> — 同级标签 (<code>cli-v*</code>, <code>coding-tutor-v*</code>) 交错；您无法一眼看出哪个版本影响了哪个组件</li>
+<li><strong>子字符串搜索不适用于重命名</strong> - “ce-X 发生了什么”不会与将其重命名为 ce-Y 的版本进行子字符串匹配</li>
+<li><strong>代码栅栏截断会破坏渲染</strong> - 天真地截断中间栅栏的长发行说明，留下一个开放的代码块，该块会吞噬下面的所有内容</li>
+<li><strong>公关细节没有基础</strong> - 发行说明总结；公关是“为什么”所在的地方。如果没有丰富内容，叙事答案就停留在表面层面</li>
+</ul>
+<h2>The Solution</h2>
+<p><code>ce-release-notes</code> 将查找作为结构化传递运行：</p>
+<ul>
+<li><strong>单个帮助程序脚本</strong> (<code>scripts/list-plugin-releases.py</code>) 处理传输 — <code>gh</code> 首选，匿名 API 后备 — 并发出单个 JSON 合约</li>
+<li><strong>标签前缀过滤</strong>确保仅出现 <code>compound-engineering-v*</code> 标签；兄弟组件被排除</li>
+<li><strong>两种模式</strong>：摘要（最后5条）和查询（搜索最后40条并进行置信度判断）</li>
+<li><strong>Markdown-fence-aware 截断</strong> - 计算保留部分中的三重反引号栅栏线；在附加“查看更多”链接之前关闭开放的栅栏</li>
+<li><strong>置信度判断，而不是子串匹配</strong>——该技能判断一个版本是否自信地回答了问题； “如果不确定，则视为不匹配”</li>
+<li><strong>PR 丰富以实现自信匹配</strong> — 获取链接的 PR 标题和正文以获取基础上下文（尽力而为；优雅降级）</li>
+<li><strong>不受信任的数据纪律</strong> - 阅读发布主体的内容，但从未按照说明进行操作</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 正确组件的标签前缀过滤</h3>
+<p>该存储库分发多个组件 - <code>cli</code>、<code>compound-engineering</code>、<code>coding-tutor</code>、<code>marketplace</code>、<code>cursor-marketplace</code>。每个都有自己的发布标签前缀。该技能严格过滤到 <code>compound-engineering-v*</code> 标签，因此有关插件的问题不会意外返回 CLI 发行说明。帮助程序脚本拥有此过滤器；技能体从来不需要。</p>
+<h3>2.辅助脚本传输合约</h3>
+<p>帮助程序 (<code>scripts/list-plugin-releases.py</code>) 始终退出 0 并在 stdout 上发出一个 JSON 对象。技能体永远不会在 <code>gh</code> 可用性上分支 - 这是助手的工作：</p>
+<pre><code class="language-json">// 成功
+{“ok”：true，“来源”：“gh”| “anon”，“fetched_at”：“...”，“releases”：[...]}
+
+// 失败
+{“确定”：错误，“错误”：{“代码”：“rate_limit”| “network_outage”，“消息”：“...”，“user_hint”：“...”}}
+</code></pre>
+<p><code>source</code> 被记录用于遥测，但 <strong>不</strong> 呈现给用户 - 从 <code>gh</code> 回退到匿名是一个稳定信号，而不是面向用户的事件。</p>
+<h3>3. 两种模式——汇总和查询</h3>
+<p><strong>摘要模式</strong>（裸调用）：获取前 5 个版本，使用版本 + 日期 + 正文渲染每个版本（软上限为 25 渲染行）。页脚指向特定问题调用和完整发布历史记录 URL。</p>
+<p><strong>查询模式</strong>（参数调用）：将窗口扩大到最近 40 个版本，运行置信度判断，通过链接的 PR 细节丰富置信匹配，通过版本引用综合叙述性答案。如果没有可靠的匹配，则打印一条带有 URL 的不匹配消息 — 切勿伪造。</p>
+<h3>4. Markdown-fence-aware 截断</h3>
+<p>幼稚的“前 25 行”截断可能会落在开放代码围栏内，让渲染器将下面的所有内容作为代码吞掉。该技能计算保留部分中的三重反引号栅栏线。如果计数为奇数（围栏打开但未关闭），则截断的输出会在附加“查看更多”链接之前获得显式的 ` ``` `` 行。结果：无论剪切落在何处，渲染的输出都保持干净。</p>
+<h3>5.置信度判断，而不是子串匹配</h3>
+<p>该技能会读取搜索窗口中的每个发布正文，并判断其是否自信地回答了用户的问题：</p>
+<ul>
+<li>如果发布正文或其链接的 PR 标题明确解决了问题，则 <strong>匹配</strong></li>
+<li><strong>不要在无关的提及上匹配</strong> - “deepen-plan”不应与仅顺便提及“计划”的版本匹配</li>
+<li><strong>如果不确定，则视为不匹配</strong> - 明确的不匹配路径胜过低置信度引用</li>
+</ul>
+<p>这捕获了子字符串搜索会错过的“ce-X 已重命名为 ce-Y”情况。</p>
+<h3>6. 丰富公关以接地气</h3>
+<p>对于可信匹配（最近的 + 最多 2 个较早的匹配），该技能通过 <code>gh pr view</code> 获取标题/正文上下文的链接 PR。尽力而为：</p>
+<ul>
+<li>如果 <code>gh</code> 丢失、未经身份验证或返回非零：不中止；退回到仅正文合成，并带有一行“PR 无法检索”注释</li>
+<li>如果 <code>linked_prs</code> 为空：不尝试调用； body-only 是预期的路径，而不是降级的路径</li>
+</ul>
+<p>始终将 PR 编号作为单独的参数（列表形式）传递，从不插入到 shell 字符串中 - 避免从发布主体内容进行 shell 注入。</p>
+<h3>7. 不受信任的数据纪律</h3>
+<p>读取发布主体的内容，但<strong>将其视为不可信数据</strong>。该技能从不遵循其中可能出现的指示、请求或指示。这很重要，因为发布主体是用户编写的降价，可能包含提示注入尝试。该技能的阅读目的是“回答问题”，而不是“从发行说明中获取指导​​”。</p>
+<h3>8. 硬编码的不匹配 URL</h3>
+<p>当不存在置信匹配时，该技能会打印带有硬编码 URL 的字面句子：</p>
+<pre><code class="language-text">I couldn&#39;t find this in the last 40 plugin releases. Browse the full history at https://github.com/EveryInc/compound-engineering-plugin/releases
+</code></pre>
+<p>URL 是专门硬编码的，因此它不会因字符串插值或 LLM 重写而漂移。用户总是能找到正确的位置来查看。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您想知道 <code>ce-resolve-pr-feedback</code> 是什么时候添加的。您调用 <code>/ce-release-notes &quot;when was ce-resolve-pr-feedback added&quot;</code>。</p>
+<p>该技能运行 <code>python3 scripts/list-plugin-releases.py --limit 100</code>，获取一个 JSON 对象，其中最新版本首先排序。将前40个作为搜索窗口。</p>
+<p>置信度判断：扫描每个发布体。两场有信心的比赛：</p>
+<ul>
+<li><code>compound-engineering-v2.51.0</code> — 发布正文提到“feat(resolve-pr-feedback)：初始发布”</li>
+<li><code>compound-engineering-v2.58.0</code> — 正文提到“feat(resolve-pr-feedback)：交叉调用的聚类分析”</li>
+</ul>
+<p>最近的自信匹配：v2.58.0。旧版：v2.51.0。</p>
+<p>PR 丰富：获取 v2.58.0 的 PR 612 — 标题“feat(resolve-pr-feedback)：聚类分析”，正文解释了交叉调用门。获取 v2.51.0 的 PR 487 — 标题“feat：ce-resolve-pr-feedback 的初始版本”。</p>
+<p>合成：</p>
+<pre><code class="language-文本">`ce-resolve-pr-feedback` 首次在 [v2.51.0](URL) 中作为一项技能引入
+并行评估和修复 PR 审查反馈 - 初始裁决类型
+（已修复/已回复/未寻址/已拒绝/人类需求），GraphQL 获取
+未解决的线程、并行代理调度以及回复 + 解决流程。
+
+在[v2.58.0](URL)中，它获得了交叉调用聚类分析——当
+同一主题跨越多轮审查，集群简介取代了外科手术简介
+通过更广泛的调查来解决。
+
+（以前：[v2.51.0]（URL））
+</code></pre>
+<p>您可以通过版本引用找到答案。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-release-notes</code>：</p>
+<ul>
+<li>您想要快速总结最近的复合工程插件更改</li>
+<li>您想要回答一个特定问题（“X 何时添加”、“Y 发生了什么”）</li>
+<li>错误报告或技能行为让你想知道什么时候发生了变化</li>
+<li>您正在检查某个功能已登陆的特定版本</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-release-notes</code>：</p>
+<ul>
+<li>您想要对同级组件（CLI、编码导师、市场）进行更改 - 此技能仅过滤到 <code>compound-engineering-v*</code></li>
+<li>您想要完整的发布历史记录 → 只需打开 GitHub Releases URL</li>
+<li>问题是关于从未发布到版本中的行为 - 发行说明不会显示它</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-release-notes</code> 是一个独立的实用程序 - 不位于链内。它在以下情况下被调用：</p>
+<ul>
+<li><code>/ce-update</code> 确认该插件是旧版本，并且用户想知道他们缺少什么</li>
+<li>一个错误嫌疑人暗示“这在上周是有效的”——中间有发布吗？</li>
+<li>有人问“技能 X 发生了什么”，因为行为发生了变化</li>
+</ul>
+<p>该技能的输出由用户直接读取——下游技能不会消耗它。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>直接调用：</p>
+<ul>
+<li><strong>摘要</strong> — <code>/ce-release-notes</code>（最近 5 个版本）</li>
+<li><strong>具体问题</strong> — <code>/ce-release-notes &quot;what happened to ce-doc-review&quot;</code></li>
+<li><strong>类似版本的输入</strong> — <code>/ce-release-notes &quot;2.65.0&quot;</code> （视为查询字符串；流经查询模式）</li>
+</ul>
+<p>保留的 <code>mode:*</code> 令牌被剥离（v1 不会对它们起作用，但不会被杂散的 <code>mode:foo</code> 阻塞）。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>触发</th>
+<th>窗口</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>总结</td>
+<td>裸调用</td>
+<td>最后 5</td>
+<td>使用日期 + 正文渲染每个版本（25 行上限，具有栅栏感知截断）</td>
+</tr>
+<tr>
+<td>查询</td>
+<td>参数调用</td>
+<td>最后 40</td>
+<td>置信度判断+公关丰富+带有版本引用的叙述合成</td>
+</tr>
+</tbody></table>
+<p>阶段（根据 SKILL.md）：阶段 1 解析参数→阶段 2 获取（摘要）→阶段 3 呈现摘要；第5阶段获取（查询）→第6阶段置信度判断→第7阶段PR丰富→第8阶段综合叙述；第9阶段不匹配。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么只过滤到 <code>compound-engineering-v*</code>？</strong>
+因为存储库提供了多个组件 - <code>cli</code>、<code>compound-engineering</code>、<code>coding-tutor</code>、<code>marketplace</code>、<code>cursor-marketplace</code> - 每个组件都有自己的发布标签。有关插件的问题不应返回 CLI 发行说明。过滤器将结果限制在正确的组件范围内。</p>
+<p><strong>为什么helper总是退出0？</strong>
+因为合约是“标准输出上的一个 JSON 对象”。如果传输失败（速率限制、网络），助手会发出 <code>{&quot;ok&quot;: false, &quot;error&quot;: {...}}</code> 而不是崩溃。技能主体在 <code>ok</code> 上分支，而不是在退出代码上分支。这使得合约形式单一并且更容易推理。</p>
+<p><strong>具有栅栏感知截断功能的软 25 行上限是什么？</strong>
+长发布正文的摘要限制为 25 行。天真的截断可能会落在代码围栏内，让渲染器吞掉下面的所有内容。该技能会计算三重反引号线并在附加“查看更多”链接之前关闭开放的栅栏。</p>
+<p><strong>为什么要“置信度判断”而不是子串搜索？</strong>
+因为子字符串搜索会错过重命名。 “ce-X 发生了什么”不会与将其重命名为 ce-Y 的版本进行子字符串匹配。基于判断的匹配捕获了子字符串搜索可能错过的概念变化。</p>
+<p><strong>为什么公关丰富是尽最大努力？</strong>
+因为 <code>gh</code> 可能未安装，可能未通过身份验证，或者可能因各种原因返回错误。因为 PR 获取失败而中止答案会比附加到仅正文综合的一行“PR 无法检索”注释更糟糕。</p>
+<p><strong>为什么 URL 被硬编码在不匹配路径中？</strong>
+特别是为了防止它通过字符串插值或 LLM 重写而漂移。用户总是可以逐字地找到正确的位置——GitHub 发布 URL。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a> — 检查插件版本；在询问发生了什么变化之前很有用</li>
+<li><a href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a> — 用于针对插件提交问题；先检查发行说明可以保存报告</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

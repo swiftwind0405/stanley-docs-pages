@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-resolve-pr-feedback · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-resolve-pr-feedback</nav>
+    <header class="page-header">
+      <h1>/ce-resolve-pr-feedback</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-resolve-pr-feedback.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-resolve-pr-feedback</code></h1>
+<blockquote>
+<p>并行评估、修复和回复 PR 审核反馈。修复真实的内容；不要为那些不存在的东西而烦恼。</p>
+</blockquote>
+<p><code>ce-resolve-pr-feedback</code> 是<strong>传入反馈解析</strong>技能。在您的 PR 获得审核意见后，此技能会获取所有未解决的线程，将它们分类为新的和已处理的，调度并行代理来验证每个发现并修复真正正确的内容（或通过推理进行回复），提交和推送，然后通过 GitHub 的 GraphQL API 发布回复并解决线程。它根据每个项目的优点来判断——无论来源（人类或机器人）或形式（内嵌线程、正式审查机构或顶级评论）——并且默认进行修复，仅在阅读代码发出具体信号时才转移（发现是错误的，修复会造成损害，它什么也买不到，或者风险无法限制）。</p>
+<p>复合工程构思链是<code>/ce-ideate → /ce-brainstorm → /ce-plan → /ce-work</code>。 <code>ce-resolve-pr-feedback</code> 是 <strong>PR 后反馈循环</strong> — 在审阅者留下评论后调用，与 <code>/ce-code-review</code>（在 PR 开放<em>之前</em>进行审阅）和 <code>/ce-debug</code>（调查破坏行为，而不是审阅反馈）互补。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>获取未解决的审核线程 + PR 评论，调度并行代理来验证每个发现并修复真正正确的内容，提交/推送、回复并解决线程</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>PR 收到您想要解决的审核反馈后</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>提交修复、回复每个线程、通过 GraphQL 解决线程、根据判决完成的操作摘要</td>
+</tr>
+<tr>
+<td>模式</td>
+<td>完整（所有未解析的线程）、目标（单线程 URL）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>大规模解决公关反馈的失败是可以预见的：</p>
+<ul>
+<li><strong>过度修复机器人噪音</strong> - 自动审查机器人过度标记、标记无关紧要的事物，有时甚至是错误的； “修复一切”本能反应会通过低价值的更改来搅乱代码和 PR</li>
+<li><strong>根据权威而非事实得出的结论</strong> - 修复是因为审阅者（或机器人）这么说，但没有确认问题确实存在于代码中</li>
+<li><strong>已经回复的项目每次运行都会重新出现</strong> - 顶级 PR 评论和审核机构没有解决机制，因此它们会一直出现，直到手动检查</li>
+<li><strong>机器人包装噪声</strong> - 审查机器人样板（“这里有一些自动审查建议......”）夸大了工作计数</li>
+<li><strong>顺序修复很慢</strong> — 一次寻址 12 个线程是挂钟时间的 12 倍</li>
+<li><strong>并行修复冲突</strong> - 编写同一文件的两个代理会默默地丢失其中一项更改</li>
+<li><strong>无组合验证</strong> - 每个代理对其自己的更改运行有针对性的测试；跨代理回归被忽略</li>
+<li><strong>过时的评论行号</strong> - 对已经漂移的行的反馈很难重新定位</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-resolve-pr-feedback</code> runs feedback resolution as a structured pipeline:</p>
+<ul>
+<li><strong>Fetch all unresolved feedback</strong> (review threads + PR comments + review bodies) via GraphQL</li>
+<li><strong>Triage new vs already-handled</strong> — a substantive reply that defers action counts as handled; only new items are processed</li>
+<li><strong>Drop bot wrapper noise silently</strong> — non-actionable boilerplate is filtered, not announced</li>
+<li><strong>Fix by default; validate as a tripwire</strong> — each finding is judged on its merits regardless of source or form; the agent fixes unless reading the code trips a concrete signal (the finding&#39;s wrong, the fix would harm, it buys nothing, or the risk can&#39;t be bounded)</li>
+<li><strong>Parallel agent dispatch with file-collision avoidance</strong> — agents that touch overlapping files serialize automatically</li>
+<li><strong>Combined validation</strong> — one full validation run after all agents complete, catches cross-agent regressions</li>
+<li><strong>Reply with quoted context</strong> — every reply quotes the relevant feedback for continuity, then states what was done</li>
+<li><strong>Resolve via GraphQL</strong> — review threads get resolved; PR comments and review bodies get a top-level reply (no resolve mechanism in the API)</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 默认固定 — 仅在绊线上转移</h3>
+<p>大多数评论反馈（从 P0 到 P2，包括挑剔）都是正确的并且值得修复，因此默认是修复它。至关重要的是，验证不是一个单独的分析过程：代理必须读取代码才能进行修复，并且检查是<em>它在读取期间注意到的绊线</em>，而不是每个项目都必须争论通过的大门。当没有任何问题发生时，它会修复并继续前进——无需对每个项目进行深思熟虑。深度工作（读取来电者、评估爆炸半径、为用户编写决策）仅花费在少数会触发电线的项目上。</p>
+<p>项目仅在具体信号上从修复中转移：</p>
+<ul>
+<li><strong>the finding doesn&#39;t hold</strong> (reading the code disproves it) → <code>not-addressing</code> with evidence</li>
+<li><strong>the fix would make the code worse</strong> → <code>declined</code> citing the harm</li>
+<li><strong>the change buys nothing real</strong> (cosmetic or immaterial — small <em>real</em> improvements still get fixed; the skip bar is &quot;no benefit,&quot; not &quot;minor&quot;) → <code>replied</code></li>
+<li><strong>the change is risky and the blast radius can&#39;t be bounded</strong> (a one-line edit can hit a hot path or thinly-tested code; the reviewer, especially a bot, usually couldn&#39;t see it) → de-risk with a test and fix if possible, else <code>needs-human</code></li>
+<li><strong>it&#39;s a question, not a change</strong> → <code>replied</code>, or <code>needs-human</code> for a product/business call</li>
+</ul>
+<p>防止过度思考的护栏是明确的：“我感到不安”不是绊网；而是“我感到不安”。 “我读了来电者的信息，这打破了X”。这对于自动审核机器人来说最为重要，因为它们会过度标记——但规则与来源无关：机器人或人类断言某件事并不能证明它是正确的。</p>
+<h3>2. 根据优点而不是来源或形式进行判断</h3>
+<p>每个项目都以相同的方式进行评估，无论<strong>谁</strong>提出它（人工审阅者或审阅机器人）或<strong>以什么形式</strong>到达（内嵌审阅线程、正式审阅机构或顶级 PR 评论）。正确性并不取决于来源或表面。结构形式仅改变<em>响应机制</em>（内联线程通过 GraphQL 解析；审核主体和顶级评论获得顶级回复）——从不改变结果是否正确。</p>
+<h3>3. 六个判决——每个判决都有不同的行动</h3>
+<table>
+<thead>
+<tr>
+<th>判决</th>
+<th>意义</th>
+<th>行动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fixed</code></td>
+<td><code>fixed</code>按要求更改代码</td>
+<td>提交+回复+解决</td>
+</tr>
+<tr>
+<td><code>fixed-differently</code></td>
+<td>进行了代码更改，采用了比建议更好的方法</td>
+<td>提交 + 回复解释分歧 + 解决</td>
+</tr>
+<tr>
+<td><code>replied</code></td>
+<td>无需更改代码；问题得到解答、设计得到解释或无需进行更改</td>
+<td>回复+解决</td>
+</tr>
+<tr>
+<td><code>not-addressing</code></td>
+<td>关于代码的反馈实际上是错误的</td>
+<td>回复证据+解决</td>
+</tr>
+<tr>
+<td><code>declined</code></td>
+<td>实施建议的修复会导致代码变得更糟</td>
+<td>回复引用伤害+解决</td>
+</tr>
+<tr>
+<td><code>needs-human</code></td>
+<td>无法确定正确的行动</td>
+<td>使用结构化 <code>decision_context</code> 回复 + 保持打开状态</td>
+</tr>
+</tbody></table>
+<p><code>needs-human</code> 是高信号且罕见的——它包括对审阅者所说内容、代理调查内容、为什么需要做出决定以及权衡的具体选项的结构化分析。</p>
+<h3>4. 分类 — 新的与已处理的</h3>
+<p>对于每条反馈，该技能在处理之前都会进行分类：</p>
+<ul>
+<li><strong>查看主题</strong> — 阅读主题；推迟采取行动的实质性答复（“需要对此进行协调”，“将仔细考虑这一点”）正在<strong>待决</strong>，请勿重新处理。只有原始评论线程才是<strong>新的</strong>。</li>
+<li><strong>公关评论 + 审查机构</strong> - 没有解决机制，因此每次运行都会重新出现。两个过滤器：可操作性（跳过审核包装、批准、状态徽章、不询问的 CI 摘要），然后是已回复（引用并解决反馈的现有回复）。任何通过两者的东西都是<strong>新的</strong>。</li>
+</ul>
+<p>来自 CodeRabbit、Codex、Gemini Code Assist、Copilot 的机器人包装器会默默地被丢弃——通过样板内容识别，从未公布或计数。这是一个<em>内容</em>检查（这里有什么可操作的吗？），而不是源检查，因此无论哪个机器人的格式发生变化它都有效。</p>
+<h3>5. 避免文件冲突的并行调度</h3>
+<p>对于 1-4 个项目，全部并行运行。对于 5 个以上，批量为 4 个。 <strong>在调度之前，技能会检查项目之间的文件重叠</strong> — 重叠的项目会序列化，因此两个代理永远不会并行写入同一文件。</p>
+<p>顺序回退：没有并行调度的平台按顺序运行代理。</p>
+<h3>6.所有代理完成后联合验证</h3>
+<p>每个解析器代理都会对其自己的更改运行有针对性的测试。所有代理返回后，该技能会聚合 <code>files_changed</code> 并运行项目的完整验证<strong>一次</strong> — 捕获目标运行无法看到的跨代理交互。</p>
+<table>
+<thead>
+<tr>
+<th>结果</th>
+<th>行动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>绿色</td>
+<td>继续提交</td>
+</tr>
+<tr>
+<td>红色，失败触及解析器更改的文件</td>
+<td>一次在线诊断和修复过程；如果仍然是红色，则升级为 <code>needs-human</code> 并且不提交</td>
+</tr>
+<tr>
+<td>红色，失败仅涉及未更改解析器的文件</td>
+<td>视为已存在；提交页脚注释</td>
+</tr>
+</tbody></table>
+<h3>7. 带引号上下文的回复格式</h3>
+<p>每个回复都会引用原始反馈的相关部分以保持连续性，然后说明已完成的操作：</p>
+<ul>
+<li><strong>已修复：</strong> <code>&gt; [quoted feedback]</code> 后跟 <code>Addressed: [brief description of the fix]</code></li>
+<li><strong>未寻址：</strong> <code>&gt; [quoted feedback]</code> 后跟 <code>Not addressing: [reason with evidence]</code></li>
+<li><strong>拒绝：</strong> <code>&gt; [quoted feedback]</code> 后跟 <code>Declined: [specific harm cited]</code></li>
+</ul>
+<p>这使得审阅者在几周后阅读回复时能够保持方向——他们无需重新阅读整个线程即可看到正在解决的问题。</p>
+<h3>8.过时评论迁移</h3>
+<p>过时线路上的线程通常具有 <code>line: null</code> 并需要回退到 <code>originalLine</code>。该技能将 <code>isOutdated</code> 标志和所有四个位置字段（<code>line</code>、<code>originalLine</code>、<code>startLine</code>、<code>originalStartLine</code>）携带到每个代理的调度中，以便代理知道报告的线路可能已漂移并可以适当地重新定位。</p>
+<h3>9. 升级的两遍循环</h3>
+<p>如果验证步骤后仍有新线程，则该技能将从剩余线程的分类中重复。经过两个修复验证周期后，该技能停止循环，并将重复出现的模式显示为 <code>needs-human</code>：“[主题] 的多轮反馈表明存在更深层次的问题。”</p>
+<h3>10. 两种模式——完全模式和目标模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>当</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>完整</strong> <em>（默认）</em></td>
+<td>没有提供网址</td>
+<td>处理 PR 上所有未解决的线程</td>
+</tr>
+<tr>
+<td><strong>有针对性</strong></td>
+<td>提供评论/话题 URL</td>
+<td>仅处理该特定线程</td>
+</tr>
+</tbody></table>
+<p>目标模式适用于“仅处理这一评论”的情况 - 当用户想要单独处理一条反馈时很常见。</p>
+<hr>
+<h2>简单示例</h2>
+<p>审阅者（和审阅机器人）对您的 PR 留下 8 条评论。您调用 <code>/ce-resolve-pr-feedback</code>。</p>
+<p>该技能从当前分支检测 PR，通过 GraphQL 获取：6 个未解决的评审线程、2 个评审主体（一个是 CodeRabbit 包装器）、0 个 PR 评论。分类：CodeRabbit 包装器是不可操作的样板文件 — 悄然丢弃。一条评论线程从昨天的推迟行动中得到了实质性答复——待定，跳过。剩下 5 个评论主题 + 1 个评论正文为<strong>新</strong>。</p>
+<p>步骤 4 分批调度 6 个 <code>ce-pr-comment-resolver</code> 代理，每批 4 个。文件冲突检查：两个线程接触 <code>app/services/dispatcher.rb</code> → 这两个线程进行序列化；其余部分并行运行。每个代理都会阅读实际代码并根据其优点判断其发现：</p>
+<ul>
+<li>2 个发现显然是正确的 → <code>fixed</code></li>
+<li>1 建议一种可行的方法，但存在更干净的方法 → <code>fixed-differently</code></li>
+<li>1 是一个机器人发现标记了“可能的 null deref”，类型系统已经排除了 → 已根据代码确认，不支持 → <code>not-addressing</code> 有证据（无流失）</li>
+<li>1问“这是故意的吗？” → 由代码负责 → <code>replied</code></li>
+<li>审查机构提出设计问题 → <code>replied</code></li>
+</ul>
+<p>针对 3 个更改的文件运行一次组合验证；测试通过。提交+推送。</p>
+<p>第7步发布回复：每个回复都引用原始反馈并说明所做的事情。所有 5 个审核线程均通过 GraphQL 解析；审核机构获得顶级 PR 评论（API 中没有解析机制）。步骤 8 验证：再次获取 — 空。完毕。摘要表面。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-resolve-pr-feedback</code>：</p>
+<ul>
+<li>您的 PR 收到了您想要解决的评论反馈</li>
+<li>自动审查机器人留下了一堆发现，您希望它们根据代码进行验证，而不是盲目应用</li>
+<li>您想要单独处理特定评论（带有评论 URL 的定向模式）</li>
+<li>之前的运行留下了 <code>needs-human</code> 项目，您已决定如何继续</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-resolve-pr-feedback</code>：</p>
+<ul>
+<li>PR还没有反馈</li>
+<li>你只想确认反馈而不修复 - 该技能期望采取行动，而不仅仅是确认</li>
+<li>反馈是关于头脑风暴或计划文档，而不是代码 → 使用 <code>/ce-doc-review</code></li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-resolve-pr-feedback</code> 是 <code>/ce-commit-push-pr</code> 打开 PR 后的关闭循环：</p>
+<pre><code class="language-text">/ce-work → /ce-commit-push-pr → reviewer leaves comments → /ce-resolve-pr-feedback
+</code></pre>
+<p>它补充了：</p>
+<ul>
+<li><strong><code>/ce-code-review</code></strong> — PR 开放<em>之前</em>进行评论；此技能处理<em>之后</em>收到的反馈</li>
+<li><strong><code>/ce-debug</code></strong> — 针对损坏的行为；这个技能是为了review-comment解析</li>
+</ul>
+<p>决议提交 PR 后，将适用标准合并/重新审核周期。如果下一轮审核产生更多反馈，则该技能可以在新一轮中再次运行。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能直接起作用：</p>
+<ul>
+<li><strong>当前分支的 PR</strong> — <code>/ce-resolve-pr-feedback</code></li>
+<li><strong>具体 PR</strong> — <code>/ce-resolve-pr-feedback 1234</code></li>
+<li><strong>有针对性（单线程）</strong> — <code>/ce-resolve-pr-feedback https://github.com/.../pull/1234#discussion_r5678901</code></li>
+</ul>
+<p>在目标模式下，仅对 URL 的特定线程进行寻址，不会获取或处理其他线程。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>完整模式——当前分支的 PR</td>
+</tr>
+<tr>
+<td><code>&lt;PR number&gt;</code></td>
+<td><code>&lt;PR number&gt;</code>完整模式——公关</td>
+</tr>
+<tr>
+<td><code>&lt;comment/thread URL&gt;</code></td>
+<td>目标模式——仅该线程</td>
+</tr>
+</tbody></table>
+<p><code>scripts/</code> 中的脚本：<code>get-pr-comments</code>（GraphQL 获取）、<code>get-thread-for-comment</code>（映射注释 → 目标线程）、<code>reply-to-pr-thread</code>（GraphQL 突变）、<code>resolve-pr-thread</code>（GraphQL 突变）。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>你还在修复挑剔吗？</strong>
+是的——默认情况下。大多数反馈（包括挑剔的反馈）都是正确的并且值得修复，因此代理会进行修复，除非阅读代码发出具体信号：发现不成立，修复会使代码变得更糟，或者更改不会带来任何实际效果。改进代码（即使是轻微的）的正确 nit 得到修复；一个纯粹的装饰性的、没有任何好处的问题会得到简短的回复，而不是流失。跳过栏“没有任何好处”，而不是“次要的”。</p>
+<p><strong>它对待机器人反馈的方式与人类反馈的方式不同吗？</strong>
+不——这是故意的。验证是根据优点而不是权威来判断的：阅读实际代码来确认发现的结果是相同的工作，无论是机器人还是人类提出的，而权威启发式（“机器人→可能是噪音”）可能会忽略真正的机器人捕获的错误。优点绊线（发现是否成立？修复是否真的有帮助？）自然地过滤机器人噪音 - 大多数是推测性的或无关紧要的 - 无需对来源进行分类。这同样适用于<em>表单</em> - 内联线程与正式审查机构与顶级评论仅改变回复的发布和解决方式，而不会改变发现是否正确。</p>
+<p><strong>为什么要默默地放弃机器人包装？</strong>
+因为宣布它们会增加毫无价值的噪音。 CodeRabbit 样板文件（“这里有一些自动审查建议......”）包含了真实的发现；包装器本身是不可操作的。在摘要中对丢弃的包装进行计数或列出会使报告变得混乱。脚本级过滤器仅处理 CI/状态机器人；内容感知下降（可操作性检查，而不是源检查）捕获其余部分。</p>
+<p><strong>如果两个并行代理发生冲突怎么办？</strong>
+调度前的文件冲突检查可以捕获大多数情况 - 重叠项目序列化。对于极少数情况下，修复会扩展到其引用的文件之外（重命名会更新其他地方的调用者），步骤 5 中的组合验证会捕获测试破坏，而步骤 8 中的验证步骤会捕获未解析的线程。如果其中任何一个出现不一致，该技能将按顺序重新运行受影响的代理。</p>
+<p><strong><code>needs-human</code> 是什么意思？</strong>
+代理调查了反馈和代码，但无法自信地确定正确的操作 - 通常是因为选择取决于代理无法推断的用户意图。该线程保持打开状态，并有确认回复，摘要呈现结构化的 <code>decision_context</code>：引用的反馈、调查结果、权衡选项、代理的精益（如果有）。</p>
+<p><strong>如果反馈循环永远不收敛怎么办？</strong>
+经过两个修复验证周期后，该技能将停止循环，并使用累积上下文将重复模式升级为 <code>needs-human</code>。它不会无限期地重试。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>ce-code-review</code></a> — 公关前审查；该技能处理公关后反馈</li>
+<li><a href="/compound-engineering/skills/ce-commit-push-pr.html"><code>ce-commit-push-pr</code></a> — 打开该技能响应的 PR</li>
+<li><a href="/compound-engineering/skills/ce-debug.html"><code>ce-debug</code></a> — 对于报告为错误的损坏行为，而不是查看反馈</li>
+<li><a href="/compound-engineering/skills/ce-doc-review.html"><code>ce-doc-review</code></a> — 针对需求或计划文档的反馈，而不是代码</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

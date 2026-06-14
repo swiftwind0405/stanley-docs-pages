@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-compound-refresh · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-compound-refresh</nav>
+    <header class="page-header">
+      <h1>/ce-compound-refresh</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-compound-refresh.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-compound-refresh</code></h1>
+<blockquote>
+<p>随着时间的推移维护 <code>docs/solutions/</code> — 根据当前代码库回顾现有知识，然后更新、合并、替换或删除漂移的知识。</p>
+</blockquote>
+<p><code>ce-compound-refresh</code> 是机构知识的<strong>维护</strong>技能。随着代码的发展，学习内容发生变化：文件路径发生变化，类被重命名，建议的修复成为反模式，两个文档从稍微不同的角度涵盖了相同的问题。如果没有定期维护，<code>docs/solutions/</code> 就会变成一堆半真半假的指导，其误导性多于其帮助。这项技能是定期审查，以保持精简和值得信赖。</p>
+<p>它与 <code>ce-compound</code> 配对：该技能<strong>捕获</strong>新知识；该技能<strong>维护</strong>现有的集合。它们一起形成了一个反馈循环——每个解决的问题都会成为一个文档，随着代码库的发展，每次刷新都会使这些文档保持诚实。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>根据当前代码库回顾 <code>docs/solutions/</code> 中的学习内容并应用五个结果之一：保留、更新、合并、替换、删除</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>经过重大重构后；当 <code>ce-compound</code> 将旧文档标记为已取代时；当学习积累漂移时；定期卫生清扫</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>更新、合并、替换或删除文档 — 以及维护报告</td>
+</tr>
+<tr>
+<td>模式</td>
+<td><strong>交互式</strong>（默认）和<strong>自动修复</strong> (<code>mode:autofix</code>)</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p><code>docs/solutions/</code> 以可预测的方式累积漂移：</p>
+<ul>
+<li><strong>重命名和移动</strong> — 学习参考 <code>app/models/auth_token.rb</code>，但文件现在是 <code>app/models/session_token.rb</code></li>
+<li><strong>架构转变</strong> - 推荐的修复现在是一种反模式；新架构以不同的方式处理问题</li>
+<li><strong>无声重复</strong> - 两篇文章从不同角度描述了同一问题，相隔数月写成，但他们开始出现分歧</li>
+<li><strong>没有支持学习的模式文档</strong> - 一个普遍规则，其基础证据已经发生了变化</li>
+<li><strong>死文档不会死</strong> - 三季度前删除的代码，但学习仍然存在</li>
+<li><strong>不断增长的存档文件夹</strong> — <code>_archived/</code> 目录会污染搜索结果并且无人读取</li>
+</ul>
+<p>如果没有积极的维护，知识存储就会失去可信度。未来的智能体（和人类）会查阅部分错误的文档，采纳不再适用的建议，复合效应会逆转：糟糕的学习会让工作变得“更难”，而不是更容易。</p>
+<h2>解决方案</h2>
+<p><code>ce-compound-refresh</code> 作为结构化审查运行，有五个明确的结果：</p>
+<ul>
+<li><strong>保留</strong> — 准确且有用；没有编辑</li>
+<li><strong>更新</strong> — 参考文献发生了漂移，但解决方案仍然是正确的；应用就地修复</li>
+<li><strong>合并</strong> — 两个文档严重重叠；将唯一内容合并到规范文档中，删除包含的内容</li>
+<li><strong>替换</strong> — 旧的指导现在具有误导性；编写一个后继（通过子代理进行上下文隔离）并删除旧的</li>
+<li><strong>删除</strong> — 代码消失了，问题域消失了，没有传入的实质性引用；删除文件（git历史记录是存档）</li>
+</ul>
+<p>该技能首先进行调查（第 1 阶段根据当前代码库读取每个文档），然后执行文档集分析（第 1.75 阶段捕获仅在文档中可见的问题），然后进行分类，然后执行 - 通过 PR 或直接将更改提交到当前分支。</p>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 五个维护成果——明确的决策，而不是模糊的“审计”</h3>
+<p>大多数“查看文档”提示都会崩溃为“这仍然是正确的吗？” → 模糊的答案。五结果模型强制每个文档做出特定决策和特定操作：保留不执行任何操作，更新应用就地修复，合并合并和删除，替换写入后继，删除删除文件。每个都有自己的证据栏。</p>
+<h3>2. 两种模式 — 交互式默认模式、<code>mode:autofix</code> 上的自动修复</h3>
+<p><strong>交互式</strong>（默认）针对不明确的情况一次提出一个问题，并提出建议。 <strong>Autofix</strong> 无需用户交互即可处理所有文档，应用所有明确的操作，并将不明确的情况标记为过时（在 frontmatter 中使用 <code>status: stale</code>、<code>stale_reason</code>、<code>stale_date</code>）以供后续人工审核。自动修复报告有两个部分：<strong>已应用</strong>（成功写入）和<strong>推荐</strong>（无法应用的写入 - 例如，权限被拒绝 - 具有完整的理由，以便人们可以应用它们）。</p>
+<h3>3. 文档集分析 — 捕获每个文档审核所遗漏的内容</h3>
+<p>阶段 1.75 评估整个文档集：跨五个维度的重叠检测（问题陈述、解决方案形状、引用文件、预防规则、根本原因）、取代信号（较新的规范文档包含较旧的窄前体）、每个主题簇的规范文档识别以及跨文档冲突检查。涉及相同领域的两篇文档最终会分道扬镳并相互矛盾——这比一篇稍长的单个文档更糟糕。</p>
+<h3>4. 通过子代理替换——上下文隔离</h3>
+<p>当学习的核心指导现在具有误导性时，编排器会分派一个子代理来编写替换内容（一次一个，按顺序 - 替换内容可能需要阅读重要的代码，而并行性可能会导致上下文耗尽）。子代理接收旧的学习、调查证据、目标路径和契约文件（架构、类别映射、模板），并编写一个干净的后继程序，而不会污染编排器的上下文。</p>
+<h3>5. 证据不足时标记陈旧</h3>
+<p>当偏差如此根本以至于代理无法自信地记录当前方法（整个子系统被替换，新架构太复杂而无法从文件扫描中理解）时，该文档会被标记为 <code>status: stale</code> ，而不是错误地替换。建议：在下次遇到该区域后，当存在新的问题解决上下文时，运行 <code>/ce-compound</code> 。</p>
+<h3>6.自动删除安全性——三个条件</h3>
+<p>仅当<strong>所有三个</strong>都为真时才会触发自动删除：</p>
+<ul>
+<li>实施已经消失（或完全被明显更好的继任者取代，或者文档显然是多余的）</li>
+<li>问题域消失了——应用程序不再处理学习内容</li>
+<li>缺少入站链接或没有明确的装饰性链接</li>
+</ul>
+<p>如果任何条件失败（包括其他文档的实质性引用），则该技能将被分类为替换、更新、合并或陈旧标记。 <strong>自动删除+装饰引文清理就可以了；实质性引用或真正的歧义将降级为过时标记。</strong></p>
+<h3>7. 入站链接分类 — 装饰性与实质性</h3>
+<p>在删除文档之前，该技能会在存储库的降价中搜索文件的引用。每个引用被分类：</p>
+<ul>
+<li><strong>装饰性</strong> - 内联陈述的原则，引用是“另请参阅”指针。删除+清理是机械的。</li>
+<li><strong>实质性</strong> - 引用文档依赖于引用文档中未内嵌说明的内容。信号替换；不要删除。</li>
+<li><strong>混合/不清楚</strong> — 陈旧标记。</li>
+</ul>
+<p>入站链接通知分类，而不仅仅是清理——引用重写了操作选择，而不仅仅是删除后的修复。</p>
+<h3>8. 将文档与现实相匹配，而不是相反</h3>
+<p>当当前代码与学习不同时，技能会更新学习以反映当前代码。 <strong>它不会询问用户代码更改是“有意的”还是“回归”</strong> - 这是一个代码审查问题，而不是文档维护问题。该技能的作用是文档准确性。如果用户认为代码是错误的，那么这是该工作流程之外的一个单独的问题。</p>
+<h3>9.删除，不存档</h3>
+<p>已删除的文档将被删除，而不是移动到 <code>_archived/</code>。 Git 历史记录会保留每个已删除的文件 (<code>git log --diff-filter=D -- docs/solutions/</code>)。专用的存档目录会累积并污染搜索结果。如果在此约定之前存在 <code>_archived/</code> 目录，则技能会将其标记为在报告中进行清理。</p>
+<h3>10.可发现性检查继续进行</h3>
+<p>与 <code>ce-compound</code> 一样，每次刷新运行都会检查 <code>AGENTS.md</code>/<code>CLAUDE.md</code> 是否表面 <code>docs/solutions/</code>。每次都会进行检查——只有当客服人员能够找到知识时，知识才具有复合价值。在自动修复模式下，建议显示在报告中而不是被应用（自动修复范围是文档维护，而不是项目配置）。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您刚刚合并了一个重构，该重构在 auth 子系统中重命名了多个模型。您调用 <code>/ce-compound-refresh auth</code>。</p>
+<p>该技能发现 5 个学习内容和 2 个与 <code>auth</code> 匹配的模式文档（通过目录、frontmatter、文件名或内容搜索）。第 0 阶段路由作为重点范围。</p>
+<p>第一阶段调查每个文档。三个不再存在的参考文件（auth_token.rb → session_token.rb）。一个已被较新的文档完全取代。有一个还是准确的。一个模式文档概括了最近的架构更改所打破的规则。</p>
+<p>阶段 1.75 表面重叠：两个学习内容从略有不同的角度涵盖了相同的身份验证错误处理问题。较新的内容更广泛、更准确。</p>
+<p>第 2 阶段分类：3 项更新（重命名引用）、1 项合并（将旧的验证错误文档合并到新的文档中并删除旧的）、1 项保留、1 项替换（模式文档 — 旧的概括不再成立）。替换的内容被分派给子代理，该子代理读取合同文件并写入后继文件；协调器删除旧的。</p>
+<p>第 3 阶段（交互模式）与您确认合并选择（规范文档选择并不总是显而易见）。其他操作直接应用。第 5 阶段作为当前功能分支上的单独提交进行提交，并带有描述性消息。</p>
+<p>该报告列出了每个文档、做了什么以及为什么。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-compound-refresh</code>：</p>
+<ul>
+<li>重大重构或重命名刚刚落地，该领域的学习内容可能会发生变化</li>
+<li><code>ce-compound</code> 将特定的旧文档标记为被新学习所取代</li>
+<li>您注意到所学知识在没有定期回顾的情况下不断积累</li>
+<li><code>docs/solutions/</code> 中的两个文档看起来涵盖了相同的问题</li>
+<li>您需要定期进行卫生清扫（例如每季度一次）以保持知识库的精简</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-compound-refresh</code>：</p>
+<ul>
+<li>你实际上并没有注意到任何漂移——没有证据的大范围扫描会产生流失</li>
+<li>文档是最新的，代码库区域尚未移动</li>
+<li>您正处于调试或构建会话中 — 首先通过 <code>/ce-compound</code> 捕获，稍后刷新</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-compound-refresh</code> 是 <code>/ce-compound</code> 的维护对应项：</p>
+<ul>
+<li><strong>从 <code>/ce-compound</code></strong> 触发 — 当新的学习表明旧文档可能已过时时，阶段 2.5 的选择性刷新检查会通过窄范围提示</li>
+<li><strong>手动定期调用</strong> - 通常限定范围（<code>/ce-compound-refresh auth</code>、<code>/ce-compound-refresh performance-issues</code>），以避免在没有证据的情况下进行全面审查</li>
+<li><strong>发布前卫生</strong> — 在主要发布之前扫描 <code>docs/solutions/</code>，以确保记录的学习内容反映运输现实</li>
+</ul>
+<p>配对很重要：<code>ce-compound</code> 添加了新文档； <code>ce-compound-refresh</code> 确保现有集合保持精简。没有第二个，第一个最终会变得混乱。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能是通过范围提示直接调用的，从而缩小了审查范围：</p>
+<ul>
+<li><strong>特定文件</strong> — <code>/ce-compound-refresh plugin-versioning-requirements</code></li>
+<li><strong>模块/组件</strong> — <code>/ce-compound-refresh payments</code></li>
+<li><strong>类别</strong> — <code>/ce-compound-refresh performance-issues</code></li>
+<li><strong>模式主题</strong> — <code>/ce-compound-refresh critical-patterns</code></li>
+<li><strong>自动修复模式</strong> — <code>/ce-compound-refresh auth mode:autofix</code>（无用户交互；报告是可交付成果）</li>
+<li><strong>广泛扫描</strong>（罕见）- <code>/ce-compound-refresh</code> 无范围，处理所有内容</li>
+</ul>
+<p>如果没有范围提示，该技能会发现候选集，进行广泛的分类（按模块/组件分组，识别影响最大的集群），并在深入调查之前推荐一个起始区域。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>广泛扫描并进行分类；推荐起始集群</td>
+</tr>
+<tr>
+<td><code>&lt;directory&gt;</code></td>
+<td><code>&lt;directory&gt;</code>例如，<code>performance-issues</code> — 按类别缩小</td>
+</tr>
+<tr>
+<td><code>&lt;filename slug&gt;</code></td>
+<td>例如，<code>plugin-versioning-requirements</code> — 按文件</td>
+</tr>
+<tr>
+<td><code>&lt;module/keyword&gt;</code></td>
+<td>例如，<code>auth</code>、<code>payments</code> — 按内容/frontmatter</td>
+</tr>
+<tr>
+<td><code>mode:autofix</code></td>
+<td>附加到上述任何一项；无需用户交互即可运行，应用所有明确的操作，将不明确的操作标记为过时</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>更新和替换有什么区别？</strong>
+更新修复了偏差，同时保持核心解决方案完整（重命名文件、移动类、损坏的链接）。替换重写了指南，因为推荐的方法发生了重大变化。边界：如果您发现自己重写了解决方案部分，那就是替换，而不是更新。</p>
+<p><strong>为什么该技能不询问代码更改是否是有意的？</strong>
+保持在自己车道上的纪律。该技能的工作是文档准确性——将文档与当前代码相匹配。代码更改是对是错是代码审查的一个问题；如果用户认为代码错误，那就是一个单独的工作流程。</p>
+<p><strong>我什么时候应该使用自动修复模式？</strong>
+对于定期扫描、定期维护运行或大范围审查来说，针对每个问题都停下来是不切实际的。 Autofix 将不明确的案例标记为过时的案例，而不是错误地解决它们，因此交付的内容是一个可供人类查看的独立报告。</p>
+<p><strong>如果技能想要删除我认为应该保留的文档怎么办？</strong>
+在交互模式下，您将在删除之前看到带有证据的建议。拒绝，医生留下来。在自动修复模式下，自动删除安全条件是保守的——实质性引用会自动降级为过时标记。</p>
+<p><strong>为什么要删除而不是存档？</strong>
+存档文件夹会累积并污染搜索结果，没有人会阅读它们，并且它们会产生“我们会回到这个问题”的错觉，但实际上却没有这样做。 Git 历史记录会保留每个已删除的文件。 <code>git log --diff-filter=D -- docs/solutions/</code> 找到您需要恢复的任何内容。</p>
+<p><strong>Does it handle pattern docs differently from learning docs?</strong>
+Yes — pattern docs are derived guidance, not incident-level learnings. The five outcomes apply, but with different evidence: Keep means underlying learnings still support the rule; Replace means the synthesis is misleading and a different generalization is needed based on refreshed learnings.</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-compound.html"><code>ce-compound</code></a> — 获取新知识；该技能维持现有的集合</li>
+<li><a href="/compound-engineering/skills/ce-plan.html"><code>ce-plan</code></a> — 将 <code>docs/solutions/</code> 读取为机构内存；受益于干净、最新的文档</li>
+<li><a href="/compound-engineering/skills/ce-ideate.html"><code>ce-ideate</code></a> — 在接地期间也参考 <code>docs/solutions/</code></li>
+<li><a href="/compound-engineering/skills/ce-doc-review.html"><code>ce-doc-review</code></a> — 不同的技能：基于角色的单个文档审查，而不是跨集合的维护</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

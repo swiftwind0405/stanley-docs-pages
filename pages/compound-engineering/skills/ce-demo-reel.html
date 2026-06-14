@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-demo-reel · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-demo-reel</nav>
+    <header class="page-header">
+      <h1>/ce-demo-reel</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-demo-reel.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-demo-reel</code></h1>
+<blockquote>
+<p>捕获视觉演示卷 — GIF、终端录制、屏幕截图 — 用于 PR 描述。真实的产品使用情况，而不是测试输出。</p>
+</blockquote>
+<p><code>ce-demo-reel</code> 是<strong>证据捕获</strong>技能。它检测项目类型，推荐正确的捕获层（浏览器卷轴/终端记录/屏幕截图卷轴/静态屏幕截图），记录实际运行的功能，上传到公共 URL，并返回准备好 PR 描述的 Markdown。 <strong>证据意味着使用产品</strong>，而不是运行测试——“我运行了 npm test”是测试证据。 Capture 正在运行实际的 CLI 命令、打开 Web 应用程序、进行 API 调用或触发功能。</p>
+<p>当更改具有可观察到的行为时，它最常由 <code>/ce-commit-push-pr</code> 调用，但当您想事后将演示添加到 PR 描述时，也会直接调用它。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>检测项目类型、选择捕获层、记录正在运行的功能、上传、返回 PR 包含的降价</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>通过可运行的示例传送 UI 更改、CLI 功能、API 行为 - 任何视觉证据有帮助的东西</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>公共 URL（或本地路径）和 <code>Tier</code>/<code>Description</code> 准备将 <code>ce-commit-push-pr</code> 拼接到 PR 正文中</td>
+</tr>
+<tr>
+<td>等级</td>
+<td>浏览器卷轴、终端录音、截图卷轴、静态截图、无需证据</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>由于可预见的原因，没有证据的公关描述较弱：</p>
+<ul>
+<li><strong>审阅者看不到发生了什么变化</strong> — 他们必须克隆、构建、运行和重现，只是为了验证 UI 渲染</li>
+<li><strong>视觉回归是无声的</strong> - 没有记录基线意味着未来的回归可能会在几周内被忽视</li>
+<li><strong>证据在压力下被伪造</strong> - 当捕获真实流程很困难时，代理会替换测试输出并将其标记为“演示”</li>
+<li><strong>捕获焦点</strong> - 弄清楚要使用哪个工具，获得正确的窗口大小，找到公共主机，生成降价 - 所有这些都会分散运输的注意力</li>
+<li><strong>秘密泄漏到录音中</strong> - CLI 输出、URL 栏、DevTools、env 导出中的凭据 - 演示随泄漏一起提供</li>
+<li><strong>仅本地工件</strong> — 磁盘上的录音从未达到 PR 描述，或者在本地文件移动时中断</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-demo-reel</code> 作为具有显式回退的结构化捕获流运行：</p>
+<ul>
+<li><strong>项目检测</strong>自动选择正确的层（Web 应用程序的浏览器卷轴，CLI 的终端记录）</li>
+<li><strong>真实产品使用</strong> — 该技能首先练习该功能以验证其是否有效，然后捕获</li>
+<li><strong>层后备链</strong> — 如果所选层失败，技能将下降到下一个可用层，而不是运行失败</li>
+<li><strong>设计保密</strong> — 录音仅保留在可见的记录中；秘密保留在环境变量中或框架外；预上传扫描发现泄漏</li>
+<li><strong>测试输出永远不会标记为“演示”</strong> - 这种区别是绝对的</li>
+<li><strong>上传到公共主机</strong> — 返回准备用于 <code>## Demo</code> 嵌入的真实公共 URL</li>
+<li><strong>在不相关时干净地跳过</strong> - 仅文档，仅降价，内部重构得到明确的“不需要证据”而不是虚假替代品</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 证据意味着使用产品——与测试输出严格分离</h3>
+<p>该技能强制执行绝对区别：**证据是运行实际的 CLI 命令、打开 Web 应用程序、进行 API 调用或触发功能。**测试输出（<code>npm test</code>、<code>pytest</code> 等）永远不会标记为“演示”或“屏幕截图”。如果实际的产品使用不切实际（需要 API 密钥、云部署、付费服务、机器人令牌），该技能会明确说明并建议回退，而不是默默地替换测试输出。</p>
+<h3>2. 四层——按项目类型和变化形状选择</h3>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>当</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>浏览器卷轴</strong></td>
+<td>具有运动或交互（表单、转换、实时更新）的 Web 应用程序 — 代理浏览器屏幕截图拼接成动画 GIF</td>
+</tr>
+<tr>
+<td><strong>终端录音</strong></td>
+<td>具有运动功能的 CLI 工具（打字流、流输出）— VHS 录制到 GIF</td>
+</tr>
+<tr>
+<td><strong>截图卷轴</strong></td>
+<td>带有离散步骤的 CLI — 风格化的终端框架拼接成 GIF</td>
+</tr>
+<tr>
+<td><strong>静态截图</strong></td>
+<td>当其他工具不可用时回退；或自然离散状态</td>
+</tr>
+<tr>
+<td><strong>无需证据</strong></td>
+<td>仅文档、仅配置、仅 CI、仅测试或纯内部重构</td>
+</tr>
+</tbody></table>
+<p>建议考虑项目类型（Web 应用程序与 CLI）、更改分类（动作与状态）和工具可用性（预检检查确认已安装的内容）。用户在可用的层中进行选择。</p>
+<h3>3.无状态目标发现——分支感知，不受会话限制</h3>
+<p>该技能假设可以在工作完成后在新会话中调用它。它不依赖于对话历史记录，也不假设呼叫者知道正确的工件。目标发现使用：当前分支名称、打开的 PR 标题和描述、更改的文件和差异、最近的提交以及仅在明显引用时的计划文件。当被另一个技能调用时，调用者提供的目标被视为提示，而不是证据 - 该技能在捕获之前重新运行目标发现和验证。</p>
+<h3>4. 设计上的秘密安全——记录卫生，而不是事后模糊</h3>
+<p>该技能从不记录凭据。秘密影响环境，而不是可见的文字记录：</p>
+<ul>
+<li>计划框架外的秘密 — 记录前设置的环境变量、通过环境变量而不是标志值调用的 CLI、经过身份验证的状态演示（不是身份验证步骤）</li>
+<li><strong>录音中没有占位符替换</strong> - 输入假的 <code>sk-xxxxx</code> 会产生误导性的工件，并可能破坏演示（<code>401 Unauthorized</code> 因为假的环境变量会覆盖真实的环境变量）</li>
+<li><strong>预上传扫描</strong> — 查找 <code>sk-</code>、<code>ghp_</code>、<code>Bearer</code>、<code>Authorization:</code>、<code>?token=</code>、<code>api_key=</code>、靠近凭据探测标签的长十六进制/base64。如果出现任何情况，丢弃并重新捕获。切勿模糊或裁剪。</li>
+</ul>
+<h3>5.运行时后备链</h3>
+<p>如果所选层在执行期间失败（工具崩溃、服务器无法访问、记录产生空输出），则技能将回退到下一个可用层，而不是运行失败：</p>
+<ul>
+<li>浏览器卷轴 → 静态屏幕截图</li>
+<li>终端录音→截图卷轴→静态截图</li>
+<li>屏幕截图卷轴 → 静态屏幕截图</li>
+<li>静态截图→向用户报告失败</li>
+</ul>
+<h3>6. 飞行前工具检测</h3>
+<p>在捕获之前，预检脚本会检查工具可用性（<code>agent_browser</code>、<code>vhs</code>、<code>silicon</code>、<code>ffmpeg</code>、<code>ffprobe</code>）并输出哪些层可用。该技能会打印缺少工具的安装命令（<code>brew install charmbracelet/tap/vhs</code>、<code>brew install silicon</code>），以便用户可以根据需要启用更丰富的层。</p>
+<h3>7. 操作系统临时文件中每次运行的暂存目录</h3>
+<p>每次捕获都会在操作系统临时 (<code>mktemp -d -t demo-reel-XXXXXX</code>) 中创建一个用于临时工件的每次运行目录。录音被上传到公共主机然后被丢弃——它们不会污染存储库树。用户只能看到最终的 URL。</p>
+<h3>8. 上游调用者的稳定输出合约</h3>
+<p>该技能返回一个结构化信封 (<code>Tier</code>、<code>Description</code>、<code>URL</code>、<code>Path</code>)，其中 <code>URL</code> 或 <code>Path</code> 中的一个恰好带有实际值（另一个是 <code>&quot;none&quot;</code>）。调用者（通常是 <code>/ce-commit-push-pr</code>）将其格式化为 PR 描述的 <code>## Demo</code> 或 <code>## Screenshots</code> 部分。静态屏幕截图获得“屏幕截图”标签；所有动作层都获得“演示”。测试输出也永远不会得到。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您完成了通知设置页面。您调用 <code>/ce-commit-push-pr</code>，它会检测可观察的行为并询问是否捕获证据。你说是的。它加载 <code>/ce-demo-reel</code>。</p>
+<p>该技能从分支 + PR 差异中发现目标：带有切换的设置页面路由。它练习该功能（导航到 <code>/settings/notifications</code>，切换一些选项，验证热重载工作）。检测项目类型为 <code>web-app</code> (Next.js)。将更改分类为 <code>motion</code>（切换状态更改、微动画）。</p>
+<p>预检发现 <code>agent_browser</code> 和 <code>ffmpeg</code> 可用 — 建议 <strong>浏览器卷轴</strong>。你确认一下。该技能通过切换流程捕获一系列代理浏览器屏幕截图，通过 ffmpeg 将它们拼接成 GIF，扫描机密（未找到），上传到公共主机，返回 URL。</p>
+<p><code>/ce-commit-push-pr</code> 将 <code>## Demo</code> 与嵌入到 PR 正文中的 GIF 拼接。总耗时：~30 秒。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-demo-reel</code>：</p>
+<ul>
+<li>PR 具有值得展示的可观察行为（UI 渲染、CLI 输出、带有可运行示例的 API 调用）</li>
+<li>错误修复前后值得展示</li>
+<li>该功能需要散文无法捕捉到的交互或动作</li>
+<li>您正在提供输出格式很重要的 CLI 功能</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-demo-reel</code>：</p>
+<ul>
+<li>更改是仅文档、仅降价、仅 CI、仅测试或纯内部重构 - 选择“无需证据”</li>
+<li>真正的产品使用需要您没有的资源（付费服务、云部署、机器人令牌）——明确地说出来，而不是伪造它</li>
+<li>差异真正说明了一切</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p>当行为可观察时，其他技能会调用 <code>ce-demo-reel</code>：</p>
+<ul>
+<li><strong><code>/ce-commit-push-pr</code> 步骤 6</strong> — 当更改具有 UI / CLI / API 行为时调用此技能并询问用户是否捕获</li>
+<li><strong><code>/ce-work</code> 阶段 4.1</strong> — 证据上下文 — 标记证据是否可能，以便 <code>ce-commit-push-pr</code> 可以提出正确的问题</li>
+</ul>
+<p>该技能返回 <code>Tier</code>、<code>Description</code>、<code>URL</code>、<code>Path</code> — 调用者决定如何将结果格式化为 PR 描述。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能也是直接调用的：</p>
+<ul>
+<li><strong>PR 已打开后</strong> — <code>/ce-demo-reel &quot;the new settings page&quot;</code> 将演示添加到现有 PR</li>
+<li><strong>对于特定行为</strong> — <code>/ce-demo-reel &quot;CLI output of the migrate command&quot;</code></li>
+<li><strong>没有描述</strong> — <code>/ce-demo-reel</code> 从分支/PR/diff 上下文推断并询问是否不明确</li>
+</ul>
+<p>当在 <code>ce-commit-push-pr</code> 外部调用时，用户通常将返回的 markdown 手动复制到 PR 描述中，或单独使用 <code>gh pr edit --body-file</code> 。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>从分支/PR/差异上下文推断目标；询问是否有歧义</td>
+</tr>
+<tr>
+<td><code>&lt;description&gt;</code></td>
+<td><code>&lt;description&gt;</code>例如，“新设置页面”、“迁移命令的 CLI 输出”</td>
+</tr>
+</tbody></table>
+<p>一旦计算出推荐，就会将等级选择作为一个阻塞问题提供；用户在可用层中进行选择。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么测试输出没有证据？</strong>
+测试证明孤立的逻辑；他们没有透露该功能是否适用于用户。审阅者需要知道“使用时它是什么样子”，而不是“单元测试是否通过”（CI 表明了这一点）。严格的分离可以防止代理用简单的测试运行来代替更困难的实际产品捕获。</p>
+<p><strong>如果真实证据需要我不想记录的凭据怎么办？</strong>
+在录制开始之前，在录制区域之外设置凭证。演示<em>经过验证的结果</em>，而不是验证步骤。切勿在录制内容中输入 <code>export API_KEY=fake</code> — 这会覆盖您的真实环境变量并破坏演示 (<code>401 Unauthorized</code>)。如果您无法在不透露秘密的情况下捕获，请说出来并选择“不需要证据”或建议后备。</p>
+<p><strong>如果所选层在捕获过程中失败怎么办？</strong>
+该技能会回退到下一个可用层，而不是完全失败。浏览器卷轴 → 静态屏幕截图。终端录音→截图卷轴→静态截图。即使静态屏幕截图也失败，该技能也会报告失败并让您做出决定。</p>
+<p><strong>GIF 或屏幕截图位于哪里？</strong>
+每次运行的工件会转到操作系统临时 (<code>/tmp/...</code>) 并上传到公共主机。本地文件是短暂的。 URL进入PR描述；本地副本将被丢弃。</p>
+<p><strong><code>--full</code> 页面截图怎么样？</strong>
+静态屏幕截图层支持通过代理浏览器的 <code>screenshot --full</code> 对于高页面进行全页捕获。该技能根据所演示的内容选择正确的捕捉模式。</p>
+<p><strong>为什么它不会自动模糊掉的秘密？</strong>
+因为部分模糊是一种已知的不良缓解措施，即使是裁剪或模糊的秘密也可能通过元数据、帧边缘或可见模式泄漏。该技能的规则是：上传前扫描，如果有任何东西看起来像秘密，则重新捕获。夺回是唯一的补救办法。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-commit-push-pr.html"><code>ce-commit-push-pr</code></a> — 主要调用者；将捕获的证据拼接到 PR 描述中</li>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 在阶段 4.1 标记证据上下文，以便 PR 流程可以提出正确的问题</li>
+<li><a href="/compound-engineering/skills/ce-test-browser.html"><code>ce-test-browser</code></a> — 用于端到端浏览器测试的同级技能（不同的目标：验证行为，而不是捕获）</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-test-xcode · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-test-xcode</nav>
+    <header class="page-header">
+      <h1>/ce-test-xcode</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-test-xcode.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-test-xcode</code></h1>
+<blockquote>
+<p>使用 XcodeBuildMCP 在模拟器上构建和测试 iOS 应用程序 — 捕获屏幕截图、日志并验证关键屏幕上的应用程序行为。</p>
+</blockquote>
+<p><code>ce-test-xcode</code> 是 <strong>iOS 模拟器测试</strong> 技能。它构建您的 iOS 项目，启动模拟器，安装并启动应用程序，跨关键屏幕捕获屏幕截图和日志，暂停以对需要设备交互的流程进行人工验证（使用 Apple 登录、推送、应用内购买、相机/照片、位置），并生成结构化测试摘要。 Beta 风格的行为 (<code>disable-model-invocation: true</code>) — 仅显式调用。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>在模拟器上构建、安装并启动 iOS 应用程序；截屏；检查日志中是否有错误；暂停对纯设备流程进行人工验证</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>进行 iOS 代码更改后；创建 PR 之前；验证应用程序行为或检查模拟器上的崩溃时</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>屏幕截图、捕获的日志和结构化测试摘要（每个屏幕通过/失败、控制台错误、人工验证、总体结果）</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>仅显式调用 (<code>disable-model-invocation: true</code>)</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>手动 iOS 模拟器测试缓慢且不一致：</p>
+<ul>
+<li><strong>构建 → 安装 → 启动 → 练习 → 屏幕截图</strong> 是每次更改都需要执行的 5 个以上步骤</li>
+<li><strong>日志丢失</strong> - 没有显式捕获，控制台错误在模拟器重新启动时消失</li>
+<li><strong>没有结构化摘要</strong> - “我测试了它，看起来不错”没有显示测试过的内容或跳过的内容</li>
+<li><strong>仅限设备的流程无法自动化</strong> - 使用 Apple 登录、沙盒购买、推送通知需要人工参与，但很容易忘记并跳过它们</li>
+<li><strong>SwiftUI 内联链接不响应模拟点击</strong> — 点击报告成功但没有效果；这让团队措手不及</li>
+<li><strong>没有可共享的工件</strong> - 屏幕截图和日志最终出现在开发人员的文件系统中，而不是 PR 描述中</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-test-xcode</code> 将模拟器测试作为具有显式门的结构化流程运行：</p>
+<ul>
+<li><strong>飞行前检查</strong> 在接触任何内容之前确认 XcodeBuildMCP 已连接</li>
+<li><strong>项目 + 方案发现</strong> 自动检测要构建的内容，并覆盖用户提供的方案</li>
+<li><strong>构建、安装、启动、日志捕获</strong>作为具有故障处理功能的离散 MCP 调用</li>
+<li><strong>逐屏测试</strong>，包括屏幕截图、日志检查以及每个屏幕的通过/失败</li>
+<li><strong>人工验证步骤</strong>，适用于需要设备交互的流程（带有 SwiftUI 内联链接的记录解决方法）</li>
+<li><strong>故障处理</strong>询问用户如何继续（立即修复或跳过）而不是默默中止</li>
+<li><strong>结构化测试摘要</strong>，包含每个屏幕的状态、控制台错误、人工验证和总体结果</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. XcodeBuildMCP作为基底</h3>
+<p>该技能使用 Sentry 的 <a href="https://github.com/getsentry/xcodebuildmcp">XcodeBuildMCP</a> — 一个 MCP 服务器，它将 Xcode 项目发现、模拟器管理、构建/安装/启动、日志捕获和屏幕截图捕获作为工具调用公开。这意味着该技能本身是 MCP 工具上的精简编排器，而不是 <code>xcodebuild</code> shell 调用的包装器：</p>
+<ul>
+<li><code>discover_projs</code> — 在工作区中查找 Xcode 项目</li>
+<li><code>list_schemes</code> — 获取项目的可用方案</li>
+<li><code>list_simulators</code>、<code>boot_simulator</code>、<code>shutdown_simulator</code> — 模拟器管理</li>
+<li><code>build_ios_sim_app</code> — 为模拟器构建</li>
+<li><code>install_app_on_simulator</code>、<code>launch_app_on_simulator</code> — 安装 + 启动</li>
+<li><code>take_screenshot</code>、<code>capture_sim_logs</code>、<code>get_sim_logs</code>、<code>stop_log_capture</code> — 观察</li>
+</ul>
+<p>当 XcodeBuildMCP 不可用时，该技能会停止并提供安装说明 - 它不会尝试后备路径。</p>
+<h3>2.结构化测试流程，而不是shell脚本</h3>
+<p>每个阶段都是一个明确的步骤：发现、启动、构建、安装、启动、日志捕获、测试屏幕、处理故障、摘要、清理。每个步骤都有失败处理。这会产生一个可在聊天中审核的测试运行 - 您可以看到测试了哪些内容、通过了哪些内容、跳过了哪些内容。</p>
+<h3>3. 人工验证步骤 — 使用 Apple 登录、IAP、推送、相机、位置</h3>
+<p>有些流程无法在模拟器上自动化：</p>
+<table>
+<thead>
+<tr>
+<th>流量</th>
+<th>人工验证的要求是什么？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>使用 Apple 登录</td>
+<td>“请在模拟器上完成使用 Apple 登录”</td>
+</tr>
+<tr>
+<td>推送通知</td>
+<td>“发送测试推送并确认其出现”</td>
+</tr>
+<tr>
+<td>应用内购买</td>
+<td>“完成沙盒购买”</td>
+</tr>
+<tr>
+<td>相机/照片</td>
+<td>“授予权限并验证相机是否正常工作”</td>
+</tr>
+<tr>
+<td>地点</td>
+<td>“允许位置访问并验证地图更新”</td>
+</tr>
+</tbody></table>
+<p>该技能因阻塞问题而暂停，用户在模拟器上执行该操作，然后回答是（继续）或否（描述问题）。这使得仅设备流变得明确，而不是默默地跳过。</p>
+<h3>4. 记录的平台限制 — SwiftUI 文本链接</h3>
+<p>模拟点击不会触发具有内联 <code>AttributedString</code> 链接的 SwiftUI <code>Text</code> 视图上的手势识别器 - 它们报告成功但没有效果。这是一个平台限制（内联链接不会作为可访问性树中的单独元素公开）。该技能知道这一点，并当内联链接不响应时提示用户手动点击，并在目标 URL 已知时记录 <code>xcrun simctl openurl</code> 回退。</p>
+<h3>5. 故障处理 — 立即修复或跳过</h3>
+<p>当屏幕出现故障时，技能会捕获错误状态（屏幕截图+控制台日志+重现步骤）并询问用户如何继续：</p>
+<ul>
+<li><strong>立即修复</strong> — 调查、提出修复建议、重建、重新测试</li>
+<li><strong>跳过</strong> — 记录为已跳过，继续测试其他屏幕</li>
+</ul>
+<p>任一路径均有效。重点是明确选择，而不是在第一次失败时默默中止。</p>
+<h3>6.结构化测试总结</h3>
+<p>测试所有屏幕后，该技能会生成一个 Markdown 摘要：</p>
+<ul>
+<li>项目名称、方案、模拟器</li>
+<li>构建状态（成功/失败）</li>
+<li>每个屏幕的状态表（通过/失败/跳过带注释）</li>
+<li>发现控制台错误</li>
+<li>人工验证已完成</li>
+<li>总体结果（通过/失败/部分）</li>
+</ul>
+<p>这适合粘贴到 PR 描述或发布准备报告中。</p>
+<h3>7. 仅 Beta 式显式调用</h3>
+<p>frontmatter 中的 <code>disable-model-invocation: true</code> 会阻止该技能自动发射。模拟器测试是一个深思熟虑的选择——你不希望它作为询问其他事情的副作用而被触发。直接调用<code>/ce-test-xcode</code>。</p>
+<hr>
+<h2>简单示例</h2>
+<p>您完成了配置文件编辑屏幕的 iOS 功能。您调用 <code>/ce-test-xcode</code>。</p>
+<p>该技能调用 XcodeBuildMCP 的 <code>list_simulators</code> 来验证 MCP 是否已连接。然后 <code>discover_projs</code> 找到你的 Xcode 项目； <code>list_schemes</code> 返回三；您没有传递参数，因此它选择默认的上次使用的方案。</p>
+<p>启动 iPhone 15 Pro 模拟器。使用 <code>build_ios_sim_app</code> 构建 — 成功。通过 <code>install_app_on_simulator</code> 和 <code>launch_app_on_simulator</code> 安装和启动。开始日志捕获。</p>
+<p>测试关键屏幕：启动（屏幕截图，无错误）、主页（屏幕截图，无错误）、个人资料（屏幕截图 - 但路径中包含“使用 Apple 登录”流程）。该技能暂停以进行人工验证：“请在模拟器上完成使用 Apple 登录。”您可以在模拟器上点击它。回答“是的——继续测试。”配置文件屏幕已测试 - 屏幕截图，没有错误。设置（屏幕截图 - 点击“隐私”行时崩溃）。该技能捕获崩溃日志，显示故障，并询问：立即修复还是跳过？</p>
+<p>您选择“立即修复”。该技能会调查崩溃日志、识别缺失的 nil 检查、提出修复建议、重建、重新安装、重新测试设置 — 通过。</p>
+<p>在所有屏幕之后，测试摘要落地：测试了 4 个屏幕，0 个控制台错误，确认了 1 个人工验证，在测试期间应用了 1 个修复。总体结果：通过。</p>
+<p>该技能会停止日志捕获并可选择关闭模拟器。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-test-xcode</code>：</p>
+<ul>
+<li>您已完成 iOS 代码更改并希望在打开 PR 之前进行验证</li>
+<li>重构后您正在检查模拟器上的崩溃情况</li>
+<li>PR 包括需要视觉验证的 UI 更改</li>
+<li>您需要使用结构化包装器手动执行仅限设备的流程（使用 Apple 登录、IAP、推送）</li>
+<li>您想要一个适合 PR 描述的测试摘要</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-test-xcode</code>：</p>
+<ul>
+<li>更改是非 UI 的（仅模型层，具有单元测试覆盖范围的内部服务）</li>
+<li>XcodeBuildMCP 不可用 — 该技能随着安装说明而停止；先安装它</li>
+<li>您想要单元测试验证 → 直接使用 <code>xcodebuild test</code> 或您项目的测试运行程序</li>
+<li>你不在 macOS / 没有 Xcode → 该技能将无法发挥作用</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-test-xcode</code> 与验证侧链的其余部分互锁：</p>
+<ul>
+<li><strong><code>/ce-code-review</code> 第 2 层</strong> — 在审查涉及 iOS 的 PR 时，工作流程可以生成一个代理来运行此技能、在模拟器上构建、测试关键屏幕并检查崩溃</li>
+<li><strong><code>/ce-work</code> 第 3 阶段/第 4 阶段</strong> — 在针对 iOS 密集型工作打开 PR 之前合适；测试摘要成为 PR 描述验证叙述的一部分</li>
+</ul>
+<p>该技能的输出（测试摘要）是包含在 PR 描述中的合适证据，补充了 <code>/ce-demo-reel</code> 为视觉演示生成的内容。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>最直接的使用：</p>
+<ul>
+<li><strong>默认方案</strong> — <code>/ce-test-xcode</code></li>
+<li><strong>具体方案</strong> — <code>/ce-test-xcode MyApp-Debug</code></li>
+<li><strong>上次使用</strong> — <code>/ce-test-xcode current</code></li>
+</ul>
+<p>该技能发现项目，选择模拟器（推荐 iPhone 15 Pro），然后运行完整流程。当 XcodeBuildMCP 丢失时，技能将停止并显示安装说明：</p>
+<pre><code class="language-文本">通过自制程序安装：
+  酿造水龙头getentry/xcodebuildmcp &amp;&amp; 酿造安装xcodebuildmcp
+
+或者通过 npx：
+  npx -y xcodebuildmcp@最新 mcp
+
+然后在代理配置中添加“XcodeBuildMCP”作为 MCP 服务器
+并重新启动您的代理。
+</code></pre>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>发现项目+使用默认方案</td>
+</tr>
+<tr>
+<td><code>&lt;scheme name&gt;</code></td>
+<td><code>&lt;scheme name&gt;</code>使用该方案构建</td>
+</tr>
+<tr>
+<td><code>current</code></td>
+<td>使用默认/上次使用的方案</td>
+</tr>
+</tbody></table>
+<p>必需：XcodeBuildMCP MCP 服务器已连接。自动检测：Xcode 项目、可用模拟器（存在时首选 iPhone 15 Pro）。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么使用 XcodeBuildMCP 而不是直接使用 <code>xcodebuild</code>？</strong>
+因为MCP服务器提供了更高级别的语义（项目发现、模拟器启动/关闭、屏幕截图、日志捕获）作为工具调用。该技能成为一个精简的编排器，而不是 shell 脚本包装器，并且特定于平台的边缘情况（模拟器状态、日志捕获生命周期）由 MCP 处理。</p>
+<p><strong>如果点击 SwiftUI 文本链接不起作用怎么办？</strong>
+已知的平台限制 - 模拟点击不会触发内联 <code>AttributedString</code> 链接上的手势识别器。该技能会提示您在模拟器中手动点击。如果目标 URL 已知，<code>xcrun simctl openurl &lt;device&gt; &lt;URL&gt;</code> 会直接打开它作为后备。</p>
+<p><strong>为什么只是显式调用？</strong>
+因为 <code>disable-model-invocation: true</code> 会阻止技能自动发射。模拟器测试是一个经过深思熟虑的用户选择——您不希望它在您刚刚要求代理查看某些内容时触发。直接调用<code>/ce-test-xcode</code>。</p>
+<p><strong>UI 测试 (XCUITest) 怎么样？</strong>
+此技能通过模拟器交互（点击、屏幕截图、日志检查）而不是通过 XCUITest 脚本来练习正在运行的应用程序。对于单元/UI 测试运行，请使用 <code>xcodebuild test</code> 或项目的运行程序。两者相辅相成。</p>
+<p><strong>没有 iPhone 15 Pro 可以运行吗？</strong>
+是的 — <code>list_simulators</code> 返回任何可用的内容；技能选其一。 iPhone 15 Pro 是推荐的默认配置，但不是必需的。</p>
+<p><strong>如果构建失败怎么办？</strong>
+该技能捕获构建错误并报告它们的具体细节。它不会在失败的构建上继续安装/启动。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>ce-code-review</code></a> — 可以为涉及 iOS 的 PR 生成此技能作为验证步骤</li>
+<li><a href="/compound-engineering/skills/ce-test-browser.html"><code>ce-test-browser</code></a> — 通过代理浏览器进行 Web 应用程序测试的同级技能</li>
+<li><a href="/compound-engineering/skills/ce-demo-reel.html"><code>ce-demo-reel</code></a> — 捕获 PR 描述的视觉证据；测试总结的补充</li>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 可以在第 3 阶段验证期间调用此技能的编排器</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

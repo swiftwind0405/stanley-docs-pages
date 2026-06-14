@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-brainstorm · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link active" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-brainstorm</nav>
+    <header class="page-header">
+      <h1>/ce-brainstorm</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-brainstorm.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-brainstorm</code></h1>
+<blockquote>
+<p>思考某件事应该变成什么样子——一次一个问题地协作——然后写一份大小合适的需求文档。</p>
+</blockquote>
+<p><code>ce-brainstorm</code> 是<strong>定义</strong>技能。它是一个有思想的合作伙伴，一次提出一个问题，根据指定的间隙透镜对您的前提进行压力测试，在推荐一种方法之前探索 2-3 种具体方法，并生成一份大小合适的需求文档，该文档的强度足以使规划永远不必发明产品行为。</p>
+<p>它在软件功能、完全非软件主题（活动策划、业务决策、个人项目框架、旅行行程、命名简介）以及介于两者之间的任何地方都同样运行良好。同样的一次只问一个问题的纪律；相同大小的模板；在任何工件落地之前都会有相同的综合摘要。</p>
+<p>这是复合工程构思链的中间步骤：</p>
+<pre><code class="language-text">/ce-ideate         /ce-brainstorm      /ce-plan             /ce-work
+&quot;What&#39;s worth      &quot;What does this     &quot;What&#39;s needed       &quot;Build it.&quot;
+ exploring?&quot;        need to be?&quot;        to accomplish
+                                        this?&quot;
+</code></pre>
+<p>它也是最常见的独立切入点——对于任何问题不是“我该怎么做？”的功能、决策或项目。但“我到底在做什么？它的形状正确吗？”</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>协作对话，以澄清范围、压力测试前提、探索方法并编写适当大小的需求文档</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>模糊的特征想法，“让我们集思广益”，多个看似合理的方向，范围不明确；非软件决策和项目</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td><code>docs/brainstorms/</code> 中的要求文档（软件模式下具有 R-ID、A-ID、F-ID、AE-ID）</td>
+</tr>
+<tr>
+<td>接下来是什么？ <code>/ce-plan</code>、<code>/ce-work</code> 用于琐碎范围、文档审查或证明迭代</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>从一个模糊的想法直接到实施会产生：</p>
+<ul>
+<li>代码（或工作）解决了错误的问题，因为没有人对前提进行压力测试</li>
+<li>范围蔓延，因为界限从未明确</li>
+<li>每次有人接触产品决策时都会重新提起诉讼的计划</li>
+<li>需求文档要么是没有人更新的过于仪式化的 PRD，要么是计划必须通过猜测来填写的一行简报</li>
+</ul>
+<p>典型的人工智能“让我们集思广益”也存在形状问题：它在一条消息中提出五个问题；你回答两个，剩下的就迷路了。它立即选择一种方法，而不是提出替代方案。它将实施细节纳入产品讨论中。输出是对话，而不是可切换的工件。</p>
+<h2>解决方案</h2>
+<p><code>ce-brainstorm</code> 运行一个结构化但对话的流程，最终形成一个持久的工件：</p>
+<ul>
+<li><strong>每轮一个问题</strong>，即使子问题感觉相关</li>
+<li><strong>规模合适的仪式</strong> — 轻量级/标准/深度/深度产品层</li>
+<li><strong>命名间隙透镜</strong> 在生成方法之前强制要求场地严格</li>
+<li><strong>背景接地侦察员</strong>在您回答开场问题时收集廉价模型的逐字回购证据</li>
+<li><strong>2-3 个具体方法</strong> 进行权衡，然后提出明确的建议</li>
+<li><strong>综合摘要</strong>作为文档落地前纠正范围的最后机会</li>
+<li><strong>新鲜上下文声明验证</strong> 在文档落地之前检查其回购声明</li>
+<li><strong>大小合适的需求文档</strong>，具有流入规划的稳定标识符 (R/A/F/AE)</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1.一次一个问题，先阻塞工具</h3>
+<p>在一条消息中堆叠三个问题会产生稀释的答案。 <code>ce-brainstorm</code> 每回合都会问一个问题，并且当存在自然选择时，默认使用平台的带有单选选项的阻塞问题工具。精心挑选的选项可以构建答案而不对其进行限制（自由文本后备始终可用）。</p>
+<h3>2. 等级分级尺度仪式到工作</h3>
+<p>并非每次头脑风暴都是一样的。轻量级涵盖了小而明确、模糊性较低的想法。标准通过一些决定来处理正常功能。 Deep 为横切工作添加了系统性移动探针。深层产品还需要建立产品形态——参与者、核心成果、定位、耐用性——而不是继承它。仪式与工作相适应，而不是与之相反。</p>
+<h3>3. 产品压力测试 — 命名为间隙镜片</h3>
+<p>在生成方法之前，该技能会扫描用户的空缺，以找出严格的差距。每个间隙都有一个名称并探讨它所捕获的混乱类型：</p>
+<ul>
+<li><strong>证据</strong> - “用户想要 X”，但没有可观察到的行为支持它</li>
+<li><strong>具体性</strong> — 抽象地描述受益人；设计会默默地创造他们是谁</li>
+<li><strong>反事实</strong> - 无法了解用户今天做了什么，或者如果没有发货会发生什么变化</li>
+<li><strong>附件</strong> - 特定的解决方案形状被视为正在构建的东西</li>
+<li><strong>耐用性</strong> <em>（仅限深度产品）</em> — 价值取决于可能发生变化的当前世界状态</li>
+</ul>
+<p>这些探测器以<strong>散文而非菜单</strong>的形式启动——一个 4 选项菜单表明哪些类型的证据值得考虑，并让用户选择而不是生成。散文迫使人们进行真实的观察。</p>
+<h3>4. 需要以不明显的角度进行探索</h3>
+<p>第 2 阶段提出了 2-3 个具体方法，其中至少有一个<strong>不明显的角度</strong>——反演、约束消除或跨域类比。方法是按机制/产品形状粒度而不是架构提出的。 （基于有意浅薄的研究而做出的架构决策往往会预先让您做出错误的选择；这些选择属于 <code>ce-plan</code>。）方法在推荐之前显示，以便用户看到替代方案而无需锚定。</p>
+<h3>5.综合总结——最后的廉价修正时刻</h3>
+<p>在编写文档之前，<code>ce-brainstorm</code> 会发出一个<strong>范围综合</strong>，其形状类似于两个产品协作者在编写 PRD 之前会确认的内容。它显示了正在构建的内容、对话产生的关键权衡、已推迟的内容以及用户应该权衡的任何真正的分叉。每个部分仅在有话要说时才会呈现——没有空桶用于仪式。当上游对话短路时（阶段 0.2 快速路径，要求已经明确，不问任何问题），范围界定综合会压缩为具有回合结束中断窗口的单个前瞻性句子。</p>
+<h3>6. 流向下游的稳定标识符</h3>
+<p>需求文档包含计划馈送标识符——R-ID（需求）、A-ID（参与者）、F-ID（关键流程）、AE-ID（验收示例）。 <code>ce-plan</code> 使用这些并跟踪每个实现单元和测试场景回溯到它们。来源范围边界（特别是“在该产品的身份之外”）流过不变。</p>
+<h3>7. 非软件领域的通用头脑风暴</h3>
+<p>构建软件功能？标准流量。给产品起个名字？选择假期？决定职业变动？ <code>ce-brainstorm</code> 路由至与领域无关的促进者，该促进者保留一次只回答一个问题的规则和适当大小的输出。</p>
+<h3>8. 默认情况下，实现不包含在需求文档中</h3>
+<p>需求描述了从用户的角度期望的<strong>什么</strong>行为。它们不描述库、模式、端点、文件布局或代码结构——除非头脑风暴本身是关于技术或架构决策的。这使规划的工作保持干净：发明<strong>如何</strong>，而不是<strong>什么</strong>。</p>
+<h3>9. 在你的思考时间内扎根和验证</h3>
+<p>在标准和深度头脑风暴中，当你回答第一个问题时，会在后台派遣一个廉价的提取层侦察员。它编写了一份基础档案（带有 <code>file:line</code> 指针的逐字引用）来清理存储并返回一个简短的要点，因此对话保持简洁，同时证据仍可按需提供。在编写需求文档之前，一个新的上下文验证器（从未见过对话的中间层模型）会根据代码库检查文档的回购声明（缺席声明、文件引用），并在您查看综合确认时运行。被驳斥的主张在文件落地前得到纠正；无法验证的假设变成了明确的假设。档案路径将交给 <code>ce-plan</code>，因此计划从经过验证的报价开始，而不是重新扫描。在没有每个代理模型选择的平台上，两者都在具有相同读取预算的继承模型上运行；由于根本没有子代理支持，该技能只能退回到内联扫描和验证。</p>
+<hr>
+<h2>简单示例</h2>
+<p>你从一个模糊的功能想法开始——“我想为用户添加一种暂停通知的方法。” <code>ce-brainstorm</code> 读取项目的约束文件，将工作分类为标准范围，并在您回答第一个问题时发送廉价的后台侦察员来收集回购证据。</p>
+<p>压力测试检测特异性差距（这些“用户”是谁？）和附件差距（“暂停”已经是特定的解决方案形状）。它将两者作为散文进行探讨，一次一篇。您列出了实际的痛苦（您的支持团队在凌晨 3 点收到非紧急事务的通知），并描述了可以解决该问题的最小版本。</p>
+<p>三种方法浮出水面——使用 TTL 的按通知类型静音、全局请勿打扰时间表、根据规则而不是频道静音——并进行权衡和建议。综合摘要读回出现的形状（“通知规则上的每个通道静音，凌晨 3 点支持 ping 的 24 小时预设”），命名对话中所做的权衡（每个通道优于每个用户，规则上的静音），推迟的内容（基于存在的静音，安静时间时间表），以及关于规则删除丢失路径的单个标注。您确认并添加 24 小时预设。</p>
+<p>编写合适大小的需求文档，第 4 阶段菜单提供后续步骤 - <code>/ce-plan</code>（推荐）、代理文档审查、证明迭代或针对琐碎范围跳过构建。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-brainstorm</code>：</p>
+<ul>
+<li>功能想法已部分形成，但您还无法绘制实施方案</li>
+<li>一个请求有多个有效的解决方案，需要选择</li>
+<li>范围不明确（“添加通知”——什么类型？为谁？何时？）</li>
+<li>您想要一个结构化的工件，可以将其交给其他贡献者或规划人员</li>
+<li>模糊的问题陈述需要成为真正的产品决策</li>
+<li>您正在开发非软件的东西（命名产品、路线图选择、决策）</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-brainstorm</code>：</p>
+<ul>
+<li>您还不知道首先要做什么 → <code>/ce-ideate</code></li>
+<li>要求已指定（PRD存在，GitHub问题详述）→直接<code>/ce-plan</code></li>
+<li>您有已知的 bug 根本原因 → <code>/ce-debug</code></li>
+<li>改变是微不足道且显而易见的 → 就去做吧</li>
+</ul>
+<hr>
+<h2>用作链式工作流程的一部分</h2>
+<pre><code class="language-text">/ce-ideate          (optional — discover candidate directions)
+   |  picks one survivor + carries warrant + rationale
+   v
+/ce-brainstorm
+   |  produces requirements / brief
+   |  software mode: R-IDs, A-IDs, F-IDs, AE-IDs + scope boundaries
+   |  universal mode: a domain-appropriate brief
+   v
+/ce-plan
+   |  reads the doc as origin
+   |  R-IDs flow into Requirements; A/F/AE-IDs trace into units and tests
+   |  origin scope boundaries are preserved verbatim
+   v
+/ce-work
+</code></pre>
+<p>当 <code>ce-plan</code> 使用需求文档作为输入加载时，它不会重新诉讼产品行为。该文档具有权威性。计划时决策是关于执行护栏的，而不是正在构建的。</p>
+<hr>
+<h2>使用独立版</h2>
+<p><code>ce-brainstorm</code> 是最常见的独立入口点。许多团队跳过 <code>ce-ideate</code> （他们已经知道要探索什么）并跳过 <code>ce-plan</code> （头脑风暴是他们完整的思考神器）。</p>
+<ul>
+<li><strong>功能简介</strong> — 将模糊的想法变成利益相关者或新贡献者的稳定工件</li>
+<li><strong>加入现有工作</strong> - 当某个功能正在开发中但从未写下其理由时</li>
+<li><strong>公关前调整</strong> - 当多人需要在代码开始之前就范围达成一致时</li>
+<li><strong>战略决策</strong> - 深层产品层表面耐久性和邻近产品风险</li>
+<li><strong>非软件头脑风暴</strong> — 命名产品、计划活动、决定路线图</li>
+</ul>
+<p>第 4 阶段交接提供规划、代理文档审查、证明迭代、轻量级范围的直接工作、更澄清的问题或暂停。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>询问功能描述</td>
+</tr>
+<tr>
+<td><code>&lt;feature idea&gt;</code></td>
+<td><code>&lt;feature idea&gt;</code>开放式头脑风暴</td>
+</tr>
+<tr>
+<td><code>&lt;problem&gt;</code></td>
+<td>路由经过产品压力测试</td>
+</tr>
+<tr>
+<td>现有 <code>*-requirements.md</code> 路径或主题</td>
+<td>简历报价</td>
+</tr>
+<tr>
+<td><code>output:html</code></td>
+<td>将需求文档编写为单个独立的 HTML 文件而不是 Markdown。排他性 — 该文档是 <code>.md</code> 或 <code>.html</code>，不能两者兼而有之。默认是降价。在 <code>.compound-engineering/config.local.yaml</code> 中设置 <code>brainstorm_output: html</code> 以使 HTML 成为默认值。管道模式（LFG，<code>disable-model-invocation</code>）始终强制降价，以便下游自动化获得稳定的文本形状。</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么一次只问一个问题？是不是很慢？</strong>
+每轮堆叠三个问题会产生稀释的答案——用户选择简单的问题，其余的就会丢失。每轮一个问题会产生更清晰的答案，并且根据经验，收敛速度更快。</p>
+<p><strong>为什么它要对我的前提进行压力测试？我只是想集思广益。</strong>
+所谓的间隙镜片捕捉了功能内裤下游失败的最常见方式。只有当你的开口处确实存在间隙时，它们才会触发——一个具体的、结构良好的提示可能会获得零探测。</p>
+<p><strong>我可以跳过需求文档吗？</strong>
+是的。轻量级层和公告模式快速路径支持这一点。如果您只需要简短的对齐，则无需编写文档。</p>
+<p><strong>如果我已经有 PRD 或详细的 GitHub 问题怎么办？</strong>
+跳过<code>ce-brainstorm</code>并直接进入<code>/ce-plan</code>。计划技能消耗任何类型的输入。</p>
+<p><strong>合成中“推断”是什么意思？</strong>
+代理撰写内部三桶草案（陈述/推断/超出范围）作为提出范围综合之前的思考步骤。推断的项目是代理为填补对话空白而进行的赌注。那些在测试表面中幸存下来的内容作为范围综合中的标注；当用户确认时，其余部分会分解为需求文档的关键决策。</p>
+<p><strong>它适用于非软件主题吗？</strong>
+是的——与领域无关的辅导员会保留一次只提出一个问题的规则，并在命名、决策、规划等方面进行适当的规模调整。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-ideate.html"><code>ce-ideate</code></a> — 上游“值得探索的内容”发现</li>
+<li><a href="/compound-engineering/skills/ce-plan.html"><code>ce-plan</code></a> — 将需求文档转化为实施计划</li>
+<li><a href="/compound-engineering/skills/ce-doc-review.html"><code>ce-doc-review</code></a> — 基于角色的需求文档审查</li>
+<li><a href="/compound-engineering/skills/ce-work.html"><code>ce-work</code></a> — 直接通过头脑风暴执行轻量级更改</li>
+<li><a href="/compound-engineering/skills/ce-strategy.html"><code>ce-strategy</code></a> — 将头脑风暴锚定在记录的产品策略上</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

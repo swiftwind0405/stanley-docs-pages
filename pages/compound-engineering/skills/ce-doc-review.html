@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-doc-review · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-doc-review</nav>
+    <header class="page-header">
+      <h1>/ce-doc-review</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-doc-review.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-doc-review</code></h1>
+<blockquote>
+<p>使用呈现特定于角色的问题的并行角色代理来审查需求或计划文档。</p>
+</blockquote>
+<p><code>ce-doc-review</code> 是 <strong>文档审查</strong> 技能 - 与链的文档端的 <code>/ce-code-review</code> 是同级的。它分析需求文档或实施计划，根据文档包含的内容（产品框架、设计表面、安全隐患、范围蔓延）选择审阅者角色，并行分派它们，然后自动应用安全修复，并通过结构化的四选项交互路由其余部分（每个发现的走查、自动解决最佳判断、附加到开放问题、仅报告）。</p>
+<p>复合工程构思链是<code>/ce-ideate → /ce-brainstorm → /ce-plan → /ce-work</code>。 <code>ce-doc-review</code> 是针对 <code>ce-brainstorm</code> 和 <code>ce-plan</code>** 生成的工件的**审阅技能 - 在其各自的第 4 阶段/第 5.3.8 阶段交接时调用，并且当您想要对磁盘上的文档进行结构化审阅时也可以直接调用。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>根据文档内容选择审阅者角色，并行调度它们，应用 <code>safe_auto</code> 修复，通过结构化交互路由剩余的发现结果</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td><code>ce-brainstorm</code> 生成需求文档后； <code>ce-plan</code> 写完计划后；在交付实施之前</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>应用了 <code>safe_auto</code> 修复的更新文档，以及对 <code>gated_auto</code> / <code>manual</code> 结果的结构化处理</td>
+</tr>
+<tr>
+<td>模式</td>
+<td>交互式（直接调用）、无头（从 <code>/ce-plan</code> 链接时默认）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>在某些方面，文档审查比代码审查更困难：</p>
+<ul>
+<li><strong>没有类型检查器</strong> - 当需求文档存在内部矛盾时，不会出现编译器错误</li>
+<li><strong>没有执行</strong> - 您无法“运行”计划来查看其范围是否符合其目标</li>
+<li><strong>通才审查失败</strong> - “看起来不错”忽略了设计差距、安全含义、未说明的范围扩展</li>
+<li><strong>交错的关注点</strong> - 产品框架、安全性、设计、范围和可行性都需要不同的视角，但单个审阅者会优先考虑其中一个</li>
+<li><strong>调查结果缺乏所有权</strong> - “考虑修改”，但没有说明谁决定或做什么</li>
+<li><strong>被拒绝的调查结果重新浮出水面</strong>——同样的问题被一轮又一轮地标记，因为拒绝没有被记录</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-doc-review</code> 将文档审查作为具有显式门的结构化管道来运行：</p>
+<ul>
+<li><strong>始终在线的角色</strong>以实现连贯性和可行性</li>
+<li><strong>根据文档内容选择条件角色</strong> - 产品镜头、设计镜头、安全镜头、范围守护者、对抗性</li>
+<li><strong>并行角色调度</strong>，具有有限并发性</li>
+<li><strong>综合管道</strong>，具有跨角色协议提升、矛盾解决和三层路由（<code>safe_auto</code>、<code>gated_auto</code>、<code>manual</code> + FYI）</li>
+<li><strong>决策底漆</strong> — 逐轮抑制，因此被拒绝的发现不会重新出现，并且应用的发现得到验证</li>
+<li><strong>四选项交互</strong> - 每个发现的演练，根据最佳判断自动解决，附加到开放问题，仅报告</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 文档内容感知角色选择</h3>
+<p>条件角色根据文档实际所说的内容激活，而不是关键字匹配：</p>
+<ul>
+<li><strong><code>ce-product-lens-reviewer</code></strong> — 当文档对构建内容和原因做出有争议的主张时，或者当提议的工作具有战略重要性时（轨迹、身份、采用、机会成本）</li>
+<li><strong><code>ce-design-lens-reviewer</code></strong> — 当文档包含 UI/UX 参考、用户流程、交互描述或视觉设计语言时</li>
+<li><strong><code>ce-security-lens-reviewer</code></strong> — 当文档涉及身份验证、公共 API、数据处理、PII、支付、第三方信任边界时</li>
+<li><strong><code>ce-scope-guardian-reviewer</code></strong> — 当文档具有多个优先级、大量需求计数或似乎不一致的范围边界语言时</li>
+<li><strong><code>ce-adversarial-document-reviewer</code></strong> — 当文档涉及高风险领域（身份验证、支付、迁移）、提出新的抽象、缺少或扩展起源、包含需求形状前提内容或提出明确的替代方案时</li>
+</ul>
+<p>2 个始终开启的（<code>ce-coherence-reviewer</code>、<code>ce-feasibility-reviewer</code>）在每次审核时运行。有条件的人物角色增加了文档内容所保证的深度。</p>
+<p>人物角色还<strong>通过文档形状来确定其技术范围</strong>。在设置了 <code>Origin:</code> 的计划文档中，意味着前提已经在头脑风暴中进行了压力测试 — <code>ce-product-lens-reviewer</code>、<code>ce-adversarial-document-reviewer</code> 和 <code>ce-scope-guardian-reviewer</code> 抑制其前提级技术并仅运行实现级检查（技术假设、决策压力测试、架构替代方案、延迟工作范围蠕变）。在需求形状文档上，他们运行完整的技术集。 <code>ce-feasibility-reviewer</code> 反转：影子路径跟踪、可实现性和迁移机制的范围仅限于平面文档；在需求文档上，它严格要求“这个方向会迫使我们进行根本性的返工吗？”查看。文档类型分类在协调器中发生一次（内容形状信号 - frontmatter、R-ID 与 U-ID、部分结构），结果通过 <code>Origin:</code> 槽传递给每个角色，因此角色不会重新分类自己。</p>
+<h3>2.具有三层路由的综合管道</h3>
+<p>所有角色回归后，合成：</p>
+<ul>
+<li>根据模式验证每个发现</li>
+<li>应用基于锚点的门（丢弃不锚定到实际文档内容的发现）</li>
+<li>跨角色重复数据删除</li>
+<li><strong>促进跨角色一致性的发现</strong> - 两位审稿人发现同一问题提高了优先级</li>
+<li>解决矛盾（不同的角色不同意做什么）</li>
+<li>自动提升符合标准的安全汽车候选者</li>
+<li>将调查结果分为三层 — <code>safe_auto</code>（直接应用）、<code>gated_auto</code> / <code>manual</code>（用户决定）和 FYI（仅供参考）</li>
+</ul>
+<p>输出是一个综合集合，而不是每个角色的原始输出的平面列表。</p>
+<h3>3. 决策入门——逐轮抑制</h3>
+<p>当用户在同一会话中运行多轮时（应用一些结果，保留其余部分，再次运行），决策引物会继承已应用的内容与拒绝的内容：</p>
+<ul>
+<li><strong>应用的发现</strong>回流，以便第 N+1 轮角色可以验证修复是否实际落地</li>
+<li><strong>拒绝的发现</strong>（跳过/推迟/确认）通过指纹+证据子串重叠匹配进行抑制，因此相同的问题不会再次出现</li>
+</ul>
+<p>该引物使用证据片段（每个发现的证据的前约 ​​120 个字符）进行重叠测试，而不仅仅是标题指纹识别。如果没有该片段，压制就会退回到仅标题，并且要么重新出现被拒绝的发现，要么压制过于激进。</p>
+<h3>4.四选项交互模型</h3>
+<p>当发现结果落在 <code>gated_auto</code> / <code>manual</code> 层时，用户选择如何处理它们：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>每次查找的演练</td>
+<td>单独逐步检查每个发现；应用、跳过、推迟开放问题或确认</td>
+</tr>
+<tr>
+<td>以最佳判断自动解决</td>
+<td>技能应用它认为安全的东西；用户在提交前评论批量预览</td>
+</tr>
+<tr>
+<td>附加到未决问题</td>
+<td>所有发现都将批量提交给文档的 <code>## Open Questions</code> 部分</td>
+</tr>
+<tr>
+<td>仅报告</td>
+<td>没有编辑；报告留在聊天中</td>
+</tr>
+</tbody></table>
+<p>如果用户已经审阅了足够的内容以信任其余部分，则演练本身支持“自动解决其余部分”转义中流。</p>
+<h3>5. 批量更改前的批量操作预览</h3>
+<p>当用户选择“以最佳判断自动解决”或“附加到未解决的问题”时，或者在演练中退出到“自动解决其余问题”时，该技能会在应用之前显示每个更改的预览。预览包括部分、查找标题、操作（应用/跳过/推迟/确认）和简要理由。用户确认或取消。这是批量操作的安全阀：用户可以在物体落地之前看到它。</p>
+<h3>6. 两种模式——交互式和无头模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>当</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>互动</strong></td>
+<td>直接用户调用，或通过调用者的后生成菜单中的 <code>Run deeper doc review</code> 选择加入</td>
+<td>路由问题、每次查找的演练、批量预览确认</td>
+</tr>
+<tr>
+<td><strong>无头</strong> <em>（链式调用的默认值）</em></td>
+<td><code>mode:headless</code>；默认为 <code>/ce-plan</code> 阶段 5.3.8</td>
+<td>静默应用<code>safe_auto</code>；以结构化文本形式返回所有其他结果；在呼叫者的下一个菜单上方显示一行摘要；没有提示</td>
+</tr>
+</tbody></table>
+<p>无头是来自文档生成技能的链式调用的默认设置 - <code>/ce-plan</code> 阶段 5.3.8 调用无头，因此例程计划自动修复并显示摘要行，而不会阻止用户。交互式用于直接调用，或者当用户从生成后菜单中选择进入 <code>Run deeper doc review</code> 时。</p>
+<h3>7. 带有背压的有限并行性</h3>
+<p>Persona 调度遵循线束的活动子代理限制。选定的审稿人队列；该技能会根据安全带接受的数量进行调度，并在审阅者完成时填充空闲的插槽。活动代理/并发限制生成错误被视为背压（插槽释放后重试），而不是审阅者失败。仅当成功调度超时或因非容量原因失败时，审阅者才会被记录为失败。</p>
+<h3>8. 覆盖范围透明度</h3>
+<p>输出命名哪些角色运行、由哪些信号激活以及是否有任何失败或超时。用户可以审核“正确的审阅者是否真正查看了此内容”，而无需解析内部状态。</p>
+<hr>
+<h2>简单示例</h2>
+<p><code>/ce-plan</code> 完成了通知静音功能的标准计划的生成。阶段 5.3.8 使用计划路径调用 <code>mode:headless</code> 中的 <code>/ce-doc-review</code>。</p>
+<p>该技能读取文档，根据内容形状信号（U-ID、计划部分结构）将其分类为 <code>plan</code>，读取 <code>Origin:</code> 槽，并分析条件角色的内容。该计划涉及 UI 表面（静音切换副本），但没有高风险领域，也没有提出新的抽象。它激活 <code>ce-coherence-reviewer</code> （始终开启）、 <code>ce-feasibility-reviewer</code> （始终开启，范围为平面形状技术）和 <code>ce-design-lens-reviewer</code> （UI 表面）。对抗性、范围守护者、安全镜头和产品镜头跳过——它们都不会触发已设定原点的例行计划。</p>
+<p>三位审稿人并行派遣。他们返回 9 项原始调查结果。综合将它们合并为 6 个不同的发现：2 <code>safe_auto</code>（拼写错误，交叉引用损坏），3 <code>gated_auto</code>（关于耐用性权衡的措辞，U2 测试场景中缺少边缘情况，切换副本上的设计镜头标志），1 FYI（建议范围澄清）。</p>
+<p>2 <code>safe_auto</code> 直接应用。无头模式将其余内容作为结构化文本返回 - 没有演练，没有每次查找的路由。生成后菜单上方显示一条摘要行： <code>Doc review applied 2 fixes. 3 decisions, 1 FYI remain.</code> 用户选择 <code>Start /ce-work</code> 并继续。如果他们想以交互方式解决这 3 个决定，他们会选择 <code>Run deeper doc review</code> 。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-doc-review</code>：</p>
+<ul>
+<li>刚刚从 <code>/ce-brainstorm</code> 收到需求文档，您希望在规划之前进行结构化审查</li>
+<li><code>/ce-plan</code> 刚刚发出一项计划，您希望在执行前进行更深入的审查</li>
+<li>您处于无头模式，并且程序调用者（链技能）需要使用结构化输出进行审查</li>
+<li>您想要对文档进行逐轮细化 - 决策引物可以防止循环</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-doc-review</code>：</p>
+<ul>
+<li>文档非常短（只有 2 个项目符号的计划；审核开销超过了产出）</li>
+<li>您想要代码审查，而不是文档审查 → <code>/ce-code-review</code></li>
+<li>该文档纯粹是信息性的（学习文档、发行说明）——没有什么可以“审查交付”的内容</li>
+</ul>
+<hr>
+<h2>用作工作流程的一部分</h2>
+<p><code>ce-doc-review</code> 从文档生成技能中调用作为其审核通过：</p>
+<ul>
+<li><strong><code>/ce-brainstorm</code> 第 4 阶段</strong> — 作为博士后选项之一提供（“代理审查需求文档”）；与全面的前提审查进行交互运行，因为验证前提正是头脑风暴的目的</li>
+<li><strong><code>/ce-plan</code> 阶段 5.3.8</strong> — 置信度检查后默认在 <code>mode:headless</code> 中运行。 <code>safe_auto</code> 修复静默应用；剩余的结果显示为生成后菜单上方的一行摘要，其中 <code>Run deeper doc review</code> 作为想要交互式演练的用户的一流选项</li>
+<li><strong><code>/ce-resolve-pr-feedback</code></strong> — 当审阅者反馈落在头脑风暴或计划文档而不是代码时</li>
+</ul>
+<p>在无头模式下，呼叫者接收结构化结果并自行路由用户决策选项。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>该技能直接适用于任何需求或计划文档：</p>
+<ul>
+<li><strong>具体路径</strong> — <code>/ce-doc-review docs/plans/2026-05-04-001-feat-notification-mute-plan.md</code></li>
+<li><strong>询问用户</strong> — 没有路径的 <code>/ce-doc-review</code> 询问要查看哪个文档（或自动查找 <code>docs/brainstorms/</code> 或 <code>docs/plans/</code> 中的最新文档）</li>
+<li><strong>无头</strong> — <code>/ce-doc-review mode:headless docs/plans/.../plan.md</code> 返回结构化结果，无需交互式提示</li>
+</ul>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空，交互式）</em></td>
+<td>询问要查看哪个文档或自动查找最新的文档</td>
+</tr>
+<tr>
+<td><code>&lt;doc path&gt;</code></td>
+<td><code>&lt;doc path&gt;</code>评论该特定文档</td>
+</tr>
+<tr>
+<td><code>mode:headless &lt;doc path&gt;</code></td>
+<td>无头模式；结构化文本输出，无提示</td>
+</tr>
+</tbody></table>
+<p>无头模式需要路径；如果没有它，它就会出错而不是猜测。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>这和 <code>ce-code-review</code> 有什么区别？</strong>
+<code>ce-code-review</code> 审查差异（代码更改）； <code>ce-doc-review</code> 审查文档（要求、计划）。不同的审稿人角色、不同的发现形式、不同的路由。两者共享多角色调度+合成模式，但针对各自的工件类型进行了调整。</p>
+<p><strong>为什么决策入门很重要？</strong>
+如果没有它，每一轮都会重新出现相同的发现，包括用户已经拒绝的结果。底漆使用指纹+证据片段匹配来抑制被拒绝的发现并验证应用的修复——使逐轮细化实际上是迭代的，而不是循环的。</p>
+<p><strong>“附加到未决问题”的用途是什么？</strong>
+对于用户希望稍后而不是现在解决的发现。它们不会在聊天中丢失，而是被附加到文档的 <code>## Open Questions</code> 部分，这样它们就可以在会话中幸存下来，并且下一个计划者/实施者可以看到它们。</p>
+<p><strong>为什么它有批量预览？</strong>
+因为大规模的变化需要一个确认步骤。 “以最佳判断自动解决”感觉就像委托，但如果该技能默默地应用 12 个更改，而您在没有预览的情况下无法查看，那就存在风险。预览显示提交前的更改，以便用户可以取消。</p>
+<p><strong>如果角色超时或失败怎么办？</strong>
+该技能根据已完成的代理的调查结果继续进行，并在“覆盖范围”部分中记录失败。单个代理的失败不会阻止整个审核。</p>
+<p><strong>它可以审查除要求和计划之外的文件吗？</strong>
+人物角色专门针对这两种类型进行了调整。审查学习文档或发行说明是机械的，但角色建议可能无法针对该工件类型进行校准。对于广泛的文档审查，这是正确的工具；对于特定的其他类型，角色可能会出现噪音。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-brainstorm.html"><code>ce-brainstorm</code></a> — 生成此技能审核的要求文档</li>
+<li><a href="/compound-engineering/skills/ce-plan.html"><code>ce-plan</code></a> — 生成此技能审查的计划文档；在阶段 5.3.8 调用该技能</li>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>ce-code-review</code></a> — 代码同级技能（差异）；相同的多重角色模式，不同的神器</li>
+<li><a href="/compound-engineering/skills/ce-proof.html"><code>ce-proof</code></a> — 通过 Every 协作编辑器的替代 HITL 审查路径；互补而非替代</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>

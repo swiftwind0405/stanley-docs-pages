@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ce-work · Compound Engineering 技能</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.loop-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem;
+  box-shadow: var(--shadow);
+}
+.loop-diagram h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.loop-diagram pre {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+}
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+    
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/compound-engineering/index.html" style="color:inherit">Compound Engineering</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/compound-engineering/index.html">概览</a>
+    
+    <div class="nav-group">
+      <div class="nav-group-title">核心循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-brainstorm.html"><code>/ce-brainstorm</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-compound.html"><code>/ce-compound</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-ideate.html"><code>/ce-ideate</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-plan.html"><code>/ce-plan</code></a>
+<a class="nav-link active" href="/compound-engineering/skills/ce-work.html"><code>/ce-work</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">循环</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-compound-refresh.html"><code>/ce-compound-refresh</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-product-pulse.html"><code>/ce-product-pulse</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-strategy.html"><code>/ce-strategy</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">一经请求</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-code-review.html"><code>/ce-code-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-debug.html"><code>/ce-debug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-doc-review.html"><code>/ce-doc-review</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-optimize.html"><code>/ce-optimize</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-simplify-code.html"><code>/ce-simplify-code</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">研究与背景</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-riffrec-feedback-analysis.html"><code>/ce-riffrec-feedback-analysis</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-sessions.html"><code>/ce-sessions</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-slack-research.html"><code>/ce-slack-research</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Git 工作流程</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-clean-gone-branches.html"><code>/ce-clean-gone-branches</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit.html"><code>/ce-commit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-commit-push-pr.html"><code>/ce-commit-push-pr</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-worktree.html"><code>/ce-worktree</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">前端设计</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-frontend-design.html"><code>/ce-frontend-design</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-polish.html"><code>/ce-polish</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">合作</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-proof.html"><code>/ce-proof</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">工作流程实用程序</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-demo-reel.html"><code>/ce-demo-reel</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-promote.html"><code>/ce-promote</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-release-notes.html"><code>/ce-release-notes</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-report-bug.html"><code>/ce-report-bug</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-resolve-pr-feedback.html"><code>/ce-resolve-pr-feedback</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-setup.html"><code>/ce-setup</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-browser.html"><code>/ce-test-browser</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-test-xcode.html"><code>/ce-test-xcode</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-update.html"><code>/ce-update</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">开发框架</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-architecture.html"><code>/ce-agent-native-architecture</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-dhh-rails-style.html"><code>/ce-dhh-rails-style</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">自动化和工具</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-gemini-imagegen.html"><code>/ce-gemini-imagegen</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">测试版/实验性</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-dogfood-beta.html"><code>/ce-dogfood-beta</code></a>
+<a class="nav-link" href="/compound-engineering/skills/lfg.html"><code>/lfg</code></a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">其他技能</div>
+      <a class="nav-link" href="/compound-engineering/skills/ce-agent-native-audit.html"><code>/ce-agent-native-audit</code></a>
+<a class="nav-link" href="/compound-engineering/skills/ce-work-beta.html"><code>/ce-work-beta</code></a>
+    </div>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="../../">README 目录</a> / <a href="/compound-engineering/index.html">compound-engineering</a> / /ce-work</nav>
+    <header class="page-header">
+      <h1>/ce-work</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>docs/skills/ce-work.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1><code>ce-work</code></h1>
+<blockquote>
+<p>根据计划的护栏执行——用你面前的代码弄清楚如何操作，发布完整的功能，交给干净的 PR。</p>
+</blockquote>
+<p><code>ce-work</code> 是<strong>执行</strong>技能。它需要一个计划（或者，对于较小的范围，一个简单的提示），根据计划的护栏执行实施，连续运行测试，在范围保证时在隔离的工作树中分派子代理，运行质量门，然后移交给提交+ PR 流程。它将计划视为<strong>决策工件</strong>——对于范围、决策、单元和测试具有权威性——并计算出实际的实施本身。 <strong><code>ce-plan</code>故意不预写的是HOW阶段。</strong></p>
+<p>这是复合工程构思链中的第四步也是最后一步：</p>
+<pre><code class="language-text">/ce-ideate         /ce-brainstorm      /ce-plan             /ce-work
+&quot;What&#39;s worth      &quot;What does this     &quot;What&#39;s needed       &quot;Build it.&quot;
+ exploring?&quot;        need to be?&quot;        to accomplish
+                                        this?&quot;
+</code></pre>
+<p><code>ce-work</code> 主要以软件为中心 - 它提交、运行测试、打开 PR 并与代码审查技能集成。它还具有轻量级的<strong>非代码剥离</strong>：标记为 <code>execution: knowledge-work</code> 的计划（由 <code>ce-plan</code> 的进近高度流生成）路由到知识工作路径，该路径读取源代码、综合并生成可交付成果，从而跳过代码生命周期。其他没有该标记的非软件工作仍然有效地以 <code>ce-plan</code> 结束，并由人类执行。</p>
+<hr>
+<h2>TL;DR</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>回答</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它有什么作用？</td>
+<td>阅读计划（或确定一个简单的提示），根据护栏执行，连续运行测试，发送经过审查的 PR</td>
+</tr>
+<tr>
+<td>何时使用它</td>
+<td>实施 <code>ce-plan</code> 计划；小型/中型即时工作；恢复部分发货工作</td>
+</tr>
+<tr>
+<td>它生产什么</td>
+<td>提交 + PR（或仅提交，无 PR 路径）</td>
+</tr>
+<tr>
+<td>接下来是什么？审查公关；运行 <code>/ce-compound</code> 来获取经验教训</td>
+<td></td>
+</tr>
+<tr>
+<td>区分</td>
+<td>计划感知幂等性、具有工作树隔离的子代理调度、具有残差门的分层审查、PR 中的操作验证</td>
+</tr>
+</tbody></table>
+<hr>
+<p>＃＃ 问题</p>
+<p>要求代理人“实施该计划”会以可预见的方式出错：</p>
+<ul>
+<li><strong>在拾取部分完成的分支时重新实现已交付的工作</strong></li>
+<li><strong>将计划视为脚本</strong> - 编辑列出的文字文件，即使不同的形状会更清晰</li>
+<li><strong>对所有被模拟的东西进行测试</strong> - 单独证明逻辑；没有提及各层是否正确交互</li>
+<li><strong>半成品功能</strong> - 可见的工作已完成，未连接的回调，未触及的边缘情况</li>
+<li><strong>并行工作，无提示数据丢失</strong> — 多个代理在共享目录中写入同一文件；仅最后一次写入幸存</li>
+<li><strong>没有质量门</strong> - 差异直接进入 PR，没有简化通过，没有审查，没有运营监控</li>
+</ul>
+<h2>解决方案</h2>
+<p><code>ce-work</code> 作为具有显式门的结构化进程来运行执行：</p>
+<ul>
+<li>该计划对于<strong>什么</strong>具有权威性；代理通过前面的代码计算出<strong>如何</strong></li>
+<li>每个任务之前进行幂等性检查 - 如果验证已经满足，则跳过它</li>
+<li>范围适当的调度（隔离工作树中的内联/串行子代理/并行子代理）</li>
+<li>测试发现+集成覆盖+在任何任务标记为完成之前进行系统范围的测试检查</li>
+<li>带有剩余工作门的分层代码审查——接受、归档、修复或停止，但绝不默默发布</li>
+<li>每个 PR 都有一个操作验证计划 - 监控什么、触发回滚</li>
+</ul>
+<hr>
+<h2>是什么让它如此新颖</h2>
+<h3>1. 计划感知执行——尊重“什么”/“如何”分离</h3>
+<p><code>ce-work</code> 将计划视为决策工件，而不是脚本。范围、决策、U-ID、文件、测试场景和验证标准都是权威的——代理自行计算出实际的实施情况。计划主体在执行期间保持只读状态；进度存在于 git 提交和任务跟踪器中。</p>
+<h3>2.幂等重新执行</h3>
+<p>在执行每个任务之前，<code>ce-work</code> 检查单元的工作是否已经存在并符合计划的意图。如果验证已得到满足，请将任务标记为完成并继续。 <strong>没有静默重新实现。</strong> 这在上下文压缩后恢复、拿起其他人的分支或在几周后返回到部分交付的计划时最为重要。</p>
+<h3>3.工作树隔离的并行性——显式冲突，而不是静默数据丢失</h3>
+<p>对于可以并行运行的独立单元，当线束支持时， <code>ce-work</code> 默认为每个子代理工作树隔离：每个子代理位于其自己的目录中的自己的分支上。当协调器显式处理合并冲突时，预测的重叠就会出现。当隔离不可用时，子代理将被禁止暂存或提交，并且协调器会连续合并批次。无论哪种方式，<strong>都不会无声覆盖。</strong></p>
+<h3>4. U-ID 跨执行锚定</h3>
+<p>当计划定义 U-ID 时，它们会作为任务前缀传播到提交消息中，并传播到最终摘要中。这在<em>跨计划编辑</em>中有效——分割单元的深化过程不会破坏引用，因为 U-ID 是稳定的。头脑风暴起源 ID (R/A/F/AE) 在存在时同样会被保留。</p>
+<h3>5. 在“完成”之前测试质量门</h3>
+<p>代码编译时任务尚未完成。在将任何功能承载任务标记为完成之前， <code>ce-work</code> 会发现正在更改的现有测试文件，检查测试场景是否涵盖适用的类别（快乐路径、边缘、错误路径、集成），并跟踪更改可能影响的回调、中间件和观察者的两个级别。嘲笑一切都证明了孤立的逻辑；集成覆盖率证明了各层确实可以协同工作。</p>
+<h3>6. 具有显式剩余处理的分层代码审查</h3>
+<p>每项更改都会受到审查。默认是harness-native（例如，克劳德代码中的<code>/review</code>）——快速，足以满足大多数差异。仅在真实信号上升级到 <code>ce-code-review</code>：敏感表面、大而分散的变化或明确的请求。当更深入的审查发现自动修复未解决的残留时， <code>ce-work</code> 不会默默地发布 - 它会显示一个四选项门（应用/提交票据/接受持久接收器/停止）。 “接受”需要真实持久的记录；研究结果不能只存在于短暂的会话中。</p>
+<h3>7. 默认操作验证</h3>
+<p>每个 PR 描述都包含 <code>Post-Deploy Monitoring &amp; Validation</code> 部分：日志查询、要观察的指标、预期的健康信号、故障信号、回滚触发器。如果确实没有对生产产生影响，则该部分仍然存在，并将其作为记录的决策而不是隐含的决策。</p>
+<h3>8. 根据提示进行智能分类</h3>
+<p>并非每次调用都有计划。 <code>ce-work</code> 接受一个简单的提示并按复杂性进行分类：琐碎的工作（几个文件，没有行为改变）直接进行实现；中小型工作建立任务清单；对于大型或敏感工作表面，建议首先使用 <code>/ce-brainstorm</code> 或 <code>/ce-plan</code>。分类使得 <code>ce-work</code> 对于小型工作的直接调用来说是合理的，而无需强制所有事情都使用完整的链。</p>
+<hr>
+<h2>简单示例</h2>
+<p>包含四个实施单位的计划已出台。 <code>ce-work</code> 读取它，在一个单元上拾取 <code>Execution note: test-first</code> ，并记下要记住的延迟实现问题。它构建一个带有 U-ID 前缀的任务列表，并确认当前分支名称是有意义的。</p>
+<p>并行安全检查发现四个单元之间没有文件重叠，并且工作树隔离可用 - 因此所有四个单元并行调度，每个单元在自己的分支上。他们完成；协调器按依赖顺序合并它们；每次合并后测试都会通过。幂等性检查发现前一个会话已经满足一个单元的验证，并将其标记为完成而无需重新实现。</p>
+<p>差异不在敏感表面上，也不是很大/漫射，因此线束本机审查可以处理它；这两个建议的调查结果已内联解决。最终验证通过；起草操作验证计划； <code>ce-commit-push-pr</code> 打开 PR，其中包含摘要、测试说明、操作部分和复合工程徽章。计划本身保持不变——它是一个决策工件，它是否发布是源自 git，而不是记录在文档中。</p>
+<hr>
+<h2>何时去实现它</h2>
+<p>在以下情况下使用 <code>ce-work</code>：</p>
+<ul>
+<li><code>ce-plan</code> 计划已准备就绪，您可以发货了</li>
+<li>您有小型或中型工作，没有计划 - 裸提示模式可以处理它</li>
+<li>您正在恢复部分交付的工作</li>
+<li>您想要具有安全隔离的并行执行</li>
+<li>您需要完整的运输流程 - 测试、简化、审查、残差、操作验证、公关</li>
+</ul>
+<p>在以下情况下跳过 <code>ce-work</code>：</p>
+<ul>
+<li>产品行为尚未确定 → <code>/ce-brainstorm</code></li>
+<li>没有为重要工作建立实施护栏 → <code>/ce-plan</code></li>
+<li>该错误有已知的根本原因和明显的修复 → <code>/ce-debug</code></li>
+<li>任务是非软件的，不是标记的 <code>execution: knowledge-work</code> 计划 - 普通的非软件工作是人类活动（标记的知识工作计划确实会导致剥离）</li>
+</ul>
+<hr>
+<h2>用作链式工作流程的一部分</h2>
+<pre><code class="language-text">/ce-ideate          (optional)
+   |
+   v
+/ce-brainstorm
+   |  requirements / brief
+   v
+/ce-plan
+   |  guardrails — U-IDs, files, test scenarios, scope, risks
+   v
+/ce-work
+   |  honors the guardrails; figures out the HOW with code in front of it
+   |  derives progress from git, not plan body
+   |  ships through quality gates to PR
+   v
+/ce-code-review     (optional escalation; auto-invoked at Tier 2)
+   |
+   v
+/ce-compound        — capture the learning
+</code></pre>
+<p>发布后，<code>/ce-compound</code> 将任何可重用的学习内容（遇到的错误、建立的模式、采用的约定）捕获到 <code>docs/solutions/</code> 中，以便未来运行 <code>ce-plan</code> 和 <code>ce-work</code> 从机构记忆中受益。</p>
+<hr>
+<h2>使用独立版</h2>
+<p>许多人直接使用 <code>ce-work</code> 并给出简单的提示 - 当范围很小且代理可以自行确定范围时，<code>ce-plan</code> 就显得有些过分了。</p>
+<ul>
+<li><strong>具有明确根本原因的错误修复</strong> - 如果微不足道，则直接实施；任务列表（小型/中型）</li>
+<li><strong>小重构</strong> — 提取助手、重命名概念、合并重复</li>
+<li><strong>恢复部分交付的计划</strong> - 幂等性防止重新实现</li>
+<li><strong>在你的脑海中连接一个你已经设计好的功能</strong>，正式的规划将是仪式</li>
+<li><strong>多功能并行工作</strong> - 工作树隔离可让您同时推送多个独立功能，而无需 git 争用</li>
+</ul>
+<p>对于大型裸提示范围（横切、敏感表面、许多文件），<code>ce-work</code> 建议首先使用 <code>/ce-brainstorm</code> 或 <code>/ce-plan</code> — 但仍可根据您的选择继续。</p>
+<hr>
+<p>＃＃ 参考</p>
+<table>
+<thead>
+<tr>
+<th>论证</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>（空）</em></td>
+<td>自动使用 <code>docs/plans/</code> 中的最新计划</td>
+</tr>
+<tr>
+<td><code>&lt;plan path&gt;</code></td>
+<td>原产地执行</td>
+</tr>
+<tr>
+<td><code>&lt;bare prompt&gt;</code></td>
+<td>按复杂性分类（简单/小-中/大）</td>
+</tr>
+</tbody></table>
+<p>输出：通过 <code>ce-commit-push-pr</code> 提交和（通常）PR。该计划自始至终都是只读的 — <code>ce-work</code> 永远不会改变它；是否发货是从git导出的，没有记录在doc中。</p>
+<hr>
+<p>＃＃ 常问问题</p>
+<p><strong>为什么 <code>ce-work</code> 不直接编写计划的确切签名中的所有代码？</strong>
+因为该计划故意没有确切的签名——它有决策、单元、文件、范围和测试场景。计划就是做什么； <code>ce-work</code> 是具体方法。这种分离使得计划可以在数周的代码更改和实施者之间进行移植。</p>
+<p><strong>如果我没有计划怎么办？</strong>
+裸提示模式按复杂性进行分类。琐事直接落实；小/中建立任务列表；大表面建议首先进行规划。</p>
+<p><strong>工作树隔离和共享目录并行模式有什么区别？</strong>
+工作树隔离为每个子代理在其自己的目录中提供了自己的分支 - 当编排器显式处理合并冲突时，重叠的写入表面。共享目录模式禁止子代理暂存、提交或运行测试套件（编排器在批处理后执行这些操作）。两者都是安全的；工作树隔离是更干净的体验。</p>
+<p><strong>为什么它在每个任务之前检查工作是否已经完成？</strong>
+上下文压缩后恢复、拿起别人的分支或返回到部分交付的计划都是很常见的。幂等性确保 <code>ce-work</code> 不会默默地重新实现已经存在的内容。</p>
+<p><strong>什么是剩余工作门？</strong>
+当更深入的代码审查层发现自动修复无法解决的问题时，<code>ce-work</code> 不会默默地发送它们。它要求：立即申请/提交票据/接受（使用耐用水槽）/停止。 “接受”需要真正持久的记录——调查结果不能只存在于会议中。</p>
+<p><strong><code>ce-work</code> 是否支持非软件计划？</strong>
+对于标记为 <code>execution: knowledge-work</code> 的计划（由 <code>ce-plan</code> 的接近高度流程生成），是的 - 轻量级剥离读取源、综合并生成可交付成果，跳过提交/测试/PR 生命周期。其他没有该标记的非软件工作仍然以 <code>ce-plan</code> 结束，并由人类执行。</p>
+<hr>
+<h2>另请参阅</h2>
+<ul>
+<li><a href="/compound-engineering/skills/ce-plan.html"><code>ce-plan</code></a> — 生成 <code>ce-work</code> 执行的护栏</li>
+<li><a href="/compound-engineering/skills/ce-brainstorm.html"><code>ce-brainstorm</code></a> — 定义计划应该完成的任务</li>
+<li><a href="/compound-engineering/skills/ce-ideate.html"><code>ce-ideate</code></a> — 上游“值得探索的内容”发现</li>
+<li><a href="/compound-engineering/skills/ce-code-review.html"><code>ce-code-review</code></a> — 第 2 层升级目标</li>
+<li><a href="/compound-engineering/skills/ce-commit-push-pr.html"><code>ce-commit-push-pr</code></a> — 处理最终提交 + PR 流程</li>
+<li><a href="/compound-engineering/skills/ce-compound.html"><code>ce-compound</code></a> — 捕获交付后可重用的学习内容</li>
+</ul>
+</article>
+    <p class="footer-note"><a href="/compound-engineering/index.html">← 返回技能概览</a></p></main>
+  </div>
+</body>
+</html>
