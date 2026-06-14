@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rick-agent · Pi 配置与工作流</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / rick-agent</div>
+
+    <section class="hero">
+      <h1>rick-agent</h1>
+      <p class="lede">Stanley 的个人 Pi 编码助手配置仓库。基于 <a href="https://github.com/badlogic/pi-mono" style="color:#fff">pi-coding-agent</a>，采用「配置即代码」：改仓库即改活配置，通过 bootstrap symlink 到 <code>~/.pi/agent/</code>。</p>
+      <div class="meta">
+        <span class="pill">Pi</span>
+        <span class="pill">gpt-5.5 + Composer</span>
+        <span class="pill">Project Workflow</span>
+        <span class="pill">配置即代码</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>模型分工</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>主 Pi</h3>
+          <p><code>openai-codex/gpt-5.5</code></p>
+          <p>默认 <code>thinkingLevel: high</code>。负责架构判断、调度、review、planning。</p>
+        </article>
+        <article class="card">
+          <h3>Subagent</h3>
+          <p><code>cursor/composer-2.5</code></p>
+          <p>统一用于 <code>project-worker</code>、<code>composer-implementer</code> 等实现型 agent，在 isolated worktree 中写代码。</p>
+        </article>
+      </div>
+      <pre><code>主 Pi（gpt-5.5 high）  →  调度 / 规划 / 严格 review
+Subagent（Composer）    →  isolated worktree 实现 + commit + push + MR</code></pre>
+      <p>本地路径：<code>/Users/admin/Workspace/projects/rick-agent</code></p>
+    </section>
+
+    <section class="section">
+      <h2>快速接入</h2>
+      <pre><code>git clone git@github.com:swiftwind0405/rick-agent.git ~/Workspace/projects/rick-agent
+cd ~/Workspace/projects/rick-agent
+./scripts/bootstrap.sh</code></pre>
+      <p><strong>bootstrap 做什么：</strong></p>
+      <ol>
+        <li>创建 <code>~/.pi/agent/</code>、<code>~/.config/rpiv-web-tools/</code></li>
+        <li>Symlink <code>pi/settings.json</code>、<code>models.json</code>、skills、agents、extensions</li>
+        <li>拷贝 <code>config.example.json</code> → <code>~/.config/rpiv-web-tools/config.json</code>（占位，非 symlink）</li>
+      </ol>
+      <p><strong>bootstrap 后手动完成：</strong></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>步骤</th><th>命令 / 操作</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Codex 登录（主模型）</td><td>Pi 内 <code>/login openai-codex</code></td></tr>
+            <tr><td>Brave Search key</td><td>编辑 <code>~/.config/rpiv-web-tools/config.json</code></td></tr>
+            <tr><td>Cursor subagent</td><td><code>pi install npm:pi-cursor-sdk</code> → <code>/login</code> → Cursor API key</td></tr>
+            <tr><td>Codex Search</td><td><code>/login openai-codex</code> → <code>/codex-search-settings status</code></td></tr>
+            <tr><td>rpiv 插件</td><td><code>pi install npm:@juicesharp/rpiv-pi</code> → <code>/rpiv-setup</code></td></tr>
+            <tr><td>加载 extension</td><td>已启动的 Pi 内 <code>/reload</code> 或重启</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>配置结构</h2>
+      <pre><code>rick-agent/
+├── .pi/                          # 项目级 Pi 配置（仅在本 repo 启动 Pi 时生效）
+│   ├── settings.json             # pin pi-codex-search
+│   └── pi-codex-search.json      # codex_search tool 默认参数
+├── pi/                           # 全局 Pi 配置（symlink → ~/.pi/agent/）
+│   ├── settings.json             # 主配置：模型、thinking、18 个 npm 包
+│   ├── models.json               # 空 providers（不维护自定义 LLM）
+│   ├── agents/                   # 4 个 custom agent
+│   ├── extensions/project-workflow/  # 自写 extension + projectd daemon
+│   └── skills/                   # 9 个自写 skill
+├── rpiv-web-tools/config.example.json
+├── docs/                         # workflow 详细文档
+└── scripts/bootstrap.sh</code></pre>
+
+      <h3>全局配置 <code>pi/settings.json</code></h3>
+      <pre><code>{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "high",
+  "packages": [
+    "npm:pi-cursor-sdk",
+    "npm:@tintinweb/pi-subagents",
+    "npm:@juicesharp/rpiv-*",
+    "npm:pi-context-prune",
+    "npm:@cnife/pi-simple-plannotator",
+    ...
+  ]
+}</code></pre>
+
+      <h3>插件分组（18 包）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>分组</th><th>包</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Cursor provider</td><td><code>pi-cursor-sdk</code></td><td>Composer subagent 模型</td></tr>
+            <tr><td>Subagents</td><td><code>@tintinweb/pi-subagents</code></td><td>worktree 隔离、RPC 调度</td></tr>
+            <tr><td>rpiv 叶子包</td><td>args / ask-user-question / todo / advisor / web-tools / i18n</td><td>交互、待办、顾问、搜索</td></tr>
+            <tr><td>观察 + 上下文</td><td>usage / context-usage / execution-time / context-prune</td><td>用量统计、上下文剪枝</td></tr>
+            <tr><td>能力扩展</td><td>multi-edit / mcp-adapter / skill-selector / plannotator</td><td>编辑、MCP、技能选择、浏览器批注</td></tr>
+            <tr><td>集成/输出</td><td>discord-remote / caveman</td><td>Discord 远程、输出压缩</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>项目级配置 <code>.pi/</code></h3>
+      <p>只在 <code>rick-agent</code> 目录启动 Pi 时加载，不影响其它项目：</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>文件</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>.pi/settings.json</code></td><td>pin <code>npm:pi-codex-search@0.1.2</code></td></tr>
+            <tr><td><code>.pi/pi-codex-search.json</code></td><td><code>searchContextSize: medium</code>，<code>freshness: live</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>改配置怎么生效</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>改什么</th><th>改哪个文件</th><th>生效方式</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>默认 model / thinking</td><td><code>pi/settings.json</code></td><td>下次 Pi 启动</td></tr>
+            <tr><td>安装/卸载包</td><td><code>pi install/uninstall</code></td><td>写回 settings.json</td></tr>
+            <tr><td>新建 agent</td><td><code>pi/agents/&lt;name&gt;.md</code> + bootstrap</td><td>下次启动</td></tr>
+            <tr><td>新建 extension</td><td><code>pi/extensions/&lt;name&gt;/</code></td><td><code>/reload</code> 或重启</td></tr>
+            <tr><td>新建 skill</td><td><code>pi/skills/&lt;name&gt;/SKILL.md</code></td><td>下次启动</td></tr>
+            <tr><td>Brave API key</td><td><code>~/.config/rpiv-web-tools/config.json</code></td><td>改完重启 Pi</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>thinking level 选择</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>值</th><th>适用场景</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>minimal</code></td><td>日常对话、查文件、改配置</td></tr>
+            <tr><td><code>low</code> / <code>medium</code></td><td>多文件改动、中等 debug</td></tr>
+            <tr><td><code>high</code></td><td>架构决策、棘手 race condition（当前全局默认）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>临时拉高：<code>/think high</code> 或 <code>/think xhigh</code>。</p>
+    </section>
+
+    <section class="section">
+      <h2>Custom Agents</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Agent</th><th>模型</th><th>用途</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>project-worker</code></td><td><code>cursor/composer-2.5</code></td><td>project workflow 实现 worker，<code>isolation: worktree</code></td></tr>
+            <tr><td><code>composer-implementer</code></td><td><code>cursor/composer-2.5</code></td><td>hybrid-plan-implement 实现</td></tr>
+            <tr><td><code>hybrid-planner</code></td><td><code>cursor/composer-2.5</code></td><td>显式委托时的 fallback planner（只读）</td></tr>
+            <tr><td><code>thermo-reviewer</code></td><td><code>cursor/composer-2.5</code></td><td>显式委托时的 fallback reviewer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>工作流一：Project Workflow</h2>
+      <p>把「issue 队列 → AI worker → review」的研发流程放进 Pi，不绑定具体项目或 tracker。通用 SOP 在 skills，确定性状态机在 extension。</p>
+
+      <h3>状态机</h3>
+      <div class="workflow">
+        <span class="workflow-step">triage</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">ready</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">running</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">review</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">done</span>
+      </div>
+      <p>GitLab issue <code>closed</code> = canonical <code>done</code>。不自动 merge，不手工打 <code>status::done</code> label。</p>
+
+      <h3>架构分层</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>层</th><th>位置</th><th>职责</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="layer-badge">Control</span></td><td><code>pi/extensions/project-workflow/</code></td><td>读配置、claim/release、状态更新、SQLite 结果、worker brief</td></tr>
+            <tr><td><span class="layer-badge">Daemon</span></td><td><code>projectd.mjs</code></td><td>Pi 退出后仍可查 workflow 状态（默认 <code>127.0.0.1:47838</code>）</td></tr>
+            <tr><td><span class="layer-badge">SOP</span></td><td><code>pi/skills/project-*/</code></td><td>写 issue、拆任务、单任务执行、runner 编排</td></tr>
+            <tr><td><span class="layer-badge">Worker</span></td><td><code>pi/agents/project-worker.md</code></td><td>isolated worktree 实现 claimed task</td></tr>
+            <tr><td><span class="layer-badge">Config</span></td><td>目标仓库 <code>docs/agents/project-workflow.md</code></td><td>tracker、状态映射、验证命令</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+flowchart TD
+  subgraph target["目标业务仓库"]
+    config["docs/agents/project-workflow.md"]
+    queue["Issue queue<br/>triage → ready → running → review → done"]
+    runtime[".pi-project-workflow/<br/>workflow.sqlite"]
+  end
+
+  subgraph pi["Pi session"]
+    execute["/project_issue_execute"]
+    control["project-workflow extension"]
+    worker["project-worker<br/>cursor/composer-2.5"]
+    mr["commit + push + MR/PR"]
+  end
+
+  human["人类验收"]
+
+  config --> control
+  queue --> execute
+  execute --> control
+  control -->|claim| queue
+  control --> runtime
+  control --> worker
+  worker --> mr
+  mr --> control
+  control -->|pass: review| queue
+  queue --> human
+  human -->|merge + close| queue
+        </pre>
+      </div>
+
+      <h3>Skills 入口</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>命令</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/skill:project-workflow-setup</code></td><td>在当前项目生成 <code>docs/agents/project-workflow.md</code></td></tr>
+            <tr><td><code>/skill:project-create-issue &lt;需求&gt;</code></td><td>把模糊需求整理成 AFK-ready issue</td></tr>
+            <tr><td><code>/skill:project-to-issues &lt;plan&gt;</code></td><td>把 plan/PRD 拆成多个 vertical slices</td></tr>
+            <tr><td><code>/project_issue_execute &lt;id&gt;</code></td><td><strong>推荐</strong>单 issue 入口，按状态机完成 shaping → 实现 → review</td></tr>
+            <tr><td><code>/project_issue_plan &lt;id&gt;</code></td><td>复杂 issue 产出 plan，停在人类确认</td></tr>
+            <tr><td><code>/skill:project-runner limit=N</code></td><td>批量消费 ready 队列</td></tr>
+            <tr><td><code>/project_issue_from_vikunja_task &lt;id&gt;</code></td><td>Vikunja task → 代码仓库 issue</td></tr>
+            <tr><td><code>/project-status</code> / <code>/project-ready</code></td><td>查 workflow 状态</td></tr>
+            <tr><td><code>/projectd-start</code> / <code>/projectd-status</code></td><td>daemon 管理</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Extension Tools（14 个）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Tool</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>project_workflow_read_config</code></td><td>解析目标仓库 workflow 配置</td></tr>
+            <tr><td><code>project_workflow_list_ready</code></td><td>列出 ready 队列候选</td></tr>
+            <tr><td><code>project_workflow_claim</code> / <code>release</code></td><td>本地 lease + 状态 → running</td></tr>
+            <tr><td><code>project_workflow_update_state</code></td><td>移动到 canonical state</td></tr>
+            <tr><td><code>project_workflow_record_result</code></td><td>写 SQLite runs 表</td></tr>
+            <tr><td><code>project_workflow_build_worker_brief</code></td><td>生成 worker brief</td></tr>
+            <tr><td><code>project_workflow_start_worker_subagent</code></td><td>启动 <code>project-worker</code> / Composer</td></tr>
+            <tr><td><code>project_issue_execute</code> / <code>plan</code></td><td>单 issue 状态机 / 规划阶段</td></tr>
+            <tr><td><code>project_workflow_add_issue_comment</code></td><td>写 issue comment（正确处理换行）</td></tr>
+            <tr><td><code>project_issue_from_vikunja_task</code></td><td>Vikunja → issue 转换</td></tr>
+            <tr><td><code>project_workflow_daemon_*</code></td><td>启动/查/停 projectd</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>支持的 tracker adapter：<code>command</code>、<code>vikunja-vja</code>、<code>github-gh</code>、<code>gitlab-glab</code>、<code>gitee-api</code>。</p>
+
+      <h3>硬规则</h3>
+      <div class="callout">
+        <ul>
+          <li>首轮实现必须由 <code>project-worker</code>（Composer）在 isolated worktree 完成</li>
+          <li>创建 worktree 前必须 <code>git fetch origin</code>，branch 基于最新 <code>origin/&lt;default-branch&gt;</code></li>
+          <li>必须 commit + push + 创建 MR/PR，description 含 <code>Closes #&lt;issue-iid&gt;</code></li>
+          <li>主 Pi 只做调度/review；<code>record_result(passed)</code> 校验 worker proof，主 Pi 直接实现不能 passed</li>
+          <li>不自动 merge；成功 worker 只进入 <code>review</code></li>
+        </ul>
+      </div>
+
+      <h3>目标仓库配置模板</h3>
+      <p>每个业务项目需 <code>docs/agents/project-workflow.md</code>，声明 tracker、状态映射、命令、验证方式。示例状态映射（GitLab/Gitee）：</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Canonical</th><th>Tracker label</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>triage</code></td><td><code>status::inbox</code></td></tr>
+            <tr><td><code>ready</code></td><td><code>status::ready</code></td></tr>
+            <tr><td><code>running</code></td><td><code>status::running</code></td></tr>
+            <tr><td><code>review</code></td><td><code>status::review</code></td></tr>
+            <tr><td><code>done</code></td><td>issue <code>closed</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>工作流二：Hybrid Plan-Implement</h2>
+      <p>本地 PR-like loop：主 Pi 规划 + review，Composer 在 isolated worktree 实现。</p>
+      <pre><code>/skill:hybrid-plan-implement &lt;要实现的需求&gt;</code></pre>
+      <div class="workflow">
+        <span class="workflow-step">1. 主 Pi 只读调查</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">2. 写 decision-complete plan</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">3. Composer 按 task 开 worktree</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">4. 主 Pi strict review（最多 3 轮）</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">5. ZERO_FINDINGS → ready branches</span>
+      </div>
+      <p>输出 ready branches、merge 顺序、本地 merge 命令。不自动 merge。</p>
+      <p><strong>适合：</strong>多文件、可拆分实现，希望 gpt-5.5 high 做架构判断。<br>
+      <strong>不适合：</strong>单行小改、非 git repo、工作区 dirty 且不想先处理。</p>
+    </section>
+
+    <section class="section">
+      <h2>辅助 Skills</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Skill</th><th>入口</th><th>作用</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>repo-tour-zh</code></td><td><code>/skill:repo-tour-zh [path]</code></td><td>5 步生成陌生 repo 中文导航图</td></tr>
+            <tr><td><code>deep-read</code></td><td><code>/skill:deep-read &lt;文件/概念&gt;</code></td><td>深度阅读文件/模块</td></tr>
+            <tr><td><code>gemini-cli</code></td><td><code>/skill:gemini-cli &lt;任务&gt;</code></td><td>委托本机 gemini CLI</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>可选能力</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Plannotator</h3>
+          <p>浏览器内 git diff / Markdown 批注，与 workflow 状态机正交。</p>
+          <ul>
+            <li><code>/pnr</code> — 审查本地 git 变更</li>
+            <li><code>/pna &lt;path&gt;</code> — 标注 Markdown</li>
+            <li><code>/pnl</code> — 标注最后一条 assistant 消息</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Discord 远程</h3>
+          <p><code>pi-discord-remote</code> 在 Discord 远程控制本机 Pi session。</p>
+          <ul>
+            <li><code>/pi-discord-remote setup</code></li>
+            <li><code>/pi-discord-remote start</code> / <code>stop</code> / <code>status</code></li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Vikunja 集成</h3>
+          <p>Vikunja = 人类个人 inbox。只有显式 <code>/project_issue_from_vikunja_task</code> 才进入工程主链路。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>安全约定</h2>
+      <ul>
+        <li><strong>绝不</strong> commit <code>BRAVE_SEARCH_API_KEY</code> / <code>CURSOR_API_KEY</code></li>
+        <li>key 走 1Password / macOS Keychain，bootstrap 后手动注入</li>
+        <li><code>rpiv-web-tools/config.json</code> 和 Discord config 均在 <code>.gitignore</code></li>
+        <li>运行时状态 <code>{repo}/.pi-project-workflow/</code> 也须加入目标仓库 <code>.gitignore</code></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>仓库内文档</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>文件</th><th>内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>README.md</code></td><td>接入、插件栈、workflow 入口、Discord/Plannotator</td></tr>
+            <tr><td><code>CLAUDE.md</code></td><td>AI agent 工作指南、改配置表、硬规则</td></tr>
+            <tr><td><code>docs/project-workflow.md</code></td><td>完整 Mermaid 图、extension tools、adapter、验证</td></tr>
+            <tr><td><code>docs/vikunja-to-issue-usage.md</code></td><td>Vikunja → issue 操作手册</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="callout-accent">
+      <strong>一句话总结：</strong>rick-agent 是 Pi 的「配置即代码」仓库——主 Pi（gpt-5.5）负责判断与 review，Composer subagent 在 worktree 里实现；Project Workflow 把 issue 队列变成可 AFK 运行的确定性状态机。
+    </div>
+  </main>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+  </script>
+</body>
+</html>
