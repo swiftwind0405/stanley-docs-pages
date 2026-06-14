@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>aida-agent &mdash; Architecture Visual Pack</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-2: #1c2330;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #9da7b3;
+    --accent: #58a6ff;
+    --accent-2: #79c0ff;
+    --warn-bg: #3a2a00;
+    --warn-border: #d99000;
+    --warn-text: #ffd97a;
+    --risk: #ff7b72;
+    --ok: #3fb950;
+    --code-bg: #0b0f14;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; max-width: 100%; overflow-x: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  header.page-head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 26px;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); font-size: 14px; margin: 0; }
+  h2 {
+    font-size: 20px;
+    margin: 44px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+  h3 { font-size: 16px; margin: 24px 0 10px; color: var(--accent-2); }
+  p { margin: 10px 0; }
+  a { color: var(--accent); }
+  .verdict {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 16px;
+    margin: 20px 0 8px;
+  }
+  .verdict strong { color: var(--accent-2); }
+  .diagram-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 14px 0;
+  }
+  pre.mermaid {
+    margin: 0;
+    background: transparent;
+    text-align: center;
+    min-width: 0;
+  }
+  pre.mermaid svg { max-width: 100%; height: auto; }
+  .caption {
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 10px 0 4px;
+  }
+  .caption b { color: var(--text); font-weight: 600; }
+  .caption code {
+    background: rgba(110,118,129,0.15);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13.5px;
+    display: block;
+    overflow-x: auto;
+  }
+  thead { background: var(--panel-2); }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { color: var(--accent-2); font-weight: 600; white-space: nowrap; }
+  td code {
+    background: rgba(110,118,129,0.18);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .perspective-tag {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin-bottom: 6px;
+  }
+  .unknowns-block {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 18px;
+    margin: 16px 0;
+  }
+  .unknowns-block h3 { margin-top: 16px; }
+  ul.unknowns { list-style: none; padding-left: 0; margin: 8px 0; }
+  ul.unknowns li {
+    padding: 7px 0 7px 0;
+    border-bottom: 1px dashed rgba(48,54,61,0.7);
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  ul.unknowns li:last-child { border-bottom: none; }
+  .badge {
+    flex: 0 0 auto;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-top: 1px;
+  }
+  .badge.unknown { background: rgba(217,144,0,0.15); color: var(--warn-text); border: 1px solid rgba(217,144,0,0.4); }
+  .badge.risk { background: rgba(255,123,114,0.13); color: var(--risk); border: 1px solid rgba(255,123,114,0.4); }
+  .note-banner {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-radius: 8px;
+    color: var(--warn-text);
+    padding: 12px 16px;
+    font-size: 13.5px;
+    margin: 16px 0;
+  }
+  .map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .map-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .map-card h4 { margin: 0 0 6px; font-size: 14px; color: var(--accent-2); }
+  .map-card p { margin: 0; font-size: 13px; color: var(--muted); }
+  .map-card code { font-size: 11.5px; }
+  footer.page-foot {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  footer.page-foot code { font-size: 11.5px; }
+  .next-move ol { padding-left: 22px; }
+  .next-move li { margin: 8px 0; }
+  @media (max-width: 640px) {
+    .container { padding: 20px 12px 60px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 17px; }
+    body { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="page-head">
+    <h1>aida-agent &mdash; Architecture Visual Pack</h1>
+    <p class="subtitle">Source-grounded briefing &middot; 5 perspectives &middot; generated 2026-06-14 &middot; read-only</p>
+  </header>
+
+  <!-- ============ VERDICT ============ -->
+  <h2 id="verdict">Verdict</h2>
+  <div class="verdict">
+    <strong>aida-agent</strong> is a pre-production, single-process Hono orchestrator whose backbone &mdash; dual-token auth, capability-first routing, a persistence-backed ReAct loop, write-governance via Action Proposals, and blocking high-risk audit &mdash; is clearly grounded in code and ADRs; its runtime risks are concentrated almost entirely in <em>unverified production topology</em> (no Dockerfile/k8s/wrangler in repo) and in encryption-key-rotation / cross-tenant-isolation enforcement details.
+  </div>
+
+  <!-- ============ SYSTEM MAP ============ -->
+  <h2 id="system-map">System Map</h2>
+  <p>Five perspectives over one codebase. Each diagram is independently sourced; together they trace a request from token to Postgres, the routing/orchestration brain that decides what runs, where processes live, how permission boundaries hold, and how durable state transitions are governed.</p>
+  <div class="map-grid">
+    <div class="map-card">
+      <h4>1 &middot; Data Flow</h4>
+      <p>One <code>/api/chat</code> request lifecycle: Aida JWT &rarr; Gateway &rarr; session binding &rarr; ReAct loop &rarr; SSE events &rarr; Postgres + audit.</p>
+    </div>
+    <div class="map-card">
+      <h4>2 &middot; Agent Orchestration</h4>
+      <p>Capability-first router pipeline, the shared ReAct loop, tool gating/risk, child-run agent-as-tool, and local workbench dispatch.</p>
+    </div>
+    <div class="map-card">
+      <h4>3 &middot; Deployment</h4>
+      <p>Dev/local process topology and external dependencies. Production topology is <em>not present in the repo</em>.</p>
+    </div>
+    <div class="map-card">
+      <h4>4 &middot; Permissions</h4>
+      <p>Dual-token boundary, write governance via Action Proposals, blocking-audit safety gates, route-decision encryption + admin access.</p>
+    </div>
+    <div class="map-card">
+      <h4>5 &middot; State Machines</h4>
+      <p>ActionProposal, PendingInteraction, and CapabilityRoute status lifecycles and their cross-coupling.</p>
+    </div>
+  </div>
+
+  <!-- ============ PERSPECTIVE 1: DATA FLOW ============ -->
+  <h2 id="data-flow">Data Flow</h2>
+  <span class="perspective-tag">Data Flow</span>
+  <h3>Data Flow: One /api/chat Request Lifecycle (Aida JWT to SSE to Postgres)</h3>
+  <div class="diagram-wrap">
+    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Client as "Client (Aida JWT)"
+    participant GW as "Gateway (Hono Auth)"
+    participant Bind as "Session Binding"
+    participant RT as "OrchestratorRuntime"
+    participant Orch as "Orchestrator (ReAct)"
+    participant Gate as "ToolCallGate"
+    participant LLM as "LLM Stream (AI SDK)"
+    participant Tool as "Tool Backend (Spring Boot)"
+    participant Router as "Capability Router"
+    participant PG as "Postgres Stores"
+    participant Audit as "Audit Pipeline (WAL + Sink)"
+
+    Note over Client,GW: auth.ts:76-194 + shared/types.ts:243-257
+    Client->>GW: "Authorization: Bearer Aida-JWT"
+    GW->>GW: "authMiddleware verify JWT"
+    GW->>GW: "tokenProvider.resolve(tenantId,userId)"
+    GW->>GW: "create TenantContext via AsyncLocalStorage"
+
+    Note over GW,Bind: chat-routes.ts:125-280 + session-binding.ts:82-280
+    GW->>GW: "validate body (message/agentId/agentKey)"
+    GW->>Bind: "resolveSessionBinding (configDbReady)"
+    Bind->>PG: "sessionStore.lookup or create"
+    Bind->>Bind: "ConfigFacade.resolveAgent (agentId or '')"
+    Bind-->>GW: "SessionBindingResult: sessionId + agentId"
+
+    Note over GW,Client: chat-routes.ts:283-330 streamSSE
+    GW->>Client: "SSE open: session_bound event"
+
+    alt agentId === '' (Unified Entry)
+        Note over GW,Router: chat-routes.ts:333-407 + routing/router.ts (ADR-0016)
+        GW->>Router: "CapabilityRouter.route(message)"
+        Router->>Client: "capability_route_decision event"
+        Router->>RT: "routed: child agent run or local workbench"
+    else agentId specified (Agent-Bound)
+        Note over GW,RT: chat-routes.ts:410-459
+        GW->>RT: "runtime.resolveAndRun(input, localExecutor?)"
+    end
+
+    Note over RT,Orch: orchestrator-runtime.ts:126-196 + resolve-and-orchestrate.ts:92-195
+    RT->>RT: "resolveAgentPipeline: llm/tools/systemPrompt"
+    RT->>RT: "assemble TurnConfig per agent (ADR-0018)"
+    RT->>Orch: "orchestrate(input, deps, signal)"
+
+    Note over Orch,PG: persistence-helpers.ts:43-100
+    Orch->>PG: "check concurrent runs then runStore.create"
+    Orch->>PG: "load message history"
+    Orch->>Client: "run_bound event (runId/conversationId)"
+    opt memoryEnabled (CONTEXT.md)
+        Orch->>Orch: "memoryRecall prepended to LLM context"
+    end
+
+    Note over Orch,Tool: drive-react-loop.ts:30-100 ReAct loop
+    loop ReAct Rounds (0..maxIterations)
+        Orch->>LLM: "llm.stream({messages,tools,systemPrompt})"
+        LLM-->>Client: "response/thinking events (streamed chunks)"
+        Orch->>Orch: "ResponseGuard validate critical fields (ADR-0018)"
+        Orch->>Client: "usage event (prompt/completion tokens)"
+
+        alt model emitted tool_use
+            Orch->>Client: "tool_call event"
+            Orch->>Gate: "ToolCallGate: pass / confirm / reject"
+            alt passed
+                Gate->>Tool: "ToolBackendClient.call (backendToken injected)"
+                Tool-->>Orch: "tool result"
+                opt result-verifier.ts
+                    Orch->>Tool: "optional 2nd-call verification"
+                end
+                Orch->>Client: "tool_result event"
+            else confirm needed
+                Gate->>PG: "create PendingInteraction"
+                Orch->>Client: "interaction_pending event (pause run)"
+                Note over Client,Orch: chat-routes.ts:801-891 confirm / 648-799 tool-result callback
+                Client->>GW: "POST /:sessionId/confirm or /tool-result"
+                GW->>PG: "resume PendingInteraction"
+            end
+        else no tool call (exit)
+            Note over Orch,PG: persistence-helpers.ts persistRoundMessages
+            Orch->>PG: "messageStore.insert + runStore.finalize"
+            Orch->>Bind: "sessionStore.update(lastActiveAt)"
+        end
+    end
+
+    Note over Orch,Audit: audit/pipeline.ts emit/emitAndWait
+    Orch->>Audit: "emit events"
+    Audit->>PG: "write JSONL + Postgres sink (ADR-0003)"
+    opt context overflow / off-path (CONTEXT.md)
+        Orch->>Orch: "compaction + summarization"
+        Orch->>PG: "memoryExtractor mines candidates after run"
+    end
+
+    alt failure
+        Orch->>Client: "error event (code/message/category)"
+    else abort signal
+        Orch->>Client: "cancelled event (stream close)"
+    end
+    Note over Orch,Client: transport/events.ts:57-68 serializeAgentEvent
+    Orch->>Client: "all events serialized to SSE JSON lines"
+    </pre>
+  </div>
+  <div class="caption">
+    <b>Evidence:</b> Grounded in <code>packages/agent/src/gateway/{auth.ts:76-194, chat-routes.ts:125-891, session-binding.ts:82-280, orchestrator-runtime.ts:126-196}</code>, <code>src/orchestrator/{agent.ts:232, drive-react-loop.ts:30-100, round.ts:82-100, tool-executor.ts:17-100, run.ts:27-90, persistence-helpers.ts:43-100}</code>, <code>src/shared/types.ts:13-257</code>, <code>src/audit/pipeline.ts</code>; ADR-0003/0016/0018/0020 and CONTEXT.md.
+  </div>
+
+  <!-- ============ PERSPECTIVE 2: AGENT ORCHESTRATION ============ -->
+  <h2 id="orchestration">Agent Orchestration</h2>
+  <span class="perspective-tag">Agent Orchestration</span>
+  <h3>Agent Orchestration: Capability-First Routing and Orchestrator Loop</h3>
+  <div class="diagram-wrap">
+    <pre class="mermaid">
+flowchart TB
+  entry["Unified Entry<br/>(統一入口)"]
+
+  subgraph ROUTER["CapabilityRouter pipeline (ADR-0016 K2)"]
+    direction TB
+    rf["ruleFilter<br/>tenant enable + role gate pre-filter"]
+    lc["llmClassify<br/>single-step LLM, malformed fallback"]
+    dr["resolveCapabilityDispatchability<br/>executor binding availability"]
+    ds["decideStatus<br/>pure decision matrix (PRD R17)"]
+    dec["CapabilityRouteDecision<br/>routed / refused / clarifying / route_only"]
+    store["PgRouteDecisionStore<br/>persist + SSE (R-Y encryption)"]
+    rf -->|"filtered candidates (non-empty)"| lc
+    lc -->|"classification + candidates"| dr
+    dr -->|"dispatchability map"| ds
+    ds -->|"status, primaryCapabilityId, riskAssessment"| dec
+    dec --> store
+  end
+
+  rc["Router Context<br/>recent msgs, child-run output filtered"]
+
+  subgraph LOOP["Orchestrator loop"]
+    direction TB
+    react["driveReActLoop<br/>shared lightweight ReAct (no persistence)"]
+    gate["ToolCallGate<br/>same-round / duplicate / cross-turn guards"]
+    risk["evaluateToolRisk<br/>metadata + riskLevel: allow / confirm / reject"]
+    disc["discoverTools<br/>write tools loaded per-run"]
+    reqc["requestConfirmation<br/>round-1 write gate (sideEffectLevel=read)"]
+    react -->|"executeRound calls gate.decide"| gate
+    gate -->|"def.riskDecision"| risk
+    gate -->|"markConfirmationRequested()"| reqc
+  end
+
+  td["Tool Disclosure<br/>read always mounted, write via discoverTools"]
+  pend["PendingInteraction<br/>confirm / ask_user / local_tool_result, once-only, expiry"]
+  prop["Action Proposal<br/>confirm|reject, approverTarget, executionPayload, hash"]
+
+  subgraph CHILD["Child Run (agent_as_tool, ADR-0016 K1/K7)"]
+    direction TB
+    allow["assertChildAgentAllowed<br/>seed_key allowlist"]
+    resolve["Child Agent resolver<br/>seed_key to ChildAgentRuntime"]
+    minc["minimizeContext<br/>recent N msgs + extracted inputs"]
+    runc["runChildAgent<br/>child agent as tool, parent_run_id lineage"]
+    fwd["transparentForward<br/>ChildRunOutput to user-visible text (no rewrite)"]
+    allow --> resolve
+    resolve --> runc
+    minc -->|"MinimizedContext"| runc
+    runc --> fwd
+  end
+
+  subgraph WORKBENCH["Local Workbench (local_workbench, K5)"]
+    direction TB
+    lwb["dispatchLocalWorkbench<br/>direct desktop primitives (no child run)"]
+    lexec["buildLocalExecutorRuntime<br/>read/write tool defs + prompt suffix"]
+    lexec -->|"filtered tools"| lwb
+  end
+
+  subgraph RUNTIME["Startup assembly (ADR-0018)"]
+    direction TB
+    ort["OrchestratorRuntime<br/>startup-assembled infrastructure"]
+    tc["TurnConfig<br/>per-turn LLM, tools, prompt, skills"]
+    ort -->|"resolveAgentPipeline"| tc
+  end
+
+  entry --> rf
+  store -->|"decision status drives dispatch"| entry
+  rc -->|"recent messages to classifier"| lc
+
+  entry -->|"routed + agent_as_tool"| runc
+  entry -->|"routed + local_workbench"| lwb
+
+  runc --> react
+  lwb --> react
+
+  disc -->|"per-run discovery"| td
+  reqc -->|"high-risk park"| pend
+  risk -->|"confirm: high-risk write"| prop
+  prop --> pend
+
+  ort -.->|"infra container"| LOOP
+  tc -.->|"per-turn config"| react
+
+  %% ADR-0017: server-side desktop write policy
+  risk -.->|"ADR-0017 write gating"| gate
+    </pre>
+  </div>
+  <div class="caption">
+    <b>Evidence:</b> Grounded in <code>packages/agent/src/routing/{router,rule-filter,llm-classifier,dispatchability,decide-status}.ts</code>, <code>src/orchestrator/{tool-call-gate,risk-policy,drive-react-loop,internal-tools,local-workbench-dispatch}.ts</code>, <code>src/orchestrator/agent-as-tool/{child-run-orchestrator,allowed-child-agents,context-minimization,transparent-forward}.ts</code>, <code>src/gateway/{unified-entry,local-executor,orchestrator-runtime}.ts</code>, and docs/adr/0010/0016/0017/0018.
+  </div>
+
+  <!-- ============ PERSPECTIVE 3: DEPLOYMENT ============ -->
+  <h2 id="deployment">Deployment</h2>
+  <span class="perspective-tag">Deployment</span>
+  <h3>Deployment Topology &mdash; Runtime Processes &amp; External Dependencies (dev/local, prod infra NOT in repo)</h3>
+  <div class="diagram-wrap">
+    <pre class="mermaid">
+flowchart LR
+  subgraph clients["Clients"]
+    chat["Shared Chat Packages<br/>(../../ai-chat)"]
+    desktop["AIDA Desktop Host<br/>(../aida-desktop, Hybrid Local Executor)"]
+    web["React Admin Web<br/>(Vite dev, port 8887)"]
+  end
+
+  subgraph agentproc["Hono Agent process (port 3000)"]
+    agent["Hono Agent<br/>(packages/agent)"]
+    orch["OrchestratorRuntime"]
+    sched["Scheduler Engine<br/>(BullMQ Worker)"]
+    audit["Audit Pipeline<br/>(JSONL + optional Postgres)"]
+    toolclient["@aida/tool-client<br/>(HTTP Tool Client)"]
+  end
+
+  subgraph datastores["Data stores"]
+    configdb[("Config DB<br/>(Postgres)")]
+    redisSess[("Redis<br/>(Session Dedup + Backend Token cache)")]
+    redisSched[("Redis<br/>(BullMQ Scheduler)")]
+  end
+
+  subgraph external["External services"]
+    nacos["Nacos<br/>(Service Discovery + Config)"]
+    authsvc["caidao-auth-service<br/>(OAuth2)"]
+    springboot["Spring Boot Tool Backend<br/>(caidaocloud-ai-service)"]
+    llm["LLM Provider<br/>(OpenAI-compatible / Anthropic)"]
+    embed["Embedding Provider<br/>(OpenAI-compatible)"]
+    feishu["Feishu IM Platform"]
+  end
+
+  eval["Agent Eval Framework<br/>(YAML scenarios)"]
+
+  chat -->|"HTTP/SSE (Aida JWT auth)"| agent
+  desktop -->|"HTTP/SSE (Aida JWT, Hybrid Local Executor)"| agent
+  web -->|"Vite dev proxy: /api /admin /healthz /aida-work/* to :3000"| agent
+
+  agent --> orch
+  agent --> sched
+  agent --> audit
+  orch -->|"Tool schema + execution"| toolclient
+
+  agent -->|"agent/provider/skill/entitlement config"| configdb
+  agent -->|"Backend Token cache + channel dedup store"| redisSess
+  agent -->|"BullMQ queue + job storage"| redisSched
+  sched -->|"BullMQ Worker process"| redisSched
+  sched -->|"Scheduled task via resolveAndRun"| orch
+
+  agent <-->|"Service discovery + config bootstrap (optional)"| nacos
+  agent -->|"Backend Token exchange + verification"| authsvc
+  agent -->|"Tool schema discovery + execution (Backend Token)"| springboot
+  toolclient -->|"HTTP REST with Backend Token"| springboot
+  agent -->|"OpenAI-compatible API calls"| llm
+  agent -->|"Embedding calls for memory recall"| embed
+  agent <-->|"Webhook + WebSocket; IM message webhooks + user binding"| feishu
+  audit -.->|"Optional Postgres audit sink"| configdb
+
+  prodUNKNOWN{{"UNKNOWN: production deployment topology<br/>NOT in repo &mdash; no Dockerfile / k8s / wrangler; project not yet shipped"}}
+  agentproc -.->|"how this runs in prod is unverified"| prodUNKNOWN
+
+  classDef unknown fill:#3a2a00,stroke:#d99000,stroke-width:2px,color:#ffd97a,stroke-dasharray:5 4;
+  class prodUNKNOWN unknown;
+    </pre>
+  </div>
+  <div class="caption">
+    <b>Evidence:</b> Grounded in <code>packages/agent/src/config.ts</code> (PORT 3000, toolBackendUrl, authServiceUrl, scheduler/backendToken Redis URLs, configDbUrl, llmBaseUrl), <code>packages/web/vite.config.ts</code> (port 8887 + /api /admin /healthz /aida-work proxy to localhost:3000), <code>packages/agent/src/index.ts</code>, <code>nacos.ts</code>, <code>scheduler/engine.ts</code>, <code>gateway/channels/feishu + dedup/redis</code>, CONTEXT.md / AGENTS.md; verified no Dockerfile/docker-compose/k8s/wrangler exist in repo.
+  </div>
+
+  <!-- ============ PERSPECTIVE 4: PERMISSIONS ============ -->
+  <h2 id="permissions">Permissions</h2>
+  <span class="perspective-tag">Permissions</span>
+  <h3>Permissions: Dual-Token Boundary, Write Governance and Blocking-Audit Safety</h3>
+  <div class="diagram-wrap">
+    <pre class="mermaid">
+flowchart TB
+  subgraph TOKENS["Dual-Token Boundary (ADR-0001)"]
+    direction TB
+    EXCHANGE["Token Exchange<br/>/api/auth/exchange<br/>(only bootstrap path)"]
+    AIDA["Aida JWT (HS256)<br/>Client to Agent auth<br/>30d expiry"]
+    BACKEND["Backend Token (OAuth2)<br/>Agent to Spring Boot auth"]
+    AUTHZCACHE["Authorized Identity Cache<br/>10 min TTL<br/>(after /api/auth/authorize)"]
+    EXCHANGE -->|"returns Aida JWT"| AIDA
+    EXCHANGE -->|"caches Backend Token<br/>for tool calls"| BACKEND
+    AUTHZCACHE -->|"pre-caches identity"| EXCHANGE
+  end
+
+  subgraph GATE["Request-Scoped Auth and Propagation"]
+    direction TB
+    AUTHMW["authMiddleware<br/>verify Aida JWT signature"]
+    CLAIMS["JWT Claims Validation<br/>tenantId + userId required<br/>empId, roles optional"]
+    ALS["TenantContext via AsyncLocalStorage<br/>request-scoped propagation"]
+    PROFILE["User Profile Fetch (async, 3s)<br/>GET /api/users/me<br/>department enrichment"]
+    TOKENPROV["TokenProvider<br/>resolve/fetch Backend Token"]
+    TOKENCACHE["Backend Token Cache<br/>Redis (CONFIG_REDIS_URL) or In-Memory<br/>25 min default TTL"]
+    AUTHMW --> CLAIMS
+    CLAIMS -->|"creates TenantContext"| ALS
+    PROFILE -.->|"enriches department<br/>(non-blocking)"| ALS
+    ALS --> TOKENPROV
+    TOKENPROV --> TOKENCACHE
+    TOKENCACHE -->|"store/retrieve OAuth2<br/>tokens with TTL"| BACKEND
+  end
+
+  AIDA -->|"Authorization: Bearer"| AUTHMW
+
+  subgraph WRITEGOV["Write Governance — Action Proposals"]
+    direction TB
+    GATE_TC["ToolCallGate<br/>write enters execution or creates Proposal"]
+    RISKEVAL["Risk Policy Evaluator<br/>evaluateToolRisk()"]
+    RISKACTION["ToolRiskDecisionAction<br/>allow | confirm | reject"]
+    PROPOSAL["ActionProposal<br/>persistent write record<br/>(Postgres or In-Memory store)"]
+    HASH["payloadHash (SHA256)<br/>stable stringify before exec"]
+    REDACT["Safe Args Redaction<br/>token / password / secret"]
+    SAVEFLAG["savePrivatePayload flag<br/>true=confirm, false=reject"]
+    STATEM["Status Machine<br/>pending to (approved | rejected | expired)<br/>to executing to (executed | failed)"]
+    REQID["requesterUserId<br/>who initiated the write"]
+    DECSRC["decisionSource<br/>policy auto-allow vs human"]
+    GATE_TC -->|"calls"| RISKEVAL
+    RISKEVAL --> RISKACTION
+    RISKACTION -->|"confirm=create, reject=create rejected,<br/>allow=skip"| PROPOSAL
+    PROPOSAL --> HASH
+    PROPOSAL --> REDACT
+    SAVEFLAG -->|"controls privatePayload stored vs null"| PROPOSAL
+    PROPOSAL --> STATEM
+    REQID --> PROPOSAL
+    DECSRC -->|"records transition origin"| STATEM
+    HASH -->|"re-hash and compare<br/>before executing"| STATEM
+  end
+
+  ALS -->|"TenantContext supplies tenantId/userId"| GATE_TC
+
+  subgraph APPROVAL["Approval Authorization"]
+    direction TB
+    TARGETVAL["ApproverTarget Validation<br/>requester | user:ID<br/>(deferred: role: dynamic: notify:)"]
+    CONFIRMRULE["Confirm Rules<br/>high-risk cannot use requester<br/>requires explicit user:ID"]
+    AUTHZ["Approver Authorization<br/>requester=userId match<br/>OR explicit user:ID match"]
+    RESPOND["POST /api/interactions/:id/respond<br/>approval decision endpoint"]
+    PISHELL["PendingInteraction(kind=confirm)<br/>delivery/response shell"]
+    EXPIRY["Approval Expiry Lifecycle<br/>created to pending(expiresAt)<br/>to expired before/after decision"]
+    TARGETVAL --> CONFIRMRULE
+    TARGETVAL --> AUTHZ
+    RESPOND -->|"calls authorizeApproverDecision()"| AUTHZ
+    RESPOND -->|"updates status approved | rejected"| STATEM
+    REQID -.->|"requester must match requesterUserId"| TARGETVAL
+    EXPIRY -->|"wraps Proposal lifetime"| PISHELL
+  end
+
+  PROPOSAL --> PISHELL
+
+  subgraph BLOCKING["Blocking-Audit Safety Gates"]
+    direction TB
+    EMIT["AuditPipeline.emit()<br/>fire-and-forget<br/>(sync for high-risk)"]
+    EMITWAIT["AuditPipeline.emitAndWait()<br/>strong sync, must succeed first"]
+    HIGHRISK["High-Risk Auto-Sync<br/>auth + error categories<br/>critical/high severity"]
+    JWTFAIL["JWT Signature Failure<br/>blocking audit then 401"]
+    CROSSTENANT["Session Cross-Tenant Denial<br/>blocking audit before exception"]
+    DENIEDERR["SessionAccessDeniedError<br/>critical severity audit then 403"]
+    EMITPARAMS["EmitParams<br/>category/action/severity/detail<br/>(tenantId auto-resolved from ALS)"]
+    EMIT --> HIGHRISK
+    EMITWAIT -->|"awaits WAL + primary sink"| HIGHRISK
+    JWTFAIL -->|"emitBlockingAuthFailure()"| EMITWAIT
+    CROSSTENANT -->|"before throwing"| EMITWAIT
+    DENIEDERR -->|"thrown only after critical audit"| CROSSTENANT
+    EMITPARAMS --> EMIT
+  end
+
+  subgraph AUDITSTRUCT["Audit Event Model"]
+    direction TB
+    EVTSTRUCT["AuditEvent Structure<br/>id, timestamp, requestId, traceId,<br/>spanId, tenantId, userId, action,<br/>detail, category, severity"]
+    CATS["Categories<br/>auth, session, tool_call,<br/>interaction, guardrail, error"]
+    ORPHAN["ORPHAN_TENANT_ID = __orphan__<br/>sentinel for lost-in-async events"]
+    TENANTREQ["TENANT_REQUIRED_CATEGORIES<br/>tool_call, tool_result, llm_call, session,<br/>quota, interaction, guardrail, quality"]
+    EVTSTRUCT -->|"no tenantId logged under __orphan__"| ORPHAN
+    CATS -->|"warn if tenantId missing"| TENANTREQ
+  end
+
+  CLAIMS -.-> JWTFAIL
+  ALS -.-> CROSSTENANT
+
+  subgraph ENCRYPT["Route-Decision Encryption and Admin Access"]
+    direction TB
+    AESGCM["AES-256-GCM (CONFIG_ENC_KEY)<br/>IV=12 TAG=16, 32-byte key<br/>route decision originals"]
+    LAYERS["R-Y 3 Encryption Layers<br/>(a) original in payload_* columns<br/>(b) redacted view in DB<br/>(c) /admin/audit/read-original decrypt"]
+    FIELDREDACT["Field-Level Redaction (layer b)<br/>name to hash, idcard to last4,<br/>salary to bracket, phone to masked"]
+    READORIG["POST /admin/audit/read-original<br/>audit:read-original scope required<br/>logs decryption_access before plaintext"]
+    ADMINMW["adminAuthMiddleware<br/>scope check: audit:read vs audit:read-original"]
+    STATICTOK["Static Admin Access Token<br/>(ADMIN_ACCESS_TOKEN env)<br/>bypass JWT verification"]
+    ADMINSUBJ["adminSubject<br/>tracks who made admin action<br/>(JWT sub or static token)"]
+    AESGCM --> LAYERS
+    LAYERS -->|"redacted copy to extracted_inputs jsonb"| FIELDREDACT
+    FIELDREDACT --> READORIG
+    READORIG --> ADMINMW
+    ADMINMW -->|"allow static token or scoped JWT"| STATICTOK
+    ADMINSUBJ -->|"recorded in audit_decryption_access row"| READORIG
+  end
+    </pre>
+  </div>
+  <div class="caption">
+    <b>Evidence:</b> Grounded in <code>packages/agent/src</code>: <code>orchestrator/risk-policy.ts</code> (allow|confirm|reject), <code>session/approver-target.ts</code> (requester|user:ID + high-risk deferral), <code>session/action-proposal-store.ts</code> (SHA256 hash, status machine, redaction), <code>audit/pipeline.ts</code> (emit/emitAndWait, ORPHAN_TENANT_ID, TENANT_REQUIRED_CATEGORIES), <code>config/crypto.ts</code> (AES-256-GCM IV=12/TAG=16), <code>gateway/admin-audit-original.ts</code> (audit:read-original scope, self-audit), plus CONTEXT.md/AGENTS.md/ADR-0001.
+  </div>
+
+  <!-- ============ PERSPECTIVE 5: STATE MACHINES ============ -->
+  <h2 id="state-machines">State Machines</h2>
+  <span class="perspective-tag">State Machines</span>
+  <h3>State Machines: Action Proposals, Capability Route Decisions, Pending Interactions</h3>
+  <div class="diagram-wrap">
+    <pre class="mermaid">
+---
+title: ActionProposal &amp; PendingInteraction Status Machines
+---
+stateDiagram-v2
+    state "ActionProposal Status Machine" as APTitle
+    note right of APTitle
+      action-proposal-store.ts:7-14
+      privatePayload: cleared on reject, kept on
+      approve until exec, cleared on failed
+    end note
+
+    [*] --> ap_pending
+    state "pending<br/>initial, awaiting decision" as ap_pending
+    state "approved<br/>decision=approved, ready" as ap_approved
+    state "rejected<br/>decisionSource policy|human<br/>privatePayload cleared" as ap_rejected
+    state "expired<br/>expiresAt deadline passed" as ap_expired
+    state "executing<br/>payload integrity verified" as ap_executing
+    state "executed<br/>executionResult stored" as ap_executed
+    state "failed<br/>payload hash mismatch" as ap_failed
+
+    ap_pending --> ap_approved : decide(status=approved) via approver
+    ap_pending --> ap_rejected : decide(status=rejected, decisionSource=policy|human)
+    ap_pending --> ap_expired : expire() on expiresAt deadline
+    ap_approved --> ap_executing : markExecuting() about to execute
+    ap_executing --> ap_executed : markExecuted(result) succeeded
+    ap_executing --> ap_failed : markFailed(error) mid-execution
+    ap_approved --> ap_failed : markFailed(error) post-decision integrity failure
+    ap_executed --> [*]
+    ap_rejected --> [*]
+    ap_expired --> [*]
+    ap_failed --> [*]
+
+    state "PendingInteraction Status Machine" as PITitle
+    note right of PITitle
+      shared/types.ts:122-126
+      kinds: confirm, ask_user, secret_ref,
+      scheduled_task_approval, local_tool_result
+      confirm kind syncs to ActionProposal above
+    end note
+
+    [*] --> pi_pending
+    state "pending<br/>initial, not yet responded" as pi_pending
+    state "approved<br/>user/approver approved" as pi_approved
+    state "rejected<br/>user/approver rejected" as pi_rejected
+    state "expired<br/>expiresAt passed (once-only)" as pi_expired
+
+    pi_pending --> pi_approved : respond(decision=approve)
+    pi_pending --> pi_rejected : respond(decision=reject)
+    pi_pending --> pi_expired : expire() or respond() detects expiresAt past now
+    pi_approved --> [*]
+    pi_rejected --> [*]
+    pi_expired --> [*]
+
+    note left of pi_approved : confirm kind syncActionProposalDecision drives ap_approved
+    note left of pi_rejected : confirm kind syncActionProposalDecision drives ap_rejected
+    note left of pi_expired : confirm kind interaction expiry expires ActionProposal (once-only)
+    </pre>
+  </div>
+  <div class="caption">
+    <b>Evidence:</b> Sources: <code>packages/agent/src/session/action-proposal-store.ts:7-14,278-340</code>; <code>packages/tool-client/src/types/capability.ts:90-101</code>; <code>packages/agent/src/shared/types.ts:115-126</code>; <code>packages/agent/src/session/pending-interaction-store.ts:141-206</code>; <code>packages/agent/src/routing/{decide-status.ts,route-decision-store.ts:178-189}</code>; docs/adr/0014.
+  </div>
+  <div class="note-banner">
+    Note &mdash; the third state machine could not be co-rendered inside the single <code>stateDiagram-v2</code> field above. <b>CapabilityRouteStatus</b> (<code>capability.ts:90-101</code>) is a 10-state machine. Confirmed states: <code>intent_clarifying</code>, <code>input_clarifying</code>, <code>refused</code>, <code>chitchat_refused</code>, <code>routed</code>, <code>route_only</code>, <code>executing</code>, <code>awaiting_local_confirm</code>, <code>completed</code>, <code>failed</code>. Confirmed transitions: <code>routed &rarr; executing &rarr; {completed, failed, awaiting_local_confirm &rarr; {completed, failed}}</code> (per <code>decide-status.ts</code>, <code>route-decision-store.ts:178-189</code>).
+  </div>
+
+  <!-- ============ DECISION MATRIX ============ -->
+  <h2 id="decision-matrix">Decision Matrix</h2>
+  <p>Each ADR mapped to the perspective(s) it most governs and the code path(s) where the decision is enforced. ADR numbers are as cited in the diagram evidence; mappings are the reviewer's reading of the captions, not new claims about the code.</p>
+  <table>
+    <thead>
+      <tr><th>ADR</th><th>Perspective</th><th>Code path (as cited)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ADR-0001</code> Dual-token model</td>
+        <td>Permissions</td>
+        <td><code>gateway/auth.ts</code>, <code>/api/auth/exchange</code>, TokenProvider + Backend Token cache</td>
+      </tr>
+      <tr>
+        <td><code>ADR-0003</code> Audit pipeline / sink</td>
+        <td>Data Flow; Permissions</td>
+        <td><code>audit/pipeline.ts</code> (emit / emitAndWait), JSONL + optional Postgres sink</td>
+      </tr>
+      <tr>
+        <td><code>ADR-0010</code> Tooling / risk policy</td>
+        <td>Agent Orchestration</td>
+        <td><code>orchestrator/risk-policy.ts</code>, <code>tool-call-gate.ts</code></td>
+      </tr>
+      <tr>
+        <td><code>ADR-0014</code> Action Proposal lifecycle</td>
+        <td>State Machines; Permissions</td>
+        <td><code>session/action-proposal-store.ts:7-14,278-340</code>; <code>pending-interaction-store.ts:141-206</code></td>
+      </tr>
+      <tr>
+        <td><code>ADR-0016</code> Capability-first routing</td>
+        <td>Agent Orchestration; Data Flow</td>
+        <td><code>routing/{router,rule-filter,llm-classifier,dispatchability,decide-status}.ts</code>; agent-as-tool (K1/K7), local workbench (K5)</td>
+      </tr>
+      <tr>
+        <td><code>ADR-0017</code> Server-side desktop write policy</td>
+        <td>Agent Orchestration</td>
+        <td>write gating in <code>risk-policy.ts</code> &rarr; <code>tool-call-gate.ts</code>; local-executor</td>
+      </tr>
+      <tr>
+        <td><code>ADR-0018</code> Startup assembly + TurnConfig</td>
+        <td>Data Flow; Agent Orchestration</td>
+        <td><code>orchestrator-runtime.ts:126-196</code>, <code>resolve-and-orchestrate.ts:92-195</code>, ResponseGuard</td>
+      </tr>
+      <tr>
+        <td><code>ADR-0020</code> (cited in Data Flow evidence)</td>
+        <td>Data Flow</td>
+        <td>Referenced alongside <code>chat-routes.ts</code> / orchestrator persistence; exact scope not detailed in captions</td>
+      </tr>
+      <tr>
+        <td>R-Y route-decision encryption</td>
+        <td>Permissions; Agent Orchestration</td>
+        <td><code>config/crypto.ts</code> (AES-256-GCM), <code>PgRouteDecisionStore</code>, <code>gateway/admin-audit-original.ts</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============ RISKS & UNKNOWNS ============ -->
+  <h2 id="risks-unknowns">Risks &amp; Unknowns</h2>
+  <p>Every item carried in the source diagrams' <code>unknowns</code> lists is reproduced below, unmodified in substance. Each is marked <span class="badge unknown">unknown</span> (a gap in evidence &mdash; not yet observed in code) or <span class="badge risk">risk</span> (an unknown that, if it resolves badly, threatens correctness, security, or operability). None of these is stated as a fact about how the system behaves.</p>
+
+  <div class="unknowns-block">
+    <h3>Data Flow (14)</h3>
+    <ul class="unknowns">
+      <li><span class="badge unknown">unknown</span><span>Exact Redis topology for backend token cache (CONFIG_BACKEND_TOKEN_REDIS_URL) and key expiry mechanics.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Concrete Postgres schema tables (columns, indices, partition strategy) for runs/checkpoints/pending_interactions/action_proposals.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Specific LLM provider's tool calling contract details (e.g., how Anthropic vs OpenAI encodes tool_use).</span></li>
+      <li><span class="badge risk">risk</span><span>Desktop app's specific protocol for local_executor payload validation and writeFile overwrite policy interaction.</span></li>
+      <li><span class="badge unknown">unknown</span><span>NACOS service discovery for caidao-ai-service endpoint resolution (isNacosToolBackendManaged, subscribeNacosToolBackend).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Feishu channel IM bot webhook ingestion path and webhook &rarr; chat conversion (createFeishuChannelRegistry).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Scheduler's cron expression parsing and Redis BullMQ queue mechanics (createScheduledTaskRunner, SchedulerEngine).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Exact CapabilityRouter classifier LLM prompt template and confidence signal calculation.</span></li>
+      <li><span class="badge risk">risk</span><span>How Config DB encryption key (CONFIG_ENC_KEY) rotation is handled for decrypting stored provider keys.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Agent memory candidate extraction watermark mechanics and long-term vs short-term TTL distinction (memory-sweep-service.ts, memory-candidate-service.ts).</span></li>
+      <li><span class="badge risk">risk</span><span>Rate limiting bucket topology (TenantRateLimiter quota tracking: how per-tenant token quota is enforced across concurrent requests).</span></li>
+      <li><span class="badge risk">risk</span><span>Exact WAL (Write-Ahead Log) replay sequence on process startup (LocalFileWal.replay mechanics).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Child run lineage cleanup: when/how parent_run_id linkage is pruned from stale child runs.</span></li>
+      <li><span class="badge risk">risk</span><span>Local workbench output target grant validation: what fields in selectedOutputTargetId opaque ID are validated server-side.</span></li>
+    </ul>
+
+    <h3>Agent Orchestration (12)</h3>
+    <ul class="unknowns">
+      <li><span class="badge risk">risk</span><span>Exact configuration of CONFIG_ENC_KEY rotation and key versioning for route-decision encryption (R-Y layer).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Metrics/SLO targets for routing latency and classification accuracy across tenants (PRD section not included).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Post-MVP strategy for tenant-level capability override and gradual rollout (mentioned as deferred in CONTEXT.md).</span></li>
+      <li><span class="badge risk">risk</span><span>Integration boundary between Hybrid Local Executor desktop synchronization and server-side writeFile timeout/retry semantics (ADR-0017 &sect;6 references but full detail not in provided files).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Exact schema of skillMap (Map&lt;string, DbSkill&gt;) and how it differs from toolSkillMap in TurnConfig (types exist but semantics unclear).</span></li>
+      <li><span class="badge unknown">unknown</span><span>How child-run conversation exclusion (R-Z1) interacts with conversation summarization for multi-turn context recovery.</span></li>
+      <li><span class="badge risk">risk</span><span>Risk Policy decision source precedence when tool metadata + agent config + tenant policy conflict (evaluateToolRisk only covers metadata + riskLevel).</span></li>
+      <li><span class="badge risk">risk</span><span>Detailed behavior of decisionStore.updateStatus() calls in dispatchDecision when child/workbench loops fail midway (update happens before outcome known).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Whether CapabilityRouter.resolveDispatchability runs in parallel or serial; performance implications for large candidate sets.</span></li>
+      <li><span class="badge unknown">unknown</span><span>How local-workbench MAX_ITERATIONS (DEFAULT_MAX_ITERATIONS=10) failure is user-signaled vs error-logged in the unified entry final response.</span></li>
+      <li><span class="badge risk">risk</span><span>Cross-turn write guard's interaction with session resumption after crashes (checkpoints not driven from tool-call-gate).</span></li>
+      <li><span class="badge risk">risk</span><span>Exact format and security implications of operationId UUID leakage in AwaitingConfirmation message vs operationId suppression rationale.</span></li>
+    </ul>
+
+    <h3>Deployment (12)</h3>
+    <ul class="unknowns">
+      <li><span class="badge risk">risk</span><span>Exact deployment model for multiple Hono Agent instances (load balancer setup, sticky sessions for SSE).</span></li>
+      <li><span class="badge risk">risk</span><span>Postgres replication / HA setup for Config DB.</span></li>
+      <li><span class="badge risk">risk</span><span>Redis cluster / sentinel configuration for HA.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Specific Feishu bot webhook registration process and platform details.</span></li>
+      <li><span class="badge unknown">unknown</span><span>AIDA BI (bi domain) backend integration details beyond TOOL_BACKEND_URL_BI + AppKey headers.</span></li>
+      <li><span class="badge risk">risk</span><span>Exact Nacos configuration server address and bootstrap credentials in production.</span></li>
+      <li><span class="badge risk">risk</span><span>LLM provider failover strategy when primary is unavailable.</span></li>
+      <li><span class="badge risk">risk</span><span>Session store behavior when Config DB is unavailable (graceful degradation to in-memory).</span></li>
+      <li><span class="badge risk">risk</span><span>Scheduler cluster behavior if multiple Agent instances are deployed.</span></li>
+      <li><span class="badge risk">risk</span><span>WAL (Write-Ahead Log) persistence strategy and recovery procedure.</span></li>
+      <li><span class="badge risk">risk</span><span>Admin JWT secret rotation / management process.</span></li>
+      <li><span class="badge risk">risk</span><span>Backup and disaster recovery procedures for Config DB and audit data.</span></li>
+    </ul>
+
+    <h3>Permissions (14)</h3>
+    <ul class="unknowns">
+      <li><span class="badge risk">risk</span><span>Whether decryption key rotation is supported for audit_decryption_access entries created under old keys.</span></li>
+      <li><span class="badge risk">risk</span><span>Exact behavior if Redis connection fails mid-request (is fallback to in-memory atomic or does it split cache state).</span></li>
+      <li><span class="badge risk">risk</span><span>Whether POST /api/auth/authorize validates the returned user's tenantId matches a known organization (or if any tenantId is accepted).</span></li>
+      <li><span class="badge risk">risk</span><span>Timeout and retry policy for /api/users/me backend profile fetch if it fails (does it block auth or proceed with partial context).</span></li>
+      <li><span class="badge risk">risk</span><span>How actionProposals with expired expiresAt are cleaned up (no mention of background sweep; only manual expire() on access).</span></li>
+      <li><span class="badge risk">risk</span><span>Whether ActionProposal.privatePayload is cleared by policy after some retention period, or if admin must manual purge.</span></li>
+      <li><span class="badge risk">risk</span><span>Exact crypto keying model if AIDA_AGENT_EMBED_JWT_SECRET differs from JWT_SECRET (isolation enforced or collocation allowed).</span></li>
+      <li><span class="badge risk">risk</span><span>If a user tries to approve/reject a Proposal for a different tenantId, whether it's caught in approver_authorization or separately.</span></li>
+      <li><span class="badge unknown">unknown</span><span>How role: approver targets will be resolved once role lookup becomes available (will it hit an organization service or tenant config).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Whether ToolRiskDecision.approverTarget can override the Proposal.approverTarget, or if source-of-truth is always in Proposal.</span></li>
+      <li><span class="badge risk">risk</span><span>Whether CONFIG_ENC_KEY rotation is supported or if plaintext audit records survive key changes.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Details on whether /api/auth/authorize rate limiting (5 per 60s per IP) applies equally to legitimate bulk bot onboarding.</span></li>
+      <li><span class="badge risk">risk</span><span>How backend token exchange failures are retried vs abandoned (does agent boot fail or degrade).</span></li>
+      <li><span class="badge risk">risk</span><span>Exact tenant isolation guarantees in PgActionProposalStore.get() &mdash; whether query predicate on tenant_id is enforced at SQL layer or application layer only.</span></li>
+    </ul>
+
+    <h3>State Machines (11)</h3>
+    <ul class="unknowns">
+      <li><span class="badge unknown">unknown</span><span>Exact call site where PendingConfirmation is first written to session.toolState.pendingConfirmation (not found in search; likely in ToolCallGate or write guard flow).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Complete lifecycle of scheduled_task_approval PendingInteractionKind &mdash; no implementation found beyond type definition.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Complete lifecycle of secret_ref PendingInteractionKind &mdash; only exists as type, no visible producer or handler.</span></li>
+      <li><span class="badge risk">risk</span><span>Exact timing and orchestration of when ActionProposal.create() is called relative to PendingInteraction.create(kind=confirm) &mdash; coordination appears implicit.</span></li>
+      <li><span class="badge unknown">unknown</span><span>User-facing message/error strings for route_only status when high-risk capability is not dispatchable.</span></li>
+      <li><span class="badge risk">risk</span><span>AdminJwtSecret and admin-only approval gates for high-risk approverTarget=role:* &mdash; authorization service integration not fully traced.</span></li>
+      <li><span class="badge risk">risk</span><span>Exact idempotency/once-semantics implementation for ActionProposal execution in ToolCallGate (ADR-0014 mentions future slice, not current implementation).</span></li>
+      <li><span class="badge unknown">unknown</span><span>Whether process_restart checkpoint projection is tested in acceptance tests (mentioned in ADR-0014 but test location not confirmed).</span></li>
+      <li><span class="badge risk">risk</span><span>Private payload retention period and cleanup strategy for executed/failed proposals (CONTEXT.md says 'retention policy' but not defined in code).</span></li>
+      <li><span class="badge unknown">unknown</span><span>How 'confirm' PendingInteraction's userId (requester) is populated vs. Proposal's decisionUserId (actual decider) across multi-user approvals.</span></li>
+      <li><span class="badge unknown">unknown</span><span>Second stateDiagram-v2 block for CapabilityRouteStatus (10-state machine, capability.ts:90-101) could not be co-rendered in this single field; confirmed states: intent_clarifying, input_clarifying, refused, chitchat_refused, routed, route_only, executing, awaiting_local_confirm, completed, failed &mdash; transitions: routed&rarr;executing&rarr;{completed,failed,awaiting_local_confirm&rarr;{completed,failed}} (decide-status.ts, route-decision-store.ts:178-189).</span></li>
+    </ul>
+  </div>
+
+  <!-- ============ NEXT MOVE ============ -->
+  <h2 id="next-move">Next Move</h2>
+  <div class="next-move">
+    <ol>
+      <li><b>Close the production-topology gap first.</b> Every Deployment unknown stems from there being no Dockerfile/k8s/wrangler in the repo. Decide and commit the prod runtime model (instances, SSE stickiness, Postgres/Redis HA) before the unknowns there become incidents.</li>
+      <li><b>Pin down encryption-key rotation.</b> Three perspectives independently flag <code>CONFIG_ENC_KEY</code> rotation as unresolved (route decisions, audit originals, stored provider keys). Define a key-versioning scheme now while the data set is empty &mdash; this is cheap pre-production and expensive later.</li>
+      <li><b>Verify tenant-isolation enforcement at the SQL layer.</b> Confirm <code>PgActionProposalStore.get()</code> and cross-tenant approval paths enforce <code>tenant_id</code> predicates in the query, not only in application code &mdash; the highest-severity security risk in the Permissions list.</li>
+      <li><b>Specify ActionProposal / PendingInteraction coordination + expiry sweep.</b> The State Machines perspective shows the two lifecycles are coupled implicitly and lack a documented background expiry/cleanup path; write the create-order contract and a sweep job.</li>
+      <li><b>Re-render and validate.</b> This pack is a static reading of code captions &mdash; open it in a browser (network required for the Mermaid CDN), confirm all five diagrams render, then promote confirmed items out of the risk/unknown list as the above investigations land.</li>
+    </ol>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="page-foot">
+    <p>This file is <b>read-only generated</b> &mdash; a static architecture briefing produced from source-grounded captions. It contains no live data and performs no actions.</p>
+    <p>It lives in <code>tmp/arch-visual-pack.html</code>, which is <b>gitignored</b> and intentionally outside the tracked repo tree. Do not commit it; regenerate instead.</p>
+    <p><b>Mermaid needs network</b> to render: diagrams are drawn client-side via the Mermaid v11 ESM module loaded from a CDN. Offline, the <code>&lt;pre class="mermaid"&gt;</code> source text is shown instead of rendered SVG.</p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "dark",
+    securityLevel: "loose",
+    flowchart: { useMaxWidth: true, htmlLabels: true },
+    sequence: { useMaxWidth: true }
+  });
+</script>
+</body>
+</html>

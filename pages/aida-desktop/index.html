@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AidaWork Desktop — Architecture Visual Pack</title>
+<style>
+  :root {
+    --bg: #0b0f17;
+    --panel: #121a28;
+    --panel-2: #0e1622;
+    --border: #243047;
+    --text: #dce6ff;
+    --muted: #8ea2c6;
+    --accent: #4f7cff;
+    --accent-2: #36c08a;
+    --warn: #d2a23c;
+    --risk: #f87171;
+    --unknown: #c069e0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  header.pack-head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 1.9rem;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); font-size: 0.95rem; margin: 0; }
+  h2 {
+    font-size: 1.35rem;
+    margin: 44px 0 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+  h2:first-of-type { border-top: none; }
+  h3 {
+    font-size: 1.05rem;
+    color: var(--text);
+    margin: 18px 0 10px;
+  }
+  p { margin: 10px 0; }
+  .verdict {
+    background: linear-gradient(90deg, rgba(79,124,255,0.16), rgba(54,192,138,0.12));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 1.05rem;
+    margin: 8px 0 0;
+  }
+  .diagram-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 12px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  pre.mermaid {
+    margin: 0;
+    background: transparent;
+    text-align: center;
+    min-width: min-content;
+  }
+  pre.mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+  .evidence {
+    font-size: 0.82rem;
+    color: var(--muted);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 10px 0 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .evidence strong { color: var(--accent-2); font-family: inherit; }
+  .persp-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(79,124,255,0.12);
+    border: 1px solid rgba(79,124,255,0.3);
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin-bottom: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.86rem;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  thead { background: var(--panel); }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--accent-2); font-weight: 600; white-space: nowrap; }
+  td code, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--text);
+    word-break: break-word;
+  }
+  ul.unknowns { list-style: none; padding-left: 0; margin: 12px 0; }
+  ul.unknowns li {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--unknown);
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin: 8px 0;
+    font-size: 0.88rem;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-radius: 5px;
+    padding: 2px 7px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .badge.unknown { color: var(--unknown); background: rgba(192,105,224,0.14); border: 1px solid rgba(192,105,224,0.35); }
+  .badge.risk { color: var(--risk); background: rgba(248,113,113,0.13); border: 1px solid rgba(248,113,113,0.35); }
+  .group-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 20px 0 4px;
+    font-weight: 600;
+  }
+  .next-move ol { padding-left: 22px; }
+  .next-move li { margin: 8px 0; }
+  footer.pack-foot {
+    margin-top: 50px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  footer.pack-foot code { color: var(--warn); }
+  @media (max-width: 640px) {
+    .container { padding: 20px 12px 60px; }
+    h1 { font-size: 1.45rem; }
+    h2 { font-size: 1.15rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="pack-head">
+    <h1>AidaWork Desktop — Architecture Visual Pack</h1>
+    <p class="subtitle">Source-grounded architecture briefing &middot; 6 perspectives &middot; aida-desktop (Electron + Vite + React)</p>
+  </header>
+
+  <!-- ============ VERDICT ============ -->
+  <h2>Verdict</h2>
+  <div class="verdict">
+    A typed-IPC Electron host where a trusted React renderer streams chat over SSE and a server orchestrator delegates high-risk local tool calls to a TTL-governed, approval-gated hybrid local executor — security-conscious and well-layered, but several execution-isolation and runtime-spawn boundaries remain unconfirmed.
+  </div>
+
+  <!-- ============ SYSTEM MAP ============ -->
+  <h2>System Map</h2>
+  <p>
+    The application is a single Electron host split across three trust zones. The
+    <strong>main process</strong> is the composition root: it owns 12 typed IPC namespaces
+    (30 invoke + 8 push channels) wired through <span class="mono">shared/ipc-contract.ts</span>,
+    plus the auth/token exchange, config store, hybrid local executor, document intake, update
+    lifecycle, speech helper, and BI insight channel. The <strong>preload</strong> layer bridges
+    only a derived, narrow surface (<span class="mono">aidaDesktop</span> for the trusted UI;
+    <span class="mono">__aidaBiBridge</span> for the untrusted ChatBI guest). The
+    <strong>renderer</strong> composes the HR workbench shell, the chat logic layer
+    (<span class="mono">src/chat/core</span>), and presentational surfaces.
+  </p>
+  <p>
+    Cross-cutting spine: a shared <strong>TtlRegistry</strong> backs every pending-decision state
+    machine (write approvals, transient file grants, document intake, extraction jobs). Token
+    identity is bound to an <strong>endpoint identity</strong> (origin + basePath). Chat is scoped
+    by a derived <strong>chat identity</strong> (tenantId:userId). The six diagrams below traverse
+    this from process topology down to the individual state machines.
+  </p>
+
+  <!-- ============ PERSPECTIVE 1 ============ -->
+  <h2>1 &middot; Process Topology &amp; IPC</h2>
+  <span class="persp-tag">Process Topology &amp; IPC</span>
+  <h3>Process Topology and IPC: Renderer / Preload / Main with 12 typed namespaces</h3>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+flowchart LR
+  subgraph REN["Renderer Process (React)"]
+    direction TB
+    R["window.aidaDesktop&lt;br/&gt;(trusted UI)"]
+    GUEST["ChatBI guest renderer&lt;br/&gt;(untrusted WebContentsView)"]
+  end
+
+  subgraph PRE["Preload (contextBridge isolation)"]
+    direction TB
+    BRIDGE["IpcBridge&lt;br/&gt;aidaDesktop exposeInMainWorld"]
+    BIB["__aidaBiBridge&lt;br/&gt;(narrow, no aida-* channels)"]
+  end
+
+  subgraph MAIN["Main Process (composition root)"]
+    direction TB
+    SERVER["ipc/server.ts&lt;br/&gt;registerInvoke / pushTo wrappers"]
+    CONTRACT["ipc-contract.ts&lt;br/&gt;IpcInvokeContract 30 invoke / IpcPushContract 8 push"]
+    subgraph SVC["Namespace handlers (12 namespaces)"]
+      direction TB
+      N1["aida-config (4 invoke) / ConfigStore"]
+      N2["aida-auth (3 invoke, 1 push)"]
+      N3["aida-api (4 invoke) / AidaApiClient"]
+      N4["aida-chat (4 invoke, 1 push)"]
+      N5["aida-speech (3 invoke, 1 push) / SpeechHelper"]
+      N6["aida-local-executor (17 invoke, 1 push) / LocalExecutorService"]
+      N7["aida-document-intake (8 invoke, 1 push) / DocumentIntakeService"]
+      N8["aida-update (4 invoke, 1 push) / VelopackDesktopUpdater"]
+      N9["aida-diagnostics (2 invoke, 1 push) / OperationHistory"]
+      N10["aida-notify (1 invoke)"]
+      N11["aida-shell (1 invoke)"]
+      N12["aida-bi (5 invoke, 1 push, BI_GUEST_CHANNEL on) / BiInsightChannel"]
+    end
+  end
+
+  R --&gt;|"property access (invoke / subscribe)"| BRIDGE
+  BRIDGE --&gt;|"derives shape from"| CONTRACT
+  BRIDGE --&gt;|"ipcRenderer.invoke/on to ipcMain.handle"| SERVER
+  SERVER --&gt;|"enforces channel/payload types"| CONTRACT
+  SERVER --&gt;|"dispatches to"| SVC
+
+  GUEST --&gt;|"BiGuestMessage / BiHostMessage"| BIB
+  BIB -.-&gt;|"ipcMain.on BI_GUEST_CHANNEL (no aida-* reach)"| N12
+
+  SVC -.-&gt;|"push channels main to renderer (8 total)"| BRIDGE
+</pre>
+  </div>
+  <div class="evidence">
+    <strong>Evidence:</strong> shared/ipc-contract.ts:375-556 (30 invoke + 8 push), electron/preload.ts:139 (aidaDesktop), electron/chatbi-preload.ts:39 (__aidaBiBridge), electron/ipc/server.ts:1, electron/main.ts:52,139,442,517,560,628,659,767
+  </div>
+
+  <!-- ============ PERSPECTIVE 2 ============ -->
+  <h2>2 &middot; Chat &amp; SSE Data Flow</h2>
+  <span class="persp-tag">Chat &amp; SSE Data Flow</span>
+  <h3>Chat &amp; SSE Data Flow: Single Chat-Send Lifecycle</h3>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Composer as "ChatSurface + AssistantRuntimeAdapter"
+    participant Hook as "useDesktopSSEChat (transport + world effects)"
+    participant Session as "useChatSessionStore (bindings)"
+    participant Api as "createChatStream / authFetch"
+    participant Main as "Electron main AidaApiClient (token to JWT)"
+    participant Backend as "AIDA backend /api/chat (SSE)"
+    participant SSE as "parseSSEStream (frame parser)"
+    participant Run as "Run timeline reducer (reduceServer / reduceTransport)"
+    participant Store as "useChatMessageStore (applyToMessage seam)"
+    participant Local as "dispatchDelegatedToolCall + local executor IPC"
+    participant Read as "Read-side projections (processPreview / timelineModel)"
+
+    Composer->>Hook: send(message, sessionId, options)
+    Hook->>Store: addMessage user + assistant (streaming, empty timeline)
+    Hook->>Session: read bindings (backendSessionId, conversationId, routingMode, agentId)
+    Note over Hook: createRunTimeline() per run / applyEvent wraps run.apply via applyToMessage
+
+    Hook->>Api: createChatStream(message, sessionId, agentId or null for unified entry, localExecutorPayload)
+    Api->>Main: authFetch attaches AIDA JWT
+    Main->>Main: exchange backend token for JWT (single-flight refresh)
+    Main->>Backend: POST /api/chat (server routes when no agentId)
+    Backend-->>Api: SSE response stream
+
+    alt response not ok
+        Hook->>Run: applyEvent stream_failed (AUTH_REQUIRED / HTTP_ERROR / unified fallback)
+        Run->>Store: write failed timeline
+    else response ok
+        Hook->>Run: applyEvent stream_connected (transport)
+        Run->>Store: runDetail.streamConnectedAt
+
+        Hook->>SSE: parseSSEStream(response, onEvent)
+        Note over SSE: skip keepalive frames / silently drop malformed JSON
+        loop each AgentEvent frame
+            SSE-->>Hook: onEvent(AgentEvent)
+            Hook->>Run: applyEvent first (timeline before world effect)
+            Run->>Run: reduceServer pattern-matches AgentEvent / deriveToolResultStatus sets ToolCallInfo.status
+            Run->>Store: applyToMessage updates ChatMessage (content, toolCalls, artifacts, routingEvents)
+
+            alt session_bound
+                Hook->>Session: setBackendSessionId(sessionId)
+            else run_bound
+                Hook->>Session: setConversationMeta(conversationId, runId)
+            else tool_call with domain desktop
+                Hook->>Local: dispatchDelegatedToolCall over IPC
+                Local-->>Hook: applyEvent local_dispatch_settled (transport)
+                Hook->>Run: reduceTransport settles artifact / tool status
+                Run->>Store: applyToMessage writes TaskArtifact + status
+            else capability route_decision
+                Run->>Store: stored in runDetail.routingEvents
+            end
+        end
+        Hook->>Run: applyEvent stream_disconnected (or stream_aborted on cancel)
+        Run->>Store: sweep pending tools / runDetail.endedAt
+    end
+
+    Read->>Store: read ChatMessage timeline
+    Read->>Composer: processPreview (运行过程) + timelineModel + convertAidaMessageToAssistantMessage render
+</pre>
+  </div>
+  <div class="evidence">
+    <strong>Verified from</strong> useDesktopSSEChat.ts:156-459, runTimeline.ts:243-575, sse.ts:9-57, store/message.ts:69-73, plus core/lib/types.ts and runDetail projections
+  </div>
+
+  <!-- ============ PERSPECTIVE 3 ============ -->
+  <h2>3 &middot; Auth &amp; Endpoint Identity</h2>
+  <span class="persp-tag">Auth &amp; Endpoint Identity</span>
+  <h3>Backend Token Lifecycle and Endpoint Identity Binding in AIDA Desktop</h3>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+flowchart TB
+  classDef main fill:#1f2a44,stroke:#4f7cff,stroke-width:1.2px,color:#dce6ff
+  classDef shared fill:#1d3a30,stroke:#36c08a,stroke-width:1.2px,color:#d6f5e8
+  classDef renderer fill:#3a2440,stroke:#c069e0,stroke-width:1.2px,color:#f1dcff
+  classDef doc fill:#3a3320,stroke:#d2a23c,stroke-width:1.2px,color:#f6e9c8
+  classDef intent fill:#27313f,stroke:#6b7a93,stroke-width:1px,color:#c7d2e0,stroke-dasharray:3 3
+  classDef unknownNode fill:#2b2030,stroke:#8a5a9c,stroke-width:1px,color:#e8d4f0,stroke-dasharray:5 4
+
+  subgraph MAIN["Electron Main / Auth"]
+    MainTs["electron/main.ts&lt;br/&gt;composition root: wires server, store, api client, IPC"]:::main
+    AuthServer["AuthCallbackServer&lt;br/&gt;loopback HTTP catching /auth/callback"]:::main
+    Extract["extractBackendToken&lt;br/&gt;parses query/body across 5 field names"]:::main
+    ApiClient["AidaApiClient&lt;br/&gt;backend token to agent JWT exchange + fetch"]:::main
+    Classify["classifyExchangeError&lt;br/&gt;maps exchange failures to error classes"]:::main
+    ConfigStore["ConfigStore&lt;br/&gt;persisted settings, endpoint intent, token retention"]:::main
+  end
+
+  subgraph SHARED["Shared Contracts"]
+    ConfigTypes["config-types&lt;br/&gt;EndpointPersistenceIntent, resolvePersistedEndpoint, resolvers"]:::shared
+    Endpoint["endpoint&lt;br/&gt;canonicalEndpointIdentity, normalizers, validators (origin, basePath)"]:::shared
+    IpcContract["IpcBridge/IpcContract&lt;br/&gt;main/preload/renderer seam for auth/config channels"]:::shared
+  end
+
+  subgraph RENDERER["Renderer"]
+    Orchestrator["AuthCallbackOrchestrator&lt;br/&gt;coalesces hash/push/poll channels with dedup"]:::renderer
+    UseAuth["useAuthSession&lt;br/&gt;React adapter, login/logout flow"]:::renderer
+    Config["src/config.ts&lt;br/&gt;read/write, normalizeSettings, legacy browser token migration"]:::renderer
+    Persist["persistSettingsChange&lt;br/&gt;reason-to-intent mapping, draft building"]:::renderer
+    SettingsHandlers["useSettingsHandlers&lt;br/&gt;user endpoint/token form actions"]:::renderer
+    ChatProvider["ChatProvider&lt;br/&gt;chat identity by tenantId:userId, localStorage scoping, store reset"]:::renderer
+  end
+
+  subgraph DOCS["Vocabulary & Process"]
+    ContextMd["CONTEXT.md&lt;br/&gt;Backend token, Endpoint identity, Chat identity, reasons, intents"]:::doc
+    AgentsMd["AGENTS.md&lt;br/&gt;layout, setup, Desktop Chat Smoke Test"]:::doc
+  end
+
+  subgraph INTENTS["Settings change reason to Endpoint persistence intent"]
+    R1["user-edited-settings -&gt; set-explicit (drop token iff identity changed)"]:::intent
+    R2["apply-legacy-override -&gt; set-explicit (drop token, re-auth)"]:::intent
+    R3["restore-defaults -&gt; restore-default (drop override, keep token iff matches default)"]:::intent
+    R4["silent-update -&gt; keep-current (token-only, endpoint untouched)"]:::intent
+  end
+
+  MainTs --&gt;|"startAuthCallbackServer wires isAllowedOrigin + acceptToken"| AuthServer
+  MainTs --&gt;|"instantiates with configPath + runtimeDefault"| ConfigStore
+  MainTs --&gt;|"injects configStore.read/write for exchange"| ApiClient
+  AuthServer --&gt;|"parse query/body for raw token"| Extract
+  AuthServer --&gt;|"acceptToken: persistAuthCallbackToken exchanges + persists"| ApiClient
+  AuthServer --&gt;|"classifies failures on acceptToken exception"| Classify
+  ApiClient --&gt;|"uses classifyExchangeError for failure mapping"| Classify
+  ApiClient --&gt;|"reads/writes config via injected callbacks"| ConfigStore
+
+  IpcContract --&gt;|"defines aida-config:* (read, save, restore-default, clearToken)"| ConfigStore
+  IpcContract --&gt;|"defines aida-auth:* callback push/poll"| AuthServer
+  ConfigStore --&gt;|"implements IPC handlers via registerInvoke"| IpcContract
+
+  ConfigStore --&gt;|"applies token/endpoint resolvers on write + restore"| ConfigTypes
+  ConfigStore --&gt;|"validates origins/paths, computes effective endpoint"| Endpoint
+  ConfigTypes --&gt;|"imports canonicalEndpointIdentity for identity checks"| Endpoint
+
+  UseAuth --&gt;|"wraps orchestrator for hash/push/poll"| Orchestrator
+  Orchestrator --&gt;|"dispatches onCallback with backendToken + alreadySaved"| UseAuth
+  UseAuth --&gt;|"calls exchangeBackendToken (via config.ts) to verify fresh tokens"| ApiClient
+  UseAuth --&gt;|"persists token, silent-update reason on completeLogin"| Persist
+  UseAuth --&gt;|"readSettings, clearBackendToken, exchangeBackendToken"| Config
+  SettingsHandlers --&gt;|"user form actions: reason-driven writes"| Persist
+
+  Persist --&gt;|"applyPersistedSettings with derived EndpointPersistenceIntent"| Config
+  Persist --&gt;|"canonicalEndpointIdentity computes token binding identity"| Endpoint
+  Persist -.-&gt;|"reason -&gt; intent"| INTENTS
+  Config --&gt;|"resolvePersistedEndpoint, resolvePersistedToken, normalizers"| ConfigTypes
+  Config --&gt;|"window.aidaDesktop.config IPC (desktop store adapter)"| ConfigStore
+
+  ChatProvider --&gt;|"reads aidaBase to compute chatProviderKey"| Endpoint
+  ChatProvider --&gt;|"derives chat identity from backend token JWT (tenantId:userId)"| UseAuth
+
+  ChatProvider -.-&gt;|"implements Chat identity scoping"| ContextMd
+  SettingsHandlers -.-&gt;|"implements reasons: user-edited, restore-defaults, apply-legacy"| ContextMd
+  ContextMd -.-&gt;|"referenced as canonical vocabulary"| AgentsMd
+
+  U1["UNKNOWN: TtlRegistry injected clock signature + token TTL impact"]:::unknownNode
+  U2["UNKNOWN: exact exchange endpoint path (only 'api/auth/exchange' visible)"]:::unknownNode
+  U3["UNKNOWN: runtime default computed in electron.vite.config.ts per build mode"]:::unknownNode
+  U4["UNKNOWN: exact backend JWT claim structure (tenantId/userId/hashed fallback)"]:::unknownNode
+  U5["UNKNOWN: ConfigStore.write endpointIntent vs main-ts propagation (versioning)"]:::unknownNode
+  U6["UNKNOWN: legacy migration ordering vs useAuthSession (race on new token)"]:::unknownNode
+  U7["UNKNOWN: orchestrator behavior when window.aidaDesktop.auth is null"]:::unknownNode
+
+  ApiClient -.-&gt; U1
+  ApiClient -.-&gt; U2
+  MainTs -.-&gt; U3
+  ChatProvider -.-&gt; U4
+  ConfigStore -.-&gt; U5
+  Config -.-&gt; U6
+  Orchestrator -.-&gt; U7
+</pre>
+  </div>
+  <div class="evidence">
+    <strong>Sources:</strong> electron/auth/{auth-callback-server,extract-backend-token,aida-api-client,classify-exchange-error}.ts, electron/{main,config/config-store}.ts, shared/{config-types,endpoint,ipc-contract}.ts, src/{config,useAuthSession,config/persistSettingsChange,app/useSettingsHandlers,auth/auth-callback-orchestrator,chat/ChatProvider}.tsx, CONTEXT.md, AGENTS.md
+  </div>
+
+  <!-- ============ PERSPECTIVE 4 ============ -->
+  <h2>4 &middot; Hybrid Local Executor &amp; Write Governance</h2>
+  <span class="persp-tag">Hybrid Local Executor &amp; Write Governance</span>
+  <h3>Hybrid Local Executor and Write Governance: Server-Orchestrated Delegated Local Tool Execution</h3>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+flowchart TB
+  classDef adr fill:#1e293b,stroke:#64748b,color:#e2e8f0,stroke-width:1px;
+  classDef svc fill:#0f2942,stroke:#3b82f6,color:#dbeafe,stroke-width:1px;
+  classDef gate fill:#3b1f1f,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+  classDef readonly fill:#14321f,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+  classDef highrisk fill:#3a2a12,stroke:#f59e0b,color:#fde68a,stroke-width:1px;
+  classDef stub fill:#2a2a2a,stroke:#71717a,color:#a1a1aa,stroke-dasharray:5 4,stroke-width:1px;
+  classDef ui fill:#1f1633,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+  classDef wire fill:#102a2e,stroke:#22d3ee,color:#cffafe,stroke-width:1px;
+  classDef unk fill:#2b2b2b,stroke:#52525b,color:#8b8b8b,stroke-dasharray:3 3,stroke-width:1px;
+
+  subgraph Governance["Decision Records (ADRs and Vocabulary)"]
+    direction LR
+    CTX["CONTEXT.md&lt;br/&gt;canonical vocabulary"]:::adr
+    A12["ADR-0012&lt;br/&gt;Hybrid-First Local Executor"]:::adr
+    A13["ADR-0013&lt;br/&gt;Desktop Write Primitive Policy"]:::adr
+    A14["ADR-0014&lt;br/&gt;Transient Grant and Document Intake"]:::adr
+    A16["ADR-0016&lt;br/&gt;Bundled Script Runner Contract"]:::adr
+    A12 --&gt;|"supersedes high-risk flow"| A13
+    A12 --&gt;|"supersedes doc payload"| A14
+    A12 --&gt;|"runBundledScript amends no-shell"| A16
+    CTX -.-&gt;|vocab| A12
+    CTX -.-&gt;|vocab| A13
+    CTX -.-&gt;|vocab| A14
+  end
+
+  subgraph Server["Server (aida-agent, cross-repo)"]
+    direction TB
+    ORCH["Server Orchestrator&lt;br/&gt;single agent loop, suspends on delegated calls"]:::wire
+    DELC["Delegated Local Tool Call&lt;br/&gt;domain=desktop in SSE stream"]:::wire
+    ORCH --&gt;|"emits domain=desktop tool_call"| DELC
+  end
+
+  subgraph Renderer["Desktop Renderer (React)"]
+    direction TB
+    SSE["useDesktopSSEChat&lt;br/&gt;detect domain=desktop, dispatch, submit result"]:::ui
+    RTL["Run Timeline Reducer&lt;br/&gt;pure event fold"]:::ui
+    MSG["Chat Message Store&lt;br/&gt;applyToMessage seam"]:::ui
+    WCD["WriteConfirmationDialog&lt;br/&gt;path edit, override warning, 10-min timer, batch grant"]:::ui
+    SSE --&gt;|"applyToMessage + reducer"| RTL
+    RTL --&gt;|"owns event fold"| MSG
+  end
+
+  subgraph Main["Desktop Electron Main (Hybrid Local Executor)"]
+    direction TB
+    IPC["IPC Bridge&lt;br/&gt;ipc-contract.ts, single source for aida-* channels"]:::wire
+    REG["IPC Handler Registration&lt;br/&gt;roots, skills, payload, picker, dispatch, write confirm/cancel"]:::svc
+    CONTRACT["Local Executor Wire Contract&lt;br/&gt;primitives enum, arg/result shapes, error codes"]:::wire
+    SVC["LocalExecutorService&lt;br/&gt;delegated dispatcher, approval gate, task artifacts"]:::svc
+    CAT["LocalSkillCatalog&lt;br/&gt;root/skill config, consent, session payload builder"]:::svc
+    MAN["Skill Manifest&lt;br/&gt;SKILL.md parser, primitive extraction"]:::svc
+    NARROW["Capability Narrowing&lt;br/&gt;root allowlist intersect skill declared"]:::svc
+    PATH["Path Policy&lt;br/&gt;resolveAllowedWritePath, symlink follow-protection"]:::svc
+    GATE["LocalExecutorApprovalGate&lt;br/&gt;pending/executing/completed, 10-min expiry, one-time"]:::gate
+    GRANT["TransientGrantStore&lt;br/&gt;snapshot-bound size+mtime+sha256, session-scoped"]:::gate
+    TTL["TtlRegistry&lt;br/&gt;UUID mint, expiresAt, lazy expiry, bounded trim"]:::svc
+    INTAKE["DocumentIntakeService&lt;br/&gt;two-step consent, intake state machine, grant minting"]:::svc
+    BROOT["Bundled Skill Root&lt;br/&gt;reserved aida.builtin, read-only + runBundledScript"]:::svc
+    SINT["Script Integrity Verifier&lt;br/&gt;manifest hash/size, no extra .py/.pth, safe paths"]:::gate
+
+    subgraph ReadP["Read-Only Primitives (execute directly)"]
+      direction LR
+      P_LIST["listDirectory"]:::readonly
+      P_READ["readFile"]:::readonly
+      P_RSKILL["readSkillFile"]:::readonly
+    end
+
+    subgraph HighP["High-Risk Primitives (approval-gated)"]
+      direction LR
+      P_WRITE["writeFile&lt;br/&gt;approval gate + path policy"]:::highrisk
+      P_RUN["runBundledScript&lt;br/&gt;per-run approval, aida.builtin only"]:::highrisk
+    end
+
+    subgraph StubP["Stub Primitives — NOT executable (return cancelled)"]
+      direction LR
+      P_SHELL["shell — NOT executable"]:::stub
+      P_MCP["mcp — NOT executable"]:::stub
+      P_NET["network — NOT executable"]:::stub
+      P_SEC["secret — NOT executable"]:::stub
+    end
+
+    subgraph Sources["Wire Sources and Targets (no absolute paths on wire)"]
+      direction LR
+      SELF["Selected File Source&lt;br/&gt;task-scoped native open dialog, fileId refs"]:::wire
+      GOVR["Grant Overwrite Target&lt;br/&gt;transient grant as write source"]:::wire
+      SAVE["Save Dialog Target&lt;br/&gt;native save dialog, batch grant per runId+sessionId+conversationId"]:::wire
+    end
+
+    IPC --&gt;|"channels defined once"| REG
+    REG --&gt;|"bridges all channels"| SVC
+    REG --&gt;|"confirm-write / cancel-write"| GATE
+    CONTRACT --&gt;|"defines event + shapes"| SVC
+    CONTRACT --&gt;|"defines wire shapes"| REG
+
+    SVC --&gt;|"read config snapshot seam"| CAT
+    SVC --&gt;|"high-risk via requireApproval"| GATE
+    SVC --&gt;|"mint + verify grants"| GRANT
+    SVC --&gt;|"execute read-only directly"| ReadP
+    SVC --&gt;|"wrap high-risk"| HighP
+    SVC --&gt;|"query resolveAllowedWritePath"| PATH
+
+    CAT --&gt;|"readLocalSkillManifest"| MAN
+    CAT --&gt;|"narrowCapabilities"| NARROW
+    CAT --&gt;|"create virtual bundled root"| BROOT
+
+    GATE --&gt;|"pending write TTL + state"| TTL
+    GATE --&gt;|"push pending-write IPC"| WCD
+    GRANT --&gt;|"grant TTL, lazy expiry, trim"| TTL
+    INTAKE --&gt;|"intake phase TTL + lifecycle"| TTL
+    INTAKE --&gt;|"mint grants after consent step 1"| GRANT
+    INTAKE -. extraction supervisor unknown .-&gt; EXTRACT
+
+    P_WRITE --&gt;|"validated by"| PATH
+    P_RUN --&gt;|"only aida.builtin may declare"| BROOT
+    P_RUN --&gt;|"verifyBundledScriptTree before spawn"| SINT
+
+    SELF --&gt;|"readFile source=selected_file"| SVC
+    GOVR --&gt;|"writeFile target=grant_overwrite"| SVC
+    SAVE --&gt;|"pick-save-path native dialog, relative to root"| REG
+  end
+
+  subgraph Unknowns["Unconfirmed / Not Drawn As Shipped"]
+    direction TB
+    EXTRACT["ExtractionSupervisor (UNCONFIRMED)&lt;br/&gt;spawn path + isolated process IPC unknown"]:::unk
+    PYRT["Python Runtime (UNCONFIRMED)&lt;br/&gt;spawn args, env scrubbing, limits, exists at launch?"]:::unk
+    JAIL["Session Workspace Jail (UNCONFIRMED)&lt;br/&gt;path scheme + impl unknown"]:::unk
+    SBOX["Sandbox Profile (UNCONFIRMED)&lt;br/&gt;macOS Seatbelt path / Windows v1 tier"]:::unk
+    P_RUN -. invokes runtime, shape unknown .-&gt; PYRT
+    P_RUN -. sandbox profile unknown .-&gt; SBOX
+    PATH -. workspace jail unknown .-&gt; JAIL
+  end
+
+  A13 --&gt;|"§2 approval gate state machine"| GATE
+  A13 --&gt;|"§1 writeFile path policy + error codes"| P_WRITE
+  A13 --&gt;|"§1 resolveAllowedWritePath stricter than read"| PATH
+  A14 --&gt;|"§3 grant snapshot identity"| GRANT
+  A14 --&gt;|"§3 two-step consent state machine"| INTAKE
+  A16 --&gt;|"§1 reserved aida.builtin policy"| BROOT
+  A16 --&gt;|"§3 verify manifest before spawn"| SINT
+
+  DELC --&gt;|"fires dispatch cycle on originating stream"| SSE
+  SSE --&gt;|"dispatchToolCall IPC"| IPC
+  WCD --&gt;|"confirmWrite IPC resolves pending write"| GATE
+</pre>
+  </div>
+  <div class="evidence">
+    <strong>Grounded in</strong> docs/adr/0012-0016, apps/desktop/electron/local-executor/* (service, approval-gate, transient-grant-store, path-policy, primitives), shared/local-executor-contract.ts (shell/mcp/network/secret stubbed at local-executor-service.ts:373-378), document-intake/, bundled-skills/, script-runner/, src/chat/useDesktopSSEChat.ts, and CONTEXT.md.
+  </div>
+
+  <!-- ============ PERSPECTIVE 5 ============ -->
+  <h2>5 &middot; Pending-Decision State Machines</h2>
+  <span class="persp-tag">Pending-Decision State Machines</span>
+  <h3>Pending-Decision State Machines: TtlRegistry-backed lifecycle flows for user decisions and file operations</h3>
+
+  <div class="group-label">TtlRegistry — shared in-memory store</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  state "TtlRegistry — shared in-memory store" as REG {
+    [*] --&gt; minted: mint(build, opts) UUID + expiresAt
+    minted --&gt; active: scheduleExpiry (active timer)
+    minted --&gt; lazy: lazy expiry (checked on get)
+    active --&gt; settled: patch / delete
+    lazy --&gt; settled: isExpired on access
+    settled --&gt; trimmed: trim(isSettled, cap=200)
+    trimmed --&gt; [*]
+  }
+  note right of REG
+    Adapters: clock injected (now, default Date.now)
+    Write approval TTL 10m / Grants 30m / Intake 30m
+  end note
+</pre>
+  </div>
+
+  <div class="group-label">LocalExecutorApprovalGate — Write Approval</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --&gt; pending: requireApproval mints entry + scheduleExpiry
+  pending --&gt; executing: confirmWrite (clearExpiry)
+  pending --&gt; cancelled: cancelWrite (WRITE_USER_CANCELLED)
+  pending --&gt; expired: TTL timer (WRITE_EXPIRED, 10m)
+  executing --&gt; completed: execute resolves ok or error
+  completed --&gt; [*]
+  cancelled --&gt; [*]
+  expired --&gt; [*]
+  note right of pending
+    parked resolve promise per entry
+    batchGrants Map skips dialog (not minted)
+  end note
+</pre>
+  </div>
+
+  <div class="group-label">TransientGrantStore — File Grant (lazy expiry)</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --&gt; active: mint grant (grantId, snapshot, expiresAt 30m)
+  active --&gt; active: verifyForRead / verifyForWrite (snapshot re-check)
+  active --&gt; revoked: revoke or bulk session revoke
+  active --&gt; expired_lazy: TTL elapsed (checked on verify)
+  revoked --&gt; [*]
+  expired_lazy --&gt; [*]
+  note right of active
+    verify checks sessionId match + not expired
+    + not revoked + snapshot matches
+    Errors: GRANT_EXPIRED, GRANT_NOT_FOUND,
+    GRANT_STALE_SNAPSHOT, GRANT_WRITE_NOT_ALLOWED
+  end note
+</pre>
+  </div>
+
+  <div class="group-label">DocumentIntakeService — 7-phase Intake</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --&gt; metadata_review: beginFromAbsolutePath
+  metadata_review --&gt; extracting: confirmMetadata (mint grant + enqueue)
+  extracting --&gt; preview_review: extraction_success
+  extracting --&gt; error: extraction_failed (revoke grant)
+  preview_review --&gt; ready: confirmSend (verify grant for read)
+  preview_review --&gt; metadata_review: resetForReconfirmation (stale snapshot, revoke grant)
+  ready --&gt; sent: markSent
+  metadata_review --&gt; cancelled: cancel (revoke grant)
+  preview_review --&gt; cancelled: cancel (revoke grant)
+  metadata_review --&gt; error: TTL expire (30m)
+  preview_review --&gt; error: TTL expire (30m)
+  sent --&gt; [*]
+  cancelled --&gt; [*]
+  error --&gt; [*]
+  note right of extracting
+    grant held during extracting + preview_review
+    outcomes: extraction_success/failed,
+    stale_reconfirm, sent, cancelled, expired
+  end note
+</pre>
+  </div>
+
+  <div class="group-label">ExtractionSupervisor — Job Lifecycle</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --&gt; queued: enqueue (resolve promise parked)
+  queued --&gt; running: pump dequeues + spawns child
+  running --&gt; running: heartbeat watcher polls lastHeartbeatAt
+  running --&gt; killed: stall or memory overage (kill child)
+  running --&gt; exited: child result or exit event
+  killed --&gt; settled: finishActive (clear timers, resolve)
+  exited --&gt; settled: finishActive (clear timers, resolve)
+  settled --&gt; [*]: pump next
+  note right of running
+    wallTimeoutMs guard + heartbeat watcher armed
+    in-process fallback path (extractDocumentText)
+  end note
+</pre>
+  </div>
+
+  <div class="group-label">SpeechHelper — macOS Subprocess</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --&gt; idle
+  idle --&gt; starting: start (spawn helper)
+  starting --&gt; listening: state=recording event (clear startWatchdog)
+  starting --&gt; failed: spawn error / start timeout 5s SIGKILL
+  listening --&gt; stopping: stop (SIGTERM)
+  stopping --&gt; idle: child exit (or stopGrace 2s SIGKILL)
+  listening --&gt; failed: helper exit / JSON parse error
+  failed --&gt; idle: failWith auto-reset (emit error + state=stopped)
+  idle --&gt; [*]
+  note right of failed
+    terminal then settles to idle
+    stdout line-by-line JSON: state / result / heartbeat
+  end note
+</pre>
+  </div>
+
+  <div class="group-label">Update Lifecycle Reducer</div>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --&gt; idle
+  idle --&gt; checking: check:start
+  checking --&gt; available: check:available (targetVersion)
+  checking --&gt; idle: check:no-update / check:error
+  available --&gt; downloading: download:start (progress 0)
+  downloading --&gt; downloading: download:progress (percent clamped 0-100)
+  downloading --&gt; downloaded: download:done (progress 100)
+  downloading --&gt; available: download:error (revert)
+  downloaded --&gt; applying: apply:start
+  applying --&gt; downloaded: apply:error (revert)
+  idle --&gt; unsupported: unsupported (no Electron API)
+  note right of downloading
+    single observable state: phase, targetVersion,
+    progress, statusText (UpdateApi IPC injected)
+  end note
+</pre>
+  </div>
+  <div class="evidence">
+    <strong>Sources:</strong> electron/ttl-registry.ts; local-executor/approval-gate.ts:106-294 + transient-grant-store.ts:69-211; document-intake/intake-service.ts:182-441 + extraction-supervisor.ts:48-243; speech/speech-helper.ts:102-324; src/update/useUpdateLifecycle.ts:51-243; CONTEXT.md:400-662
+  </div>
+
+  <!-- ============ PERSPECTIVE 6 ============ -->
+  <h2>6 &middot; Renderer Composition (App Shell)</h2>
+  <span class="persp-tag">Renderer Composition (App Shell)</span>
+  <h3>Renderer Composition: App Shell Bootstrap, Hooks, and Surfaces</h3>
+  <div class="diagram-wrap">
+<pre class="mermaid">
+flowchart TB
+  App["App.tsx&lt;br/&gt;(Shell Layout Root)"]
+
+  subgraph HUB["Orchestration Hub"]
+    Boot["useAppBootstrap&lt;br/&gt;(Init Sequence and Bootstrap Seam)"]
+  end
+
+  subgraph HOOKS["Composed Hooks and Pure Modules"]
+    Auth["useAuthSession&lt;br/&gt;(Auth Lifecycle and Token Management)"]
+    Cap["useCapabilityFetch&lt;br/&gt;(Raw Agent and Skill Fetch)"]
+    Gating["workbenchGating&lt;br/&gt;(Pure Gating Functions)"]
+    WsSel["useWorkspaceSelection&lt;br/&gt;(Workspace Key and Category State)"]
+    Update["useUpdateLifecycle&lt;br/&gt;(Update FSM and Notifications)"]
+    Nav["useShellNavigation&lt;br/&gt;(Navigation State and Handlers)"]
+    SetH["useSettingsHandlers&lt;br/&gt;(Settings Modal State and Handlers)"]
+    WbExp["workbenchExperience.tsx&lt;br/&gt;(Workspace and Task Catalog)"]
+    HrExp["hrExperience.tsx&lt;br/&gt;(HR-Specific Task Metadata)"]
+  end
+
+  subgraph STORES["Chat Logic Layer (Stores and Transport)"]
+    Provider["ChatProvider&lt;br/&gt;(Chat Identity and Store Scope)"]
+    SessStore["useChatSessionStore&lt;br/&gt;(Session CRUD and Agent Catalog)"]
+    MsgStore["useChatMessageStore&lt;br/&gt;(Message Timeline and Streaming)"]
+    Comp["Chat Store Composition Seam&lt;br/&gt;(./store/chat.ts)"]
+    Snap["ChatWindowSnapshot&lt;br/&gt;(Snapshot Adapter)"]
+    SSE["useDesktopSSEChat&lt;br/&gt;(SSE Transport and Reducer)"]
+    RunTl["Run Timeline Reducer&lt;br/&gt;(Assistant Message State)"]
+    RtAdapter["AidaAssistantRuntimeAdapter&lt;br/&gt;(assistant-ui Bridge)"]
+  end
+
+  subgraph SURFACES["Presentational Surfaces (Leaves)"]
+    Sidebar["AppSidebar&lt;br/&gt;(Brand, Search, Nav, Workspaces, Conversations, Account)"]
+    Home["WorkbenchHome&lt;br/&gt;(HR Workbench Home - Greeting, Tasks, Automation)"]
+    CPanel["ChatPanel&lt;br/&gt;(Chat Drawer Container)"]
+    CSurface["ChatSurface&lt;br/&gt;(Chat UI - Header, Messages, Composer, Artifacts)"]
+    CParts["ChatSurfaceParts&lt;br/&gt;(Pure Presenter - Header, Thread, Composer)"]
+    ConvSide["ConversationSidebar&lt;br/&gt;(Chat Window Conversation List)"]
+    Login["LoginModal&lt;br/&gt;(Auth Overlay)"]
+    Settings["SettingsModal&lt;br/&gt;(Settings Overlay with Tab Modules)"]
+    Gallery["SkillGalleryView&lt;br/&gt;(Skill Gallery View)"]
+    Sched["ScheduledTasksView&lt;br/&gt;(Automation View)"]
+  end
+
+  App --&gt;|"composes to sequence boot"| Boot
+
+  Boot --&gt;|"Step 1: settings plus legacy migration"| Auth
+  Boot --&gt;|"Step 2a: raw agents plus skills"| Cap
+  Boot --&gt;|"Step 2b/c: derive gating snapshot"| Gating
+  Boot --&gt;|"Step 3: workspace plus category state"| WsSel
+  Boot --&gt;|"Step 4: update FSM"| Update
+  Boot --&gt;|"delegates navigation"| Nav
+  Boot --&gt;|"delegates settings modal"| SetH
+
+  Gating --&gt;|"composes agents plus skills"| Cap
+  Gating --&gt;|"reads agentWorkspaces"| WbExp
+  WsSel --&gt;|"resolves active workspace"| WbExp
+  WbExp -.-&gt;|"sources HR task metadata"| HrExp
+
+  Nav --&gt;|"creates/manages sessions"| SessStore
+  SetH --&gt;|"syncSettings callback"| Auth
+
+  App --&gt;|"renders with state"| Sidebar
+  App --&gt;|"mainView=workspace"| Home
+  App --&gt;|"chatVisible=true"| CPanel
+  App --&gt;|"loginOpen=true"| Login
+  App --&gt;|"settingsOpen=true"| Settings
+  App --&gt;|"mainView=capabilities"| Gallery
+  App --&gt;|"mainView=scheduled"| Sched
+  App --&gt;|"wraps with providerKey"| Provider
+
+  Sidebar --&gt;|"navigation actions"| Nav
+  Sidebar --&gt;|"renders conversation list"| ConvSide
+  Home --&gt;|"onTaskPrompt routes to chat"| Nav
+  Home --&gt;|"reads workspace catalog"| WbExp
+  Login --&gt;|"calls login"| Auth
+  Settings --&gt;|"reads state plus handlers"| SetH
+
+  CPanel --&gt;|"renders with pendingPrompt"| CSurface
+  CSurface --&gt;|"composes header plus thread plus composer"| CParts
+  CSurface --&gt;|"reads activeSessionId"| SessStore
+  CSurface --&gt;|"reads messages, streaming"| MsgStore
+  CSurface --&gt;|"renders conversation history"| ConvSide
+  CSurface --&gt;|"wrapped by assistant-ui adapter"| RtAdapter
+
+  Provider --&gt;|"identity scoping"| SessStore
+
+  SSE --&gt;|"writes via applyToMessage"| RunTl
+  RunTl --&gt;|"pure updater contract"| MsgStore
+  SessStore --&gt;|"observes for invariants"| Comp
+  MsgStore --&gt;|"joined by composition seam"| Comp
+  Snap --&gt;|"composes session"| SessStore
+  Snap --&gt;|"composes messages"| MsgStore
+</pre>
+  </div>
+  <div class="evidence">
+    <strong>Grounded in</strong> apps/desktop/src/App.tsx, src/app/{useAppBootstrap,useShellNavigation,useSettingsHandlers}.ts, src/{useAuthSession,workspace/*,hooks/useCapabilityFetch,chat/*,chat/core/store/*}.ts(x), and CONTEXT.md lines 32, 351, 359, 414, 541, 561, 576, 750.
+  </div>
+
+  <!-- ============ DECISION MATRIX ============ -->
+  <h2>Decision Matrix</h2>
+  <p>Maps each architecture decision record (ADR-0012 through ADR-0016) to the perspective it governs and the primary code path that implements it.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>ADR</th>
+        <th>Decision</th>
+        <th>Perspective</th>
+        <th>Primary Code Path</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ADR-0012</td>
+        <td>Hybrid-First Local Executor — server orchestrator suspends and delegates <span class="mono">domain=desktop</span> tool calls to the desktop; supersedes earlier high-risk and doc-payload flows.</td>
+        <td>Hybrid Local Executor &amp; Write Governance; Chat &amp; SSE Data Flow</td>
+        <td><code>apps/desktop/electron/local-executor/local-executor-service.ts</code>; <code>apps/desktop/src/chat/useDesktopSSEChat.ts</code></td>
+      </tr>
+      <tr>
+        <td>ADR-0013</td>
+        <td>Desktop Write Primitive Policy — §1 <span class="mono">writeFile</span> path policy + error codes (<span class="mono">resolveAllowedWritePath</span> stricter than read); §2 approval-gate state machine (pending/executing/completed, 10-min expiry, one-time).</td>
+        <td>Hybrid Local Executor &amp; Write Governance; Pending-Decision State Machines</td>
+        <td><code>apps/desktop/electron/local-executor/approval-gate.ts:106-294</code>; <code>apps/desktop/electron/local-executor/path-policy.ts</code></td>
+      </tr>
+      <tr>
+        <td>ADR-0014</td>
+        <td>Transient Grant &amp; Document Intake — §3 grant snapshot identity (size+mtime+sha256, session-scoped) and two-step consent intake state machine.</td>
+        <td>Hybrid Local Executor &amp; Write Governance; Pending-Decision State Machines</td>
+        <td><code>apps/desktop/electron/local-executor/transient-grant-store.ts:69-211</code>; <code>apps/desktop/electron/document-intake/intake-service.ts:182-441</code></td>
+      </tr>
+      <tr>
+        <td>ADR-0015</td>
+        <td>Not explicitly carried in the supplied diagram evidence; the executor/governance chain references ADR-0012, 0013, 0014, and 0016. Treated as a gap in the source material rather than an asserted decision. <span class="badge unknown">unknown</span></td>
+        <td>(unconfirmed — see Risks &amp; Unknowns / Next Move)</td>
+        <td><code>docs/adr/0015-*.md</code> (file present in the 0012–0016 series; content not surfaced in diagram evidence)</td>
+      </tr>
+      <tr>
+        <td>ADR-0016</td>
+        <td>Bundled Script Runner Contract — §1 reserved <span class="mono">aida.builtin</span> read-only root + <span class="mono">runBundledScript</span> (per-run approval); §3 verify manifest hash/size before spawn; amends the no-shell stance.</td>
+        <td>Hybrid Local Executor &amp; Write Governance</td>
+        <td><code>apps/desktop/electron/bundled-skills/</code>; <code>apps/desktop/electron/script-runner/</code> (script integrity verifier)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============ RISKS & UNKNOWNS ============ -->
+  <h2>Risks &amp; Unknowns</h2>
+  <p>Every item below is carried directly from the per-diagram <span class="mono">unknowns</span> arrays. None is asserted as fact. Items where an unverified boundary could allow incorrect or unsafe behavior are tagged <span class="badge risk">risk</span>; pure information gaps are tagged <span class="badge unknown">unknown</span>.</p>
+
+  <div class="group-label">Process Topology &amp; IPC</div>
+  <ul class="unknowns">
+    <li><span class="badge unknown">unknown</span>Exact structure of chat window Electron process (separate BrowserWindow or same process as main window).</li>
+    <li><span class="badge risk">risk</span>Whether speech subprocess spawns in main process or separate process.</li>
+    <li><span class="badge unknown">unknown</span>Exact Velopack update mechanism and where lifecycle orchestration runs.</li>
+    <li><span class="badge risk">risk</span>BI_GUEST_CHANNEL ipcMain.on handler implementation details (separate from aida-bi: invoke channels).</li>
+    <li><span class="badge risk">risk</span>Whether document extraction supervisor spawns as separate process.</li>
+    <li><span class="badge unknown">unknown</span>Exact memory/disk persistence lifecycle of TtlRegistry entries across restart.</li>
+    <li><span class="badge unknown">unknown</span>Whether LocalExecutorService runs in main thread or worker.</li>
+    <li><span class="badge risk">risk</span>Electron security policy (CSP, preload isolation, context isolation details).</li>
+    <li><span class="badge risk">risk</span>Whether ipcMain.on handlers outside aida-* namespace exist and what they do.</li>
+    <li><span class="badge unknown">unknown</span>Exact transport for OperationHistory recording across IPC boundaries.</li>
+  </ul>
+
+  <div class="group-label">Chat &amp; SSE Data Flow</div>
+  <ul class="unknowns">
+    <li><span class="badge unknown">unknown</span>Exact message on /api/chat endpoint when local executor context includes documents or skills (buildLocalExecutorPayload assembly details beyond src/chat/useDesktopSSEChat.ts visible code).</li>
+    <li><span class="badge unknown">unknown</span>Specific SSE frame format for keepalive events (implementation only silently skips 'keepalive' event type in sse.ts:40).</li>
+    <li><span class="badge risk">risk</span>Desktop token refresh concurrency model detailed semantics (refreshPromise single-flight dedup logic in src/chat/core/lib/auth.ts has MAX_RETRY=2 with RETRY_DELAYS but timing guarantees unclear).</li>
+    <li><span class="badge unknown">unknown</span>Server-side routing decision mechanism for Unified Entry capability routing (server-side aida-agent orchestrator behavior, not visible in desktop code).</li>
+    <li><span class="badge unknown">unknown</span>Process preview item limit enforcement (PROCESS_PREVIEW_ITEM_LIMIT=5 defined but truncation logic within buildProcessPreviewItems not fully read).</li>
+    <li><span class="badge risk">risk</span>Task artifact save confirmation lifecycle timeouts and expiry (TtlRegistry in electron/ttl-registry.ts owns expiry but renderer confirm modal timeout details not explored).</li>
+    <li><span class="badge risk">risk</span>Async iteration order between stream_connected/session_bound/run_bound (relative timing of transport events vs server events when both queue before parseSSEStream iterator yields).</li>
+    <li><span class="badge risk">risk</span>Whether IPC channel window.aidaDesktop.localExecutor.dispatchToolCall reply acknowledgement model (fire-and-forget vs await-on-reply for local_dispatch_settled emission).</li>
+    <li><span class="badge unknown">unknown</span>Desktop orchestrator (marked as deferred v2 in CONTEXT.md, not implemented in v1).</li>
+  </ul>
+
+  <div class="group-label">Auth &amp; Endpoint Identity</div>
+  <ul class="unknowns">
+    <li><span class="badge unknown">unknown</span>What is the exact contract/signature of the injected clock parameter in TtlRegistry and how it impacts token TTL decisions (CONTEXT.md mentions it but lifecycle not fully visible in code).</li>
+    <li><span class="badge unknown">unknown</span>What specific AIDA backend endpoint path is used for backend-token to agent-JWT exchange (only 'api/auth/exchange' is visible in code).</li>
+    <li><span class="badge unknown">unknown</span>How does the runtime default endpoint get computed at build time in electron.vite.config.ts for different build modes (referenced but not shown).</li>
+    <li><span class="badge unknown">unknown</span>What is the exact JWT claim structure the backend issues (CONTEXT.md references tenantId/userId/hashed-token fallback but claim names vary between implementations).</li>
+    <li><span class="badge risk">risk</span>What happens when ConfigStore.write receives an endpointIntent field but the main-ts composition has not been updated to propagate it (versioning/compatibility).</li>
+    <li><span class="badge risk">risk</span>Whether the legacy browser-token migration runs in-place before useAuthSession starts or after, and if there's a race condition when a new token arrives during migration.</li>
+    <li><span class="badge risk">risk</span>What the exact behavior is when window.aidaDesktop.auth is null (browser environment) for the three-channel orchestrator — does it silently skip poll/push or throw.</li>
+  </ul>
+
+  <div class="group-label">Hybrid Local Executor &amp; Write Governance</div>
+  <ul class="unknowns">
+    <li><span class="badge risk">risk</span>Exact RPC/protocol shape for Python runtime invocation in runBundledScript (spawn args, env scrubbing, resource limits).</li>
+    <li><span class="badge risk">risk</span>Desktop-side Seatbelt/sandbox profile path for macOS script runner (ADR-0016 §4 mentions availability).</li>
+    <li><span class="badge risk">risk</span>Windows v1 sandbox tier details (documented as 'weaker environment-and-limits tier').</li>
+    <li><span class="badge unknown">unknown</span>Exact xor between aida-agent ADR-0017 §5 'untrusted document text handoff' and CONTEXT.md §5 'audit/retention treatment'.</li>
+    <li><span class="badge unknown">unknown</span>Whether app-bundled Python runtime exists at launch or is gated post-MVP.</li>
+    <li><span class="badge risk">risk</span>Session workspace jail implementation details and path scheme.</li>
+    <li><span class="badge unknown">unknown</span>Approved output root auto-provisioning logic for Local File Mode.</li>
+    <li><span class="badge risk">risk</span>Whether useDesktopSSEChat fire-and-forget dispatch (void call) includes retry logic or is one-shot.</li>
+    <li><span class="badge risk">risk</span>Extraction supervisor spawn path and isolated process IPC wire shape.</li>
+    <li><span class="badge unknown">unknown</span>Exact 'task artifact' indexing key structure (artifactId to absolutePath to metadata projection to wire).</li>
+  </ul>
+
+  <div class="group-label">Pending-Decision State Machines</div>
+  <ul class="unknowns">
+    <li><span class="badge unknown">unknown</span>Exact wiring of LocalExecutorApprovalGate into the IPC message loop (emit callback signature not fully specified in approval-gate.ts; located in main.ts registration).</li>
+    <li><span class="badge unknown">unknown</span>Exact wiring of DocumentIntakeService into IPC channels (intake-service.ts is agnostic; main.ts composes it).</li>
+    <li><span class="badge risk">risk</span>Memory limit tuning strategy for ExtractionSupervisor (memoryLimitMb = 512 default, but platform-specific real memory probe function not visible).</li>
+    <li><span class="badge unknown">unknown</span>Extraction heartbeat silence threshold behavior (heartbeatSilenceMs defined in extraction-limits.ts, not fully visible).</li>
+    <li><span class="badge risk">risk</span>Whether extraction-supervisor's in-process extraction path has memory guards (appears to fall back to extractDocumentText directly without memory monitoring).</li>
+    <li><span class="badge unknown">unknown</span>Exact clock source for all three TtlRegistry adapters at wiring time in main.ts (all accept now option, default to Date.now, but actual injection point not visible).</li>
+    <li><span class="badge risk">risk</span>SpeechHelper's handling of already-killed subprocess on second stop() call (child.killed is checked but stderr behavior on double-kill unclear).</li>
+    <li><span class="badge unknown">unknown</span>Update lifecycle progress semantics (progress clamped to 0-100 during downloading, but source of percent value from onDownloadProgress callback not specified).</li>
+    <li><span class="badge risk">risk</span>Document intake snapshot re-verification when grant is stale: whether file change is always-error or allows user re-consent (resetForReconfirmation path suggests user re-consent, not automatic retry).</li>
+  </ul>
+
+  <div class="group-label">Renderer Composition (App Shell)</div>
+  <ul class="unknowns">
+    <li><span class="badge unknown">unknown</span>Exact format and location of ChatIdentity derivation in ChatProvider from backend token JWT.</li>
+    <li><span class="badge unknown">unknown</span>BiInsightHost implementation details and how it differs from ChatPanel.</li>
+    <li><span class="badge unknown">unknown</span>Precise AgentEvent union types and SSE event sequence consumed by useDesktopSSEChat.</li>
+    <li><span class="badge unknown">unknown</span>Local executor delegated tool call IPC handler implementation.</li>
+    <li><span class="badge unknown">unknown</span>Runtime decision logic for 'sendImmediately' vs 'prefill' prompt hand-off mode per task.</li>
+    <li><span class="badge unknown">unknown</span>Complete wire shape of ChatWindowSnapshot across Electron IPC.</li>
+    <li><span class="badge unknown">unknown</span>Whether assistant-ui adapter reads stores reactively or via subscription.</li>
+    <li><span class="badge unknown">unknown</span>Full set of routing events in InputClarificationEvent and rendering flow.</li>
+    <li><span class="badge risk">risk</span>How document intake consent flows through ChatSurface and local file grants.</li>
+    <li><span class="badge unknown">unknown</span>Implementation of BiInsightHost ChatBi embed mode.</li>
+  </ul>
+
+  <!-- ============ NEXT MOVE ============ -->
+  <h2>Next Move</h2>
+  <div class="next-move">
+    <ol>
+      <li><strong>Close the process-isolation gaps first.</strong> The highest-leverage risks all concern where untrusted work executes: the extraction supervisor, the bundled-script Python runtime, and the speech subprocess. Confirm each spawn path, its sandbox profile (macOS Seatbelt / Windows v1 tier), and env scrubbing in <code>electron/document-intake/extraction-supervisor.ts</code>, <code>electron/script-runner/</code>, and <code>electron/speech/speech-helper.ts</code>.</li>
+      <li><strong>Pin ADR-0015.</strong> The decision matrix carries a gap: ADR-0015 is in the series but absent from diagram evidence. Read <code>docs/adr/0015-*.md</code> and slot it into the matrix so the 0012–0016 chain is complete.</li>
+      <li><strong>Verify the dispatch acknowledgement model.</strong> Resolve whether <code>dispatchToolCall</code> is fire-and-forget or await-on-reply, and whether it retries — this governs how delegated local tool results settle back onto the run timeline.</li>
+      <li><strong>Document the IPC wiring seams.</strong> Approval gate, document intake, and the three TtlRegistry clock adapters are all composed in <code>electron/main.ts</code> but not yet traced end-to-end; capturing these closes the largest cluster of pure-information unknowns.</li>
+      <li><strong>Render-verify this pack.</strong> Open the file in a browser with network access (Mermaid loads from CDN) and confirm all eight diagrams render, then fold any newly confirmed facts back into the affected diagrams.</li>
+    </ol>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="pack-foot">
+    <p>
+      Read-only generated artifact. Lives in the gitignored <code>tmp/</code> directory
+      (<code>tmp/arch-visual-pack.html</code>) and is never committed to the repo tree.
+      Diagrams render client-side via Mermaid 11 loaded from a CDN, so an active network
+      connection is required to view them. Every entry under Risks &amp; Unknowns is an
+      unverified gap, not an asserted fact.
+    </p>
+  </footer>
+
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { useMaxWidth: true, htmlLabels: true },
+    sequence: { useMaxWidth: true }
+  });
+</script>
+</body>
+</html>
