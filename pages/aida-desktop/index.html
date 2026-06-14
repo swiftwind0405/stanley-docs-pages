@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AidaWork Desktop — Architecture Visual Pack</title>
+<title>AidaWork Desktop — 架构可视化包</title>
 <style>
   :root {
     --bg: #0b0f17;
@@ -187,61 +187,56 @@
 <div class="container">
 
   <header class="pack-head">
-    <h1>AidaWork Desktop — Architecture Visual Pack</h1>
-    <p class="subtitle">Source-grounded architecture briefing &middot; 6 perspectives &middot; aida-desktop (Electron + Vite + React)</p>
+    <h1>AidaWork Desktop — 架构可视化包</h1>
+    <p class="subtitle">源码有据架构简报 &middot; 6 个视角 &middot; aida-desktop (Electron + Vite + React)</p>
   </header>
 
   <!-- ============ VERDICT ============ -->
-  <h2>Verdict</h2>
+  <h2>结论</h2>
   <div class="verdict">
-    A typed-IPC Electron host where a trusted React renderer streams chat over SSE and a server orchestrator delegates high-risk local tool calls to a TTL-governed, approval-gated hybrid local executor — security-conscious and well-layered, but several execution-isolation and runtime-spawn boundaries remain unconfirmed.
+    一个基于类型化 IPC 的 Electron 宿主：受信任的 React 渲染器通过 SSE 流式传输聊天，服务端编排器将高风险本地工具调用委托给受 TTL 治理、需审批的混合本地执行器——安全意识强、分层清晰，但若干执行隔离与运行时 spawn 边界仍未确认。
   </div>
 
   <!-- ============ SYSTEM MAP ============ -->
-  <h2>System Map</h2>
+  <h2>系统地图</h2>
   <p>
-    The application is a single Electron host split across three trust zones. The
-    <strong>main process</strong> is the composition root: it owns 12 typed IPC namespaces
-    (30 invoke + 8 push channels) wired through <span class="mono">shared/ipc-contract.ts</span>,
-    plus the auth/token exchange, config store, hybrid local executor, document intake, update
-    lifecycle, speech helper, and BI insight channel. The <strong>preload</strong> layer bridges
-    only a derived, narrow surface (<span class="mono">aidaDesktop</span> for the trusted UI;
-    <span class="mono">__aidaBiBridge</span> for the untrusted ChatBI guest). The
-    <strong>renderer</strong> composes the HR workbench shell, the chat logic layer
-    (<span class="mono">src/chat/core</span>), and presentational surfaces.
+    应用是单一 Electron 宿主，划分为三个信任域。<strong>主进程</strong>是组合根：拥有 12 个类型化 IPC 命名空间
+    （30 个 invoke + 8 个 push 通道），通过 <span class="mono">shared/ipc-contract.ts</span> 接线，
+    并负责 auth/token 交换、配置存储、混合本地执行器、文档摄入、更新生命周期、语音辅助与 BI 洞察通道。
+    <strong>preload</strong> 层仅桥接一个派生的窄接口（受信任 UI 用 <span class="mono">aidaDesktop</span>；
+    不受信任的 ChatBI 访客用 <span class="mono">__aidaBiBridge</span>）。<strong>渲染器</strong>组合 HR 工作台壳层、
+    聊天逻辑层（<span class="mono">src/chat/core</span>）与展示面。
   </p>
   <p>
-    Cross-cutting spine: a shared <strong>TtlRegistry</strong> backs every pending-decision state
-    machine (write approvals, transient file grants, document intake, extraction jobs). Token
-    identity is bound to an <strong>endpoint identity</strong> (origin + basePath). Chat is scoped
-    by a derived <strong>chat identity</strong> (tenantId:userId). The six diagrams below traverse
-    this from process topology down to the individual state machines.
+    横切主线：共享 <strong>TtlRegistry</strong> 支撑所有待决策状态机（写入审批、临时文件授权、文档摄入、提取任务）。
+    Token 身份绑定到 <strong>endpoint identity</strong>（origin + basePath）。聊天按派生的
+    <strong>chat identity</strong>（tenantId:userId）划分作用域。下方六张图从进程拓扑一直下探到各状态机。
   </p>
 
   <!-- ============ PERSPECTIVE 1 ============ -->
-  <h2>1 &middot; Process Topology &amp; IPC</h2>
-  <span class="persp-tag">Process Topology &amp; IPC</span>
-  <h3>Process Topology and IPC: Renderer / Preload / Main with 12 typed namespaces</h3>
+  <h2>1 &middot; 进程拓扑与 IPC</h2>
+  <span class="persp-tag">进程拓扑与 IPC</span>
+  <h3>进程拓扑与 IPC：Renderer / Preload / Main 与 12 个类型化命名空间</h3>
   <div class="diagram-wrap">
 <pre class="mermaid">
 flowchart LR
-  subgraph REN["Renderer Process (React)"]
+  subgraph REN["Renderer 进程 (React)"]
     direction TB
-    R["window.aidaDesktop&lt;br/&gt;(trusted UI)"]
-    GUEST["ChatBI guest renderer&lt;br/&gt;(untrusted WebContentsView)"]
+    R["window.aidaDesktop&lt;br/&gt;(受信任 UI)"]
+    GUEST["ChatBI 访客渲染器&lt;br/&gt;(不受信任 WebContentsView)"]
   end
 
-  subgraph PRE["Preload (contextBridge isolation)"]
+  subgraph PRE["Preload (contextBridge 隔离)"]
     direction TB
     BRIDGE["IpcBridge&lt;br/&gt;aidaDesktop exposeInMainWorld"]
-    BIB["__aidaBiBridge&lt;br/&gt;(narrow, no aida-* channels)"]
+    BIB["__aidaBiBridge&lt;br/&gt;(窄接口，无 aida-* 通道)"]
   end
 
-  subgraph MAIN["Main Process (composition root)"]
+  subgraph MAIN["Main 进程 (组合根)"]
     direction TB
-    SERVER["ipc/server.ts&lt;br/&gt;registerInvoke / pushTo wrappers"]
+    SERVER["ipc/server.ts&lt;br/&gt;registerInvoke / pushTo 包装器"]
     CONTRACT["ipc-contract.ts&lt;br/&gt;IpcInvokeContract 30 invoke / IpcPushContract 8 push"]
-    subgraph SVC["Namespace handlers (12 namespaces)"]
+    subgraph SVC["命名空间处理器 (12 个命名空间)"]
       direction TB
       N1["aida-config (4 invoke) / ConfigStore"]
       N2["aida-auth (3 invoke, 1 push)"]
@@ -258,26 +253,26 @@ flowchart LR
     end
   end
 
-  R --&gt;|"property access (invoke / subscribe)"| BRIDGE
-  BRIDGE --&gt;|"derives shape from"| CONTRACT
-  BRIDGE --&gt;|"ipcRenderer.invoke/on to ipcMain.handle"| SERVER
-  SERVER --&gt;|"enforces channel/payload types"| CONTRACT
-  SERVER --&gt;|"dispatches to"| SVC
+  R --&gt;|"属性访问 (invoke / subscribe)"| BRIDGE
+  BRIDGE --&gt;|"从契约派生形状"| CONTRACT
+  BRIDGE --&gt;|"ipcRenderer.invoke/on 到 ipcMain.handle"| SERVER
+  SERVER --&gt;|"强制 channel/payload 类型"| CONTRACT
+  SERVER --&gt;|"分发到"| SVC
 
   GUEST --&gt;|"BiGuestMessage / BiHostMessage"| BIB
-  BIB -.-&gt;|"ipcMain.on BI_GUEST_CHANNEL (no aida-* reach)"| N12
+  BIB -.-&gt;|"ipcMain.on BI_GUEST_CHANNEL (不可达 aida-*)"| N12
 
-  SVC -.-&gt;|"push channels main to renderer (8 total)"| BRIDGE
+  SVC -.-&gt;|"push 通道 main 到 renderer (共 8 个)"| BRIDGE
 </pre>
   </div>
   <div class="evidence">
-    <strong>Evidence:</strong> shared/ipc-contract.ts:375-556 (30 invoke + 8 push), electron/preload.ts:139 (aidaDesktop), electron/chatbi-preload.ts:39 (__aidaBiBridge), electron/ipc/server.ts:1, electron/main.ts:52,139,442,517,560,628,659,767
+    <strong>依据：</strong> shared/ipc-contract.ts:375-556 (30 invoke + 8 push), electron/preload.ts:139 (aidaDesktop), electron/chatbi-preload.ts:39 (__aidaBiBridge), electron/ipc/server.ts:1, electron/main.ts:52,139,442,517,560,628,659,767
   </div>
 
   <!-- ============ PERSPECTIVE 2 ============ -->
-  <h2>2 &middot; Chat &amp; SSE Data Flow</h2>
-  <span class="persp-tag">Chat &amp; SSE Data Flow</span>
-  <h3>Chat &amp; SSE Data Flow: Single Chat-Send Lifecycle</h3>
+  <h2>2 &middot; 聊天与 SSE 数据流</h2>
+  <span class="persp-tag">聊天与 SSE 数据流</span>
+  <h3>聊天与 SSE 数据流：单次 Chat-Send 生命周期</h3>
   <div class="diagram-wrap">
 <pre class="mermaid">
 sequenceDiagram
@@ -342,13 +337,13 @@ sequenceDiagram
 </pre>
   </div>
   <div class="evidence">
-    <strong>Verified from</strong> useDesktopSSEChat.ts:156-459, runTimeline.ts:243-575, sse.ts:9-57, store/message.ts:69-73, plus core/lib/types.ts and runDetail projections
+    <strong>已验证自</strong> useDesktopSSEChat.ts:156-459, runTimeline.ts:243-575, sse.ts:9-57, store/message.ts:69-73, plus core/lib/types.ts and runDetail projections
   </div>
 
   <!-- ============ PERSPECTIVE 3 ============ -->
-  <h2>3 &middot; Auth &amp; Endpoint Identity</h2>
-  <span class="persp-tag">Auth &amp; Endpoint Identity</span>
-  <h3>Backend Token Lifecycle and Endpoint Identity Binding in AIDA Desktop</h3>
+  <h2>3 &middot; 认证与端点身份</h2>
+  <span class="persp-tag">认证与端点身份</span>
+  <h3>后端 Token 生命周期与 AIDA Desktop 中的 Endpoint Identity 绑定</h3>
   <div class="diagram-wrap">
 <pre class="mermaid">
 flowchart TB
@@ -360,85 +355,85 @@ flowchart TB
   classDef unknownNode fill:#2b2030,stroke:#8a5a9c,stroke-width:1px,color:#e8d4f0,stroke-dasharray:5 4
 
   subgraph MAIN["Electron Main / Auth"]
-    MainTs["electron/main.ts&lt;br/&gt;composition root: wires server, store, api client, IPC"]:::main
-    AuthServer["AuthCallbackServer&lt;br/&gt;loopback HTTP catching /auth/callback"]:::main
-    Extract["extractBackendToken&lt;br/&gt;parses query/body across 5 field names"]:::main
-    ApiClient["AidaApiClient&lt;br/&gt;backend token to agent JWT exchange + fetch"]:::main
-    Classify["classifyExchangeError&lt;br/&gt;maps exchange failures to error classes"]:::main
-    ConfigStore["ConfigStore&lt;br/&gt;persisted settings, endpoint intent, token retention"]:::main
+    MainTs["electron/main.ts&lt;br/&gt;组合根：接线 server、store、api client、IPC"]:::main
+    AuthServer["AuthCallbackServer&lt;br/&gt;回环 HTTP 捕获 /auth/callback"]:::main
+    Extract["extractBackendToken&lt;br/&gt;解析 query/body 共 5 个字段名"]:::main
+    ApiClient["AidaApiClient&lt;br/&gt;backend token 到 agent JWT 交换 + fetch"]:::main
+    Classify["classifyExchangeError&lt;br/&gt;将交换失败映射为错误类"]:::main
+    ConfigStore["ConfigStore&lt;br/&gt;持久化设置、endpoint intent、token 保留"]:::main
   end
 
-  subgraph SHARED["Shared Contracts"]
+  subgraph SHARED["共享契约"]
     ConfigTypes["config-types&lt;br/&gt;EndpointPersistenceIntent, resolvePersistedEndpoint, resolvers"]:::shared
     Endpoint["endpoint&lt;br/&gt;canonicalEndpointIdentity, normalizers, validators (origin, basePath)"]:::shared
-    IpcContract["IpcBridge/IpcContract&lt;br/&gt;main/preload/renderer seam for auth/config channels"]:::shared
+    IpcContract["IpcBridge/IpcContract&lt;br/&gt;main/preload/renderer 的 auth/config 通道接缝"]:::shared
   end
 
   subgraph RENDERER["Renderer"]
-    Orchestrator["AuthCallbackOrchestrator&lt;br/&gt;coalesces hash/push/poll channels with dedup"]:::renderer
-    UseAuth["useAuthSession&lt;br/&gt;React adapter, login/logout flow"]:::renderer
+    Orchestrator["AuthCallbackOrchestrator&lt;br/&gt;合并 hash/push/poll 通道并去重"]:::renderer
+    UseAuth["useAuthSession&lt;br/&gt;React 适配器，login/logout 流程"]:::renderer
     Config["src/config.ts&lt;br/&gt;read/write, normalizeSettings, legacy browser token migration"]:::renderer
-    Persist["persistSettingsChange&lt;br/&gt;reason-to-intent mapping, draft building"]:::renderer
-    SettingsHandlers["useSettingsHandlers&lt;br/&gt;user endpoint/token form actions"]:::renderer
-    ChatProvider["ChatProvider&lt;br/&gt;chat identity by tenantId:userId, localStorage scoping, store reset"]:::renderer
+    Persist["persistSettingsChange&lt;br/&gt;reason 到 intent 映射，draft 构建"]:::renderer
+    SettingsHandlers["useSettingsHandlers&lt;br/&gt;用户 endpoint/token 表单操作"]:::renderer
+    ChatProvider["ChatProvider&lt;br/&gt;chat identity 按 tenantId:userId，localStorage 作用域，store 重置"]:::renderer
   end
 
-  subgraph DOCS["Vocabulary & Process"]
+  subgraph DOCS["词汇与流程"]
     ContextMd["CONTEXT.md&lt;br/&gt;Backend token, Endpoint identity, Chat identity, reasons, intents"]:::doc
     AgentsMd["AGENTS.md&lt;br/&gt;layout, setup, Desktop Chat Smoke Test"]:::doc
   end
 
-  subgraph INTENTS["Settings change reason to Endpoint persistence intent"]
-    R1["user-edited-settings -&gt; set-explicit (drop token iff identity changed)"]:::intent
-    R2["apply-legacy-override -&gt; set-explicit (drop token, re-auth)"]:::intent
-    R3["restore-defaults -&gt; restore-default (drop override, keep token iff matches default)"]:::intent
-    R4["silent-update -&gt; keep-current (token-only, endpoint untouched)"]:::intent
+  subgraph INTENTS["Settings change reason 到 Endpoint persistence intent"]
+    R1["user-edited-settings -&gt; set-explicit (identity 变更则丢弃 token)"]:::intent
+    R2["apply-legacy-override -&gt; set-explicit (丢弃 token，重新认证)"]:::intent
+    R3["restore-defaults -&gt; restore-default (丢弃 override，与默认一致则保留 token)"]:::intent
+    R4["silent-update -&gt; keep-current (仅 token，endpoint 不变)"]:::intent
   end
 
-  MainTs --&gt;|"startAuthCallbackServer wires isAllowedOrigin + acceptToken"| AuthServer
-  MainTs --&gt;|"instantiates with configPath + runtimeDefault"| ConfigStore
-  MainTs --&gt;|"injects configStore.read/write for exchange"| ApiClient
-  AuthServer --&gt;|"parse query/body for raw token"| Extract
-  AuthServer --&gt;|"acceptToken: persistAuthCallbackToken exchanges + persists"| ApiClient
-  AuthServer --&gt;|"classifies failures on acceptToken exception"| Classify
-  ApiClient --&gt;|"uses classifyExchangeError for failure mapping"| Classify
-  ApiClient --&gt;|"reads/writes config via injected callbacks"| ConfigStore
+  MainTs --&gt;|"startAuthCallbackServer 接线 isAllowedOrigin + acceptToken"| AuthServer
+  MainTs --&gt;|"以 configPath + runtimeDefault 实例化"| ConfigStore
+  MainTs --&gt;|"注入 configStore.read/write 用于 exchange"| ApiClient
+  AuthServer --&gt;|"解析 query/body 获取 raw token"| Extract
+  AuthServer --&gt;|"acceptToken: persistAuthCallbackToken 交换并持久化"| ApiClient
+  AuthServer --&gt;|"acceptToken 异常时分类失败"| Classify
+  ApiClient --&gt;|"用 classifyExchangeError 映射失败"| Classify
+  ApiClient --&gt;|"通过注入回调读写 config"| ConfigStore
 
-  IpcContract --&gt;|"defines aida-config:* (read, save, restore-default, clearToken)"| ConfigStore
-  IpcContract --&gt;|"defines aida-auth:* callback push/poll"| AuthServer
-  ConfigStore --&gt;|"implements IPC handlers via registerInvoke"| IpcContract
+  IpcContract --&gt;|"定义 aida-config:* (read, save, restore-default, clearToken)"| ConfigStore
+  IpcContract --&gt;|"定义 aida-auth:* callback push/poll"| AuthServer
+  ConfigStore --&gt;|"通过 registerInvoke 实现 IPC 处理器"| IpcContract
 
-  ConfigStore --&gt;|"applies token/endpoint resolvers on write + restore"| ConfigTypes
-  ConfigStore --&gt;|"validates origins/paths, computes effective endpoint"| Endpoint
-  ConfigTypes --&gt;|"imports canonicalEndpointIdentity for identity checks"| Endpoint
+  ConfigStore --&gt;|"写入/恢复时应用 token/endpoint resolvers"| ConfigTypes
+  ConfigStore --&gt;|"校验 origin/path，计算有效 endpoint"| Endpoint
+  ConfigTypes --&gt;|"导入 canonicalEndpointIdentity 做 identity 检查"| Endpoint
 
-  UseAuth --&gt;|"wraps orchestrator for hash/push/poll"| Orchestrator
-  Orchestrator --&gt;|"dispatches onCallback with backendToken + alreadySaved"| UseAuth
-  UseAuth --&gt;|"calls exchangeBackendToken (via config.ts) to verify fresh tokens"| ApiClient
-  UseAuth --&gt;|"persists token, silent-update reason on completeLogin"| Persist
+  UseAuth --&gt;|"包装 orchestrator 处理 hash/push/poll"| Orchestrator
+  Orchestrator --&gt;|"onCallback 分发 backendToken + alreadySaved"| UseAuth
+  UseAuth --&gt;|"调用 exchangeBackendToken (经 config.ts) 验证新 token"| ApiClient
+  UseAuth --&gt;|"持久化 token，completeLogin 时 silent-update reason"| Persist
   UseAuth --&gt;|"readSettings, clearBackendToken, exchangeBackendToken"| Config
-  SettingsHandlers --&gt;|"user form actions: reason-driven writes"| Persist
+  SettingsHandlers --&gt;|"用户表单操作：reason 驱动写入"| Persist
 
-  Persist --&gt;|"applyPersistedSettings with derived EndpointPersistenceIntent"| Config
-  Persist --&gt;|"canonicalEndpointIdentity computes token binding identity"| Endpoint
+  Persist --&gt;|"applyPersistedSettings 带派生 EndpointPersistenceIntent"| Config
+  Persist --&gt;|"canonicalEndpointIdentity 计算 token 绑定 identity"| Endpoint
   Persist -.-&gt;|"reason -&gt; intent"| INTENTS
   Config --&gt;|"resolvePersistedEndpoint, resolvePersistedToken, normalizers"| ConfigTypes
   Config --&gt;|"window.aidaDesktop.config IPC (desktop store adapter)"| ConfigStore
 
-  ChatProvider --&gt;|"reads aidaBase to compute chatProviderKey"| Endpoint
-  ChatProvider --&gt;|"derives chat identity from backend token JWT (tenantId:userId)"| UseAuth
+  ChatProvider --&gt;|"读取 aidaBase 计算 chatProviderKey"| Endpoint
+  ChatProvider --&gt;|"从 backend token JWT 派生 chat identity (tenantId:userId)"| UseAuth
 
-  ChatProvider -.-&gt;|"implements Chat identity scoping"| ContextMd
-  SettingsHandlers -.-&gt;|"implements reasons: user-edited, restore-defaults, apply-legacy"| ContextMd
-  ContextMd -.-&gt;|"referenced as canonical vocabulary"| AgentsMd
+  ChatProvider -.-&gt;|"实现 Chat identity 作用域"| ContextMd
+  SettingsHandlers -.-&gt;|"实现 reasons: user-edited, restore-defaults, apply-legacy"| ContextMd
+  ContextMd -.-&gt;|"作为规范词汇引用"| AgentsMd
 
-  U1["UNKNOWN: TtlRegistry injected clock signature + token TTL impact"]:::unknownNode
-  U2["UNKNOWN: exact exchange endpoint path (only 'api/auth/exchange' visible)"]:::unknownNode
-  U3["UNKNOWN: runtime default computed in electron.vite.config.ts per build mode"]:::unknownNode
-  U4["UNKNOWN: exact backend JWT claim structure (tenantId/userId/hashed fallback)"]:::unknownNode
-  U5["UNKNOWN: ConfigStore.write endpointIntent vs main-ts propagation (versioning)"]:::unknownNode
-  U6["UNKNOWN: legacy migration ordering vs useAuthSession (race on new token)"]:::unknownNode
-  U7["UNKNOWN: orchestrator behavior when window.aidaDesktop.auth is null"]:::unknownNode
+  U1["未知: TtlRegistry 注入 clock 签名 + token TTL 影响"]:::unknownNode
+  U2["未知: 精确 exchange endpoint 路径 (仅见 'api/auth/exchange')"]:::unknownNode
+  U3["未知: electron.vite.config.ts 按构建模式计算的 runtime default"]:::unknownNode
+  U4["未知: 后端 JWT claim 结构 (tenantId/userId/hashed fallback)"]:::unknownNode
+  U5["未知: ConfigStore.write endpointIntent 与 main-ts 传播 (版本化)"]:::unknownNode
+  U6["未知: legacy migration 顺序 vs useAuthSession (新 token 竞态)"]:::unknownNode
+  U7["未知: window.aidaDesktop.auth 为 null 时 orchestrator 行为"]:::unknownNode
 
   ApiClient -.-&gt; U1
   ApiClient -.-&gt; U2
@@ -450,13 +445,13 @@ flowchart TB
 </pre>
   </div>
   <div class="evidence">
-    <strong>Sources:</strong> electron/auth/{auth-callback-server,extract-backend-token,aida-api-client,classify-exchange-error}.ts, electron/{main,config/config-store}.ts, shared/{config-types,endpoint,ipc-contract}.ts, src/{config,useAuthSession,config/persistSettingsChange,app/useSettingsHandlers,auth/auth-callback-orchestrator,chat/ChatProvider}.tsx, CONTEXT.md, AGENTS.md
+    <strong>来源：</strong> electron/auth/{auth-callback-server,extract-backend-token,aida-api-client,classify-exchange-error}.ts, electron/{main,config/config-store}.ts, shared/{config-types,endpoint,ipc-contract}.ts, src/{config,useAuthSession,config/persistSettingsChange,app/useSettingsHandlers,auth/auth-callback-orchestrator,chat/ChatProvider}.tsx, CONTEXT.md, AGENTS.md
   </div>
 
   <!-- ============ PERSPECTIVE 4 ============ -->
-  <h2>4 &middot; Hybrid Local Executor &amp; Write Governance</h2>
-  <span class="persp-tag">Hybrid Local Executor &amp; Write Governance</span>
-  <h3>Hybrid Local Executor and Write Governance: Server-Orchestrated Delegated Local Tool Execution</h3>
+  <h2>4 &middot; 混合本地执行器与写入治理</h2>
+  <span class="persp-tag">混合本地执行器与写入治理</span>
+  <h3>混合本地执行器与写入治理：服务端编排的委托本地工具执行</h3>
   <div class="diagram-wrap">
 <pre class="mermaid">
 flowchart TB
@@ -470,69 +465,69 @@ flowchart TB
   classDef wire fill:#102a2e,stroke:#22d3ee,color:#cffafe,stroke-width:1px;
   classDef unk fill:#2b2b2b,stroke:#52525b,color:#8b8b8b,stroke-dasharray:3 3,stroke-width:1px;
 
-  subgraph Governance["Decision Records (ADRs and Vocabulary)"]
+  subgraph Governance["决策记录 (ADR 与词汇)"]
     direction LR
-    CTX["CONTEXT.md&lt;br/&gt;canonical vocabulary"]:::adr
+    CTX["CONTEXT.md&lt;br/&gt;规范词汇"]:::adr
     A12["ADR-0012&lt;br/&gt;Hybrid-First Local Executor"]:::adr
     A13["ADR-0013&lt;br/&gt;Desktop Write Primitive Policy"]:::adr
     A14["ADR-0014&lt;br/&gt;Transient Grant and Document Intake"]:::adr
     A16["ADR-0016&lt;br/&gt;Bundled Script Runner Contract"]:::adr
-    A12 --&gt;|"supersedes high-risk flow"| A13
-    A12 --&gt;|"supersedes doc payload"| A14
-    A12 --&gt;|"runBundledScript amends no-shell"| A16
+    A12 --&gt;|"取代高风险流程"| A13
+    A12 --&gt;|"取代 doc payload"| A14
+    A12 --&gt;|"runBundledScript 修正 no-shell"| A16
     CTX -.-&gt;|vocab| A12
     CTX -.-&gt;|vocab| A13
     CTX -.-&gt;|vocab| A14
   end
 
-  subgraph Server["Server (aida-agent, cross-repo)"]
+  subgraph Server["Server (aida-agent, 跨仓库)"]
     direction TB
-    ORCH["Server Orchestrator&lt;br/&gt;single agent loop, suspends on delegated calls"]:::wire
-    DELC["Delegated Local Tool Call&lt;br/&gt;domain=desktop in SSE stream"]:::wire
-    ORCH --&gt;|"emits domain=desktop tool_call"| DELC
+    ORCH["Server Orchestrator&lt;br/&gt;单一 agent 循环，委托调用时挂起"]:::wire
+    DELC["Delegated Local Tool Call&lt;br/&gt;SSE 流中 domain=desktop"]:::wire
+    ORCH --&gt;|"发出 domain=desktop tool_call"| DELC
   end
 
   subgraph Renderer["Desktop Renderer (React)"]
     direction TB
-    SSE["useDesktopSSEChat&lt;br/&gt;detect domain=desktop, dispatch, submit result"]:::ui
-    RTL["Run Timeline Reducer&lt;br/&gt;pure event fold"]:::ui
-    MSG["Chat Message Store&lt;br/&gt;applyToMessage seam"]:::ui
-    WCD["WriteConfirmationDialog&lt;br/&gt;path edit, override warning, 10-min timer, batch grant"]:::ui
+    SSE["useDesktopSSEChat&lt;br/&gt;检测 domain=desktop，dispatch，提交结果"]:::ui
+    RTL["Run Timeline Reducer&lt;br/&gt;纯事件折叠"]:::ui
+    MSG["Chat Message Store&lt;br/&gt;applyToMessage 接缝"]:::ui
+    WCD["WriteConfirmationDialog&lt;br/&gt;路径编辑、override 警告、10 分钟计时、批量授权"]:::ui
     SSE --&gt;|"applyToMessage + reducer"| RTL
-    RTL --&gt;|"owns event fold"| MSG
+    RTL --&gt;|"拥有事件折叠"| MSG
   end
 
   subgraph Main["Desktop Electron Main (Hybrid Local Executor)"]
     direction TB
-    IPC["IPC Bridge&lt;br/&gt;ipc-contract.ts, single source for aida-* channels"]:::wire
+    IPC["IPC Bridge&lt;br/&gt;ipc-contract.ts，aida-* 通道单一来源"]:::wire
     REG["IPC Handler Registration&lt;br/&gt;roots, skills, payload, picker, dispatch, write confirm/cancel"]:::svc
     CONTRACT["Local Executor Wire Contract&lt;br/&gt;primitives enum, arg/result shapes, error codes"]:::wire
-    SVC["LocalExecutorService&lt;br/&gt;delegated dispatcher, approval gate, task artifacts"]:::svc
-    CAT["LocalSkillCatalog&lt;br/&gt;root/skill config, consent, session payload builder"]:::svc
-    MAN["Skill Manifest&lt;br/&gt;SKILL.md parser, primitive extraction"]:::svc
-    NARROW["Capability Narrowing&lt;br/&gt;root allowlist intersect skill declared"]:::svc
+    SVC["LocalExecutorService&lt;br/&gt;委托分发器、审批门、task artifacts"]:::svc
+    CAT["LocalSkillCatalog&lt;br/&gt;root/skill 配置、consent、session payload builder"]:::svc
+    MAN["Skill Manifest&lt;br/&gt;SKILL.md 解析器、primitive 提取"]:::svc
+    NARROW["Capability Narrowing&lt;br/&gt;root allowlist 与 skill 声明求交"]:::svc
     PATH["Path Policy&lt;br/&gt;resolveAllowedWritePath, symlink follow-protection"]:::svc
-    GATE["LocalExecutorApprovalGate&lt;br/&gt;pending/executing/completed, 10-min expiry, one-time"]:::gate
-    GRANT["TransientGrantStore&lt;br/&gt;snapshot-bound size+mtime+sha256, session-scoped"]:::gate
+    GATE["LocalExecutorApprovalGate&lt;br/&gt;pending/executing/completed, 10 分钟过期, 一次性"]:::gate
+    GRANT["TransientGrantStore&lt;br/&gt;snapshot 绑定 size+mtime+sha256, session 作用域"]:::gate
     TTL["TtlRegistry&lt;br/&gt;UUID mint, expiresAt, lazy expiry, bounded trim"]:::svc
-    INTAKE["DocumentIntakeService&lt;br/&gt;two-step consent, intake state machine, grant minting"]:::svc
-    BROOT["Bundled Skill Root&lt;br/&gt;reserved aida.builtin, read-only + runBundledScript"]:::svc
-    SINT["Script Integrity Verifier&lt;br/&gt;manifest hash/size, no extra .py/.pth, safe paths"]:::gate
+    INTAKE["DocumentIntakeService&lt;br/&gt;两步 consent、intake 状态机、grant minting"]:::svc
+    BROOT["Bundled Skill Root&lt;br/&gt;保留 aida.builtin, 只读 + runBundledScript"]:::svc
+    SINT["Script Integrity Verifier&lt;br/&gt;manifest hash/size, 无额外 .py/.pth, safe paths"]:::gate
 
-    subgraph ReadP["Read-Only Primitives (execute directly)"]
+    subgraph ReadP["只读 Primitives (直接执行)"]
       direction LR
       P_LIST["listDirectory"]:::readonly
       P_READ["readFile"]:::readonly
       P_RSKILL["readSkillFile"]:::readonly
     end
 
-    subgraph HighP["High-Risk Primitives (approval-gated)"]
+    subgraph HighP["高风险 Primitives (需审批)"]
       direction LR
       P_WRITE["writeFile&lt;br/&gt;approval gate + path policy"]:::highrisk
-      P_RUN["runBundledScript&lt;br/&gt;per-run approval, aida.builtin only"]:::highrisk
+      P_RUN["runBundledScript&lt;br/&gt;每 run 审批, 仅 aida.builtin"]:::highrisk
     end
 
-    subgraph StubP["Stub Primitives — NOT executable (return cancelled)"]
+    subgraph StubP["Stub Primitives — 不可执行 (返回 cancelled)"]
       direction LR
       P_SHELL["shell — NOT executable"]:::stub
       P_MCP["mcp — NOT executable"]:::stub
@@ -540,85 +535,85 @@ flowchart TB
       P_SEC["secret — NOT executable"]:::stub
     end
 
-    subgraph Sources["Wire Sources and Targets (no absolute paths on wire)"]
+    subgraph Sources["Wire 来源与目标 (wire 上无绝对路径)"]
       direction LR
-      SELF["Selected File Source&lt;br/&gt;task-scoped native open dialog, fileId refs"]:::wire
-      GOVR["Grant Overwrite Target&lt;br/&gt;transient grant as write source"]:::wire
-      SAVE["Save Dialog Target&lt;br/&gt;native save dialog, batch grant per runId+sessionId+conversationId"]:::wire
+      SELF["Selected File Source&lt;br/&gt;任务作用域原生打开对话框, fileId refs"]:::wire
+      GOVR["Grant Overwrite Target&lt;br/&gt;临时 grant 作为写入来源"]:::wire
+      SAVE["Save Dialog Target&lt;br/&gt;原生保存对话框, 按 runId+sessionId+conversationId 批量 grant"]:::wire
     end
 
-    IPC --&gt;|"channels defined once"| REG
-    REG --&gt;|"bridges all channels"| SVC
+    IPC --&gt;|"通道唯一定义"| REG
+    REG --&gt;|"桥接所有通道"| SVC
     REG --&gt;|"confirm-write / cancel-write"| GATE
-    CONTRACT --&gt;|"defines event + shapes"| SVC
-    CONTRACT --&gt;|"defines wire shapes"| REG
+    CONTRACT --&gt;|"定义 event + shapes"| SVC
+    CONTRACT --&gt;|"定义 wire shapes"| REG
 
-    SVC --&gt;|"read config snapshot seam"| CAT
-    SVC --&gt;|"high-risk via requireApproval"| GATE
+    SVC --&gt;|"读取 config snapshot 接缝"| CAT
+    SVC --&gt;|"高风险经 requireApproval"| GATE
     SVC --&gt;|"mint + verify grants"| GRANT
-    SVC --&gt;|"execute read-only directly"| ReadP
-    SVC --&gt;|"wrap high-risk"| HighP
-    SVC --&gt;|"query resolveAllowedWritePath"| PATH
+    SVC --&gt;|"直接执行只读"| ReadP
+    SVC --&gt;|"包装高风险"| HighP
+    SVC --&gt;|"查询 resolveAllowedWritePath"| PATH
 
     CAT --&gt;|"readLocalSkillManifest"| MAN
     CAT --&gt;|"narrowCapabilities"| NARROW
-    CAT --&gt;|"create virtual bundled root"| BROOT
+    CAT --&gt;|"创建虚拟 bundled root"| BROOT
 
     GATE --&gt;|"pending write TTL + state"| TTL
     GATE --&gt;|"push pending-write IPC"| WCD
     GRANT --&gt;|"grant TTL, lazy expiry, trim"| TTL
-    INTAKE --&gt;|"intake phase TTL + lifecycle"| TTL
-    INTAKE --&gt;|"mint grants after consent step 1"| GRANT
-    INTAKE -. extraction supervisor unknown .-&gt; EXTRACT
+    INTAKE --&gt;|"intake 阶段 TTL + 生命周期"| TTL
+    INTAKE --&gt;|"consent 步骤 1 后 mint grants"| GRANT
+    INTAKE -. extraction supervisor 未知 .-&gt; EXTRACT
 
-    P_WRITE --&gt;|"validated by"| PATH
-    P_RUN --&gt;|"only aida.builtin may declare"| BROOT
-    P_RUN --&gt;|"verifyBundledScriptTree before spawn"| SINT
+    P_WRITE --&gt;|"经 PATH 校验"| PATH
+    P_RUN --&gt;|"仅 aida.builtin 可声明"| BROOT
+    P_RUN --&gt;|"spawn 前 verifyBundledScriptTree"| SINT
 
     SELF --&gt;|"readFile source=selected_file"| SVC
     GOVR --&gt;|"writeFile target=grant_overwrite"| SVC
-    SAVE --&gt;|"pick-save-path native dialog, relative to root"| REG
+    SAVE --&gt;|"pick-save-path 原生对话框, 相对 root"| REG
   end
 
-  subgraph Unknowns["Unconfirmed / Not Drawn As Shipped"]
+  subgraph Unknowns["未确认 / 未按已发布绘制"]
     direction TB
-    EXTRACT["ExtractionSupervisor (UNCONFIRMED)&lt;br/&gt;spawn path + isolated process IPC unknown"]:::unk
-    PYRT["Python Runtime (UNCONFIRMED)&lt;br/&gt;spawn args, env scrubbing, limits, exists at launch?"]:::unk
-    JAIL["Session Workspace Jail (UNCONFIRMED)&lt;br/&gt;path scheme + impl unknown"]:::unk
-    SBOX["Sandbox Profile (UNCONFIRMED)&lt;br/&gt;macOS Seatbelt path / Windows v1 tier"]:::unk
-    P_RUN -. invokes runtime, shape unknown .-&gt; PYRT
-    P_RUN -. sandbox profile unknown .-&gt; SBOX
-    PATH -. workspace jail unknown .-&gt; JAIL
+    EXTRACT["ExtractionSupervisor (UNCONFIRMED)&lt;br/&gt;spawn 路径 + 隔离进程 IPC 未知"]:::unk
+    PYRT["Python Runtime (UNCONFIRMED)&lt;br/&gt;spawn args, env scrubbing, limits, 启动时存在?"]:::unk
+    JAIL["Session Workspace Jail (UNCONFIRMED)&lt;br/&gt;路径方案 + 实现未知"]:::unk
+    SBOX["Sandbox Profile (UNCONFIRMED)&lt;br/&gt;macOS Seatbelt 路径 / Windows v1 tier"]:::unk
+    P_RUN -. 调用 runtime，形状未知 .-&gt; PYRT
+    P_RUN -. sandbox profile 未知 .-&gt; SBOX
+    PATH -. workspace jail 未知 .-&gt; JAIL
   end
 
-  A13 --&gt;|"§2 approval gate state machine"| GATE
+  A13 --&gt;|"§2 approval gate 状态机"| GATE
   A13 --&gt;|"§1 writeFile path policy + error codes"| P_WRITE
-  A13 --&gt;|"§1 resolveAllowedWritePath stricter than read"| PATH
+  A13 --&gt;|"§1 resolveAllowedWritePath 比 read 更严"| PATH
   A14 --&gt;|"§3 grant snapshot identity"| GRANT
-  A14 --&gt;|"§3 two-step consent state machine"| INTAKE
-  A16 --&gt;|"§1 reserved aida.builtin policy"| BROOT
-  A16 --&gt;|"§3 verify manifest before spawn"| SINT
+  A14 --&gt;|"§3 两步 consent 状态机"| INTAKE
+  A16 --&gt;|"§1 保留 aida.builtin 策略"| BROOT
+  A16 --&gt;|"§3 spawn 前 verify manifest"| SINT
 
-  DELC --&gt;|"fires dispatch cycle on originating stream"| SSE
+  DELC --&gt;|"在 originating stream 上触发 dispatch 周期"| SSE
   SSE --&gt;|"dispatchToolCall IPC"| IPC
-  WCD --&gt;|"confirmWrite IPC resolves pending write"| GATE
+  WCD --&gt;|"confirmWrite IPC 解析 pending write"| GATE
 </pre>
   </div>
   <div class="evidence">
-    <strong>Grounded in</strong> docs/adr/0012-0016, apps/desktop/electron/local-executor/* (service, approval-gate, transient-grant-store, path-policy, primitives), shared/local-executor-contract.ts (shell/mcp/network/secret stubbed at local-executor-service.ts:373-378), document-intake/, bundled-skills/, script-runner/, src/chat/useDesktopSSEChat.ts, and CONTEXT.md.
+    <strong>依据</strong> docs/adr/0012-0016, apps/desktop/electron/local-executor/* (service, approval-gate, transient-grant-store, path-policy, primitives), shared/local-executor-contract.ts (shell/mcp/network/secret stubbed at local-executor-service.ts:373-378), document-intake/, bundled-skills/, script-runner/, src/chat/useDesktopSSEChat.ts, and CONTEXT.md.
   </div>
 
   <!-- ============ PERSPECTIVE 5 ============ -->
-  <h2>5 &middot; Pending-Decision State Machines</h2>
-  <span class="persp-tag">Pending-Decision State Machines</span>
-  <h3>Pending-Decision State Machines: TtlRegistry-backed lifecycle flows for user decisions and file operations</h3>
+  <h2>5 &middot; 待决策状态机</h2>
+  <span class="persp-tag">待决策状态机</span>
+  <h3>待决策状态机：TtlRegistry 支撑的用户决策与文件操作生命周期</h3>
 
-  <div class="group-label">TtlRegistry — shared in-memory store</div>
+  <div class="group-label">TtlRegistry — 共享内存存储</div>
   <div class="diagram-wrap">
 <pre class="mermaid">
 stateDiagram-v2
   direction LR
-  state "TtlRegistry — shared in-memory store" as REG {
+  state "TtlRegistry — 共享内存存储" as REG {
     [*] --&gt; minted: mint(build, opts) UUID + expiresAt
     minted --&gt; active: scheduleExpiry (active timer)
     minted --&gt; lazy: lazy expiry (checked on get)
@@ -634,7 +629,7 @@ stateDiagram-v2
 </pre>
   </div>
 
-  <div class="group-label">LocalExecutorApprovalGate — Write Approval</div>
+  <div class="group-label">LocalExecutorApprovalGate — 写入审批</div>
   <div class="diagram-wrap">
 <pre class="mermaid">
 stateDiagram-v2
@@ -654,7 +649,7 @@ stateDiagram-v2
 </pre>
   </div>
 
-  <div class="group-label">TransientGrantStore — File Grant (lazy expiry)</div>
+  <div class="group-label">TransientGrantStore — 文件 Grant（lazy expiry）</div>
   <div class="diagram-wrap">
 <pre class="mermaid">
 stateDiagram-v2
@@ -674,7 +669,7 @@ stateDiagram-v2
 </pre>
   </div>
 
-  <div class="group-label">DocumentIntakeService — 7-phase Intake</div>
+  <div class="group-label">DocumentIntakeService — 7 阶段 Intake</div>
   <div class="diagram-wrap">
 <pre class="mermaid">
 stateDiagram-v2
@@ -701,7 +696,7 @@ stateDiagram-v2
 </pre>
   </div>
 
-  <div class="group-label">ExtractionSupervisor — Job Lifecycle</div>
+  <div class="group-label">ExtractionSupervisor — 任务生命周期</div>
   <div class="diagram-wrap">
 <pre class="mermaid">
 stateDiagram-v2
@@ -721,7 +716,7 @@ stateDiagram-v2
 </pre>
   </div>
 
-  <div class="group-label">SpeechHelper — macOS Subprocess</div>
+  <div class="group-label">SpeechHelper — macOS 子进程</div>
   <div class="diagram-wrap">
 <pre class="mermaid">
 stateDiagram-v2
@@ -765,23 +760,23 @@ stateDiagram-v2
 </pre>
   </div>
   <div class="evidence">
-    <strong>Sources:</strong> electron/ttl-registry.ts; local-executor/approval-gate.ts:106-294 + transient-grant-store.ts:69-211; document-intake/intake-service.ts:182-441 + extraction-supervisor.ts:48-243; speech/speech-helper.ts:102-324; src/update/useUpdateLifecycle.ts:51-243; CONTEXT.md:400-662
+    <strong>来源：</strong> electron/ttl-registry.ts; local-executor/approval-gate.ts:106-294 + transient-grant-store.ts:69-211; document-intake/intake-service.ts:182-441 + extraction-supervisor.ts:48-243; speech/speech-helper.ts:102-324; src/update/useUpdateLifecycle.ts:51-243; CONTEXT.md:400-662
   </div>
 
   <!-- ============ PERSPECTIVE 6 ============ -->
-  <h2>6 &middot; Renderer Composition (App Shell)</h2>
-  <span class="persp-tag">Renderer Composition (App Shell)</span>
-  <h3>Renderer Composition: App Shell Bootstrap, Hooks, and Surfaces</h3>
+  <h2>6 &middot; 渲染器组合（应用壳层）</h2>
+  <span class="persp-tag">渲染器组合（应用壳层）</span>
+  <h3>渲染器组合：应用壳层 Bootstrap、Hooks 与 Surfaces</h3>
   <div class="diagram-wrap">
 <pre class="mermaid">
 flowchart TB
   App["App.tsx&lt;br/&gt;(Shell Layout Root)"]
 
-  subgraph HUB["Orchestration Hub"]
+  subgraph HUB["编排中枢"]
     Boot["useAppBootstrap&lt;br/&gt;(Init Sequence and Bootstrap Seam)"]
   end
 
-  subgraph HOOKS["Composed Hooks and Pure Modules"]
+  subgraph HOOKS["组合的 Hooks 与纯模块"]
     Auth["useAuthSession&lt;br/&gt;(Auth Lifecycle and Token Management)"]
     Cap["useCapabilityFetch&lt;br/&gt;(Raw Agent and Skill Fetch)"]
     Gating["workbenchGating&lt;br/&gt;(Pure Gating Functions)"]
@@ -793,7 +788,7 @@ flowchart TB
     HrExp["hrExperience.tsx&lt;br/&gt;(HR-Specific Task Metadata)"]
   end
 
-  subgraph STORES["Chat Logic Layer (Stores and Transport)"]
+  subgraph STORES["聊天逻辑层 (Stores and Transport)"]
     Provider["ChatProvider&lt;br/&gt;(Chat Identity and Store Scope)"]
     SessStore["useChatSessionStore&lt;br/&gt;(Session CRUD and Agent Catalog)"]
     MsgStore["useChatMessageStore&lt;br/&gt;(Message Timeline and Streaming)"]
@@ -804,7 +799,7 @@ flowchart TB
     RtAdapter["AidaAssistantRuntimeAdapter&lt;br/&gt;(assistant-ui Bridge)"]
   end
 
-  subgraph SURFACES["Presentational Surfaces (Leaves)"]
+  subgraph SURFACES["展示面 (Leaves)"]
     Sidebar["AppSidebar&lt;br/&gt;(Brand, Search, Nav, Workspaces, Conversations, Account)"]
     Home["WorkbenchHome&lt;br/&gt;(HR Workbench Home - Greeting, Tasks, Automation)"]
     CPanel["ChatPanel&lt;br/&gt;(Chat Drawer Container)"]
@@ -817,7 +812,7 @@ flowchart TB
     Sched["ScheduledTasksView&lt;br/&gt;(Automation View)"]
   end
 
-  App --&gt;|"composes to sequence boot"| Boot
+  App --&gt;|"组合以顺序 boot"| Boot
 
   Boot --&gt;|"Step 1: settings plus legacy migration"| Auth
   Boot --&gt;|"Step 2a: raw agents plus skills"| Cap
@@ -869,158 +864,157 @@ flowchart TB
 </pre>
   </div>
   <div class="evidence">
-    <strong>Grounded in</strong> apps/desktop/src/App.tsx, src/app/{useAppBootstrap,useShellNavigation,useSettingsHandlers}.ts, src/{useAuthSession,workspace/*,hooks/useCapabilityFetch,chat/*,chat/core/store/*}.ts(x), and CONTEXT.md lines 32, 351, 359, 414, 541, 561, 576, 750.
+    <strong>依据</strong> apps/desktop/src/App.tsx, src/app/{useAppBootstrap,useShellNavigation,useSettingsHandlers}.ts, src/{useAuthSession,workspace/*,hooks/useCapabilityFetch,chat/*,chat/core/store/*}.ts(x), and CONTEXT.md lines 32, 351, 359, 414, 541, 561, 576, 750.
   </div>
 
   <!-- ============ DECISION MATRIX ============ -->
-  <h2>Decision Matrix</h2>
-  <p>Maps each architecture decision record (ADR-0012 through ADR-0016) to the perspective it governs and the primary code path that implements it.</p>
+  <h2>决策矩阵</h2>
+  <p>将各架构决策记录（ADR-0012 至 ADR-0016）映射到其治理的视角与主要实现代码路径。</p>
   <table>
     <thead>
       <tr>
         <th>ADR</th>
-        <th>Decision</th>
-        <th>Perspective</th>
-        <th>Primary Code Path</th>
+        <th>决策</th>
+        <th>视角</th>
+        <th>主要代码路径</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>ADR-0012</td>
-        <td>Hybrid-First Local Executor — server orchestrator suspends and delegates <span class="mono">domain=desktop</span> tool calls to the desktop; supersedes earlier high-risk and doc-payload flows.</td>
-        <td>Hybrid Local Executor &amp; Write Governance; Chat &amp; SSE Data Flow</td>
+        <td>Hybrid-First Local Executor — 服务端编排器挂起并将 <span class="mono">domain=desktop</span> 工具调用委托给桌面端；取代较早的高风险与 doc-payload 流程。</td>
+        <td>混合本地执行器与写入治理；聊天与 SSE 数据流</td>
         <td><code>apps/desktop/electron/local-executor/local-executor-service.ts</code>; <code>apps/desktop/src/chat/useDesktopSSEChat.ts</code></td>
       </tr>
       <tr>
         <td>ADR-0013</td>
-        <td>Desktop Write Primitive Policy — §1 <span class="mono">writeFile</span> path policy + error codes (<span class="mono">resolveAllowedWritePath</span> stricter than read); §2 approval-gate state machine (pending/executing/completed, 10-min expiry, one-time).</td>
-        <td>Hybrid Local Executor &amp; Write Governance; Pending-Decision State Machines</td>
+        <td>Desktop Write Primitive Policy — §1 <span class="mono">writeFile</span> 路径策略 + 错误码（<span class="mono">resolveAllowedWritePath</span> 比 read 更严）；§2 approval-gate 状态机（pending/executing/completed，10 分钟过期，一次性）。</td>
+        <td>混合本地执行器与写入治理；待决策状态机</td>
         <td><code>apps/desktop/electron/local-executor/approval-gate.ts:106-294</code>; <code>apps/desktop/electron/local-executor/path-policy.ts</code></td>
       </tr>
       <tr>
         <td>ADR-0014</td>
-        <td>Transient Grant &amp; Document Intake — §3 grant snapshot identity (size+mtime+sha256, session-scoped) and two-step consent intake state machine.</td>
-        <td>Hybrid Local Executor &amp; Write Governance; Pending-Decision State Machines</td>
+        <td>Transient Grant &amp; Document Intake — §3 grant snapshot identity（size+mtime+sha256，session 作用域）与两步 consent intake 状态机。</td>
+        <td>混合本地执行器与写入治理；待决策状态机</td>
         <td><code>apps/desktop/electron/local-executor/transient-grant-store.ts:69-211</code>; <code>apps/desktop/electron/document-intake/intake-service.ts:182-441</code></td>
       </tr>
       <tr>
         <td>ADR-0015</td>
-        <td>Not explicitly carried in the supplied diagram evidence; the executor/governance chain references ADR-0012, 0013, 0014, and 0016. Treated as a gap in the source material rather than an asserted decision. <span class="badge unknown">unknown</span></td>
-        <td>(unconfirmed — see Risks &amp; Unknowns / Next Move)</td>
-        <td><code>docs/adr/0015-*.md</code> (file present in the 0012–0016 series; content not surfaced in diagram evidence)</td>
+        <td>所供图示证据中未明确承载；执行器/治理链引用 ADR-0012、0013、0014 与 0016。视为源材料缺口而非断言决策。 <span class="badge unknown">未知</span></td>
+        <td>（未确认 — 见风险与未知项 / 下一步）</td>
+        <td><code>docs/adr/0015-*.md</code>（0012–0016 系列中存在该文件；图示证据未呈现内容）</td>
       </tr>
       <tr>
         <td>ADR-0016</td>
-        <td>Bundled Script Runner Contract — §1 reserved <span class="mono">aida.builtin</span> read-only root + <span class="mono">runBundledScript</span> (per-run approval); §3 verify manifest hash/size before spawn; amends the no-shell stance.</td>
-        <td>Hybrid Local Executor &amp; Write Governance</td>
-        <td><code>apps/desktop/electron/bundled-skills/</code>; <code>apps/desktop/electron/script-runner/</code> (script integrity verifier)</td>
+        <td>Bundled Script Runner Contract — §1 保留 <span class="mono">aida.builtin</span> 只读根 + <span class="mono">runBundledScript</span>（每 run 审批）；§3 spawn 前 verify manifest hash/size；修正 no-shell 立场。</td>
+        <td>混合本地执行器与写入治理</td>
+        <td><code>apps/desktop/electron/bundled-skills/</code>; <code>apps/desktop/electron/script-runner/</code>（script integrity verifier）</td>
       </tr>
     </tbody>
   </table>
 
   <!-- ============ RISKS & UNKNOWNS ============ -->
-  <h2>Risks &amp; Unknowns</h2>
-  <p>Every item below is carried directly from the per-diagram <span class="mono">unknowns</span> arrays. None is asserted as fact. Items where an unverified boundary could allow incorrect or unsafe behavior are tagged <span class="badge risk">risk</span>; pure information gaps are tagged <span class="badge unknown">unknown</span>.</p>
+  <h2>风险与未知项</h2>
+  <p>以下各项均直接来自各图 <span class="mono">unknowns</span> 数组。无一被断言为事实。若未验证边界可能导致错误或不安全行为，标记为 <span class="badge risk">风险</span>；纯信息缺口标记为 <span class="badge unknown">未知</span>。</p>
 
-  <div class="group-label">Process Topology &amp; IPC</div>
+  <div class="group-label">进程拓扑与 IPC</div>
   <ul class="unknowns">
-    <li><span class="badge unknown">unknown</span>Exact structure of chat window Electron process (separate BrowserWindow or same process as main window).</li>
-    <li><span class="badge risk">risk</span>Whether speech subprocess spawns in main process or separate process.</li>
-    <li><span class="badge unknown">unknown</span>Exact Velopack update mechanism and where lifecycle orchestration runs.</li>
-    <li><span class="badge risk">risk</span>BI_GUEST_CHANNEL ipcMain.on handler implementation details (separate from aida-bi: invoke channels).</li>
-    <li><span class="badge risk">risk</span>Whether document extraction supervisor spawns as separate process.</li>
-    <li><span class="badge unknown">unknown</span>Exact memory/disk persistence lifecycle of TtlRegistry entries across restart.</li>
-    <li><span class="badge unknown">unknown</span>Whether LocalExecutorService runs in main thread or worker.</li>
-    <li><span class="badge risk">risk</span>Electron security policy (CSP, preload isolation, context isolation details).</li>
-    <li><span class="badge risk">risk</span>Whether ipcMain.on handlers outside aida-* namespace exist and what they do.</li>
-    <li><span class="badge unknown">unknown</span>Exact transport for OperationHistory recording across IPC boundaries.</li>
+    <li><span class="badge unknown">未知</span>聊天窗口 Electron 进程的确切结构（独立 BrowserWindow 还是与主窗口同进程）。</li>
+    <li><span class="badge risk">风险</span>语音子进程是在主进程 spawn 还是独立进程。</li>
+    <li><span class="badge unknown">未知</span>Velopack 更新的确切机制及生命周期编排运行位置。</li>
+    <li><span class="badge risk">风险</span>BI_GUEST_CHANNEL ipcMain.on 处理器实现细节（与 aida-bi: invoke 通道分离）。</li>
+    <li><span class="badge risk">风险</span>文档提取 supervisor 是否作为独立进程 spawn。</li>
+    <li><span class="badge unknown">未知</span>TtlRegistry 条目跨重启的内存/磁盘持久化生命周期。</li>
+    <li><span class="badge unknown">未知</span>LocalExecutorService 运行在主线程还是 worker。</li>
+    <li><span class="badge risk">风险</span>Electron 安全策略（CSP、preload 隔离、context isolation 细节）。</li>
+    <li><span class="badge risk">风险</span>aida-* 命名空间外是否存在 ipcMain.on 处理器及其行为。</li>
+    <li><span class="badge unknown">未知</span>OperationHistory 跨 IPC 边界记录的确切传输方式。</li>
   </ul>
 
-  <div class="group-label">Chat &amp; SSE Data Flow</div>
+  <div class="group-label">聊天与 SSE 数据流</div>
   <ul class="unknowns">
-    <li><span class="badge unknown">unknown</span>Exact message on /api/chat endpoint when local executor context includes documents or skills (buildLocalExecutorPayload assembly details beyond src/chat/useDesktopSSEChat.ts visible code).</li>
-    <li><span class="badge unknown">unknown</span>Specific SSE frame format for keepalive events (implementation only silently skips 'keepalive' event type in sse.ts:40).</li>
-    <li><span class="badge risk">risk</span>Desktop token refresh concurrency model detailed semantics (refreshPromise single-flight dedup logic in src/chat/core/lib/auth.ts has MAX_RETRY=2 with RETRY_DELAYS but timing guarantees unclear).</li>
-    <li><span class="badge unknown">unknown</span>Server-side routing decision mechanism for Unified Entry capability routing (server-side aida-agent orchestrator behavior, not visible in desktop code).</li>
-    <li><span class="badge unknown">unknown</span>Process preview item limit enforcement (PROCESS_PREVIEW_ITEM_LIMIT=5 defined but truncation logic within buildProcessPreviewItems not fully read).</li>
-    <li><span class="badge risk">risk</span>Task artifact save confirmation lifecycle timeouts and expiry (TtlRegistry in electron/ttl-registry.ts owns expiry but renderer confirm modal timeout details not explored).</li>
-    <li><span class="badge risk">risk</span>Async iteration order between stream_connected/session_bound/run_bound (relative timing of transport events vs server events when both queue before parseSSEStream iterator yields).</li>
-    <li><span class="badge risk">risk</span>Whether IPC channel window.aidaDesktop.localExecutor.dispatchToolCall reply acknowledgement model (fire-and-forget vs await-on-reply for local_dispatch_settled emission).</li>
-    <li><span class="badge unknown">unknown</span>Desktop orchestrator (marked as deferred v2 in CONTEXT.md, not implemented in v1).</li>
+    <li><span class="badge unknown">未知</span>本地执行器上下文含文档或 skill 时 /api/chat 端点的确切消息（buildLocalExecutorPayload 组装细节超出 src/chat/useDesktopSSEChat.ts 可见代码）。</li>
+    <li><span class="badge unknown">未知</span>keepalive 事件的 SSE 帧格式（实现仅在 sse.ts:40 静默跳过 'keepalive' event type）。</li>
+    <li><span class="badge risk">风险</span>桌面 token 刷新并发模型详细语义（src/chat/core/lib/auth.ts 中 refreshPromise single-flight 去重逻辑有 MAX_RETRY=2 与 RETRY_DELAYS，但时序保证不明）。</li>
+    <li><span class="badge unknown">未知</span>统一入口能力路由的服务端路由决策机制（服务端 aida-agent 编排器行为，桌面代码不可见）。</li>
+    <li><span class="badge unknown">未知</span>process preview 条目限制执行（PROCESS_PREVIEW_ITEM_LIMIT=5 已定义，但 buildProcessPreviewItems 内截断逻辑未完整阅读）。</li>
+    <li><span class="badge risk">风险</span>Task artifact 保存确认生命周期超时与过期（electron/ttl-registry.ts 中 TtlRegistry 负责过期，但渲染器确认模态框超时细节未探索）。</li>
+    <li><span class="badge risk">风险</span>stream_connected/session_bound/run_bound 之间的异步迭代顺序（parseSSEStream 迭代器 yield 前两者均排队时的 transport 与 server 事件相对时序）。</li>
+    <li><span class="badge risk">风险</span>IPC 通道 window.aidaDesktop.localExecutor.dispatchToolCall 的回复确认模型（fire-and-forget 还是 await-on-reply 以发出 local_dispatch_settled）。</li>
+    <li><span class="badge unknown">未知</span>桌面编排器（CONTEXT.md 标记为 v2 延后，v1 未实现）。</li>
   </ul>
 
-  <div class="group-label">Auth &amp; Endpoint Identity</div>
+  <div class="group-label">认证与端点身份</div>
   <ul class="unknowns">
-    <li><span class="badge unknown">unknown</span>What is the exact contract/signature of the injected clock parameter in TtlRegistry and how it impacts token TTL decisions (CONTEXT.md mentions it but lifecycle not fully visible in code).</li>
-    <li><span class="badge unknown">unknown</span>What specific AIDA backend endpoint path is used for backend-token to agent-JWT exchange (only 'api/auth/exchange' is visible in code).</li>
-    <li><span class="badge unknown">unknown</span>How does the runtime default endpoint get computed at build time in electron.vite.config.ts for different build modes (referenced but not shown).</li>
-    <li><span class="badge unknown">unknown</span>What is the exact JWT claim structure the backend issues (CONTEXT.md references tenantId/userId/hashed-token fallback but claim names vary between implementations).</li>
-    <li><span class="badge risk">risk</span>What happens when ConfigStore.write receives an endpointIntent field but the main-ts composition has not been updated to propagate it (versioning/compatibility).</li>
-    <li><span class="badge risk">risk</span>Whether the legacy browser-token migration runs in-place before useAuthSession starts or after, and if there's a race condition when a new token arrives during migration.</li>
-    <li><span class="badge risk">risk</span>What the exact behavior is when window.aidaDesktop.auth is null (browser environment) for the three-channel orchestrator — does it silently skip poll/push or throw.</li>
+    <li><span class="badge unknown">未知</span>TtlRegistry 中注入 clock 参数的精确契约/签名及其对 token TTL 决策的影响（CONTEXT.md 提及但代码中生命周期未完全可见）。</li>
+    <li><span class="badge unknown">未知</span>backend-token 到 agent-JWT 交换使用的 AIDA 后端端点路径（代码中仅见 'api/auth/exchange'）。</li>
+    <li><span class="badge unknown">未知</span>electron.vite.config.ts 中不同构建模式的 runtime default endpoint 如何在构建时计算（有引用但未展示）。</li>
+    <li><span class="badge unknown">未知</span>后端签发的 JWT claim 结构（CONTEXT.md 引用 tenantId/userId/hashed-token fallback，但 claim 名因实现而异）。</li>
+    <li><span class="badge risk">风险</span>ConfigStore.write 收到 endpointIntent 字段但 main-ts 组合未更新以传播时会发生什么（版本/兼容性）。</li>
+    <li><span class="badge risk">风险</span>legacy browser-token migration 是在 useAuthSession 启动前就地运行还是之后，迁移期间新 token 到达是否存在竞态。</li>
+    <li><span class="badge risk">风险</span>window.aidaDesktop.auth 为 null（浏览器环境）时三通道 orchestrator 的确切行为——静默跳过 poll/push 还是抛出异常。</li>
   </ul>
 
-  <div class="group-label">Hybrid Local Executor &amp; Write Governance</div>
+  <div class="group-label">混合本地执行器与写入治理</div>
   <ul class="unknowns">
-    <li><span class="badge risk">risk</span>Exact RPC/protocol shape for Python runtime invocation in runBundledScript (spawn args, env scrubbing, resource limits).</li>
-    <li><span class="badge risk">risk</span>Desktop-side Seatbelt/sandbox profile path for macOS script runner (ADR-0016 §4 mentions availability).</li>
-    <li><span class="badge risk">risk</span>Windows v1 sandbox tier details (documented as 'weaker environment-and-limits tier').</li>
-    <li><span class="badge unknown">unknown</span>Exact xor between aida-agent ADR-0017 §5 'untrusted document text handoff' and CONTEXT.md §5 'audit/retention treatment'.</li>
-    <li><span class="badge unknown">unknown</span>Whether app-bundled Python runtime exists at launch or is gated post-MVP.</li>
-    <li><span class="badge risk">risk</span>Session workspace jail implementation details and path scheme.</li>
-    <li><span class="badge unknown">unknown</span>Approved output root auto-provisioning logic for Local File Mode.</li>
-    <li><span class="badge risk">risk</span>Whether useDesktopSSEChat fire-and-forget dispatch (void call) includes retry logic or is one-shot.</li>
-    <li><span class="badge risk">risk</span>Extraction supervisor spawn path and isolated process IPC wire shape.</li>
-    <li><span class="badge unknown">unknown</span>Exact 'task artifact' indexing key structure (artifactId to absolutePath to metadata projection to wire).</li>
+    <li><span class="badge risk">风险</span>runBundledScript 中 Python runtime 调用的精确 RPC/协议形状（spawn args、env scrubbing、资源限制）。</li>
+    <li><span class="badge risk">风险</span>macOS script runner 的桌面端 Seatbelt/sandbox profile 路径（ADR-0016 §4 提及可用性）。</li>
+    <li><span class="badge risk">风险</span>Windows v1 sandbox tier 细节（文档为「较弱的环境与限制 tier」）。</li>
+    <li><span class="badge unknown">未知</span>aida-agent ADR-0017 §5「不受信任文档文本交接」与 CONTEXT.md §5「审计/保留处理」之间的精确 xor。</li>
+    <li><span class="badge unknown">未知</span>应用捆绑的 Python runtime 启动时是否存在或 MVP 后 gated。</li>
+    <li><span class="badge risk">风险</span>Session workspace jail 实现细节与路径方案。</li>
+    <li><span class="badge unknown">未知</span>Local File Mode 的 approved output root 自动 provisioning 逻辑。</li>
+    <li><span class="badge risk">风险</span>useDesktopSSEChat fire-and-forget dispatch（void call）是否含重试逻辑或一次性。</li>
+    <li><span class="badge risk">风险</span>Extraction supervisor spawn 路径与隔离进程 IPC wire 形状。</li>
+    <li><span class="badge unknown">未知</span>「task artifact」索引键结构（artifactId 到 absolutePath 到 metadata projection 到 wire）。</li>
   </ul>
 
-  <div class="group-label">Pending-Decision State Machines</div>
+  <div class="group-label">待决策状态机</div>
   <ul class="unknowns">
-    <li><span class="badge unknown">unknown</span>Exact wiring of LocalExecutorApprovalGate into the IPC message loop (emit callback signature not fully specified in approval-gate.ts; located in main.ts registration).</li>
-    <li><span class="badge unknown">unknown</span>Exact wiring of DocumentIntakeService into IPC channels (intake-service.ts is agnostic; main.ts composes it).</li>
-    <li><span class="badge risk">risk</span>Memory limit tuning strategy for ExtractionSupervisor (memoryLimitMb = 512 default, but platform-specific real memory probe function not visible).</li>
-    <li><span class="badge unknown">unknown</span>Extraction heartbeat silence threshold behavior (heartbeatSilenceMs defined in extraction-limits.ts, not fully visible).</li>
-    <li><span class="badge risk">risk</span>Whether extraction-supervisor's in-process extraction path has memory guards (appears to fall back to extractDocumentText directly without memory monitoring).</li>
-    <li><span class="badge unknown">unknown</span>Exact clock source for all three TtlRegistry adapters at wiring time in main.ts (all accept now option, default to Date.now, but actual injection point not visible).</li>
-    <li><span class="badge risk">risk</span>SpeechHelper's handling of already-killed subprocess on second stop() call (child.killed is checked but stderr behavior on double-kill unclear).</li>
-    <li><span class="badge unknown">unknown</span>Update lifecycle progress semantics (progress clamped to 0-100 during downloading, but source of percent value from onDownloadProgress callback not specified).</li>
-    <li><span class="badge risk">risk</span>Document intake snapshot re-verification when grant is stale: whether file change is always-error or allows user re-consent (resetForReconfirmation path suggests user re-consent, not automatic retry).</li>
+    <li><span class="badge unknown">未知</span>LocalExecutorApprovalGate 接入 IPC 消息循环的确切接线（approval-gate.ts 中 emit 回调签名未完全指定；位于 main.ts 注册）。</li>
+    <li><span class="badge unknown">未知</span>DocumentIntakeService 接入 IPC 通道的确切接线（intake-service.ts 与 IPC 无关；main.ts 组合）。</li>
+    <li><span class="badge risk">风险</span>ExtractionSupervisor 内存限制调优策略（memoryLimitMb = 512 默认，但平台特定真实内存探测函数不可见）。</li>
+    <li><span class="badge unknown">未知</span>Extraction heartbeat 静默阈值行为（extraction-limits.ts 定义 heartbeatSilenceMs，未完全可见）。</li>
+    <li><span class="badge risk">风险</span>extraction-supervisor 进程内提取路径是否有内存防护（似乎直接回退 extractDocumentText 而无内存监控）。</li>
+    <li><span class="badge unknown">未知</span>main.ts 接线时三个 TtlRegistry 适配器的精确 clock 来源（均接受 now 选项，默认 Date.now，但实际注入点不可见）。</li>
+    <li><span class="badge risk">风险</span>SpeechHelper 对第二次 stop() 时已 killed 子进程的处理（检查 child.killed，但 double-kill 时 stderr 行为不明）。</li>
+    <li><span class="badge unknown">未知</span>Update lifecycle progress 语义（downloading 期间 progress 钳制 0-100，但 onDownloadProgress 回调中 percent 来源未指定）。</li>
+    <li><span class="badge risk">风险</span>Document intake 在 grant stale 时 snapshot 重新验证：文件变更是否总是 error 还是允许用户 re-consent（resetForReconfirmation 路径暗示用户 re-consent，非自动重试）。</li>
   </ul>
 
-  <div class="group-label">Renderer Composition (App Shell)</div>
+  <div class="group-label">渲染器组合（应用壳层）</div>
   <ul class="unknowns">
-    <li><span class="badge unknown">unknown</span>Exact format and location of ChatIdentity derivation in ChatProvider from backend token JWT.</li>
-    <li><span class="badge unknown">unknown</span>BiInsightHost implementation details and how it differs from ChatPanel.</li>
-    <li><span class="badge unknown">unknown</span>Precise AgentEvent union types and SSE event sequence consumed by useDesktopSSEChat.</li>
-    <li><span class="badge unknown">unknown</span>Local executor delegated tool call IPC handler implementation.</li>
-    <li><span class="badge unknown">unknown</span>Runtime decision logic for 'sendImmediately' vs 'prefill' prompt hand-off mode per task.</li>
-    <li><span class="badge unknown">unknown</span>Complete wire shape of ChatWindowSnapshot across Electron IPC.</li>
-    <li><span class="badge unknown">unknown</span>Whether assistant-ui adapter reads stores reactively or via subscription.</li>
-    <li><span class="badge unknown">unknown</span>Full set of routing events in InputClarificationEvent and rendering flow.</li>
-    <li><span class="badge risk">risk</span>How document intake consent flows through ChatSurface and local file grants.</li>
-    <li><span class="badge unknown">unknown</span>Implementation of BiInsightHost ChatBi embed mode.</li>
+    <li><span class="badge unknown">未知</span>ChatProvider 从 backend token JWT 派生 ChatIdentity 的精确格式与位置。</li>
+    <li><span class="badge unknown">未知</span>BiInsightHost 实现细节及其与 ChatPanel 的差异。</li>
+    <li><span class="badge unknown">未知</span>useDesktopSSEChat 消费的 AgentEvent 联合类型与 SSE 事件序列。</li>
+    <li><span class="badge unknown">未知</span>Local executor 委托工具调用 IPC 处理器实现。</li>
+    <li><span class="badge unknown">未知</span>各任务「sendImmediately」vs「prefill」prompt 交接模式的运行时决策逻辑。</li>
+    <li><span class="badge unknown">未知</span>ChatWindowSnapshot 跨 Electron IPC 的完整 wire 形状。</li>
+    <li><span class="badge unknown">未知</span>assistant-ui adapter 是响应式读 store 还是通过 subscription。</li>
+    <li><span class="badge unknown">未知</span>InputClarificationEvent 中 routing events 完整集合与渲染流程。</li>
+    <li><span class="badge risk">风险</span>Document intake consent 如何经 ChatSurface 与 local file grants 流转。</li>
+    <li><span class="badge unknown">未知</span>BiInsightHost ChatBi embed 模式实现。</li>
   </ul>
 
   <!-- ============ NEXT MOVE ============ -->
-  <h2>Next Move</h2>
+  <h2>下一步</h2>
   <div class="next-move">
     <ol>
-      <li><strong>Close the process-isolation gaps first.</strong> The highest-leverage risks all concern where untrusted work executes: the extraction supervisor, the bundled-script Python runtime, and the speech subprocess. Confirm each spawn path, its sandbox profile (macOS Seatbelt / Windows v1 tier), and env scrubbing in <code>electron/document-intake/extraction-supervisor.ts</code>, <code>electron/script-runner/</code>, and <code>electron/speech/speech-helper.ts</code>.</li>
-      <li><strong>Pin ADR-0015.</strong> The decision matrix carries a gap: ADR-0015 is in the series but absent from diagram evidence. Read <code>docs/adr/0015-*.md</code> and slot it into the matrix so the 0012–0016 chain is complete.</li>
-      <li><strong>Verify the dispatch acknowledgement model.</strong> Resolve whether <code>dispatchToolCall</code> is fire-and-forget or await-on-reply, and whether it retries — this governs how delegated local tool results settle back onto the run timeline.</li>
-      <li><strong>Document the IPC wiring seams.</strong> Approval gate, document intake, and the three TtlRegistry clock adapters are all composed in <code>electron/main.ts</code> but not yet traced end-to-end; capturing these closes the largest cluster of pure-information unknowns.</li>
-      <li><strong>Render-verify this pack.</strong> Open the file in a browser with network access (Mermaid loads from CDN) and confirm all eight diagrams render, then fold any newly confirmed facts back into the affected diagrams.</li>
+      <li><strong>优先闭合进程隔离缺口。</strong> 最高杠杆风险均涉及不受信任工作执行位置：extraction supervisor、bundled-script Python runtime、speech 子进程。在 <code>electron/document-intake/extraction-supervisor.ts</code>、<code>electron/script-runner/</code> 与 <code>electron/speech/speech-helper.ts</code> 中确认各 spawn 路径、沙箱 profile（macOS Seatbelt / Windows v1 tier）与 env scrubbing。</li>
+      <li><strong>钉住 ADR-0015。</strong> 决策矩阵存在缺口：ADR-0015 在系列中但图示证据缺失。阅读 <code>docs/adr/0015-*.md</code> 并填入矩阵，使 0012–0016 链完整。</li>
+      <li><strong>验证 dispatch 确认模型。</strong> 厘清 <code>dispatchToolCall</code> 是 fire-and-forget 还是 await-on-reply，是否重试——这决定委托本地工具结果如何回写到 run timeline。</li>
+      <li><strong>记录 IPC 接线接缝。</strong> Approval gate、document intake 与三个 TtlRegistry clock 适配器均在 <code>electron/main.ts</code> 组合但未端到端追踪；捕获这些可闭合最大簇纯信息未知项。</li>
+      <li><strong>渲染验证本包。</strong> 在浏览器中打开（Mermaid 从 CDN 加载，需网络）确认全部八张图渲染，再将新确认事实回填到受影响图。</li>
     </ol>
   </div>
 
   <!-- ============ FOOTER ============ -->
   <footer class="pack-foot">
     <p>
-      Read-only generated artifact. Lives in the gitignored <code>tmp/</code> directory
-      (<code>tmp/arch-visual-pack.html</code>) and is never committed to the repo tree.
-      Diagrams render client-side via Mermaid 11 loaded from a CDN, so an active network
-      connection is required to view them. Every entry under Risks &amp; Unknowns is an
-      unverified gap, not an asserted fact.
+      只读生成物。位于 gitignored 的 <code>tmp/</code> 目录
+      （<code>tmp/arch-visual-pack.html</code>），从不提交到仓库树。
+      图表通过 Mermaid 11 从 CDN 客户端渲染，查看需活跃网络连接。
+      「风险与未知项」下每一项均为未验证缺口，非断言事实。
     </p>
   </footer>
 

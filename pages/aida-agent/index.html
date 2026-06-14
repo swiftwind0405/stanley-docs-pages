@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>aida-agent &mdash; Architecture Visual Pack</title>
+<title>aida-agent &mdash; 架构可视化包</title>
 <style>
   :root {
     --bg: #0d1117;
@@ -208,61 +208,61 @@
 <div class="container">
 
   <header class="page-head">
-    <h1>aida-agent &mdash; Architecture Visual Pack</h1>
-    <p class="subtitle">Source-grounded briefing &middot; 5 perspectives &middot; generated 2026-06-14 &middot; read-only</p>
+    <h1>aida-agent &mdash; 架构可视化包</h1>
+    <p class="subtitle">源码有据简报 &middot; 5 个视角 &middot; 生成于 2026-06-14 &middot; 只读</p>
   </header>
 
   <!-- ============ VERDICT ============ -->
-  <h2 id="verdict">Verdict</h2>
+  <h2 id="verdict">结论</h2>
   <div class="verdict">
-    <strong>aida-agent</strong> is a pre-production, single-process Hono orchestrator whose backbone &mdash; dual-token auth, capability-first routing, a persistence-backed ReAct loop, write-governance via Action Proposals, and blocking high-risk audit &mdash; is clearly grounded in code and ADRs; its runtime risks are concentrated almost entirely in <em>unverified production topology</em> (no Dockerfile/k8s/wrangler in repo) and in encryption-key-rotation / cross-tenant-isolation enforcement details.
+    <strong>aida-agent</strong> 是一个尚未投产、单进程的 Hono 编排器；其核心骨架——双令牌认证、能力优先路由、持久化 ReAct 循环、通过 Action Proposal 的写入治理，以及阻塞式高风险审计——在代码与 ADR 中有清晰依据；其运行时风险几乎完全集中在<em>未经验证的生产拓扑</em>（仓库中无 Dockerfile/k8s/wrangler）以及加密密钥轮换 / 跨租户隔离执行细节。
   </div>
 
   <!-- ============ SYSTEM MAP ============ -->
-  <h2 id="system-map">System Map</h2>
-  <p>Five perspectives over one codebase. Each diagram is independently sourced; together they trace a request from token to Postgres, the routing/orchestration brain that decides what runs, where processes live, how permission boundaries hold, and how durable state transitions are governed.</p>
+  <h2 id="system-map">系统地图</h2>
+  <p>同一套代码库的五个视角。每张图独立溯源；合起来追踪一次请求从令牌到 Postgres 的完整路径、决定执行内容的路由/编排大脑、进程部署位置、权限边界如何维持，以及持久化状态转换如何受治理。</p>
   <div class="map-grid">
     <div class="map-card">
-      <h4>1 &middot; Data Flow</h4>
-      <p>One <code>/api/chat</code> request lifecycle: Aida JWT &rarr; Gateway &rarr; session binding &rarr; ReAct loop &rarr; SSE events &rarr; Postgres + audit.</p>
+      <h4>1 &middot; 数据流</h4>
+      <p>一次 <code>/api/chat</code> 请求生命周期：Aida JWT &rarr; 网关 &rarr; 会话绑定 &rarr; ReAct 循环 &rarr; SSE 事件 &rarr; Postgres + 审计。</p>
     </div>
     <div class="map-card">
-      <h4>2 &middot; Agent Orchestration</h4>
-      <p>Capability-first router pipeline, the shared ReAct loop, tool gating/risk, child-run agent-as-tool, and local workbench dispatch.</p>
+      <h4>2 &middot; 代理编排</h4>
+      <p>能力优先路由管道、共享 ReAct 循环、工具门控/风险、子运行 agent-as-tool，以及本地工作台调度。</p>
     </div>
     <div class="map-card">
-      <h4>3 &middot; Deployment</h4>
-      <p>Dev/local process topology and external dependencies. Production topology is <em>not present in the repo</em>.</p>
+      <h4>3 &middot; 部署</h4>
+      <p>开发/本地进程拓扑与外部依赖。生产拓扑<em>不在仓库中</em>。</p>
     </div>
     <div class="map-card">
-      <h4>4 &middot; Permissions</h4>
-      <p>Dual-token boundary, write governance via Action Proposals, blocking-audit safety gates, route-decision encryption + admin access.</p>
+      <h4>4 &middot; 权限</h4>
+      <p>双令牌边界、通过 Action Proposal 的写入治理、阻塞式审计安全门、路由决策加密 + 管理员访问。</p>
     </div>
     <div class="map-card">
-      <h4>5 &middot; State Machines</h4>
-      <p>ActionProposal, PendingInteraction, and CapabilityRoute status lifecycles and their cross-coupling.</p>
+      <h4>5 &middot; 状态机</h4>
+      <p>ActionProposal、PendingInteraction 与 CapabilityRoute 状态生命周期及其交叉耦合。</p>
     </div>
   </div>
 
   <!-- ============ PERSPECTIVE 1: DATA FLOW ============ -->
-  <h2 id="data-flow">Data Flow</h2>
-  <span class="perspective-tag">Data Flow</span>
-  <h3>Data Flow: One /api/chat Request Lifecycle (Aida JWT to SSE to Postgres)</h3>
+  <h2 id="data-flow">数据流</h2>
+  <span class="perspective-tag">数据流</span>
+  <h3>数据流：一次 /api/chat 请求生命周期（Aida JWT 到 SSE 到 Postgres）</h3>
   <div class="diagram-wrap">
     <pre class="mermaid">
 sequenceDiagram
     autonumber
-    actor Client as "Client (Aida JWT)"
-    participant GW as "Gateway (Hono Auth)"
-    participant Bind as "Session Binding"
+    actor Client as "客户端 (Aida JWT)"
+    participant GW as "网关 (Hono Auth)"
+    participant Bind as "会话绑定"
     participant RT as "OrchestratorRuntime"
-    participant Orch as "Orchestrator (ReAct)"
+    participant Orch as "编排器 (ReAct)"
     participant Gate as "ToolCallGate"
-    participant LLM as "LLM Stream (AI SDK)"
-    participant Tool as "Tool Backend (Spring Boot)"
-    participant Router as "Capability Router"
-    participant PG as "Postgres Stores"
-    participant Audit as "Audit Pipeline (WAL + Sink)"
+    participant LLM as "LLM 流 (AI SDK)"
+    participant Tool as "工具后端 (Spring Boot)"
+    participant Router as "能力路由"
+    participant PG as "Postgres 存储"
+    participant Audit as "审计管道 (WAL + Sink)"
 
     Note over Client,GW: auth.ts:76-194 + shared/types.ts:243-257
     Client->>GW: "Authorization: Bearer Aida-JWT"
@@ -280,12 +280,12 @@ sequenceDiagram
     Note over GW,Client: chat-routes.ts:283-330 streamSSE
     GW->>Client: "SSE open: session_bound event"
 
-    alt agentId === '' (Unified Entry)
+    alt agentId === '' (统一入口)
         Note over GW,Router: chat-routes.ts:333-407 + routing/router.ts (ADR-0016)
         GW->>Router: "CapabilityRouter.route(message)"
         Router->>Client: "capability_route_decision event"
         Router->>RT: "routed: child agent run or local workbench"
-    else agentId specified (Agent-Bound)
+    else agentId specified (代理绑定)
         Note over GW,RT: chat-routes.ts:410-459
         GW->>RT: "runtime.resolveAndRun(input, localExecutor?)"
     end
@@ -352,26 +352,26 @@ sequenceDiagram
     </pre>
   </div>
   <div class="caption">
-    <b>Evidence:</b> Grounded in <code>packages/agent/src/gateway/{auth.ts:76-194, chat-routes.ts:125-891, session-binding.ts:82-280, orchestrator-runtime.ts:126-196}</code>, <code>src/orchestrator/{agent.ts:232, drive-react-loop.ts:30-100, round.ts:82-100, tool-executor.ts:17-100, run.ts:27-90, persistence-helpers.ts:43-100}</code>, <code>src/shared/types.ts:13-257</code>, <code>src/audit/pipeline.ts</code>; ADR-0003/0016/0018/0020 and CONTEXT.md.
+    <b>依据：</b>溯源自 <code>packages/agent/src/gateway/{auth.ts:76-194, chat-routes.ts:125-891, session-binding.ts:82-280, orchestrator-runtime.ts:126-196}</code>、<code>src/orchestrator/{agent.ts:232, drive-react-loop.ts:30-100, round.ts:82-100, tool-executor.ts:17-100, run.ts:27-90, persistence-helpers.ts:43-100}</code>、<code>src/shared/types.ts:13-257</code>、<code>src/audit/pipeline.ts</code>；ADR-0003/0016/0018/0020 与 CONTEXT.md。
   </div>
 
   <!-- ============ PERSPECTIVE 2: AGENT ORCHESTRATION ============ -->
-  <h2 id="orchestration">Agent Orchestration</h2>
-  <span class="perspective-tag">Agent Orchestration</span>
-  <h3>Agent Orchestration: Capability-First Routing and Orchestrator Loop</h3>
+  <h2 id="orchestration">代理编排</h2>
+  <span class="perspective-tag">代理编排</span>
+  <h3>代理编排：能力优先路由与编排器循环</h3>
   <div class="diagram-wrap">
     <pre class="mermaid">
 flowchart TB
-  entry["Unified Entry<br/>(統一入口)"]
+  entry["统一入口<br/>(Unified Entry)"]
 
-  subgraph ROUTER["CapabilityRouter pipeline (ADR-0016 K2)"]
+  subgraph ROUTER["CapabilityRouter 管道 (ADR-0016 K2)"]
     direction TB
-    rf["ruleFilter<br/>tenant enable + role gate pre-filter"]
-    lc["llmClassify<br/>single-step LLM, malformed fallback"]
-    dr["resolveCapabilityDispatchability<br/>executor binding availability"]
-    ds["decideStatus<br/>pure decision matrix (PRD R17)"]
+    rf["ruleFilter<br/>租户启用 + 角色门控预过滤"]
+    lc["llmClassify<br/>单步 LLM，畸形回退"]
+    dr["resolveCapabilityDispatchability<br/>执行器绑定可用性"]
+    ds["decideStatus<br/>纯决策矩阵 (PRD R17)"]
     dec["CapabilityRouteDecision<br/>routed / refused / clarifying / route_only"]
-    store["PgRouteDecisionStore<br/>persist + SSE (R-Y encryption)"]
+    store["PgRouteDecisionStore<br/>持久化 + SSE (R-Y 加密)"]
     rf -->|"filtered candidates (non-empty)"| lc
     lc -->|"classification + candidates"| dr
     dr -->|"dispatchability map"| ds
@@ -381,25 +381,25 @@ flowchart TB
 
   rc["Router Context<br/>recent msgs, child-run output filtered"]
 
-  subgraph LOOP["Orchestrator loop"]
+  subgraph LOOP["编排器循环"]
     direction TB
-    react["driveReActLoop<br/>shared lightweight ReAct (no persistence)"]
-    gate["ToolCallGate<br/>same-round / duplicate / cross-turn guards"]
+    react["driveReActLoop<br/>共享轻量 ReAct（无持久化）"]
+    gate["ToolCallGate<br/>同轮 / 重复 / 跨轮守卫"]
     risk["evaluateToolRisk<br/>metadata + riskLevel: allow / confirm / reject"]
-    disc["discoverTools<br/>write tools loaded per-run"]
-    reqc["requestConfirmation<br/>round-1 write gate (sideEffectLevel=read)"]
+    disc["discoverTools<br/>每轮加载写入工具"]
+    reqc["requestConfirmation<br/>第 1 轮写入门控 (sideEffectLevel=read)"]
     react -->|"executeRound calls gate.decide"| gate
     gate -->|"def.riskDecision"| risk
     gate -->|"markConfirmationRequested()"| reqc
   end
 
-  td["Tool Disclosure<br/>read always mounted, write via discoverTools"]
+  td["Tool Disclosure<br/>读工具始终挂载，写工具经 discoverTools"]
   pend["PendingInteraction<br/>confirm / ask_user / local_tool_result, once-only, expiry"]
   prop["Action Proposal<br/>confirm|reject, approverTarget, executionPayload, hash"]
 
-  subgraph CHILD["Child Run (agent_as_tool, ADR-0016 K1/K7)"]
+  subgraph CHILD["子运行 (agent_as_tool, ADR-0016 K1/K7)"]
     direction TB
-    allow["assertChildAgentAllowed<br/>seed_key allowlist"]
+    allow["assertChildAgentAllowed<br/>seed_key 白名单"]
     resolve["Child Agent resolver<br/>seed_key to ChildAgentRuntime"]
     minc["minimizeContext<br/>recent N msgs + extracted inputs"]
     runc["runChildAgent<br/>child agent as tool, parent_run_id lineage"]
@@ -410,16 +410,16 @@ flowchart TB
     runc --> fwd
   end
 
-  subgraph WORKBENCH["Local Workbench (local_workbench, K5)"]
+  subgraph WORKBENCH["本地工作台 (local_workbench, K5)"]
     direction TB
-    lwb["dispatchLocalWorkbench<br/>direct desktop primitives (no child run)"]
+    lwb["dispatchLocalWorkbench<br/>直接桌面原语（无子运行）"]
     lexec["buildLocalExecutorRuntime<br/>read/write tool defs + prompt suffix"]
     lexec -->|"filtered tools"| lwb
   end
 
-  subgraph RUNTIME["Startup assembly (ADR-0018)"]
+  subgraph RUNTIME["启动组装 (ADR-0018)"]
     direction TB
-    ort["OrchestratorRuntime<br/>startup-assembled infrastructure"]
+    ort["OrchestratorRuntime<br/>启动时组装的基础设施"]
     tc["TurnConfig<br/>per-turn LLM, tools, prompt, skills"]
     ort -->|"resolveAgentPipeline"| tc
   end
@@ -447,23 +447,23 @@ flowchart TB
     </pre>
   </div>
   <div class="caption">
-    <b>Evidence:</b> Grounded in <code>packages/agent/src/routing/{router,rule-filter,llm-classifier,dispatchability,decide-status}.ts</code>, <code>src/orchestrator/{tool-call-gate,risk-policy,drive-react-loop,internal-tools,local-workbench-dispatch}.ts</code>, <code>src/orchestrator/agent-as-tool/{child-run-orchestrator,allowed-child-agents,context-minimization,transparent-forward}.ts</code>, <code>src/gateway/{unified-entry,local-executor,orchestrator-runtime}.ts</code>, and docs/adr/0010/0016/0017/0018.
+    <b>依据：</b>溯源自 <code>packages/agent/src/routing/{router,rule-filter,llm-classifier,dispatchability,decide-status}.ts</code>、<code>src/orchestrator/{tool-call-gate,risk-policy,drive-react-loop,internal-tools,local-workbench-dispatch}.ts</code>、<code>src/orchestrator/agent-as-tool/{child-run-orchestrator,allowed-child-agents,context-minimization,transparent-forward}.ts</code>、<code>src/gateway/{unified-entry,local-executor,orchestrator-runtime}.ts</code>，以及 docs/adr/0010/0016/0017/0018。
   </div>
 
   <!-- ============ PERSPECTIVE 3: DEPLOYMENT ============ -->
-  <h2 id="deployment">Deployment</h2>
-  <span class="perspective-tag">Deployment</span>
-  <h3>Deployment Topology &mdash; Runtime Processes &amp; External Dependencies (dev/local, prod infra NOT in repo)</h3>
+  <h2 id="deployment">部署</h2>
+  <span class="perspective-tag">部署</span>
+  <h3>部署拓扑 &mdash; 运行时进程与外部依赖（dev/local，生产基础设施不在仓库中）</h3>
   <div class="diagram-wrap">
     <pre class="mermaid">
 flowchart LR
-  subgraph clients["Clients"]
+  subgraph clients["客户端"]
     chat["Shared Chat Packages<br/>(../../ai-chat)"]
     desktop["AIDA Desktop Host<br/>(../aida-desktop, Hybrid Local Executor)"]
     web["React Admin Web<br/>(Vite dev, port 8887)"]
   end
 
-  subgraph agentproc["Hono Agent process (port 3000)"]
+  subgraph agentproc["Hono Agent 进程 (port 3000)"]
     agent["Hono Agent<br/>(packages/agent)"]
     orch["OrchestratorRuntime"]
     sched["Scheduler Engine<br/>(BullMQ Worker)"]
@@ -471,13 +471,13 @@ flowchart LR
     toolclient["@aida/tool-client<br/>(HTTP Tool Client)"]
   end
 
-  subgraph datastores["Data stores"]
+  subgraph datastores["数据存储"]
     configdb[("Config DB<br/>(Postgres)")]
     redisSess[("Redis<br/>(Session Dedup + Backend Token cache)")]
     redisSched[("Redis<br/>(BullMQ Scheduler)")]
   end
 
-  subgraph external["External services"]
+  subgraph external["外部服务"]
     nacos["Nacos<br/>(Service Discovery + Config)"]
     authsvc["caidao-auth-service<br/>(OAuth2)"]
     springboot["Spring Boot Tool Backend<br/>(caidaocloud-ai-service)"]
@@ -512,25 +512,25 @@ flowchart LR
   agent <-->|"Webhook + WebSocket; IM message webhooks + user binding"| feishu
   audit -.->|"Optional Postgres audit sink"| configdb
 
-  prodUNKNOWN{{"UNKNOWN: production deployment topology<br/>NOT in repo &mdash; no Dockerfile / k8s / wrangler; project not yet shipped"}}
-  agentproc -.->|"how this runs in prod is unverified"| prodUNKNOWN
+  prodUNKNOWN{{"未知：生产部署拓扑<br/>不在仓库中 &mdash; 无 Dockerfile / k8s / wrangler；项目尚未发布"}}
+  agentproc -.->|"生产环境运行方式未经验证"| prodUNKNOWN
 
   classDef unknown fill:#3a2a00,stroke:#d99000,stroke-width:2px,color:#ffd97a,stroke-dasharray:5 4;
   class prodUNKNOWN unknown;
     </pre>
   </div>
   <div class="caption">
-    <b>Evidence:</b> Grounded in <code>packages/agent/src/config.ts</code> (PORT 3000, toolBackendUrl, authServiceUrl, scheduler/backendToken Redis URLs, configDbUrl, llmBaseUrl), <code>packages/web/vite.config.ts</code> (port 8887 + /api /admin /healthz /aida-work proxy to localhost:3000), <code>packages/agent/src/index.ts</code>, <code>nacos.ts</code>, <code>scheduler/engine.ts</code>, <code>gateway/channels/feishu + dedup/redis</code>, CONTEXT.md / AGENTS.md; verified no Dockerfile/docker-compose/k8s/wrangler exist in repo.
+    <b>依据：</b>溯源自 <code>packages/agent/src/config.ts</code>（PORT 3000、toolBackendUrl、authServiceUrl、scheduler/backendToken Redis URLs、configDbUrl、llmBaseUrl）、<code>packages/web/vite.config.ts</code>（port 8887 + /api /admin /healthz /aida-work 代理到 localhost:3000）、<code>packages/agent/src/index.ts</code>、<code>nacos.ts</code>、<code>scheduler/engine.ts</code>、<code>gateway/channels/feishu + dedup/redis</code>、CONTEXT.md / AGENTS.md；已确认仓库中不存在 Dockerfile/docker-compose/k8s/wrangler。
   </div>
 
   <!-- ============ PERSPECTIVE 4: PERMISSIONS ============ -->
-  <h2 id="permissions">Permissions</h2>
-  <span class="perspective-tag">Permissions</span>
-  <h3>Permissions: Dual-Token Boundary, Write Governance and Blocking-Audit Safety</h3>
+  <h2 id="permissions">权限</h2>
+  <span class="perspective-tag">权限</span>
+  <h3>权限：双令牌边界、写入治理与阻塞式审计安全</h3>
   <div class="diagram-wrap">
     <pre class="mermaid">
 flowchart TB
-  subgraph TOKENS["Dual-Token Boundary (ADR-0001)"]
+  subgraph TOKENS["双令牌边界 (ADR-0001)"]
     direction TB
     EXCHANGE["Token Exchange<br/>/api/auth/exchange<br/>(only bootstrap path)"]
     AIDA["Aida JWT (HS256)<br/>Client to Agent auth<br/>30d expiry"]
@@ -541,7 +541,7 @@ flowchart TB
     AUTHZCACHE -->|"pre-caches identity"| EXCHANGE
   end
 
-  subgraph GATE["Request-Scoped Auth and Propagation"]
+  subgraph GATE["请求级认证与传播"]
     direction TB
     AUTHMW["authMiddleware<br/>verify Aida JWT signature"]
     CLAIMS["JWT Claims Validation<br/>tenantId + userId required<br/>empId, roles optional"]
@@ -559,7 +559,7 @@ flowchart TB
 
   AIDA -->|"Authorization: Bearer"| AUTHMW
 
-  subgraph WRITEGOV["Write Governance — Action Proposals"]
+  subgraph WRITEGOV["写入治理 — Action Proposals"]
     direction TB
     GATE_TC["ToolCallGate<br/>write enters execution or creates Proposal"]
     RISKEVAL["Risk Policy Evaluator<br/>evaluateToolRisk()"]
@@ -585,7 +585,7 @@ flowchart TB
 
   ALS -->|"TenantContext supplies tenantId/userId"| GATE_TC
 
-  subgraph APPROVAL["Approval Authorization"]
+  subgraph APPROVAL["审批授权"]
     direction TB
     TARGETVAL["ApproverTarget Validation<br/>requester | user:ID<br/>(deferred: role: dynamic: notify:)"]
     CONFIRMRULE["Confirm Rules<br/>high-risk cannot use requester<br/>requires explicit user:ID"]
@@ -603,7 +603,7 @@ flowchart TB
 
   PROPOSAL --> PISHELL
 
-  subgraph BLOCKING["Blocking-Audit Safety Gates"]
+  subgraph BLOCKING["阻塞式审计安全门"]
     direction TB
     EMIT["AuditPipeline.emit()<br/>fire-and-forget<br/>(sync for high-risk)"]
     EMITWAIT["AuditPipeline.emitAndWait()<br/>strong sync, must succeed first"]
@@ -620,7 +620,7 @@ flowchart TB
     EMITPARAMS --> EMIT
   end
 
-  subgraph AUDITSTRUCT["Audit Event Model"]
+  subgraph AUDITSTRUCT["审计事件模型"]
     direction TB
     EVTSTRUCT["AuditEvent Structure<br/>id, timestamp, requestId, traceId,<br/>spanId, tenantId, userId, action,<br/>detail, category, severity"]
     CATS["Categories<br/>auth, session, tool_call,<br/>interaction, guardrail, error"]
@@ -633,7 +633,7 @@ flowchart TB
   CLAIMS -.-> JWTFAIL
   ALS -.-> CROSSTENANT
 
-  subgraph ENCRYPT["Route-Decision Encryption and Admin Access"]
+  subgraph ENCRYPT["路由决策加密与管理员访问"]
     direction TB
     AESGCM["AES-256-GCM (CONFIG_ENC_KEY)<br/>IV=12 TAG=16, 32-byte key<br/>route decision originals"]
     LAYERS["R-Y 3 Encryption Layers<br/>(a) original in payload_* columns<br/>(b) redacted view in DB<br/>(c) /admin/audit/read-original decrypt"]
@@ -652,20 +652,20 @@ flowchart TB
     </pre>
   </div>
   <div class="caption">
-    <b>Evidence:</b> Grounded in <code>packages/agent/src</code>: <code>orchestrator/risk-policy.ts</code> (allow|confirm|reject), <code>session/approver-target.ts</code> (requester|user:ID + high-risk deferral), <code>session/action-proposal-store.ts</code> (SHA256 hash, status machine, redaction), <code>audit/pipeline.ts</code> (emit/emitAndWait, ORPHAN_TENANT_ID, TENANT_REQUIRED_CATEGORIES), <code>config/crypto.ts</code> (AES-256-GCM IV=12/TAG=16), <code>gateway/admin-audit-original.ts</code> (audit:read-original scope, self-audit), plus CONTEXT.md/AGENTS.md/ADR-0001.
+    <b>依据：</b>溯源自 <code>packages/agent/src</code>：<code>orchestrator/risk-policy.ts</code>（allow|confirm|reject）、<code>session/approver-target.ts</code>（requester|user:ID + high-risk deferral）、<code>session/action-proposal-store.ts</code>（SHA256 hash、状态机、脱敏）、<code>audit/pipeline.ts</code>（emit/emitAndWait、ORPHAN_TENANT_ID、TENANT_REQUIRED_CATEGORIES）、<code>config/crypto.ts</code>（AES-256-GCM IV=12/TAG=16）、<code>gateway/admin-audit-original.ts</code>（audit:read-original scope、自审计），以及 CONTEXT.md/AGENTS.md/ADR-0001。
   </div>
 
   <!-- ============ PERSPECTIVE 5: STATE MACHINES ============ -->
-  <h2 id="state-machines">State Machines</h2>
-  <span class="perspective-tag">State Machines</span>
-  <h3>State Machines: Action Proposals, Capability Route Decisions, Pending Interactions</h3>
+  <h2 id="state-machines">状态机</h2>
+  <span class="perspective-tag">状态机</span>
+  <h3>状态机：Action Proposal、能力路由决策、Pending Interaction</h3>
   <div class="diagram-wrap">
     <pre class="mermaid">
 ---
-title: ActionProposal &amp; PendingInteraction Status Machines
+title: ActionProposal &amp; PendingInteraction 状态机
 ---
 stateDiagram-v2
-    state "ActionProposal Status Machine" as APTitle
+    state "ActionProposal 状态机" as APTitle
     note right of APTitle
       action-proposal-store.ts:7-14
       privatePayload: cleared on reject, kept on
@@ -673,7 +673,7 @@ stateDiagram-v2
     end note
 
     [*] --> ap_pending
-    state "pending<br/>initial, awaiting decision" as ap_pending
+    state "pending<br/>初始，等待决策" as ap_pending
     state "approved<br/>decision=approved, ready" as ap_approved
     state "rejected<br/>decisionSource policy|human<br/>privatePayload cleared" as ap_rejected
     state "expired<br/>expiresAt deadline passed" as ap_expired
@@ -693,7 +693,7 @@ stateDiagram-v2
     ap_expired --> [*]
     ap_failed --> [*]
 
-    state "PendingInteraction Status Machine" as PITitle
+    state "PendingInteraction 状态机" as PITitle
     note right of PITitle
       shared/types.ts:122-126
       kinds: confirm, ask_user, secret_ref,
@@ -702,7 +702,7 @@ stateDiagram-v2
     end note
 
     [*] --> pi_pending
-    state "pending<br/>initial, not yet responded" as pi_pending
+    state "pending<br/>初始，尚未响应" as pi_pending
     state "approved<br/>user/approver approved" as pi_approved
     state "rejected<br/>user/approver rejected" as pi_rejected
     state "expired<br/>expiresAt passed (once-only)" as pi_expired
@@ -720,174 +720,174 @@ stateDiagram-v2
     </pre>
   </div>
   <div class="caption">
-    <b>Evidence:</b> Sources: <code>packages/agent/src/session/action-proposal-store.ts:7-14,278-340</code>; <code>packages/tool-client/src/types/capability.ts:90-101</code>; <code>packages/agent/src/shared/types.ts:115-126</code>; <code>packages/agent/src/session/pending-interaction-store.ts:141-206</code>; <code>packages/agent/src/routing/{decide-status.ts,route-decision-store.ts:178-189}</code>; docs/adr/0014.
+    <b>依据：</b>来源：<code>packages/agent/src/session/action-proposal-store.ts:7-14,278-340</code>；<code>packages/tool-client/src/types/capability.ts:90-101</code>；<code>packages/agent/src/shared/types.ts:115-126</code>；<code>packages/agent/src/session/pending-interaction-store.ts:141-206</code>；<code>packages/agent/src/routing/{decide-status.ts,route-decision-store.ts:178-189}</code>；docs/adr/0014。
   </div>
   <div class="note-banner">
-    Note &mdash; the third state machine could not be co-rendered inside the single <code>stateDiagram-v2</code> field above. <b>CapabilityRouteStatus</b> (<code>capability.ts:90-101</code>) is a 10-state machine. Confirmed states: <code>intent_clarifying</code>, <code>input_clarifying</code>, <code>refused</code>, <code>chitchat_refused</code>, <code>routed</code>, <code>route_only</code>, <code>executing</code>, <code>awaiting_local_confirm</code>, <code>completed</code>, <code>failed</code>. Confirmed transitions: <code>routed &rarr; executing &rarr; {completed, failed, awaiting_local_confirm &rarr; {completed, failed}}</code> (per <code>decide-status.ts</code>, <code>route-decision-store.ts:178-189</code>).
+    说明 &mdash; 第三个状态机无法与上方单个 <code>stateDiagram-v2</code> 字段共同渲染。<b>CapabilityRouteStatus</b>（<code>capability.ts:90-101</code>）是一个 10 状态机。已确认状态：<code>intent_clarifying</code>、<code>input_clarifying</code>、<code>refused</code>、<code>chitchat_refused</code>、<code>routed</code>、<code>route_only</code>、<code>executing</code>、<code>awaiting_local_confirm</code>、<code>completed</code>、<code>failed</code>。已确认转换：<code>routed &rarr; executing &rarr; {completed, failed, awaiting_local_confirm &rarr; {completed, failed}}</code>（见 <code>decide-status.ts</code>、<code>route-decision-store.ts:178-189</code>）。
   </div>
 
   <!-- ============ DECISION MATRIX ============ -->
-  <h2 id="decision-matrix">Decision Matrix</h2>
-  <p>Each ADR mapped to the perspective(s) it most governs and the code path(s) where the decision is enforced. ADR numbers are as cited in the diagram evidence; mappings are the reviewer's reading of the captions, not new claims about the code.</p>
+  <h2 id="decision-matrix">决策矩阵</h2>
+  <p>每条 ADR 映射到其最主要管辖的视角，以及决策被强制执行的代码路径。ADR 编号与图中依据引用一致；映射关系是审阅者对说明文字的解读，并非对代码的新主张。</p>
   <table>
     <thead>
-      <tr><th>ADR</th><th>Perspective</th><th>Code path (as cited)</th></tr>
+      <tr><th>ADR</th><th>视角</th><th>代码路径（引用处）</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><code>ADR-0001</code> Dual-token model</td>
-        <td>Permissions</td>
-        <td><code>gateway/auth.ts</code>, <code>/api/auth/exchange</code>, TokenProvider + Backend Token cache</td>
+        <td><code>ADR-0001</code> 双令牌模型</td>
+        <td>权限</td>
+        <td><code>gateway/auth.ts</code>、<code>/api/auth/exchange</code>、TokenProvider + Backend Token cache</td>
       </tr>
       <tr>
-        <td><code>ADR-0003</code> Audit pipeline / sink</td>
-        <td>Data Flow; Permissions</td>
-        <td><code>audit/pipeline.ts</code> (emit / emitAndWait), JSONL + optional Postgres sink</td>
+        <td><code>ADR-0003</code> 审计管道 / 接收端</td>
+        <td>数据流；权限</td>
+        <td><code>audit/pipeline.ts</code>（emit / emitAndWait）、JSONL + optional Postgres sink</td>
       </tr>
       <tr>
-        <td><code>ADR-0010</code> Tooling / risk policy</td>
-        <td>Agent Orchestration</td>
-        <td><code>orchestrator/risk-policy.ts</code>, <code>tool-call-gate.ts</code></td>
+        <td><code>ADR-0010</code> 工具 / 风险策略</td>
+        <td>代理编排</td>
+        <td><code>orchestrator/risk-policy.ts</code>、<code>tool-call-gate.ts</code></td>
       </tr>
       <tr>
-        <td><code>ADR-0014</code> Action Proposal lifecycle</td>
-        <td>State Machines; Permissions</td>
-        <td><code>session/action-proposal-store.ts:7-14,278-340</code>; <code>pending-interaction-store.ts:141-206</code></td>
+        <td><code>ADR-0014</code> Action Proposal 生命周期</td>
+        <td>状态机；权限</td>
+        <td><code>session/action-proposal-store.ts:7-14,278-340</code>；<code>pending-interaction-store.ts:141-206</code></td>
       </tr>
       <tr>
-        <td><code>ADR-0016</code> Capability-first routing</td>
-        <td>Agent Orchestration; Data Flow</td>
-        <td><code>routing/{router,rule-filter,llm-classifier,dispatchability,decide-status}.ts</code>; agent-as-tool (K1/K7), local workbench (K5)</td>
+        <td><code>ADR-0016</code> 能力优先路由</td>
+        <td>代理编排；数据流</td>
+        <td><code>routing/{router,rule-filter,llm-classifier,dispatchability,decide-status}.ts</code>；agent-as-tool (K1/K7)、local workbench (K5)</td>
       </tr>
       <tr>
-        <td><code>ADR-0017</code> Server-side desktop write policy</td>
-        <td>Agent Orchestration</td>
-        <td>write gating in <code>risk-policy.ts</code> &rarr; <code>tool-call-gate.ts</code>; local-executor</td>
+        <td><code>ADR-0017</code> 服务端桌面写入策略</td>
+        <td>代理编排</td>
+        <td><code>risk-policy.ts</code> 中的写入门控 &rarr; <code>tool-call-gate.ts</code>；local-executor</td>
       </tr>
       <tr>
-        <td><code>ADR-0018</code> Startup assembly + TurnConfig</td>
-        <td>Data Flow; Agent Orchestration</td>
-        <td><code>orchestrator-runtime.ts:126-196</code>, <code>resolve-and-orchestrate.ts:92-195</code>, ResponseGuard</td>
+        <td><code>ADR-0018</code> 启动组装 + TurnConfig</td>
+        <td>数据流；代理编排</td>
+        <td><code>orchestrator-runtime.ts:126-196</code>、<code>resolve-and-orchestrate.ts:92-195</code>、ResponseGuard</td>
       </tr>
       <tr>
-        <td><code>ADR-0020</code> (cited in Data Flow evidence)</td>
-        <td>Data Flow</td>
-        <td>Referenced alongside <code>chat-routes.ts</code> / orchestrator persistence; exact scope not detailed in captions</td>
+        <td><code>ADR-0020</code>（数据流依据中引用）</td>
+        <td>数据流</td>
+        <td>与 <code>chat-routes.ts</code> / orchestrator persistence 一并引用；说明中未详述具体范围</td>
       </tr>
       <tr>
-        <td>R-Y route-decision encryption</td>
-        <td>Permissions; Agent Orchestration</td>
-        <td><code>config/crypto.ts</code> (AES-256-GCM), <code>PgRouteDecisionStore</code>, <code>gateway/admin-audit-original.ts</code></td>
+        <td>R-Y 路由决策加密</td>
+        <td>权限；代理编排</td>
+        <td><code>config/crypto.ts</code>（AES-256-GCM）、<code>PgRouteDecisionStore</code>、<code>gateway/admin-audit-original.ts</code></td>
       </tr>
     </tbody>
   </table>
 
   <!-- ============ RISKS & UNKNOWNS ============ -->
-  <h2 id="risks-unknowns">Risks &amp; Unknowns</h2>
-  <p>Every item carried in the source diagrams' <code>unknowns</code> lists is reproduced below, unmodified in substance. Each is marked <span class="badge unknown">unknown</span> (a gap in evidence &mdash; not yet observed in code) or <span class="badge risk">risk</span> (an unknown that, if it resolves badly, threatens correctness, security, or operability). None of these is stated as a fact about how the system behaves.</p>
+  <h2 id="risks-unknowns">风险与未知项</h2>
+  <p>下方完整复现源图中 <code>unknowns</code> 列表的全部条目，实质内容未作改动。每条标记为 <span class="badge unknown">未知</span>（证据缺口 &mdash; 代码中尚未观察到）或 <span class="badge risk">风险</span>（若向不利方向落地，将威胁正确性、安全性或可运维性的未知项）。以上均非对系统实际行为的断言。</p>
 
   <div class="unknowns-block">
-    <h3>Data Flow (14)</h3>
+    <h3>数据流 (14)</h3>
     <ul class="unknowns">
-      <li><span class="badge unknown">unknown</span><span>Exact Redis topology for backend token cache (CONFIG_BACKEND_TOKEN_REDIS_URL) and key expiry mechanics.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Concrete Postgres schema tables (columns, indices, partition strategy) for runs/checkpoints/pending_interactions/action_proposals.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Specific LLM provider's tool calling contract details (e.g., how Anthropic vs OpenAI encodes tool_use).</span></li>
-      <li><span class="badge risk">risk</span><span>Desktop app's specific protocol for local_executor payload validation and writeFile overwrite policy interaction.</span></li>
-      <li><span class="badge unknown">unknown</span><span>NACOS service discovery for caidao-ai-service endpoint resolution (isNacosToolBackendManaged, subscribeNacosToolBackend).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Feishu channel IM bot webhook ingestion path and webhook &rarr; chat conversion (createFeishuChannelRegistry).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Scheduler's cron expression parsing and Redis BullMQ queue mechanics (createScheduledTaskRunner, SchedulerEngine).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Exact CapabilityRouter classifier LLM prompt template and confidence signal calculation.</span></li>
-      <li><span class="badge risk">risk</span><span>How Config DB encryption key (CONFIG_ENC_KEY) rotation is handled for decrypting stored provider keys.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Agent memory candidate extraction watermark mechanics and long-term vs short-term TTL distinction (memory-sweep-service.ts, memory-candidate-service.ts).</span></li>
-      <li><span class="badge risk">risk</span><span>Rate limiting bucket topology (TenantRateLimiter quota tracking: how per-tenant token quota is enforced across concurrent requests).</span></li>
-      <li><span class="badge risk">risk</span><span>Exact WAL (Write-Ahead Log) replay sequence on process startup (LocalFileWal.replay mechanics).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Child run lineage cleanup: when/how parent_run_id linkage is pruned from stale child runs.</span></li>
-      <li><span class="badge risk">risk</span><span>Local workbench output target grant validation: what fields in selectedOutputTargetId opaque ID are validated server-side.</span></li>
+      <li><span class="badge unknown">未知</span><span>Backend Token 缓存（CONFIG_BACKEND_TOKEN_REDIS_URL）的确切 Redis 拓扑与键过期机制。</span></li>
+      <li><span class="badge unknown">未知</span><span>runs/checkpoints/pending_interactions/action_proposals 的具体 Postgres 表结构（列、索引、分区策略）。</span></li>
+      <li><span class="badge unknown">未知</span><span>具体 LLM 提供商的工具调用契约细节（例如 Anthropic 与 OpenAI 如何编码 tool_use）。</span></li>
+      <li><span class="badge risk">风险</span><span>桌面应用对 local_executor 载荷校验的具体协议，以及与 writeFile 覆盖策略的交互。</span></li>
+      <li><span class="badge unknown">未知</span><span>NACOS 对 caidao-ai-service 端点解析的服务发现（isNacosToolBackendManaged、subscribeNacosToolBackend）。</span></li>
+      <li><span class="badge unknown">未知</span><span>飞书频道 IM 机器人 webhook 接入路径及 webhook &rarr; chat 转换（createFeishuChannelRegistry）。</span></li>
+      <li><span class="badge unknown">未知</span><span>调度器的 cron 表达式解析与 Redis BullMQ 队列机制（createScheduledTaskRunner、SchedulerEngine）。</span></li>
+      <li><span class="badge unknown">未知</span><span>CapabilityRouter 分类器 LLM 提示词模板的确切内容与置信度信号计算方式。</span></li>
+      <li><span class="badge risk">风险</span><span>Config DB 加密密钥（CONFIG_ENC_KEY）轮换时，如何解密已存储的 provider keys。</span></li>
+      <li><span class="badge unknown">未知</span><span>Agent 记忆候选提取的水位机制，以及长期与短期 TTL 的区分（memory-sweep-service.ts、memory-candidate-service.ts）。</span></li>
+      <li><span class="badge risk">风险</span><span>限流桶拓扑（TenantRateLimiter 配额追踪：并发请求间如何强制 per-tenant token 配额）。</span></li>
+      <li><span class="badge risk">风险</span><span>进程启动时 WAL（Write-Ahead Log）重放的确切顺序（LocalFileWal.replay 机制）。</span></li>
+      <li><span class="badge unknown">未知</span><span>子运行血缘清理：parent_run_id 关联何时/如何从过期子运行中修剪。</span></li>
+      <li><span class="badge risk">风险</span><span>本地工作台输出目标授权校验：selectedOutputTargetId 不透明 ID 中哪些字段在服务端校验。</span></li>
     </ul>
 
-    <h3>Agent Orchestration (12)</h3>
+    <h3>代理编排 (12)</h3>
     <ul class="unknowns">
-      <li><span class="badge risk">risk</span><span>Exact configuration of CONFIG_ENC_KEY rotation and key versioning for route-decision encryption (R-Y layer).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Metrics/SLO targets for routing latency and classification accuracy across tenants (PRD section not included).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Post-MVP strategy for tenant-level capability override and gradual rollout (mentioned as deferred in CONTEXT.md).</span></li>
-      <li><span class="badge risk">risk</span><span>Integration boundary between Hybrid Local Executor desktop synchronization and server-side writeFile timeout/retry semantics (ADR-0017 &sect;6 references but full detail not in provided files).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Exact schema of skillMap (Map&lt;string, DbSkill&gt;) and how it differs from toolSkillMap in TurnConfig (types exist but semantics unclear).</span></li>
-      <li><span class="badge unknown">unknown</span><span>How child-run conversation exclusion (R-Z1) interacts with conversation summarization for multi-turn context recovery.</span></li>
-      <li><span class="badge risk">risk</span><span>Risk Policy decision source precedence when tool metadata + agent config + tenant policy conflict (evaluateToolRisk only covers metadata + riskLevel).</span></li>
-      <li><span class="badge risk">risk</span><span>Detailed behavior of decisionStore.updateStatus() calls in dispatchDecision when child/workbench loops fail midway (update happens before outcome known).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Whether CapabilityRouter.resolveDispatchability runs in parallel or serial; performance implications for large candidate sets.</span></li>
-      <li><span class="badge unknown">unknown</span><span>How local-workbench MAX_ITERATIONS (DEFAULT_MAX_ITERATIONS=10) failure is user-signaled vs error-logged in the unified entry final response.</span></li>
-      <li><span class="badge risk">risk</span><span>Cross-turn write guard's interaction with session resumption after crashes (checkpoints not driven from tool-call-gate).</span></li>
-      <li><span class="badge risk">risk</span><span>Exact format and security implications of operationId UUID leakage in AwaitingConfirmation message vs operationId suppression rationale.</span></li>
+      <li><span class="badge risk">风险</span><span>路由决策加密（R-Y 层）中 CONFIG_ENC_KEY 轮换与密钥版本化的确切配置。</span></li>
+      <li><span class="badge unknown">未知</span><span>跨租户路由延迟与分类准确率的 Metrics/SLO 目标（PRD 章节未纳入）。</span></li>
+      <li><span class="badge unknown">未知</span><span>MVP 后租户级能力覆盖与渐进发布的策略（CONTEXT.md 中提及为延期项）。</span></li>
+      <li><span class="badge risk">风险</span><span>Hybrid Local Executor 桌面同步与服务端 writeFile 超时/重试语义之间的集成边界（ADR-0017 §6 有引用，但所提供文件中细节不全）。</span></li>
+      <li><span class="badge unknown">未知</span><span>skillMap（Map&lt;string, DbSkill&gt;）的确切 schema，及其与 TurnConfig 中 toolSkillMap 的差异（类型存在但语义不清）。</span></li>
+      <li><span class="badge unknown">未知</span><span>子运行会话排除（R-Z1）如何与多轮上下文恢复的会话摘要交互。</span></li>
+      <li><span class="badge risk">风险</span><span>工具 metadata + agent config + 租户策略冲突时，Risk Policy 决策来源的优先级（evaluateToolRisk 仅覆盖 metadata + riskLevel）。</span></li>
+      <li><span class="badge risk">风险</span><span>子运行/工作台循环中途失败时，dispatchDecision 中 decisionStore.updateStatus() 调用的详细行为（在结果已知前即更新）。</span></li>
+      <li><span class="badge unknown">未知</span><span>CapabilityRouter.resolveDispatchability 是并行还是串行执行；对大规模候选集的性能影响。</span></li>
+      <li><span class="badge unknown">未知</span><span>local-workbench MAX_ITERATIONS（DEFAULT_MAX_ITERATIONS=10）失败时，如何向用户呈现 vs 仅记录错误日志（统一入口最终响应）。</span></li>
+      <li><span class="badge risk">风险</span><span>跨轮写入守卫与崩溃后会话恢复的交互（checkpoints 不由 tool-call-gate 驱动）。</span></li>
+      <li><span class="badge risk">风险</span><span>AwaitingConfirmation 消息中 operationId UUID 泄露的确切格式与安全影响，以及 operationId 抑制的理由。</span></li>
     </ul>
 
-    <h3>Deployment (12)</h3>
+    <h3>部署 (12)</h3>
     <ul class="unknowns">
-      <li><span class="badge risk">risk</span><span>Exact deployment model for multiple Hono Agent instances (load balancer setup, sticky sessions for SSE).</span></li>
-      <li><span class="badge risk">risk</span><span>Postgres replication / HA setup for Config DB.</span></li>
-      <li><span class="badge risk">risk</span><span>Redis cluster / sentinel configuration for HA.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Specific Feishu bot webhook registration process and platform details.</span></li>
-      <li><span class="badge unknown">unknown</span><span>AIDA BI (bi domain) backend integration details beyond TOOL_BACKEND_URL_BI + AppKey headers.</span></li>
-      <li><span class="badge risk">risk</span><span>Exact Nacos configuration server address and bootstrap credentials in production.</span></li>
-      <li><span class="badge risk">risk</span><span>LLM provider failover strategy when primary is unavailable.</span></li>
-      <li><span class="badge risk">risk</span><span>Session store behavior when Config DB is unavailable (graceful degradation to in-memory).</span></li>
-      <li><span class="badge risk">risk</span><span>Scheduler cluster behavior if multiple Agent instances are deployed.</span></li>
-      <li><span class="badge risk">risk</span><span>WAL (Write-Ahead Log) persistence strategy and recovery procedure.</span></li>
-      <li><span class="badge risk">risk</span><span>Admin JWT secret rotation / management process.</span></li>
-      <li><span class="badge risk">risk</span><span>Backup and disaster recovery procedures for Config DB and audit data.</span></li>
+      <li><span class="badge risk">风险</span><span>多个 Hono Agent 实例的确切部署模型（负载均衡配置、SSE 粘性会话）。</span></li>
+      <li><span class="badge risk">风险</span><span>Config DB 的 Postgres 复制 / 高可用配置。</span></li>
+      <li><span class="badge risk">风险</span><span>Redis 集群 / Sentinel 高可用配置。</span></li>
+      <li><span class="badge unknown">未知</span><span>飞书机器人 webhook 注册流程与平台细节。</span></li>
+      <li><span class="badge unknown">未知</span><span>AIDA BI（bi domain）后端集成细节，超出 TOOL_BACKEND_URL_BI + AppKey headers 的部分。</span></li>
+      <li><span class="badge risk">风险</span><span>生产环境中 Nacos 配置服务器地址与启动凭据。</span></li>
+      <li><span class="badge risk">风险</span><span>主 LLM 提供商不可用时的故障转移策略。</span></li>
+      <li><span class="badge risk">风险</span><span>Config DB 不可用时 Session Store 的行为（是否优雅降级到内存）。</span></li>
+      <li><span class="badge risk">风险</span><span>部署多个 Agent 实例时 Scheduler 集群行为。</span></li>
+      <li><span class="badge risk">风险</span><span>WAL（Write-Ahead Log）持久化策略与恢复流程。</span></li>
+      <li><span class="badge risk">风险</span><span>Admin JWT secret 轮换 / 管理流程。</span></li>
+      <li><span class="badge risk">风险</span><span>Config DB 与审计数据的备份与灾难恢复流程。</span></li>
     </ul>
 
-    <h3>Permissions (14)</h3>
+    <h3>权限 (14)</h3>
     <ul class="unknowns">
-      <li><span class="badge risk">risk</span><span>Whether decryption key rotation is supported for audit_decryption_access entries created under old keys.</span></li>
-      <li><span class="badge risk">risk</span><span>Exact behavior if Redis connection fails mid-request (is fallback to in-memory atomic or does it split cache state).</span></li>
-      <li><span class="badge risk">risk</span><span>Whether POST /api/auth/authorize validates the returned user's tenantId matches a known organization (or if any tenantId is accepted).</span></li>
-      <li><span class="badge risk">risk</span><span>Timeout and retry policy for /api/users/me backend profile fetch if it fails (does it block auth or proceed with partial context).</span></li>
-      <li><span class="badge risk">risk</span><span>How actionProposals with expired expiresAt are cleaned up (no mention of background sweep; only manual expire() on access).</span></li>
-      <li><span class="badge risk">risk</span><span>Whether ActionProposal.privatePayload is cleared by policy after some retention period, or if admin must manual purge.</span></li>
-      <li><span class="badge risk">risk</span><span>Exact crypto keying model if AIDA_AGENT_EMBED_JWT_SECRET differs from JWT_SECRET (isolation enforced or collocation allowed).</span></li>
-      <li><span class="badge risk">risk</span><span>If a user tries to approve/reject a Proposal for a different tenantId, whether it's caught in approver_authorization or separately.</span></li>
-      <li><span class="badge unknown">unknown</span><span>How role: approver targets will be resolved once role lookup becomes available (will it hit an organization service or tenant config).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Whether ToolRiskDecision.approverTarget can override the Proposal.approverTarget, or if source-of-truth is always in Proposal.</span></li>
-      <li><span class="badge risk">risk</span><span>Whether CONFIG_ENC_KEY rotation is supported or if plaintext audit records survive key changes.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Details on whether /api/auth/authorize rate limiting (5 per 60s per IP) applies equally to legitimate bulk bot onboarding.</span></li>
-      <li><span class="badge risk">risk</span><span>How backend token exchange failures are retried vs abandoned (does agent boot fail or degrade).</span></li>
-      <li><span class="badge risk">risk</span><span>Exact tenant isolation guarantees in PgActionProposalStore.get() &mdash; whether query predicate on tenant_id is enforced at SQL layer or application layer only.</span></li>
+      <li><span class="badge risk">风险</span><span>旧密钥下创建的 audit_decryption_access 条目是否支持解密密钥轮换。</span></li>
+      <li><span class="badge risk">风险</span><span>请求中途 Redis 连接失败时的确切行为（回退到内存是否原子，还是会分裂缓存状态）。</span></li>
+      <li><span class="badge risk">风险</span><span>POST /api/auth/authorize 是否校验返回用户的 tenantId 属于已知组织（还是接受任意 tenantId）。</span></li>
+      <li><span class="badge risk">风险</span><span>/api/users/me 后端 profile 获取失败时的超时与重试策略（是否阻塞认证，还是以部分上下文继续）。</span></li>
+      <li><span class="badge risk">风险</span><span>expiresAt 已过期的 actionProposals 如何清理（未提及后台 sweep；仅在访问时手动 expire()）。</span></li>
+      <li><span class="badge risk">风险</span><span>ActionProposal.privatePayload 是否按策略在保留期后清除，还是需管理员手动 purge。</span></li>
+      <li><span class="badge risk">风险</span><span>若 AIDA_AGENT_EMBED_JWT_SECRET 与 JWT_SECRET 不同，确切的密钥模型（是否强制隔离，还是允许共用）。</span></li>
+      <li><span class="badge risk">风险</span><span>用户尝试审批/拒绝不同 tenantId 的 Proposal 时，是在 approver_authorization 中捕获，还是另有单独检查。</span></li>
+      <li><span class="badge unknown">未知</span><span>role: 审批目标可用后如何解析（会查询组织服务还是租户配置）。</span></li>
+      <li><span class="badge unknown">未知</span><span>ToolRiskDecision.approverTarget 能否覆盖 Proposal.approverTarget，还是 Proposal 始终为唯一真相来源。</span></li>
+      <li><span class="badge risk">风险</span><span>是否支持 CONFIG_ENC_KEY 轮换，还是密钥变更后明文审计记录仍可读。</span></li>
+      <li><span class="badge unknown">未知</span><span>/api/auth/authorize 限流（每 IP 每 60 秒 5 次）是否同等适用于合法批量 bot 接入。</span></li>
+      <li><span class="badge risk">风险</span><span>Backend Token 交换失败时如何重试 vs 放弃（Agent 启动失败还是降级运行）。</span></li>
+      <li><span class="badge risk">风险</span><span>PgActionProposalStore.get() 中 tenant 隔离的确切保证 &mdash; tenant_id 谓词是在 SQL 层还是仅在应用层强制。</span></li>
     </ul>
 
-    <h3>State Machines (11)</h3>
+    <h3>状态机 (11)</h3>
     <ul class="unknowns">
-      <li><span class="badge unknown">unknown</span><span>Exact call site where PendingConfirmation is first written to session.toolState.pendingConfirmation (not found in search; likely in ToolCallGate or write guard flow).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Complete lifecycle of scheduled_task_approval PendingInteractionKind &mdash; no implementation found beyond type definition.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Complete lifecycle of secret_ref PendingInteractionKind &mdash; only exists as type, no visible producer or handler.</span></li>
-      <li><span class="badge risk">risk</span><span>Exact timing and orchestration of when ActionProposal.create() is called relative to PendingInteraction.create(kind=confirm) &mdash; coordination appears implicit.</span></li>
-      <li><span class="badge unknown">unknown</span><span>User-facing message/error strings for route_only status when high-risk capability is not dispatchable.</span></li>
-      <li><span class="badge risk">risk</span><span>AdminJwtSecret and admin-only approval gates for high-risk approverTarget=role:* &mdash; authorization service integration not fully traced.</span></li>
-      <li><span class="badge risk">risk</span><span>Exact idempotency/once-semantics implementation for ActionProposal execution in ToolCallGate (ADR-0014 mentions future slice, not current implementation).</span></li>
-      <li><span class="badge unknown">unknown</span><span>Whether process_restart checkpoint projection is tested in acceptance tests (mentioned in ADR-0014 but test location not confirmed).</span></li>
-      <li><span class="badge risk">risk</span><span>Private payload retention period and cleanup strategy for executed/failed proposals (CONTEXT.md says 'retention policy' but not defined in code).</span></li>
-      <li><span class="badge unknown">unknown</span><span>How 'confirm' PendingInteraction's userId (requester) is populated vs. Proposal's decisionUserId (actual decider) across multi-user approvals.</span></li>
-      <li><span class="badge unknown">unknown</span><span>Second stateDiagram-v2 block for CapabilityRouteStatus (10-state machine, capability.ts:90-101) could not be co-rendered in this single field; confirmed states: intent_clarifying, input_clarifying, refused, chitchat_refused, routed, route_only, executing, awaiting_local_confirm, completed, failed &mdash; transitions: routed&rarr;executing&rarr;{completed,failed,awaiting_local_confirm&rarr;{completed,failed}} (decide-status.ts, route-decision-store.ts:178-189).</span></li>
+      <li><span class="badge unknown">未知</span><span>PendingConfirmation 首次写入 session.toolState.pendingConfirmation 的确切调用点（搜索未找到；可能在 ToolCallGate 或 write guard 流程中）。</span></li>
+      <li><span class="badge unknown">未知</span><span>scheduled_task_approval PendingInteractionKind 的完整生命周期 &mdash; 除类型定义外未找到实现。</span></li>
+      <li><span class="badge unknown">未知</span><span>secret_ref PendingInteractionKind 的完整生命周期 &mdash; 仅存在类型，未见 producer 或 handler。</span></li>
+      <li><span class="badge risk">风险</span><span>ActionProposal.create() 相对 PendingInteraction.create(kind=confirm) 的调用时机与编排 &mdash; 协调关系看似隐式。</span></li>
+      <li><span class="badge unknown">未知</span><span>route_only 状态下高风险能力不可调度时，面向用户的消息/错误字符串。</span></li>
+      <li><span class="badge risk">风险</span><span>AdminJwtSecret 与 high-risk approverTarget=role:* 的管理员专用审批门 &mdash; 授权服务集成未完全追踪。</span></li>
+      <li><span class="badge risk">风险</span><span>ToolCallGate 中 ActionProposal 执行的确切幂等/once 语义实现（ADR-0014 提及未来 slice，非当前实现）。</span></li>
+      <li><span class="badge unknown">未知</span><span>process_restart checkpoint 投影是否在验收测试中覆盖（ADR-0014 提及但测试位置未确认）。</span></li>
+      <li><span class="badge risk">风险</span><span>已执行/失败 Proposal 的 private payload 保留期与清理策略（CONTEXT.md 称有「retention policy」但代码中未定义）。</span></li>
+      <li><span class="badge unknown">未知</span><span>「confirm」PendingInteraction 的 userId（requester）如何填充，与 Proposal 的 decisionUserId（实际决策者）在多用户审批场景下的关系。</span></li>
+      <li><span class="badge unknown">未知</span><span>CapabilityRouteStatus（10 状态机，capability.ts:90-101）的第二个 stateDiagram-v2 块无法在本单一字段中共同渲染；已确认状态：intent_clarifying、input_clarifying、refused、chitchat_refused、routed、route_only、executing、awaiting_local_confirm、completed、failed &mdash; 转换：routed&rarr;executing&rarr;{completed,failed,awaiting_local_confirm&rarr;{completed,failed}}（decide-status.ts、route-decision-store.ts:178-189）。</span></li>
     </ul>
   </div>
 
   <!-- ============ NEXT MOVE ============ -->
-  <h2 id="next-move">Next Move</h2>
+  <h2 id="next-move">下一步</h2>
   <div class="next-move">
     <ol>
-      <li><b>Close the production-topology gap first.</b> Every Deployment unknown stems from there being no Dockerfile/k8s/wrangler in the repo. Decide and commit the prod runtime model (instances, SSE stickiness, Postgres/Redis HA) before the unknowns there become incidents.</li>
-      <li><b>Pin down encryption-key rotation.</b> Three perspectives independently flag <code>CONFIG_ENC_KEY</code> rotation as unresolved (route decisions, audit originals, stored provider keys). Define a key-versioning scheme now while the data set is empty &mdash; this is cheap pre-production and expensive later.</li>
-      <li><b>Verify tenant-isolation enforcement at the SQL layer.</b> Confirm <code>PgActionProposalStore.get()</code> and cross-tenant approval paths enforce <code>tenant_id</code> predicates in the query, not only in application code &mdash; the highest-severity security risk in the Permissions list.</li>
-      <li><b>Specify ActionProposal / PendingInteraction coordination + expiry sweep.</b> The State Machines perspective shows the two lifecycles are coupled implicitly and lack a documented background expiry/cleanup path; write the create-order contract and a sweep job.</li>
-      <li><b>Re-render and validate.</b> This pack is a static reading of code captions &mdash; open it in a browser (network required for the Mermaid CDN), confirm all five diagrams render, then promote confirmed items out of the risk/unknown list as the above investigations land.</li>
+      <li><b>优先补齐生产拓扑缺口。</b>部署视角下的所有未知项均源于仓库中无 Dockerfile/k8s/wrangler。在这些问题演变为事故之前，先确定并固化生产运行时模型（实例数、SSE 粘性、Postgres/Redis HA）。</li>
+      <li><b>明确加密密钥轮换方案。</b>三个视角独立标记 <code>CONFIG_ENC_KEY</code> 轮换未解决（路由决策、审计原文、已存储 provider keys）。在数据集仍为空时定义密钥版本化方案 &mdash; 投产前成本低，投产后代价高。</li>
+      <li><b>验证 SQL 层的租户隔离强制。</b>确认 <code>PgActionProposalStore.get()</code> 与跨租户审批路径在查询中强制 <code>tenant_id</code> 谓词，而非仅在应用代码中 &mdash; 这是权限列表中严重程度最高的安全风险。</li>
+      <li><b>规范 ActionProposal / PendingInteraction 协调与过期 sweep。</b>状态机视角显示两个生命周期隐式耦合，且缺少文档化的后台过期/清理路径；编写创建顺序契约与 sweep 作业。</li>
+      <li><b>重新渲染并验证。</b>本包是对代码说明的静态阅读 &mdash; 在浏览器中打开（Mermaid CDN 需联网），确认五张图均正常渲染，然后随着上述调查落地，将已确认项从风险/未知列表中移出。</li>
     </ol>
   </div>
 
   <!-- ============ FOOTER ============ -->
   <footer class="page-foot">
-    <p>This file is <b>read-only generated</b> &mdash; a static architecture briefing produced from source-grounded captions. It contains no live data and performs no actions.</p>
-    <p>It lives in <code>tmp/arch-visual-pack.html</code>, which is <b>gitignored</b> and intentionally outside the tracked repo tree. Do not commit it; regenerate instead.</p>
-    <p><b>Mermaid needs network</b> to render: diagrams are drawn client-side via the Mermaid v11 ESM module loaded from a CDN. Offline, the <code>&lt;pre class="mermaid"&gt;</code> source text is shown instead of rendered SVG.</p>
+    <p>本文件为<b>只读生成物</b> &mdash; 基于源码有据说明生成的静态架构简报。不含实时数据，不执行任何操作。</p>
+    <p>位于 <code>tmp/arch-visual-pack.html</code>，该路径<b>已被 gitignore</b>，刻意置于受跟踪仓库树之外。请勿提交；应重新生成。</p>
+    <p><b>Mermaid 渲染需联网</b>：图表通过 CDN 加载的 Mermaid v11 ESM 模块在客户端绘制。离线时，<code>&lt;pre class="mermaid"&gt;</code> 将显示源码文本而非渲染后的 SVG。</p>
   </footer>
 
 </div>
