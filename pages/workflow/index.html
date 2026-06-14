@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow Atlas · 23 个工作流可视化地图</title>
+<style>
+:root {
+  --bg: #F7F3EC;
+  --paper: #FFFCF5;
+  --ink: #1C1A18;
+  --ink-2: #4A4641;
+  --ink-3: #8A857F;
+  --ink-4: #C7C0B5;
+  --line: #E4DDD0;
+  --line-soft: #EEE8DC;
+  --p0: #C4453C;
+  --p0-bg: #FBEFEC;
+  --p1: #B07A2C;
+  --p1-bg: #FAF1DE;
+  --p2: #3F6B96;
+  --p2-bg: #ECF1F7;
+  --accent: #2D7D5F;
+  --accent-bg: #E8F1ED;
+  --serif: 'Iowan Old Style','Palatino Linotype',Palatino,Charter,Georgia,serif;
+  --sans: -apple-system, BlinkMacSystemFont,'Inter','Helvetica Neue',Arial,sans-serif;
+  --mono: 'SF Mono','JetBrains Mono','Menlo',monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding: 0;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 56px 36px 80px; }
+
+/* ---- HERO ---- */
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 32px;
+  align-items: end;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 48px;
+}
+.hero-mark {
+  font-family: var(--serif);
+  font-size: 88px;
+  line-height: 1;
+  color: var(--accent);
+  font-weight: 400;
+  letter-spacing: -3px;
+}
+.hero-title h1 {
+  font-family: var(--serif);
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: -1.2px;
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+.hero-title .sub {
+  color: var(--ink-3);
+  font-size: 14px;
+  font-family: var(--mono);
+  letter-spacing: 0.2px;
+}
+.hero-stats {
+  display: flex;
+  gap: 24px;
+  font-family: var(--mono);
+}
+.hero-stat { text-align: center; }
+.hero-stat .n {
+  font-family: var(--serif);
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 400;
+  display: block;
+}
+.hero-stat .l {
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+.hero-stat.p0 .n { color: var(--p0); }
+.hero-stat.p1 .n { color: var(--p1); }
+.hero-stat.p2 .n { color: var(--p2); }
+
+/* ---- Section headers ---- */
+.sec { margin-bottom: 56px; }
+.sec-h {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.sec-h .n {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink-3);
+  font-style: italic;
+}
+.sec-h h2 {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+}
+.sec-h .meta {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.5px;
+}
+
+/* ---- 3 trigger cards ---- */
+.triggers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.trigger {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 140px;
+  position: relative;
+}
+.trigger .idx {
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--ink-3);
+  font-style: italic;
+}
+.trigger .glyph {
+  font-size: 32px;
+  line-height: 1;
+}
+.trigger h3 {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+}
+.trigger .code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  background: var(--bg);
+  padding: 6px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.trigger .tag {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+.trigger.light .tag { background: var(--accent-bg); color: var(--accent); }
+.trigger.mid   .tag { background: var(--p1-bg); color: var(--p1); }
+.trigger.heavy .tag { background: var(--p0-bg); color: var(--p0); }
+
+/* ---- Decision tree SVG ---- */
+.dt-wrap {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  overflow-x: auto;
+}
+.dt-svg { display: block; width: 100%; min-width: 880px; height: auto; }
+
+/* ---- Workflow domain clusters ---- */
+.domains {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+.domain {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 20px 20px;
+}
+.domain-h {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--line-soft);
+}
+.domain-h .ico { font-size: 16px; }
+.domain-h h3 {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.1px;
+}
+.domain-h .desc {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-family: var(--mono);
+  letter-spacing: 0.2px;
+  margin-left: auto;
+}
+.wf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+.wf {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 12px 11px;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+  min-height: 116px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.wf:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(28, 26, 24, 0.07);
+}
+.wf.p0:hover { border-color: var(--p0); }
+.wf.p1:hover { border-color: var(--p1); }
+.wf.p2:hover { border-color: var(--p2); }
+.wf .row1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wf .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+}
+.wf .glyph {
+  font-size: 17px;
+  margin-left: auto;
+}
+.wf .title {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.2;
+  letter-spacing: -0.1px;
+  font-weight: 400;
+}
+.wf .hint {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  line-height: 1.4;
+  font-family: var(--mono);
+  letter-spacing: 0.1px;
+  margin-top: auto;
+}
+.wf.p0 { border-left: 3px solid var(--p0); }
+.wf.p1 { border-left: 3px solid var(--p1); }
+.wf.p2 { border-left: 3px solid var(--p2); }
+.wf.p0 .num { color: var(--p0); }
+.wf.p1 .num { color: var(--p1); }
+.wf.p2 .num { color: var(--p2); }
+
+/* ---- SVG Link Nodes hover effects ---- */
+svg a {
+  text-decoration: none;
+  cursor: pointer;
+}
+svg a:hover rect {
+  filter: brightness(0.98);
+  stroke: var(--ink);
+  stroke-width: 1.8px;
+}
+svg a:hover circle {
+  filter: brightness(0.98);
+  stroke: var(--ink);
+  stroke-width: 2.5px;
+}
+svg a:hover text {
+  font-weight: 600;
+}
+
+/* ---- Routing constellation ---- */
+.const-wrap {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  overflow-x: auto;
+}
+.const-svg { display: block; width: 100%; min-width: 900px; height: auto; }
+
+/* ---- Legend ---- */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-2);
+  padding: 14px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+}
+.legend .dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.legend .dot.p0 { background: var(--p0); }
+.legend .dot.p1 { background: var(--p1); }
+.legend .dot.p2 { background: var(--p2); }
+.legend .dot.acc { background: var(--accent); }
+
+/* ---- Footer ---- */
+footer {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--line);
+  letter-spacing: 0.5px;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 720px) {
+  main { padding: 32px 18px 56px; }
+  .hero { grid-template-columns: 1fr; gap: 18px; align-items: start; }
+  .hero-mark { font-size: 64px; }
+  .hero-title h1 { font-size: 32px; }
+  .hero-stats { justify-content: flex-start; gap: 18px; }
+  .triggers { grid-template-columns: 1fr; }
+  .wf-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .sec-h .meta { display: none; }
+  .domain-h .desc { display: none; }
+}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="hero-mark">⌬</div>
+    <div class="hero-title">
+      <h1>Workflow Atlas</h1>
+      <div class="sub">23 workflows · 11 domains · 3 trigger paths</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat p0"><span class="n">8</span><div class="l">P0</div></div>
+      <div class="hero-stat p1"><span class="n">11</span><div class="l">P1</div></div>
+      <div class="hero-stat p2"><span class="n">4</span><div class="l">P2</div></div>
+    </div>
+  </header>
+
+  <!-- ============ TRIGGERS ============ -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="n">§1</span>
+      <h2>触发方式</h2>
+      <span class="meta">3 paths · 从轻到重</span>
+    </div>
+    <div class="triggers">
+
+      <div class="trigger light">
+        <span class="tag">LIGHT</span>
+        <div class="idx">i.</div>
+        <div class="glyph">📋</div>
+        <h3>贴 Prompt 模板</h3>
+        <div class="code">paste 定位 + 编排步骤</div>
+        <div class="hint" style="color:var(--ink-3);font-size:12px;font-family:var(--mono);">任何 chat · 最低成本</div>
+      </div>
+
+      <div class="trigger mid">
+        <span class="tag">DYNAMIC</span>
+        <div class="idx">ii.</div>
+        <div class="glyph">⚡</div>
+        <h3>Dynamic Workflow</h3>
+        <div class="code">ultracode → "Create a workflow"</div>
+        <div class="hint" style="color:var(--ink-3);font-size:12px;font-family:var(--mono);">/workflows · 并行 · retry × 3</div>
+      </div>
+
+      <div class="trigger heavy">
+        <span class="tag">PERMANENT</span>
+        <div class="idx">iii.</div>
+        <div class="glyph">🎛</div>
+        <h3>固化为 Skill</h3>
+        <div class="code">skill-creator → /your-skill</div>
+        <div class="hint" style="color:var(--ink-3);font-size:12px;font-family:var(--mono);">跑过一次后再做</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ DECISION TREE ============ -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="n">§2</span>
+      <h2>选哪个? · 按症状路由</h2>
+      <span class="meta">symptom → workflow</span>
+    </div>
+    <div class="dt-wrap">
+      <svg class="dt-svg" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#8A857F"/>
+          </marker>
+        </defs>
+        <style>
+          .dt-node { fill: #FFFCF5; stroke: #C7C0B5; stroke-width: 1; }
+          .dt-root { fill: #1C1A18; }
+          .dt-root-t { fill: #FFFCF5; font-family: var(--serif); font-size: 14px; }
+          .dt-mid { fill: #F7F3EC; stroke: #B07A2C; stroke-width: 1.2; }
+          .dt-leaf-p0 { fill: #FBEFEC; stroke: #C4453C; stroke-width: 1.4; }
+          .dt-leaf-p1 { fill: #FAF1DE; stroke: #B07A2C; stroke-width: 1.4; }
+          .dt-leaf-p2 { fill: #ECF1F7; stroke: #3F6B96; stroke-width: 1.4; }
+          .dt-t { font-family: 'Iowan Old Style',Georgia,serif; font-size: 12.5px; fill: #1C1A18; }
+          .dt-num { font-family: 'SF Mono',Menlo,monospace; font-size: 11px; font-weight: 700; }
+          .dt-num.p0 { fill: #C4453C; }
+          .dt-num.p1 { fill: #B07A2C; }
+          .dt-num.p2 { fill: #3F6B96; }
+          .dt-edge { stroke: #8A857F; stroke-width: 1; fill: none; }
+          .dt-mid-t { font-family: 'Iowan Old Style',Georgia,serif; font-size: 12px; fill: #4A4641; font-style: italic; }
+        </style>
+
+        <!-- ROOT -->
+        <rect class="dt-node dt-root" x="370" y="20" width="160" height="44" rx="6"/>
+        <text class="dt-root-t" x="450" y="40" text-anchor="middle">你拿到了什么?</text>
+        <text class="dt-root-t" x="450" y="56" text-anchor="middle" style="font-size:11px;opacity:0.7;">— 按入口分流 —</text>
+
+        <!-- MID NODES (Layer 2) -->
+        <!-- session id -->
+        <line class="dt-edge" x1="450" y1="64" x2="80" y2="118" marker-end="url(#arr)"/>
+        <rect class="dt-mid" x="20" y="125" width="120" height="36" rx="5"/>
+        <text class="dt-mid-t" x="80" y="148" text-anchor="middle">session id</text>
+
+        <!-- PR/review -->
+        <line class="dt-edge" x1="450" y1="64" x2="220" y2="118" marker-end="url(#arr)"/>
+        <rect class="dt-mid" x="160" y="125" width="120" height="36" rx="5"/>
+        <text class="dt-mid-t" x="220" y="148" text-anchor="middle">PR / Review</text>
+
+        <!-- PRD/Spec -->
+        <line class="dt-edge" x1="450" y1="64" x2="360" y2="118" marker-end="url(#arr)"/>
+        <rect class="dt-mid" x="300" y="125" width="120" height="36" rx="5"/>
+        <text class="dt-mid-t" x="360" y="148" text-anchor="middle">PRD / Spec</text>
+
+        <!-- repo + 改一波 -->
+        <line class="dt-edge" x1="450" y1="64" x2="500" y2="118" marker-end="url(#arr)"/>
+        <rect class="dt-mid" x="440" y="125" width="120" height="36" rx="5"/>
+        <text class="dt-mid-t" x="500" y="148" text-anchor="middle">repo + 重构</text>
+
+        <!-- 部署/上线 -->
+        <line class="dt-edge" x1="450" y1="64" x2="640" y2="118" marker-end="url(#arr)"/>
+        <rect class="dt-mid" x="580" y="125" width="120" height="36" rx="5"/>
+        <text class="dt-mid-t" x="640" y="148" text-anchor="middle">部署 / 上线</text>
+
+        <!-- 多 repo / 长任务 -->
+        <line class="dt-edge" x1="450" y1="64" x2="780" y2="118" marker-end="url(#arr)"/>
+        <rect class="dt-mid" x="720" y="125" width="160" height="36" rx="5"/>
+        <text class="dt-mid-t" x="800" y="148" text-anchor="middle">长任务 / 多 repo</text>
+
+        <!-- LEAVES Layer 3 -->
+        <!-- session id → 18, 19, 20, 23 -->
+        <line class="dt-edge" x1="80" y1="161" x2="55" y2="210" marker-end="url(#arr)"/>
+        <a href="details/18-agent-session-debug-to-patch.html">
+          <rect class="dt-leaf-p0" x="20" y="215" width="70" height="32" rx="4"/>
+          <text class="dt-t" x="55" y="232" text-anchor="middle">还原链路</text>
+          <text class="dt-num p0" x="55" y="245" text-anchor="middle">#18</text>
+        </a>
+
+        <line class="dt-edge" x1="80" y1="161" x2="125" y2="210" marker-end="url(#arr)"/>
+        <a href="details/19-runtime-truth-regression.html">
+          <rect class="dt-leaf-p0" x="100" y="215" width="70" height="32" rx="4"/>
+          <text class="dt-t" x="135" y="232" text-anchor="middle">展示误报</text>
+          <text class="dt-num p0" x="135" y="245" text-anchor="middle">#19</text>
+        </a>
+
+        <!-- review → 13 -->
+        <line class="dt-edge" x1="220" y1="161" x2="220" y2="210" marker-end="url(#arr)"/>
+        <a href="details/13-review-fix-regression-loop.html">
+          <rect class="dt-leaf-p0" x="180" y="215" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="220" y="232" text-anchor="middle">review→fix</text>
+          <text class="dt-num p0" x="220" y="245" text-anchor="middle">#13</text>
+        </a>
+
+        <!-- PRD → 02, 17 -->
+        <line class="dt-edge" x1="360" y1="161" x2="320" y2="210" marker-end="url(#arr)"/>
+        <a href="details/02-prd-cross-consistency.html">
+          <rect class="dt-leaf-p0" x="280" y="215" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="320" y="232" text-anchor="middle">一致性</text>
+          <text class="dt-num p0" x="320" y="245" text-anchor="middle">#02</text>
+        </a>
+
+        <line class="dt-edge" x1="360" y1="161" x2="405" y2="210" marker-end="url(#arr)"/>
+        <a href="details/17-spec-slimming-gate.html">
+          <rect class="dt-leaf-p2" x="370" y="215" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="410" y="232" text-anchor="middle">瘦身</text>
+          <text class="dt-num p2" x="410" y="245" text-anchor="middle">#17</text>
+        </a>
+
+        <!-- repo + 改一波 → 03, 04, 12, 16 -->
+        <line class="dt-edge" x1="500" y1="161" x2="468" y2="210" marker-end="url(#arr)"/>
+        <a href="details/03-skill-quality-contract-and-split-audit.html">
+          <rect class="dt-leaf-p1" x="458" y="215" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="488" y="232" text-anchor="middle">skill</text>
+          <text class="dt-num p1" x="488" y="245" text-anchor="middle">#03</text>
+        </a>
+
+        <line class="dt-edge" x1="500" y1="161" x2="528" y2="210" marker-end="url(#arr)"/>
+        <a href="details/16-metadata-driven-cli-refactor.html">
+          <rect class="dt-leaf-p1" x="528" y="215" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="558" y="232" text-anchor="middle">CLI</text>
+          <text class="dt-num p1" x="558" y="245" text-anchor="middle">#16</text>
+        </a>
+
+        <!-- 部署 → 15, 22 -->
+        <line class="dt-edge" x1="640" y1="161" x2="612" y2="210" marker-end="url(#arr)"/>
+        <a href="details/15-cloudflare-deploy-runtime-smoke.html">
+          <rect class="dt-leaf-p1" x="598" y="215" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="628" y="232" text-anchor="middle">CF</text>
+          <text class="dt-num p1" x="628" y="245" text-anchor="middle">#15</text>
+        </a>
+
+        <line class="dt-edge" x1="640" y1="161" x2="678" y2="210" marker-end="url(#arr)"/>
+        <a href="details/22-desktop-real-user-smoke-report.html">
+          <rect class="dt-leaf-p1" x="668" y="215" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="698" y="232" text-anchor="middle">桌面</text>
+          <text class="dt-num p1" x="698" y="245" text-anchor="middle">#22</text>
+        </a>
+
+        <!-- 长任务 / 多 repo → 06, 14, 11 -->
+        <line class="dt-edge" x1="800" y1="161" x2="760" y2="210" marker-end="url(#arr)"/>
+        <a href="details/06-progress-checkpoint-recovery.html">
+          <rect class="dt-leaf-p0" x="745" y="215" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="775" y="232" text-anchor="middle">恢复</text>
+          <text class="dt-num p0" x="775" y="245" text-anchor="middle">#06</text>
+        </a>
+
+        <line class="dt-edge" x1="800" y1="161" x2="820" y2="210" marker-end="url(#arr)"/>
+        <a href="details/11-pulse-multi-repo.html">
+          <rect class="dt-leaf-p2" x="810" y="215" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="840" y="232" text-anchor="middle">pulse</text>
+          <text class="dt-num p2" x="840" y="245" text-anchor="middle">#11</text>
+        </a>
+
+        <!-- 跟进层: 根因转入 -->
+        <text x="450" y="295" text-anchor="middle" class="dt-mid-t" style="font-size:13px;">↓ #18 进一步分流根因 ↓</text>
+
+        <!-- root cause layer -->
+        <line class="dt-edge" x1="55" y1="247" x2="60" y2="318" marker-end="url(#arr)"/>
+        <a href="details/01-cross-repo-contract-alignment.html">
+          <rect class="dt-leaf-p0" x="20" y="325" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="60" y="342" text-anchor="middle">跨 repo 契约</text>
+          <text class="dt-num p0" x="60" y="354" text-anchor="middle">#01</text>
+        </a>
+
+        <line class="dt-edge" x1="100" y1="245" x2="160" y2="318" marker-end="url(#arr)"/>
+        <a href="details/21-tool-contract-end-to-end-audit.html">
+          <rect class="dt-leaf-p0" x="120" y="325" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="160" y="342" text-anchor="middle">tool 契约</text>
+          <text class="dt-num p0" x="160" y="354" text-anchor="middle">#21</text>
+        </a>
+
+        <line class="dt-edge" x1="135" y1="247" x2="260" y2="318" marker-end="url(#arr)"/>
+        <a href="details/20-seed-db-prompt-drift-audit.html">
+          <rect class="dt-leaf-p0" x="220" y="325" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="260" y="342" text-anchor="middle">seed/DB 漂移</text>
+          <text class="dt-num p0" x="260" y="354" text-anchor="middle">#20</text>
+        </a>
+
+        <line class="dt-edge" x1="55" y1="247" x2="360" y2="318" marker-end="url(#arr)"/>
+        <a href="details/23-auth-token-flow-audit.html">
+          <rect class="dt-leaf-p1" x="320" y="325" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="360" y="342" text-anchor="middle">auth/token</text>
+          <text class="dt-num p1" x="360" y="354" text-anchor="middle">#23</text>
+        </a>
+
+        <!-- 另一支: 安全 + 大重构 -->
+        <text x="600" y="295" text-anchor="middle" class="dt-mid-t" style="font-size:13px;">高强度审计与改造</text>
+
+        <line class="dt-edge" x1="500" y1="295" x2="475" y2="318" marker-end="url(#arr)"/>
+        <a href="details/08-repo-bug-hunt.html">
+          <rect class="dt-leaf-p1" x="445" y="325" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="475" y="342" text-anchor="middle">bug猎</text>
+          <text class="dt-num p1" x="475" y="354" text-anchor="middle">#08</text>
+        </a>
+
+        <line class="dt-edge" x1="500" y1="295" x2="540" y2="318" marker-end="url(#arr)"/>
+        <a href="details/09-security-audit-workflow.html">
+          <rect class="dt-leaf-p1" x="510" y="325" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="540" y="342" text-anchor="middle">security</text>
+          <text class="dt-num p1" x="540" y="354" text-anchor="middle">#09</text>
+        </a>
+
+        <line class="dt-edge" x1="500" y1="295" x2="610" y2="318" marker-end="url(#arr)"/>
+        <a href="details/07-framework-migration.html">
+          <rect class="dt-leaf-p1" x="580" y="325" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="610" y="342" text-anchor="middle">migrate</text>
+          <text class="dt-num p1" x="610" y="354" text-anchor="middle">#07</text>
+        </a>
+
+        <line class="dt-edge" x1="500" y1="295" x2="680" y2="318" marker-end="url(#arr)"/>
+        <a href="details/12-mega-refactor.html">
+          <rect class="dt-leaf-p2" x="650" y="325" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="680" y="342" text-anchor="middle">大重构</text>
+          <text class="dt-num p2" x="680" y="354" text-anchor="middle">#12</text>
+        </a>
+
+        <line class="dt-edge" x1="500" y1="295" x2="750" y2="318" marker-end="url(#arr)"/>
+        <a href="details/05-docs-link-rot.html">
+          <rect class="dt-leaf-p1" x="720" y="325" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="750" y="342" text-anchor="middle">link rot</text>
+          <text class="dt-num p1" x="750" y="354" text-anchor="middle">#05</text>
+        </a>
+
+        <line class="dt-edge" x1="500" y1="295" x2="820" y2="318" marker-end="url(#arr)"/>
+        <a href="details/10-arch-visual-pack.html">
+          <rect class="dt-leaf-p2" x="790" y="325" width="60" height="32" rx="4"/>
+          <text class="dt-t" x="820" y="342" text-anchor="middle">arch图</text>
+          <text class="dt-num p2" x="820" y="354" text-anchor="middle">#10</text>
+        </a>
+
+        <!-- Frontend-CLI parity & tmux -->
+        <a href="details/04-frontend-api-cli-parity.html">
+          <rect class="dt-leaf-p1" x="20" y="408" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="60" y="425" text-anchor="middle">三层对齐</text>
+          <text class="dt-num p1" x="60" y="437" text-anchor="middle">#04</text>
+        </a>
+
+        <a href="details/14-claude-tmux-delegation-driver.html">
+          <rect class="dt-leaf-p1" x="120" y="408" width="80" height="32" rx="4"/>
+          <text class="dt-t" x="160" y="425" text-anchor="middle">tmux 派发</text>
+          <text class="dt-num p1" x="160" y="437" text-anchor="middle">#14</text>
+        </a>
+
+        <!-- Legend strip -->
+        <text x="20" y="475" class="dt-mid-t" style="font-size:11px;">实线 = 上→下 路由</text>
+        <text x="280" y="475" class="dt-mid-t" style="font-size:11px;">颜色 = 优先级 (P0红 / P1琥珀 / P2蓝)</text>
+        <text x="650" y="475" class="dt-mid-t" style="font-size:11px;">#NN = 文件号</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ 23 WORKFLOWS GRID ============ -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="n">§3</span>
+      <h2>23 个工作流 · 按领域分组</h2>
+      <span class="meta">11 domains</span>
+    </div>
+    <div class="domains">
+
+      <!-- Contract -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">⛓️</span>
+          <h3>契约 & 对齐</h3>
+          <span class="desc">canonical source of truth</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/01-cross-repo-contract-alignment.html" class="wf p0">
+            <div class="row1"><span class="num">#01</span><span class="glyph">⛓️</span></div>
+            <div class="title">跨 repo 契约对齐</div>
+            <div class="hint">先收 owner contract<br>再接 consumer</div>
+          </a>
+          <a href="details/21-tool-contract-end-to-end-audit.html" class="wf p0">
+            <div class="row1"><span class="num">#21</span><span class="glyph">🔧</span></div>
+            <div class="title">tool 端到端审计</div>
+            <div class="hint">backend → discover<br>→ skill → UI</div>
+          </a>
+          <a href="details/23-auth-token-flow-audit.html" class="wf p1">
+            <div class="row1"><span class="num">#23</span><span class="glyph">🔐</span></div>
+            <div class="title">auth token flow</div>
+            <div class="hint">login · exchange<br>· callback · logout</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Docs / Spec -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">📚</span>
+          <h3>文档 & 规格</h3>
+          <span class="desc">PRD · ADR · CONTEXT · Plan</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/02-prd-cross-consistency.html" class="wf p0">
+            <div class="row1"><span class="num">#02</span><span class="glyph">📚</span></div>
+            <div class="title">PRD 全库一致性</div>
+            <div class="hint">状态错位<br>术语漂移</div>
+          </a>
+          <a href="details/05-docs-link-rot.html" class="wf p1">
+            <div class="row1"><span class="num">#05</span><span class="glyph">🔗</span></div>
+            <div class="title">docs 断链巡查</div>
+            <div class="hint">相对路径 · 锚点<br>· 旧目录名</div>
+          </a>
+          <a href="details/17-spec-slimming-gate.html" class="wf p2">
+            <div class="row1"><span class="num">#17</span><span class="glyph">✂️</span></div>
+            <div class="title">spec 瘦身关口</div>
+            <div class="hint">PRD/Plan/ADR<br>职责分层</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Drift -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">🌪️</span>
+          <h3>配置漂移</h3>
+          <span class="desc">DB ↔ seed ↔ skill ↔ prompt</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/20-seed-db-prompt-drift-audit.html" class="wf p0">
+            <div class="row1"><span class="num">#20</span><span class="glyph">🌱</span></div>
+            <div class="title">seed/DB 漂移审计</div>
+            <div class="hint">canonical 真相<br>从哪一层来</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Skill / CLI -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">🧩</span>
+          <h3>Skill & CLI 卫生</h3>
+          <span class="desc">tool layer hygiene</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/03-skill-quality-contract-and-split-audit.html" class="wf p1">
+            <div class="row1"><span class="num">#03</span><span class="glyph">🧩</span></div>
+            <div class="title">skill 质量 & 拆分</div>
+            <div class="hint">行数 · 重复<br>· LESSONS 回写</div>
+          </a>
+          <a href="details/04-frontend-api-cli-parity.html" class="wf p1">
+            <div class="row1"><span class="num">#04</span><span class="glyph">🔗</span></div>
+            <div class="title">前端-API-CLI 三层对齐</div>
+            <div class="hint">orphan<br>· 命名漂移</div>
+          </a>
+          <a href="details/16-metadata-driven-cli-refactor.html" class="wf p1">
+            <div class="row1"><span class="num">#16</span><span class="glyph">⚙️</span></div>
+            <div class="title">metadata 驱动 CLI 重构</div>
+            <div class="hint">registry · runner<br>· schema cache</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Runtime -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">📡</span>
+          <h3>Agent 运行时调试</h3>
+          <span class="desc">why did THIS session fail</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/18-agent-session-debug-to-patch.html" class="wf p0">
+            <div class="row1"><span class="num">#18</span><span class="glyph">🔍</span></div>
+            <div class="title">session id → 链路 → patch</div>
+            <div class="hint">router · skill<br>· tool · child run</div>
+          </a>
+          <a href="details/19-runtime-truth-regression.html" class="wf p0">
+            <div class="row1"><span class="num">#19</span><span class="glyph">📡</span></div>
+            <div class="title">运行时真相回归</div>
+            <div class="hint">副作用成功<br>展示却说失败</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Review / Bug / Security -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">🐛</span>
+          <h3>Review · Bug · Security</h3>
+          <span class="desc">find &amp; fix loop</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/13-review-fix-regression-loop.html" class="wf p0">
+            <div class="row1"><span class="num">#13</span><span class="glyph">🔁</span></div>
+            <div class="title">review→regression→patch</div>
+            <div class="hint">finding 分组<br>最小 patch</div>
+          </a>
+          <a href="details/08-repo-bug-hunt.html" class="wf p1">
+            <div class="row1"><span class="num">#08</span><span class="glyph">🐛</span></div>
+            <div class="title">全库 bug 巡猎</div>
+            <div class="hint">module + lens<br>必须可复现</div>
+          </a>
+          <a href="details/09-security-audit-workflow.html" class="wf p1">
+            <div class="row1"><span class="num">#09</span><span class="glyph">🛡️</span></div>
+            <div class="title">安全审计</div>
+            <div class="hint">攻击者 → impact<br>OWASP lens</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Deploy / Smoke -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">🚀</span>
+          <h3>部署 & 真实 Smoke</h3>
+          <span class="desc">does it work for users</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/15-cloudflare-deploy-runtime-smoke.html" class="wf p1">
+            <div class="row1"><span class="num">#15</span><span class="glyph">☁️</span></div>
+            <div class="title">Cloudflare deploy smoke</div>
+            <div class="hint">Worker · R2<br>· DNS · 浏览器</div>
+          </a>
+          <a href="details/22-desktop-real-user-smoke-report.html" class="wf p1">
+            <div class="row1"><span class="num">#22</span><span class="glyph">🖥️</span></div>
+            <div class="title">桌面真实用户 smoke</div>
+            <div class="hint">Electron · IPC<br>· local executor</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Long task -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">📍</span>
+          <h3>长任务管理</h3>
+          <span class="desc">survive interruptions</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/06-progress-checkpoint-recovery.html" class="wf p0">
+            <div class="row1"><span class="num">#06</span><span class="glyph">📍</span></div>
+            <div class="title">checkpoint 恢复</div>
+            <div class="hint">git · test · plan<br>三方对账</div>
+          </a>
+          <a href="details/14-claude-tmux-delegation-driver.html" class="wf p1">
+            <div class="row1"><span class="num">#14</span><span class="glyph">🎯</span></div>
+            <div class="title">Codex 驱动 Claude/tmux</div>
+            <div class="hint">短任务派发<br>· 观察 · 收口</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Migration / Refactor -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">🏗️</span>
+          <h3>迁移 & 重构</h3>
+          <span class="desc">large-scale change</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/07-framework-migration.html" class="wf p1">
+            <div class="row1"><span class="num">#07</span><span class="glyph">🚚</span></div>
+            <div class="title">框架/API/语言迁移</div>
+            <div class="hint">分批 · 行为等价<br>· 残留清零</div>
+          </a>
+          <a href="details/12-mega-refactor.html" class="wf p2">
+            <div class="row1"><span class="num">#12</span><span class="glyph">🏗️</span></div>
+            <div class="title">跨多文件大型重构</div>
+            <div class="hint">分片互斥<br>· 行为不变</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Architecture -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">🗺️</span>
+          <h3>架构可视化</h3>
+          <span class="desc">explain the system</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/10-arch-visual-pack.html" class="wf p2">
+            <div class="row1"><span class="num">#10</span><span class="glyph">🗺️</span></div>
+            <div class="title">多视角架构 HTML</div>
+            <div class="hint">数据流 · agent<br>部署 · 权限 · 状态</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Pulse -->
+      <div class="domain">
+        <div class="domain-h">
+          <span class="ico">💓</span>
+          <h3>跨仓库脉搏</h3>
+          <span class="desc">multi-repo pulse</span>
+        </div>
+        <div class="wf-grid">
+          <a href="details/11-pulse-multi-repo.html" class="wf p2">
+            <div class="row1"><span class="num">#11</span><span class="glyph">💓</span></div>
+            <div class="title">跨 repo 周报</div>
+            <div class="hint">并行 ce-product-pulse<br>+ 主题合并</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ROUTING CONSTELLATION ============ -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="n">§4</span>
+      <h2>路由网络 · 工作流之间如何转</h2>
+      <span class="meta">cross-references</span>
+    </div>
+    <div class="const-wrap">
+      <svg class="const-svg" viewBox="0 0 1000 580" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#8A857F" opacity="0.65"/>
+          </marker>
+        </defs>
+        <style>
+          .nd { stroke-width: 1.6; cursor: default; }
+          .nd-p0 { fill: #FBEFEC; stroke: #C4453C; }
+          .nd-p1 { fill: #FAF1DE; stroke: #B07A2C; }
+          .nd-p2 { fill: #ECF1F7; stroke: #3F6B96; }
+          .nd-t { font-family: 'SF Mono',Menlo,monospace; font-size: 11px; font-weight: 700; }
+          .nd-t.p0 { fill: #C4453C; }
+          .nd-t.p1 { fill: #B07A2C; }
+          .nd-t.p2 { fill: #3F6B96; }
+          .nd-l { font-family: 'Iowan Old Style',Georgia,serif; font-size: 10.5px; fill: #4A4641; }
+          .ed { stroke: #8A857F; stroke-width: 1; fill: none; opacity: 0.55; }
+          .clu-l { font-family: 'Iowan Old Style',Georgia,serif; font-size: 13px; fill: #8A857F; font-style: italic; }
+          .clu-box { fill: none; stroke: #E4DDD0; stroke-width: 1; stroke-dasharray: 3 4; }
+        </style>
+
+        <!-- Cluster: Contract/Runtime CORE (center-left) -->
+        <rect class="clu-box" x="60" y="80" width="280" height="220" rx="10"/>
+        <text class="clu-l" x="200" y="100" text-anchor="middle">契约 · 运行时核心</text>
+
+        <!-- 01 -->
+        <a href="details/01-cross-repo-contract-alignment.html">
+          <circle class="nd nd-p0" cx="120" cy="180" r="28"/>
+          <text class="nd-t p0" x="120" y="178" text-anchor="middle">#01</text>
+          <text class="nd-l" x="120" y="192" text-anchor="middle">contract</text>
+        </a>
+
+        <!-- 21 -->
+        <a href="details/21-tool-contract-end-to-end-audit.html">
+          <circle class="nd nd-p0" cx="270" cy="180" r="28"/>
+          <text class="nd-t p0" x="270" y="178" text-anchor="middle">#21</text>
+          <text class="nd-l" x="270" y="192" text-anchor="middle">tool</text>
+        </a>
+
+        <!-- 18 -->
+        <a href="details/18-agent-session-debug-to-patch.html">
+          <circle class="nd nd-p0" cx="120" cy="260" r="28"/>
+          <text class="nd-t p0" x="120" y="258" text-anchor="middle">#18</text>
+          <text class="nd-l" x="120" y="272" text-anchor="middle">session</text>
+        </a>
+
+        <!-- 19 -->
+        <a href="details/19-runtime-truth-regression.html">
+          <circle class="nd nd-p0" cx="270" cy="260" r="28"/>
+          <text class="nd-t p0" x="270" y="258" text-anchor="middle">#19</text>
+          <text class="nd-l" x="270" y="272" text-anchor="middle">truth</text>
+        </a>
+
+        <!-- 20 -->
+        <a href="details/20-seed-db-prompt-drift-audit.html">
+          <circle class="nd nd-p0" cx="195" cy="130" r="26"/>
+          <text class="nd-t p0" x="195" y="128" text-anchor="middle">#20</text>
+          <text class="nd-l" x="195" y="142" text-anchor="middle">drift</text>
+        </a>
+
+        <!-- Cluster: Docs/Spec (top-right) -->
+        <rect class="clu-box" x="400" y="80" width="240" height="160" rx="10"/>
+        <text class="clu-l" x="520" y="100" text-anchor="middle">文档</text>
+
+        <a href="details/02-prd-cross-consistency.html">
+          <circle class="nd nd-p0" cx="450" cy="170" r="26"/>
+          <text class="nd-t p0" x="450" y="168" text-anchor="middle">#02</text>
+          <text class="nd-l" x="450" y="182" text-anchor="middle">PRD</text>
+        </a>
+
+        <a href="details/17-spec-slimming-gate.html">
+          <circle class="nd nd-p2" cx="600" cy="170" r="22"/>
+          <text class="nd-t p2" x="600" y="168" text-anchor="middle">#17</text>
+          <text class="nd-l" x="600" y="180" text-anchor="middle">slim</text>
+        </a>
+
+        <a href="details/05-docs-link-rot.html">
+          <circle class="nd nd-p1" cx="525" cy="125" r="22"/>
+          <text class="nd-t p1" x="525" y="123" text-anchor="middle">#05</text>
+          <text class="nd-l" x="525" y="135" text-anchor="middle">links</text>
+        </a>
+
+        <!-- Cluster: Auth/Deploy (right) -->
+        <rect class="clu-box" x="700" y="80" width="250" height="220" rx="10"/>
+        <text class="clu-l" x="825" y="100" text-anchor="middle">部署 / Auth</text>
+
+        <a href="details/23-auth-token-flow-audit.html">
+          <circle class="nd nd-p1" cx="760" cy="160" r="26"/>
+          <text class="nd-t p1" x="760" y="158" text-anchor="middle">#23</text>
+          <text class="nd-l" x="760" y="172" text-anchor="middle">auth</text>
+        </a>
+
+        <a href="details/22-desktop-real-user-smoke-report.html">
+          <circle class="nd nd-p1" cx="890" cy="160" r="26"/>
+          <text class="nd-t p1" x="890" y="158" text-anchor="middle">#22</text>
+          <text class="nd-l" x="890" y="172" text-anchor="middle">desktop</text>
+        </a>
+
+        <a href="details/15-cloudflare-deploy-runtime-smoke.html">
+          <circle class="nd nd-p1" cx="825" cy="245" r="26"/>
+          <text class="nd-t p1" x="825" y="243" text-anchor="middle">#15</text>
+          <text class="nd-l" x="825" y="257" text-anchor="middle">CF</text>
+        </a>
+
+        <!-- Cluster: Review/Bug -->
+        <rect class="clu-box" x="60" y="340" width="280" height="180" rx="10"/>
+        <text class="clu-l" x="200" y="360" text-anchor="middle">Review / Bug</text>
+
+        <a href="details/13-review-fix-regression-loop.html">
+          <circle class="nd nd-p0" cx="120" cy="430" r="26"/>
+          <text class="nd-t p0" x="120" y="428" text-anchor="middle">#13</text>
+          <text class="nd-l" x="120" y="442" text-anchor="middle">review→fix</text>
+        </a>
+
+        <a href="details/08-repo-bug-hunt.html">
+          <circle class="nd nd-p1" cx="220" cy="400" r="22"/>
+          <text class="nd-t p1" x="220" y="398" text-anchor="middle">#08</text>
+          <text class="nd-l" x="220" y="410" text-anchor="middle">bug</text>
+        </a>
+
+        <a href="details/09-security-audit-workflow.html">
+          <circle class="nd nd-p1" cx="290" cy="455" r="22"/>
+          <text class="nd-t p1" x="290" y="453" text-anchor="middle">#09</text>
+          <text class="nd-l" x="290" y="465" text-anchor="middle">sec</text>
+        </a>
+
+        <!-- Cluster: Skill/CLI -->
+        <rect class="clu-box" x="400" y="280" width="280" height="230" rx="10"/>
+        <text class="clu-l" x="540" y="300" text-anchor="middle">Skill / CLI</text>
+
+        <a href="details/03-skill-quality-contract-and-split-audit.html">
+          <circle class="nd nd-p1" cx="455" cy="350" r="24"/>
+          <text class="nd-t p1" x="455" y="348" text-anchor="middle">#03</text>
+          <text class="nd-l" x="455" y="362" text-anchor="middle">skill</text>
+        </a>
+
+        <a href="details/04-frontend-api-cli-parity.html">
+          <circle class="nd nd-p1" cx="565" cy="350" r="24"/>
+          <text class="nd-t p1" x="565" y="348" text-anchor="middle">#04</text>
+          <text class="nd-l" x="565" y="362" text-anchor="middle">3 层</text>
+        </a>
+
+        <a href="details/16-metadata-driven-cli-refactor.html">
+          <circle class="nd nd-p1" cx="630" cy="430" r="24"/>
+          <text class="nd-t p1" x="630" y="428" text-anchor="middle">#16</text>
+          <text class="nd-l" x="630" y="442" text-anchor="middle">CLI</text>
+        </a>
+
+        <a href="details/12-mega-refactor.html">
+          <circle class="nd nd-p2" cx="450" cy="450" r="22"/>
+          <text class="nd-t p2" x="450" y="448" text-anchor="middle">#12</text>
+          <text class="nd-l" x="450" y="460" text-anchor="middle">refactor</text>
+        </a>
+
+        <a href="details/07-framework-migration.html">
+          <circle class="nd nd-p1" cx="540" cy="450" r="22"/>
+          <text class="nd-t p1" x="540" y="448" text-anchor="middle">#07</text>
+          <text class="nd-l" x="540" y="460" text-anchor="middle">migrate</text>
+        </a>
+
+        <!-- Cluster: Long task & misc -->
+        <rect class="clu-box" x="700" y="340" width="250" height="180" rx="10"/>
+        <text class="clu-l" x="825" y="360" text-anchor="middle">长任务 / 视图</text>
+
+        <a href="details/06-progress-checkpoint-recovery.html">
+          <circle class="nd nd-p0" cx="760" cy="410" r="24"/>
+          <text class="nd-t p0" x="760" y="408" text-anchor="middle">#06</text>
+          <text class="nd-l" x="760" y="422" text-anchor="middle">recover</text>
+        </a>
+
+        <a href="details/14-claude-tmux-delegation-driver.html">
+          <circle class="nd nd-p1" cx="890" cy="410" r="22"/>
+          <text class="nd-t p1" x="890" y="408" text-anchor="middle">#14</text>
+          <text class="nd-l" x="890" y="420" text-anchor="middle">tmux</text>
+        </a>
+
+        <a href="details/10-arch-visual-pack.html">
+          <circle class="nd nd-p2" cx="760" cy="475" r="22"/>
+          <text class="nd-t p2" x="760" y="473" text-anchor="middle">#10</text>
+          <text class="nd-l" x="760" y="485" text-anchor="middle">arch</text>
+        </a>
+
+        <a href="details/11-pulse-multi-repo.html">
+          <circle class="nd nd-p2" cx="890" cy="475" r="22"/>
+          <text class="nd-t p2" x="890" y="473" text-anchor="middle">#11</text>
+          <text class="nd-l" x="890" y="485" text-anchor="middle">pulse</text>
+        </a>
+
+        <!-- Edges (routing) -->
+        <!-- 01 ↔ 18, 21, 23 -->
+        <path class="ed" d="M 148 180 Q 200 180 242 180" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 120 208 Q 120 234 120 232" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 148 167 Q 400 130 736 155" marker-end="url(#arr2)"/>
+
+        <!-- 18 → 19, 20, 21, 01 -->
+        <path class="ed" d="M 148 260 Q 200 260 242 260" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 138 232 Q 170 180 184 156" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 145 240 Q 220 220 250 198" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 110 232 Q 105 220 112 208" marker-end="url(#arr2)"/>
+
+        <!-- 19 → 18 -->
+        <path class="ed" d="M 242 260 Q 200 270 150 268" marker-end="url(#arr2)"/>
+
+        <!-- 20 → 21, 02 -->
+        <path class="ed" d="M 218 138 Q 240 150 250 158" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 218 122 Q 320 140 426 165" marker-end="url(#arr2)"/>
+
+        <!-- 21 → 20 -->
+        <path class="ed" d="M 252 158 Q 230 140 215 138" marker-end="url(#arr2)"/>
+
+        <!-- 02 → 17, 06 -->
+        <path class="ed" d="M 476 170 Q 530 170 578 170" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 460 196 Q 600 320 738 408" marker-end="url(#arr2)"/>
+
+        <!-- 13 → 18, 19, 01 -->
+        <path class="ed" d="M 105 404 Q 100 340 110 290" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 140 410 Q 200 340 246 288" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 100 408 Q 80 300 110 208" marker-end="url(#arr2)"/>
+
+        <!-- 08 → 09 -->
+        <path class="ed" d="M 235 420 Q 260 440 273 440" marker-end="url(#arr2)"/>
+
+        <!-- 04 → 01 -->
+        <path class="ed" d="M 543 348 Q 350 280 148 200" marker-end="url(#arr2)"/>
+
+        <!-- 16 → 01 -->
+        <path class="ed" d="M 608 425 Q 400 320 148 200" marker-end="url(#arr2)"/>
+
+        <!-- 15 → 22, 19 -->
+        <path class="ed" d="M 845 225 Q 870 200 880 184" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 800 240 Q 540 250 296 264" marker-end="url(#arr2)"/>
+
+        <!-- 22 → 19, 23 -->
+        <path class="ed" d="M 868 174 Q 540 230 296 258" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 866 158 Q 830 158 786 158" marker-end="url(#arr2)"/>
+
+        <!-- 23 → 01, 22 -->
+        <path class="ed" d="M 736 153 Q 400 130 148 175" marker-end="url(#arr2)"/>
+        <path class="ed" d="M 784 158 Q 820 158 864 158" marker-end="url(#arr2)"/>
+
+        <!-- 11 → ce-product-pulse (annotation only) -->
+        <text class="nd-l" x="890" y="510" text-anchor="middle" style="font-size:9.5px;font-style:italic;fill:#8A857F;">+ce-product-pulse</text>
+
+        <!-- LEGEND BOTTOM -->
+        <g transform="translate(60, 545)">
+          <text class="clu-l" x="0" y="0" style="font-size:11px;">→ 实箭头 = 一个 workflow 在"失败处理"里 routes 到另一个</text>
+          <text class="clu-l" x="500" y="0" style="font-size:11px;">虚线框 = 同一领域</text>
+          <text class="clu-l" x="700" y="0" style="font-size:11px;">圆圈大小 = 优先级（P0 略大）</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ LEGEND ============ -->
+  <section class="sec" style="margin-bottom: 24px;">
+    <div class="legend">
+      <span><span class="dot p0"></span>P0 — 复用价值最高 / 失败成本最高 / 并行收益最大</span>
+      <span><span class="dot p1"></span>P1 — 高频 / 标准流程</span>
+      <span><span class="dot p2"></span>P2 — 偶发 / 重型 / 偏离主路径</span>
+      <span><span class="dot acc"></span>已有同类 skill 可复用</span>
+    </div>
+  </section>
+
+  <footer>
+    Workflow Atlas · generated 2026-06-13 · 23 workflows distilled from Claude &amp; Codex sessions
+  </footer>
+
+</main>
+</body>
+</html>

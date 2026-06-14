@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow Details · Index</title>
+<style>
+:root {
+  --bg: #F7F3EC;
+  --paper: #FFFCF5;
+  --ink: #1C1A18;
+  --ink-2: #4A4641;
+  --ink-3: #8A857F;
+  --ink-4: #C7C0B5;
+  --line: #E4DDD0;
+  --line-soft: #EEE8DC;
+  --p0: #C4453C;  --p0-bg: #FBEFEC;
+  --p1: #B07A2C;  --p1-bg: #FAF1DE;
+  --p2: #3F6B96;  --p2-bg: #ECF1F7;
+  --acc: #2D7D5F; --acc-bg: #E8F1ED;
+  --serif: 'Iowan Old Style','Palatino Linotype',Palatino,Charter,Georgia,serif;
+  --sans: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',Arial,sans-serif;
+  --mono: 'SF Mono','JetBrains Mono','Menlo',monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+a { color: inherit; text-decoration: none; }
+.wl {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  color: var(--acc);
+  background: var(--acc-bg);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #D1E4DA;
+  white-space: nowrap;
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+}
+/* ───── Topnav ───── */
+.topnav {
+  display: flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--ink-3);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+  gap: 14px;
+}
+.topnav a { color: var(--ink-2); }
+.topnav a:hover { color: var(--acc); }
+.topnav .spacer { flex: 1; }
+.topnav .pn { padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px; }
+.topnav .pn:hover { background: var(--paper); }
+
+/* ───── Hero ───── */
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 28px;
+  align-items: end;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+}
+.hero-num {
+  font-family: var(--serif);
+  font-size: 96px;
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: -3px;
+  color: var(--ink);
+}
+.hero-num.p0 { color: var(--p0); }
+.hero-num.p1 { color: var(--p1); }
+.hero-num.p2 { color: var(--p2); }
+.hero-title { min-width: 0; }
+.hero-title .crumb {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.hero-title h1 {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+}
+.hero-title .slug {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.5px;
+}
+.glyph-big {
+  font-size: 36px;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  display: inline-block;
+}
+.badge.p0 { background: var(--p0-bg); color: var(--p0); border: 1px solid #E8C6C2; }
+.badge.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #E8D9B3; }
+.badge.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #C9D7E5; }
+
+/* ───── Section header ───── */
+.sec { margin-bottom: 36px; }
+.sec-h {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px dashed var(--line);
+}
+.sec-h .sec-glyph {
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.sec-h h2 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 2px;
+}
+.sec-h .sec-zh {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.1px;
+  margin-left: 4px;
+}
+
+/* ───── Intent ───── */
+.intent {
+  box-shadow: 0 4px 16px rgba(28,26,24,0.02);
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+.intent:hover {
+  box-shadow: 0 6px 20px rgba(28,26,24,0.04);
+}
+.intent {
+  background: var(--paper);
+  border-left: 3px solid var(--ink);
+  padding: 16px 20px;
+  border-radius: 4px;
+}
+.intent p { margin-bottom: 10px; }
+.intent p:last-child { margin-bottom: 0; }
+.intent-lead {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.intent-body {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* ───── Triggers ───── */
+.trigger-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+.trigger-chip {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trigger-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(28,26,24,0.04);
+  border-color: var(--p1);
+}
+.trigger-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.trigger-chip .bullet {
+  color: var(--p1);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ───── IO columns ───── */
+.io-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.io-col {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.io-col:hover {
+  box-shadow: 0 6px 18px rgba(28,26,24,0.04);
+}
+.io-col.io-in {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+.io-col.io-in { border-left: 3px solid var(--p2); }
+.io-col.io-out { border-left: 3px solid var(--acc); }
+.io-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.io-col.io-in .io-label { color: var(--p2); }
+.io-col.io-out .io-label { color: var(--acc); }
+.io-col ul { list-style: none; }
+.io-col li {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--line-soft);
+  line-height: 1.4;
+}
+.io-col li:last-child { border-bottom: none; }
+.io-col li:before {
+  content: "·";
+  color: var(--ink-3);
+  margin-right: 8px;
+}
+
+/* ───── Timeline ───── */
+.timeline {
+  list-style: none;
+  padding-left: 0;
+  position: relative;
+}
+.timeline:before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--line);
+}
+.step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  position: relative;
+}
+.step-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.step-body {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.step-body:hover {
+  box-shadow: 0 6px 16px rgba(28,26,24,0.04);
+  border-color: var(--ink-2);
+}
+.step-body {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 16px;
+}
+.step-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.1px;
+}
+.step-desc {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* ───── Agents ───── */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.agent-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.agent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(28,26,24,0.05);
+  border-color: var(--acc);
+}
+.agent-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 14px 13px;
+  position: relative;
+}
+.agent-glyph {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 14px;
+  color: var(--ink-4);
+}
+.agent-name {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.1px;
+}
+.agent-desc {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+/* ───── Checklist ───── */
+.checklist {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.checklist li {
+  transition: all 0.2s ease;
+}
+.checklist li:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--acc);
+}
+.checklist li {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.checklist .checkmark {
+  color: var(--acc);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.check-txt { flex: 1; }
+
+/* ───── Fail paths ───── */
+.fail-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fail-route, .fail-rule {
+  transition: all 0.2s ease;
+}
+.fail-route:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--p1);
+}
+.fail-rule:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--ink-3);
+}
+.fail-route, .fail-rule {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.fail-route { border-left: 3px solid var(--p1); }
+.fail-rule { border-left: 3px solid var(--ink-3); }
+.fail-icon {
+  font-family: var(--mono);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.fail-route .fail-icon { color: var(--p1); }
+.fail-rule .fail-icon { color: var(--ink-3); }
+
+/* ───── Code/Templates ───── */
+.code-wrap {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.code-bar {
+  background: var(--bg);
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+}
+pre.code {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  background: var(--paper);
+}
+pre.code code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  white-space: pre;
+}
+
+/* ───── Generic ───── */
+.default-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.default-list > li {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 14px;
+}
+.default-list .d-main {
+  font-size: 13.5px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.default-list .d-sub {
+  list-style: none;
+  padding-left: 12px;
+  border-left: 2px solid var(--line);
+  margin-top: 4px;
+}
+.default-list .d-sub li {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  padding: 3px 0;
+}
+.default-list .d-sub li:before {
+  content: "·  ";
+  color: var(--ink-3);
+}
+.generic p { margin-bottom: 8px; font-size: 14px; color: var(--ink-2); }
+
+/* ───── Footer ───── */
+footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ───── Mobile ───── */
+@media (max-width: 720px) {
+  main { padding: 24px 16px 56px; }
+  .hero { grid-template-columns: 1fr; gap: 14px; align-items: flex-start; }
+  .hero-num { font-size: 64px; }
+  .hero-title h1 { font-size: 26px; }
+  .hero-meta { flex-direction: row; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .io-row { grid-template-columns: 1fr; }
+  .step { grid-template-columns: 32px 1fr; gap: 10px; }
+  .step-num { width: 30px; height: 30px; font-size: 12px; }
+  .timeline:before { left: 15px; }
+  .trigger-grid { grid-template-columns: 1fr; }
+  .agents-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.idx-list { list-style: none; display: grid; grid-template-columns: 1fr; gap: 6px; }
+.idx-list a { display: grid; grid-template-columns: 60px 32px 1fr auto; gap: 16px;
+  padding: 12px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; align-items: center; transition: all 0.2s ease; }
+.idx-list a:hover { background: var(--bg); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,0.03); }
+.ix-num { font-family: var(--mono); font-weight: 600; color: var(--ink-3); font-size: 13px; }
+.ix-glyph { font-size: 18px; }
+.ix-name { font-family: var(--serif); font-size: 15px; }
+.ix-dom { font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.5px; }
+</style></head><body><main>
+<nav class="topnav"><a href="../">⌬ Atlas</a><span style="color:var(--ink-4);">›</span><span>All Details</span></nav>
+<header class="hero"><div class="hero-num">23</div><div class="hero-title">
+<div class="crumb">DETAILS</div><h1>所有 workflow 详情</h1>
+<div class="slug">workflow-detail-index</div></div><div class="hero-meta"><div class="glyph-big">⌬</div></div></header>
+<ul class="idx-list"><li><a href="01-cross-repo-contract-alignment.html"><span class="ix-num">#01</span><span class="ix-glyph">⛓️</span><span class="ix-name">cross-repo-contract-alignment</span><span class="ix-dom">契约 · 对齐</span></a></li><li><a href="02-prd-cross-consistency.html"><span class="ix-num">#02</span><span class="ix-glyph">📚</span><span class="ix-name">prd-cross-consistency</span><span class="ix-dom">文档 · 规格</span></a></li><li><a href="03-skill-quality-contract-and-split-audit.html"><span class="ix-num">#03</span><span class="ix-glyph">🧩</span><span class="ix-name">skill-quality-contract-and-split-audit</span><span class="ix-dom">Skill · CLI</span></a></li><li><a href="04-frontend-api-cli-parity.html"><span class="ix-num">#04</span><span class="ix-glyph">🔗</span><span class="ix-name">frontend-api-cli-parity</span><span class="ix-dom">Skill · CLI</span></a></li><li><a href="05-docs-link-rot.html"><span class="ix-num">#05</span><span class="ix-glyph">🔗</span><span class="ix-name">docs-link-rot</span><span class="ix-dom">文档 · 规格</span></a></li><li><a href="06-progress-checkpoint-recovery.html"><span class="ix-num">#06</span><span class="ix-glyph">📍</span><span class="ix-name">progress-checkpoint-recovery</span><span class="ix-dom">长任务管理</span></a></li><li><a href="07-framework-migration.html"><span class="ix-num">#07</span><span class="ix-glyph">🚚</span><span class="ix-name">framework-migration</span><span class="ix-dom">迁移 · 重构</span></a></li><li><a href="08-repo-bug-hunt.html"><span class="ix-num">#08</span><span class="ix-glyph">🐛</span><span class="ix-name">repo-bug-hunt</span><span class="ix-dom">Review · Bug</span></a></li><li><a href="09-security-audit-workflow.html"><span class="ix-num">#09</span><span class="ix-glyph">🛡️</span><span class="ix-name">security-audit-workflow</span><span class="ix-dom">Review · Bug</span></a></li><li><a href="10-arch-visual-pack.html"><span class="ix-num">#10</span><span class="ix-glyph">🗺️</span><span class="ix-name">arch-visual-pack</span><span class="ix-dom">架构可视化</span></a></li><li><a href="11-pulse-multi-repo.html"><span class="ix-num">#11</span><span class="ix-glyph">💓</span><span class="ix-name">pulse-multi-repo</span><span class="ix-dom">跨仓库脉搏</span></a></li><li><a href="12-mega-refactor.html"><span class="ix-num">#12</span><span class="ix-glyph">🏗️</span><span class="ix-name">mega-refactor</span><span class="ix-dom">迁移 · 重构</span></a></li><li><a href="13-review-fix-regression-loop.html"><span class="ix-num">#13</span><span class="ix-glyph">🔁</span><span class="ix-name">review-fix-regression-loop</span><span class="ix-dom">Review · Bug</span></a></li><li><a href="14-claude-tmux-delegation-driver.html"><span class="ix-num">#14</span><span class="ix-glyph">🎯</span><span class="ix-name">claude-tmux-delegation-driver</span><span class="ix-dom">长任务管理</span></a></li><li><a href="15-cloudflare-deploy-runtime-smoke.html"><span class="ix-num">#15</span><span class="ix-glyph">☁️</span><span class="ix-name">cloudflare-deploy-runtime-smoke</span><span class="ix-dom">部署 · Smoke</span></a></li><li><a href="16-metadata-driven-cli-refactor.html"><span class="ix-num">#16</span><span class="ix-glyph">⚙️</span><span class="ix-name">metadata-driven-cli-refactor</span><span class="ix-dom">Skill · CLI</span></a></li><li><a href="17-spec-slimming-gate.html"><span class="ix-num">#17</span><span class="ix-glyph">✂️</span><span class="ix-name">spec-slimming-gate</span><span class="ix-dom">文档 · 规格</span></a></li><li><a href="18-agent-session-debug-to-patch.html"><span class="ix-num">#18</span><span class="ix-glyph">🔍</span><span class="ix-name">agent-session-debug-to-patch</span><span class="ix-dom">Agent 运行时</span></a></li><li><a href="19-runtime-truth-regression.html"><span class="ix-num">#19</span><span class="ix-glyph">📡</span><span class="ix-name">runtime-truth-regression</span><span class="ix-dom">Agent 运行时</span></a></li><li><a href="20-seed-db-prompt-drift-audit.html"><span class="ix-num">#20</span><span class="ix-glyph">🌱</span><span class="ix-name">seed-db-prompt-drift-audit</span><span class="ix-dom">配置漂移</span></a></li><li><a href="21-tool-contract-end-to-end-audit.html"><span class="ix-num">#21</span><span class="ix-glyph">🔧</span><span class="ix-name">tool-contract-end-to-end-audit</span><span class="ix-dom">契约 · 对齐</span></a></li><li><a href="22-desktop-real-user-smoke-report.html"><span class="ix-num">#22</span><span class="ix-glyph">🖥️</span><span class="ix-name">desktop-real-user-smoke-report</span><span class="ix-dom">部署 · Smoke</span></a></li><li><a href="23-auth-token-flow-audit.html"><span class="ix-num">#23</span><span class="ix-glyph">🔐</span><span class="ix-name">auth-token-flow-audit</span><span class="ix-dom">契约 · 对齐</span></a></li></ul>
+<footer>Workflow Detail Index</footer>
+</main></body></html>

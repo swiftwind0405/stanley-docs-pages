@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#02 prd-cross-consistency · Workflow Detail</title>
+<style>
+:root {
+  --bg: #F7F3EC;
+  --paper: #FFFCF5;
+  --ink: #1C1A18;
+  --ink-2: #4A4641;
+  --ink-3: #8A857F;
+  --ink-4: #C7C0B5;
+  --line: #E4DDD0;
+  --line-soft: #EEE8DC;
+  --p0: #C4453C;  --p0-bg: #FBEFEC;
+  --p1: #B07A2C;  --p1-bg: #FAF1DE;
+  --p2: #3F6B96;  --p2-bg: #ECF1F7;
+  --acc: #2D7D5F; --acc-bg: #E8F1ED;
+  --serif: 'Iowan Old Style','Palatino Linotype',Palatino,Charter,Georgia,serif;
+  --sans: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',Arial,sans-serif;
+  --mono: 'SF Mono','JetBrains Mono','Menlo',monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+a { color: inherit; text-decoration: none; }
+.wl {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  color: var(--acc);
+  background: var(--acc-bg);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #D1E4DA;
+  white-space: nowrap;
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+}
+/* ───── Topnav ───── */
+.topnav {
+  display: flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--ink-3);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+  gap: 14px;
+}
+.topnav a { color: var(--ink-2); }
+.topnav a:hover { color: var(--acc); }
+.topnav .spacer { flex: 1; }
+.topnav .pn { padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px; }
+.topnav .pn:hover { background: var(--paper); }
+
+/* ───── Hero ───── */
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 28px;
+  align-items: end;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+}
+.hero-num {
+  font-family: var(--serif);
+  font-size: 96px;
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: -3px;
+  color: var(--ink);
+}
+.hero-num.p0 { color: var(--p0); }
+.hero-num.p1 { color: var(--p1); }
+.hero-num.p2 { color: var(--p2); }
+.hero-title { min-width: 0; }
+.hero-title .crumb {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.hero-title h1 {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+}
+.hero-title .slug {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.5px;
+}
+.glyph-big {
+  font-size: 36px;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  display: inline-block;
+}
+.badge.p0 { background: var(--p0-bg); color: var(--p0); border: 1px solid #E8C6C2; }
+.badge.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #E8D9B3; }
+.badge.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #C9D7E5; }
+
+/* ───── Section header ───── */
+.sec { margin-bottom: 36px; }
+.sec-h {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px dashed var(--line);
+}
+.sec-h .sec-glyph {
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.sec-h h2 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 2px;
+}
+.sec-h .sec-zh {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.1px;
+  margin-left: 4px;
+}
+
+/* ───── Intent ───── */
+.intent {
+  box-shadow: 0 4px 16px rgba(28,26,24,0.02);
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+.intent:hover {
+  box-shadow: 0 6px 20px rgba(28,26,24,0.04);
+}
+.intent {
+  background: var(--paper);
+  border-left: 3px solid var(--ink);
+  padding: 16px 20px;
+  border-radius: 4px;
+}
+.intent p { margin-bottom: 10px; }
+.intent p:last-child { margin-bottom: 0; }
+.intent-lead {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.intent-body {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* ───── Triggers ───── */
+.trigger-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+.trigger-chip {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trigger-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(28,26,24,0.04);
+  border-color: var(--p1);
+}
+.trigger-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.trigger-chip .bullet {
+  color: var(--p1);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ───── IO columns ───── */
+.io-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.io-col {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.io-col:hover {
+  box-shadow: 0 6px 18px rgba(28,26,24,0.04);
+}
+.io-col.io-in {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+.io-col.io-in { border-left: 3px solid var(--p2); }
+.io-col.io-out { border-left: 3px solid var(--acc); }
+.io-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.io-col.io-in .io-label { color: var(--p2); }
+.io-col.io-out .io-label { color: var(--acc); }
+.io-col ul { list-style: none; }
+.io-col li {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--line-soft);
+  line-height: 1.4;
+}
+.io-col li:last-child { border-bottom: none; }
+.io-col li:before {
+  content: "·";
+  color: var(--ink-3);
+  margin-right: 8px;
+}
+
+/* ───── Timeline ───── */
+.timeline {
+  list-style: none;
+  padding-left: 0;
+  position: relative;
+}
+.timeline:before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--line);
+}
+.step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  position: relative;
+}
+.step-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.step-body {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.step-body:hover {
+  box-shadow: 0 6px 16px rgba(28,26,24,0.04);
+  border-color: var(--ink-2);
+}
+.step-body {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 16px;
+}
+.step-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.1px;
+}
+.step-desc {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* ───── Agents ───── */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.agent-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.agent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(28,26,24,0.05);
+  border-color: var(--acc);
+}
+.agent-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 14px 13px;
+  position: relative;
+}
+.agent-glyph {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 14px;
+  color: var(--ink-4);
+}
+.agent-name {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.1px;
+}
+.agent-desc {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+/* ───── Checklist ───── */
+.checklist {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.checklist li {
+  transition: all 0.2s ease;
+}
+.checklist li:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--acc);
+}
+.checklist li {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.checklist .checkmark {
+  color: var(--acc);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.check-txt { flex: 1; }
+
+/* ───── Fail paths ───── */
+.fail-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fail-route, .fail-rule {
+  transition: all 0.2s ease;
+}
+.fail-route:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--p1);
+}
+.fail-rule:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--ink-3);
+}
+.fail-route, .fail-rule {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.fail-route { border-left: 3px solid var(--p1); }
+.fail-rule { border-left: 3px solid var(--ink-3); }
+.fail-icon {
+  font-family: var(--mono);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.fail-route .fail-icon { color: var(--p1); }
+.fail-rule .fail-icon { color: var(--ink-3); }
+
+/* ───── Code/Templates ───── */
+.code-wrap {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.code-bar {
+  background: var(--bg);
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+}
+pre.code {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  background: var(--paper);
+}
+pre.code code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  white-space: pre;
+}
+
+/* ───── Generic ───── */
+.default-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.default-list > li {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 14px;
+}
+.default-list .d-main {
+  font-size: 13.5px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.default-list .d-sub {
+  list-style: none;
+  padding-left: 12px;
+  border-left: 2px solid var(--line);
+  margin-top: 4px;
+}
+.default-list .d-sub li {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  padding: 3px 0;
+}
+.default-list .d-sub li:before {
+  content: "·  ";
+  color: var(--ink-3);
+}
+.generic p { margin-bottom: 8px; font-size: 14px; color: var(--ink-2); }
+
+/* ───── Footer ───── */
+footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ───── Mobile ───── */
+@media (max-width: 720px) {
+  main { padding: 24px 16px 56px; }
+  .hero { grid-template-columns: 1fr; gap: 14px; align-items: flex-start; }
+  .hero-num { font-size: 64px; }
+  .hero-title h1 { font-size: 26px; }
+  .hero-meta { flex-direction: row; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .io-row { grid-template-columns: 1fr; }
+  .step { grid-template-columns: 32px 1fr; gap: 10px; }
+  .step-num { width: 30px; height: 30px; font-size: 12px; }
+  .timeline:before { left: 15px; }
+  .trigger-grid { grid-template-columns: 1fr; }
+  .agents-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+
+  <nav class="topnav">
+    <a href="../">⌬ Atlas</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>文档 · 规格</span>
+    <span class="spacer"></span>
+    <a class="pn" href="01-cross-repo-contract-alignment.html">← prev</a>
+    <a class="pn" href="03-skill-quality-contract-and-split-audit.html">next →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p0">02</div>
+    <div class="hero-title">
+      <div class="crumb">PRD Align · workflow</div>
+      <h1>prd-cross-consistency</h1>
+      <div class="slug">02-prd-cross-consistency.md</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">📚</div>
+      <span class="badge p0">P0</span>
+      <span>source: claude-and-codex-sessions</span>
+      <span>created: 2026-06-13</span>
+    </div>
+  </header>
+
+  <section class="sec sec-intent"><div class="sec-h"><span class="sec-glyph">◉</span><h2>WHAT IS THIS</h2><span class="sec-zh">定位</span></div><div class="block intent"><p class="intent-lead">PRD、ADR、CONTEXT、Plan、README 的一致性体检。目标不是润色文档，而是找出状态错位、术语漂移、架构承诺不一致、pending 决策未落地。</p></div></section><section class="sec sec-trigger"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="block trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span class="t">同一 capability 在多份 PRD 里含义不同。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">PRD 写了 approved，ADR 里仍是 pending。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">Plan 标记 completed，但代码、测试、frontmatter 不支持这个状态。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">新增 agent/runtime/event 后，旧文档还保留旧状态机。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">读文档时需要靠人脑猜“到底哪份为准”。</span></div></div></section><section class="sec sec-io"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT</div><ul><li><code>docs/prds/*.md</code></li><li><code>docs/adrs/*.md</code></li><li><code>CONTEXT.md</code></li><li><code>README.md</code></li><li><code>docs/plans/*.md</code></li><li>capability 名称或模块范围，可选。</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT</div><ul><li>一份 conflict report。</li><li>一份 canonical terminology table。</li><li>需要新增或更新的 ADR 列表。</li><li>可直接提交的文档 patch。</li></ul></div></div></section><section class="sec sec-steps"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">编排步骤</span></div><ol class="block timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">文档清单</div><div class="step-desc">扫描所有候选 Markdown，记录标题、frontmatter、状态字段、最后更新时间。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">决策点抽取</div><div class="step-desc">按 capability、状态机、数据模型、agent event、权限边界、部署边界抽取决策点。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">多文档交叉比对</div><div class="step-desc">每个决策点检查所有文档里的表述，标记 canonical、conflict、missing、stale。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">反驳轮</div><div class="step-desc">专门找“看起来一致但实际不一致”的地方，比如名称一样但状态含义不同。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">ADR 落点检查</div><div class="step-desc">pending 决策必须有 ADR 或明确不需要 ADR 的理由。approved/locked 状态必须能追到 ADR 或代码证据。</div></div></li><li class="step"><div class="step-num">6</div><div class="step-body"><div class="step-title">修改文档</div><div class="step-desc">更新 canonical 文档，删除过期重复段落，把实现细节下沉到 Plan。</div></div></li><li class="step"><div class="step-num">7</div><div class="step-body"><div class="step-title">链接和 frontmatter 检查</div><div class="step-desc">跑 link check、<code>git diff --check</code>，确认状态字段一致。</div></div></li></ol></section><section class="sec sec-agents"><div class="sec-h"><span class="sec-glyph">⚙</span><h2>AGENT ROLES</h2><span class="sec-zh">Agent 分工</span></div><div class="block agents-grid"><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Extractor Agents</div><div class="agent-desc">每个 agent 负责一类决策点。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Contradiction Agents</div><div class="agent-desc">只找冲突，不做修复。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">ADR Agent</div><div class="agent-desc">判断哪些 pending 需要 ADR。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Editor Agent</div><div class="agent-desc">统一术语和状态。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Verifier Agent</div><div class="agent-desc">跑链接、锚点、frontmatter、diff check。</div></div></div></section><section class="sec sec-misc"><div class="sec-h"><span class="sec-glyph">·</span><h2>冲突类型</h2><span class="sec-zh">冲突类型</span></div><div class="block generic"><ul class="default-list"><li><div class="d-main">名称冲突：同一 capability 多个名字。</div></li><li><div class="d-main">语义冲突：名字一样，行为不同。</div></li><li><div class="d-main">状态冲突：draft、approved、locked、completed 不一致。</div></li><li><div class="d-main">时间冲突：旧文档覆盖新决策。</div></li><li><div class="d-main">边界冲突：PRD 写产品目标，Plan 写实现细节，两者互相污染。</div></li><li><div class="d-main">来源冲突：文档承诺和代码实际不一致。</div></li></ul></div></section><section class="sec sec-gate"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE GATE</h2><span class="sec-zh">验收 gate</span></div><ul class="block checklist"><li><span class="checkmark">✓</span><span class="check-txt">每个 capability 有唯一 canonical 名称。</span></li><li><span class="checkmark">✓</span><span class="check-txt">每个 pending 决策有 owner 和下一步。</span></li><li><span class="checkmark">✓</span><span class="check-txt">approved/locked 状态能追到 ADR 或代码证据。</span></li><li><span class="checkmark">✓</span><span class="check-txt"><code>rg</code> 搜旧术语只剩历史说明或迁移表。</span></li><li><span class="checkmark">✓</span><span class="check-txt">文档之间没有互相引用不存在的路径或锚点。</span></li><li><span class="checkmark">✓</span><span class="check-txt">读者不需要知道 session 背景也能判断当前状态。</span></li></ul></section><section class="sec sec-fail"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>FAILURE HANDLING</h2><span class="sec-zh">失败处理</span></div><div class="block fail-paths"><div class="fail-rule"><span class="fail-icon">⊘</span><div>如果冲突无法自动裁决，输出一组最小问题给用户，不继续批量改。</div></div><div class="fail-route"><span class="fail-icon">⤳</span><div>如果发现 PRD 过度承载实现细节，转入 <a class="wl" href="17-spec-slimming-gate.html">→#17</a>。</div></div><div class="fail-route"><span class="fail-icon">⤳</span><div>如果文档状态和 git 状态冲突，转入 <a class="wl" href="06-progress-checkpoint-recovery.html">→#06</a>。</div></div></div></section><section class="sec sec-template"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>TEMPLATE</h2><span class="sec-zh">最小报告模板</span></div><div class="block template-block"><div class="code-wrap"><div class="code-bar"><span>TEMPLATE</span></div><pre class="code"><code>## PRD Consistency Report
+
+### Canonical Decisions
+
+| Decision | Canonical source | Status | Evidence |
+| --- | --- | --- | --- |
+
+### Conflicts
+
+| Topic | File A | File B | Resolution |
+| --- | --- | --- | --- |
+
+### ADR Actions
+
+| Decision | Action | Owner | Reason |
+| --- | --- | --- | --- |</code></pre></div></div></section>
+
+  <footer>
+    Workflow #02 · part of Workflow Atlas · single-file detail page · regenerate via generate_details.py
+  </footer>
+
+</main>
+</body>
+</html>

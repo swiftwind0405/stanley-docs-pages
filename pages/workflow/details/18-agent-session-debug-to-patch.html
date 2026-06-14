@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#18 agent-session-debug-to-patch · Workflow Detail</title>
+<style>
+:root {
+  --bg: #F7F3EC;
+  --paper: #FFFCF5;
+  --ink: #1C1A18;
+  --ink-2: #4A4641;
+  --ink-3: #8A857F;
+  --ink-4: #C7C0B5;
+  --line: #E4DDD0;
+  --line-soft: #EEE8DC;
+  --p0: #C4453C;  --p0-bg: #FBEFEC;
+  --p1: #B07A2C;  --p1-bg: #FAF1DE;
+  --p2: #3F6B96;  --p2-bg: #ECF1F7;
+  --acc: #2D7D5F; --acc-bg: #E8F1ED;
+  --serif: 'Iowan Old Style','Palatino Linotype',Palatino,Charter,Georgia,serif;
+  --sans: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',Arial,sans-serif;
+  --mono: 'SF Mono','JetBrains Mono','Menlo',monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+a { color: inherit; text-decoration: none; }
+.wl {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  color: var(--acc);
+  background: var(--acc-bg);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #D1E4DA;
+  white-space: nowrap;
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+}
+/* ───── Topnav ───── */
+.topnav {
+  display: flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--ink-3);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+  gap: 14px;
+}
+.topnav a { color: var(--ink-2); }
+.topnav a:hover { color: var(--acc); }
+.topnav .spacer { flex: 1; }
+.topnav .pn { padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px; }
+.topnav .pn:hover { background: var(--paper); }
+
+/* ───── Hero ───── */
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 28px;
+  align-items: end;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+}
+.hero-num {
+  font-family: var(--serif);
+  font-size: 96px;
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: -3px;
+  color: var(--ink);
+}
+.hero-num.p0 { color: var(--p0); }
+.hero-num.p1 { color: var(--p1); }
+.hero-num.p2 { color: var(--p2); }
+.hero-title { min-width: 0; }
+.hero-title .crumb {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.hero-title h1 {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: 1.1;
+}
+.hero-title .slug {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.5px;
+}
+.glyph-big {
+  font-size: 36px;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  display: inline-block;
+}
+.badge.p0 { background: var(--p0-bg); color: var(--p0); border: 1px solid #E8C6C2; }
+.badge.p1 { background: var(--p1-bg); color: var(--p1); border: 1px solid #E8D9B3; }
+.badge.p2 { background: var(--p2-bg); color: var(--p2); border: 1px solid #C9D7E5; }
+
+/* ───── Section header ───── */
+.sec { margin-bottom: 36px; }
+.sec-h {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px dashed var(--line);
+}
+.sec-h .sec-glyph {
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.sec-h h2 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 2px;
+}
+.sec-h .sec-zh {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.1px;
+  margin-left: 4px;
+}
+
+/* ───── Intent ───── */
+.intent {
+  box-shadow: 0 4px 16px rgba(28,26,24,0.02);
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+.intent:hover {
+  box-shadow: 0 6px 20px rgba(28,26,24,0.04);
+}
+.intent {
+  background: var(--paper);
+  border-left: 3px solid var(--ink);
+  padding: 16px 20px;
+  border-radius: 4px;
+}
+.intent p { margin-bottom: 10px; }
+.intent p:last-child { margin-bottom: 0; }
+.intent-lead {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.intent-body {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* ───── Triggers ───── */
+.trigger-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+.trigger-chip {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trigger-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(28,26,24,0.04);
+  border-color: var(--p1);
+}
+.trigger-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.trigger-chip .bullet {
+  color: var(--p1);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ───── IO columns ───── */
+.io-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.io-col {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.io-col:hover {
+  box-shadow: 0 6px 18px rgba(28,26,24,0.04);
+}
+.io-col.io-in {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+.io-col.io-in { border-left: 3px solid var(--p2); }
+.io-col.io-out { border-left: 3px solid var(--acc); }
+.io-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.io-col.io-in .io-label { color: var(--p2); }
+.io-col.io-out .io-label { color: var(--acc); }
+.io-col ul { list-style: none; }
+.io-col li {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--line-soft);
+  line-height: 1.4;
+}
+.io-col li:last-child { border-bottom: none; }
+.io-col li:before {
+  content: "·";
+  color: var(--ink-3);
+  margin-right: 8px;
+}
+
+/* ───── Timeline ───── */
+.timeline {
+  list-style: none;
+  padding-left: 0;
+  position: relative;
+}
+.timeline:before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--line);
+}
+.step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  position: relative;
+}
+.step-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.step-body {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.step-body:hover {
+  box-shadow: 0 6px 16px rgba(28,26,24,0.04);
+  border-color: var(--ink-2);
+}
+.step-body {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 16px;
+}
+.step-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.1px;
+}
+.step-desc {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* ───── Agents ───── */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.agent-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.agent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(28,26,24,0.05);
+  border-color: var(--acc);
+}
+.agent-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 14px 13px;
+  position: relative;
+}
+.agent-glyph {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 14px;
+  color: var(--ink-4);
+}
+.agent-name {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.1px;
+}
+.agent-desc {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+/* ───── Checklist ───── */
+.checklist {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.checklist li {
+  transition: all 0.2s ease;
+}
+.checklist li:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--acc);
+}
+.checklist li {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.checklist .checkmark {
+  color: var(--acc);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.check-txt { flex: 1; }
+
+/* ───── Fail paths ───── */
+.fail-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fail-route, .fail-rule {
+  transition: all 0.2s ease;
+}
+.fail-route:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--p1);
+}
+.fail-rule:hover {
+  box-shadow: 0 4px 12px rgba(28,26,24,0.03);
+  border-color: var(--ink-3);
+}
+.fail-route, .fail-rule {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.fail-route { border-left: 3px solid var(--p1); }
+.fail-rule { border-left: 3px solid var(--ink-3); }
+.fail-icon {
+  font-family: var(--mono);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.fail-route .fail-icon { color: var(--p1); }
+.fail-rule .fail-icon { color: var(--ink-3); }
+
+/* ───── Code/Templates ───── */
+.code-wrap {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.code-bar {
+  background: var(--bg);
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+}
+pre.code {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  background: var(--paper);
+}
+pre.code code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  white-space: pre;
+}
+
+/* ───── Generic ───── */
+.default-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.default-list > li {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 14px;
+}
+.default-list .d-main {
+  font-size: 13.5px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.default-list .d-sub {
+  list-style: none;
+  padding-left: 12px;
+  border-left: 2px solid var(--line);
+  margin-top: 4px;
+}
+.default-list .d-sub li {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  padding: 3px 0;
+}
+.default-list .d-sub li:before {
+  content: "·  ";
+  color: var(--ink-3);
+}
+.generic p { margin-bottom: 8px; font-size: 14px; color: var(--ink-2); }
+
+/* ───── Footer ───── */
+footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ───── Mobile ───── */
+@media (max-width: 720px) {
+  main { padding: 24px 16px 56px; }
+  .hero { grid-template-columns: 1fr; gap: 14px; align-items: flex-start; }
+  .hero-num { font-size: 64px; }
+  .hero-title h1 { font-size: 26px; }
+  .hero-meta { flex-direction: row; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .io-row { grid-template-columns: 1fr; }
+  .step { grid-template-columns: 32px 1fr; gap: 10px; }
+  .step-num { width: 30px; height: 30px; font-size: 12px; }
+  .timeline:before { left: 15px; }
+  .trigger-grid { grid-template-columns: 1fr; }
+  .agents-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+
+  <nav class="topnav">
+    <a href="../">⌬ Atlas</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>Agent 运行时</span>
+    <span class="spacer"></span>
+    <a class="pn" href="17-spec-slimming-gate.html">← prev</a>
+    <a class="pn" href="19-runtime-truth-regression.html">next →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p0">18</div>
+    <div class="hero-title">
+      <div class="crumb">Session Debug · workflow</div>
+      <h1>agent-session-debug-to-patch</h1>
+      <div class="slug">18-agent-session-debug-to-patch.md</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">🔍</div>
+      <span class="badge p0">P0</span>
+      <span>source: codex-sessions</span>
+      <span>created: 2026-06-13</span>
+    </div>
+  </header>
+
+  <section class="sec sec-intent"><div class="sec-h"><span class="sec-glyph">◉</span><h2>WHAT IS THIS</h2><span class="sec-zh">定位</span></div><div class="block intent"><p class="intent-lead">从一个真实 <code>session_id</code> 或 <code>conversation_id</code> 出发，还原 Agent 运行时链路，并把根因落到 patch、配置修正或文档决策。它解决的不是“代码哪里看起来有问题”，而是“这一次用户为什么失败”。</p></div></section><section class="sec sec-trigger"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="block trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span class="t">用户给出 session id，问为什么不能发布、查询、展示图片、走 SSE。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">前端看起来失败，但后端 tool call 可能已经成功。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">route decision、capability、skill、tool schema、child run、UI 展示之间状态不一致。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">本地代码、DB 配置、线上运行态可能不一致。</span></div><div class="trigger-chip"><span class="bullet">▸</span><span class="t">用户多次重试同一问题，每次失败点不同。</span></div></div></section><section class="sec sec-io"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT</div><ul><li><code>session_id</code>、<code>conversation_id</code> 或 run id。</li><li>tenant id，可从 DB 反查。</li><li>相关 repo 路径。</li><li>DB 连接或只读查询方式。</li><li>相关日志、audit table、tool call records。</li><li>前端页面或用户看到的错误文案。</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT</div><ul><li>运行时链路时间线。</li><li>根因分层：router、capability、skill、tool discover、tool execution、child loop、final response、UI。</li><li>最小修复 patch 或配置 seed。</li><li>Targeted regression tests。</li><li>DB/seed 同步说明。</li><li>用户可复验步骤。</li></ul></div></div></section><section class="sec sec-steps"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">编排步骤</span></div><ol class="block timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">判定 ID 类型</div><div class="step-desc">确认输入是 session、conversation、run、message 还是 tool call id，反查 tenant 和 conversation。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">还原消息链</div><div class="step-desc">抽取用户输入、assistant 回复、route decision、child run、tool call、audit event 的时间线。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">判定是否进入目标能力</div><div class="step-desc">看 route status、candidates、primary capability、missing inputs、confirmation 状态，不先猜 tool 后端失败。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">检查 capability 和 skill</div><div class="step-desc">对比 DB 当前 agent skills、capability registry、本地 seed、skill files、agent instructions。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">检查 tool discover 和执行</div><div class="step-desc">确认目标工具是否出现在 allowlist、read/write 池、sideEffectLevel、riskLevel、调用参数和返回值。</div></div></li><li class="step"><div class="step-num">6</div><div class="step-body"><div class="step-title">检查最终收尾</div><div class="step-desc">写操作成功后，确认 child loop、final LLM、timeout、assistant text 和 UI toast 是否把成功误报为失败。</div></div></li><li class="step"><div class="step-num">7</div><div class="step-body"><div class="step-title">落 patch 或配置</div><div class="step-desc">代码 bug 写 regression；配置漂移改 seed 并同步 DB；文档过期同步 docs。</div></div></li><li class="step"><div class="step-num">8</div><div class="step-body"><div class="step-title">复验同类路径</div><div class="step-desc">不用同一已完成写操作重复验证，改用未处理样本或只读状态查询。</div></div></li></ol></section><section class="sec sec-agents"><div class="sec-h"><span class="sec-glyph">⚙</span><h2>AGENT ROLES</h2><span class="sec-zh">Agent 分工</span></div><div class="block agents-grid"><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Session Historian</div><div class="agent-desc">定位 ID、还原消息和时间线。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Router Auditor</div><div class="agent-desc">检查 route decision、候选和 missing inputs。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Capability Auditor</div><div class="agent-desc">核对 capability、agent skills、seed、DB。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Tool Auditor</div><div class="agent-desc">核对 discover、sideEffectLevel、tool result。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Patch Agent</div><div class="agent-desc">做最小修复和 regression。</div></div><div class="agent-card"><div class="agent-glyph">⚙</div><div class="agent-name">Verifier Agent</div><div class="agent-desc">跑 DB 验证、targeted tests、用户复验路径。</div></div></div></section><section class="sec sec-gate"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE GATE</h2><span class="sec-zh">验收 gate</span></div><ul class="block checklist"><li><span class="checkmark">✓</span><span class="check-txt">每个结论有 DB row、audit event、log 或代码路径证据。</span></li><li><span class="checkmark">✓</span><span class="check-txt">能说明“有没有调用目标 tool”。</span></li><li><span class="checkmark">✓</span><span class="check-txt">能说明“tool 是否成功产生副作用”。</span></li><li><span class="checkmark">✓</span><span class="check-txt">能说明“用户看到的文案来自哪一层”。</span></li><li><span class="checkmark">✓</span><span class="check-txt">Patch 有 targeted regression，配置改动有 seed/DB 验证。</span></li><li><span class="checkmark">✓</span><span class="check-txt">不把线上已发生的写操作重复执行作为验证手段。</span></li></ul></section><section class="sec sec-fail"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>FAILURE HANDLING</h2><span class="sec-zh">失败处理</span></div><div class="block fail-paths"><div class="fail-rule"><span class="fail-icon">⊘</span><div>如果 DB 或日志不可读，输出缺失证据，不猜根因。</div></div><div class="fail-rule"><span class="fail-icon">⊘</span><div>如果本地代码不是线上版本，先标出版本漂移，再决定是否 pull 或查部署版本。</div></div><div class="fail-route"><span class="fail-icon">⤳</span><div>如果根因是 contract 跨 repo 不一致，转 <a class="wl" href="01-cross-repo-contract-alignment.html">→#01</a>。</div></div><div class="fail-route"><span class="fail-icon">⤳</span><div>如果根因是 tool contract 不闭合，转 <a class="wl" href="21-tool-contract-end-to-end-audit.html">→#21</a>。</div></div><div class="fail-route"><span class="fail-icon">⤳</span><div>如果证据显示写操作已成功但 final response 或 UI 把它误报为失败，转 <a class="wl" href="19-runtime-truth-regression.html">→#19</a>。</div></div><div class="fail-route"><span class="fail-icon">⤳</span><div>如果根因是 DB/seed/prompt 漂移导致 agent 进不去目标能力，转 <a class="wl" href="20-seed-db-prompt-drift-audit.html">→#20</a>。</div></div></div></section><section class="sec sec-template"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>TEMPLATE</h2><span class="sec-zh">报告模板</span></div><div class="block template-block"><div class="code-wrap"><div class="code-bar"><span>TEMPLATE</span></div><pre class="code"><code>## Session Debug Report
+
+- Input id:
+- Tenant:
+- Conversation:
+- User symptom:
+- Route decision:
+- Capability:
+- Tool calls:
+- Side effect result:
+- Final response source:
+- Root cause:
+- Patch/config:
+- Tests:
+- Recheck path:</code></pre></div></div></section>
+
+  <footer>
+    Workflow #18 · part of Workflow Atlas · single-file detail page · regenerate via generate_details.py
+  </footer>
+
+</main>
+</body>
+</html>
