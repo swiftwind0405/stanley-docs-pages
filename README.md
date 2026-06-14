@@ -23,6 +23,15 @@ bun run docs:build-skills-site:stanley
 
 Set `STANLEY_DOCS_PAGES` if your stanley-docs-pages checkout is not at `~/Workspace/projects/stanley-docs-pages`.
 
+`pages/matt-pocock-skills/` is generated from the [mattpocock/skills](https://github.com/mattpocock/skills) repo:
+
+```bash
+# in mattpocock-skills checkout
+python3 scripts/build-stanley-docs-site.py
+```
+
+Set `STANLEY_DOCS_PAGES` to override the default output path (`~/Workspace/projects/stanley-docs-pages`).
+
 ## Build
 
 ```bash

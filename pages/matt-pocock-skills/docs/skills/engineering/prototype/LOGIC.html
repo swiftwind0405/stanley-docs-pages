@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LOGIC · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / LOGIC</nav>
+        <header class="page-header">
+      <h1>LOGIC</h1>
+      <div class="page-meta">
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/prototype/LOGIC.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Logic Prototype</h1>
+<p>Tiny interactive terminal app，让用户手 drive state model。当问题是 <strong>business logic、state transition 或 data shape</strong>——纸上 reasonable 但 push real case 才 feel wrong 时用。</p>
+<h2>何时是该形态</h2>
+<ul>
+<li>"I'm not sure if this state machine handles the edge case where X then Y."</li>
+<li>"Does this data model actually let me represent the case where..."</li>
+<li>"I want to feel out what the API should look like before writing it."</li>
+<li>任何用户想 <strong>按按钮看 state 变</strong> 的时候。</li>
+</ul>
+<p>若问题是 "what should this look like"——wrong branch。用 <a href="/matt-pocock-skills/docs/skills/engineering/prototype/UI.html">UI.md</a>。</p>
+<h2>流程</h2>
+<h3>1. State the question</h3>
+<p>写代码前，写下 prototype 什么 state model、回答什么问题。一段，在 prototype README 或 file 顶 comment。答错问题的 logic prototype 纯 waste——explicit question 以便 later check，无论用户 now 看还是 AFK 回来。</p>
+<h3>2. Pick the language</h3>
+<p>用 host project 用的。若无 obvious runtime（如 docs repo），问。</p>
+<p>Match 项目现有 tooling convention——不要为 prototype 加新 package manager 或 runtime。</p>
+<h3>3. Isolate the logic in a portable module</h3>
+<p>将 actual logic——回答问题的部分——放在 small pure interface 后，日后可 lift 进 real codebase。周围 TUI 可丢弃；logic module 不应。</p>
+<p>Right shape 取决于问题：</p>
+<ul>
+<li><strong>A pure reducer</strong> — <code>(state, action) =&gt; state</code>。Good when actions are discrete events and state is a single value.</li>
+<li><strong>A state machine</strong> — explicit states and transitions. Good when "which actions are even legal right now" is part of the question.</li>
+<li><strong>A small set of pure functions</strong> over a plain data type. Good when there's no implicit current state — just transformations.</li>
+<li><strong>A class or module with a clear method surface</strong> when the logic genuinely owns ongoing internal state.</li>
+</ul>
+<p>Pick whichever shape best fits the question being asked, <em>not</em> whichever is easiest to wire to a TUI. Keep it pure: no I/O, no terminal code, no <code>console.log</code> for control flow. The TUI imports it and calls into it; nothing flows the other direction.</p>
+<p>这使 prototype 超越自身 lifetime useful。问题 answered 后，validated reducer / machine / function set 可 lift 进 real module——TUI shell delete。</p>
+<h3>4. Build the smallest TUI that exposes the state</h3>
+<p>Build <strong>lightweight TUI</strong>——每 tick clear screen（<code>console.clear()</code> / <code>print("\033[2J\033[H")</code> / equivalent）re-render 整 frame。用户应始终见 one stable view，非 ever-growing scrollback。</p>
+<p>每 frame 两部分，此顺序：</p>
+<ol>
+<li><strong>Current state</strong>，pretty-printed、diff-friendly（一行一 field，或 formatted JSON）。field name 或 section header 用 <strong>bold</strong>，less important context（timestamp、ID、derived value）用 <strong>dim</strong>。Native ANSI fine——<code>\x1b[1m</code> bold、<code>\x1b[2m</code> dim、<code>\x1b[0m</code> reset。除非项目已有 styling library，否则不必 pull in。</li>
+<li><strong>Keyboard shortcuts</strong>，列在 bottom：<code>[a] add user  [d] delete user  [t] tick clock  [q] quit</code>。Key bold、description dim，或 vice-versa——whatever reads cleanly。</li>
+</ol>
+<p>Behaviour:</p>
+<ol>
+<li><strong>Initialise state</strong> — single in-memory object/struct。start 时 render 第一 frame。</li>
+<li><strong>Read one keystroke (or one line)</strong> at a time，dispatch handler mutate state。</li>
+<li><strong>Re-render</strong> full frame after every action — don't append, replace.</li>
+<li><strong>Loop until quit.</strong></li>
+</ol>
+<p>Whole frame 应 fit one screen。</p>
+<h3>5. Make it runnable in one command</h3>
+<p>Add script 到项目现有 task runner（<code>package.json</code> scripts、<code>Makefile</code>、<code>justfile</code>、<code>pyproject.toml</code>）。用户应 run <code>pnpm run &lt;prototype-name&gt;</code> 或 equivalent——never remember path。</p>
+<p>Host project 无 task runner 时，command 放 prototype README 顶。</p>
+<h3>6. Hand it over</h3>
+<p>给 run command。用户 self drive；有趣时刻是 "wait, that shouldn't be possible" 或 "huh, I assumed X would be different"——那是 <em>idea</em> 的 bug，whole point。若要新 action，加。Prototype evolve。</p>
+<h3>7. Capture the answer</h3>
+<p>Prototype done 后，唯一 worth keeping 是问题的 answer。若用户在，问教会了什么。若不在，留 <code>NOTES.md</code> 旁以便填 answer（或你若 watched session 则你填）再 delete prototype。</p>
+<h2>Anti-patterns</h2>
+<ul>
+<li><strong>Don't add tests.</strong> 需要 test 的不再是 prototype。</li>
+<li><strong>Don't wire it to the real database.</strong> 用 in-memory store，除非问题 specifically 关于 persistence。</li>
+<li><strong>Don't generalise.</strong> 无 "what if we wanted to support X later." Prototype 答一个问题。</li>
+<li><strong>Don't blur the logic and the TUI together.</strong> 若 reducer / state machine 引用 <code>console.log</code>、prompts 或 terminal escape codes，不再 portable。TUI 作 thin shell over pure module。</li>
+<li><strong>Don't ship the TUI shell into production.</strong> Shell 优化为 terminal hand drive。背后 logic module 才是 worth keeping 的 bit。</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/engineering/prototype/LOGIC.zh-CN.md</code> 自动生成。</p>
+    </main>
+  </div>
+</body>
+</html>

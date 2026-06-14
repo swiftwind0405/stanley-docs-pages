@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>write-a-skill · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /write-a-skill</nav>
+        <header class="page-header">
+      <h1>/write-a-skill</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/productivity/write-a-skill/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>编写 Skill</h1>
+<h2>流程</h2>
+<ol>
+<li>
+<p><strong>收集需求</strong> — 向用户询问：<br>
+   - 这个 skill 覆盖什么任务/领域？<br>
+   - 应处理哪些具体用例？<br>
+   - 需要可执行脚本，还是只要说明即可？<br>
+   - 是否要纳入参考材料？</p>
+</li>
+<li>
+<p><strong>起草 skill</strong> — 创建：<br>
+   - 简洁说明的 SKILL.md<br>
+   - 若内容超过 500 行，则增加额外参考文件<br>
+   - 若需要确定性操作，则增加实用脚本</p>
+</li>
+<li>
+<p><strong>与用户评审</strong> — 展示草稿并询问：<br>
+   - 是否覆盖你的用例？<br>
+   - 有无遗漏或不清楚之处？<br>
+   - 哪些部分应更详细或更简略？</p>
+</li>
+</ol>
+<h2>Skill 结构</h2>
+<pre><code>skill-name/
+├── SKILL.md           # Main instructions (required)
+├── REFERENCE.md       # Detailed docs (if needed)
+├── EXAMPLES.md        # Usage examples (if needed)
+└── scripts/           # Utility scripts (if needed)
+    └── helper.js
+</code></pre>
+<h2>SKILL.md 模板</h2>
+<pre><code class="language-md">---
+name: skill-name
+description: Brief description of capability. Use when [specific triggers].
+---
+
+# Skill Name
+
+## Quick start
+
+[Minimal working example]
+
+## Workflows
+
+[Step-by-step processes with checklists for complex tasks]
+
+## Advanced features
+
+[Link to separate files: See `REFERENCE.md`]
+</code></pre>
+<h2>Description 要求</h2>
+<p>description 是 agent 决定加载哪个 skill 时<strong>唯一能看到的内容</strong>。它会与所有已安装 skill 一起出现在系统提示中。agent 读取这些 description，并根据用户请求选择相关 skill。</p>
+<p><strong>目标</strong>：给 agent 刚好足够的信息，让它知道：</p>
+<ol>
+<li>这个 skill 提供什么能力</li>
+<li>何时/为何触发（具体关键词、上下文、文件类型）</li>
+</ol>
+<p><strong>格式</strong>：</p>
+<ul>
+<li>最多 1024 个字符</li>
+<li>使用第三人称</li>
+<li>第一句：它做什么</li>
+<li>第二句："Use when [specific triggers]"</li>
+</ul>
+<p><strong>好例子</strong>：</p>
+<pre><code>Extract text and tables from PDF files, fill forms, merge documents. Use when working with PDF files or when user mentions PDFs, forms, or document extraction.
+</code></pre>
+<p><strong>坏例子</strong>：</p>
+<pre><code>Helps with documents.
+</code></pre>
+<p>坏例子无法让 agent 把它和其他文档类 skill 区分开。</p>
+<h2>何时添加脚本</h2>
+<p>在以下情况添加实用脚本：</p>
+<ul>
+<li>操作是确定性的（校验、格式化）</li>
+<li>同一段代码会反复生成</li>
+<li>错误需要显式处理</li>
+</ul>
+<p>相比生成代码，脚本能省 token，也更可靠。</p>
+<h2>何时拆分文件</h2>
+<p>在以下情况拆成独立文件：</p>
+<ul>
+<li>SKILL.md 超过 100 行</li>
+<li>内容属于不同领域（例如 finance vs sales schema）</li>
+<li>高级功能很少用到</li>
+</ul>
+<h2>评审清单</h2>
+<p>起草完成后，确认：</p>
+<ul>
+<li>[ ] Description 包含触发条件（"Use when..."）</li>
+<li>[ ] SKILL.md 少于 100 行</li>
+<li>[ ] 无时效性信息</li>
+<li>[ ] 术语一致</li>
+<li>[ ] 包含具体示例</li>
+<li>[ ] 引用层级不超过一层</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/productivity/write-a-skill/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

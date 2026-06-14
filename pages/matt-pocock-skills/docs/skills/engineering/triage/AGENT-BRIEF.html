@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AGENT-BRIEF · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / AGENT-BRIEF</nav>
+        <header class="page-header">
+      <h1>AGENT-BRIEF</h1>
+      <div class="page-meta">
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/triage/AGENT-BRIEF.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>撰写 Agent Brief</h1>
+<p>agent brief 是 issue 移到 <code>ready-for-agent</code> 时发布在 GitHub issue 上的结构化 comment。它是 AFK agent 工作的 authoritative 规格。原始 issue body 与讨论是 context——agent brief 是 contract。</p>
+<h2>原则</h2>
+<h3>耐久性优于精确性</h3>
+<p>issue 可能在 <code>ready-for-agent</code> 停留数天或数周。代码库 meantime 会变。brief 应即使文件 rename、移动或 refactor 仍有用。</p>
+<ul>
+<li><strong>Do</strong> 描述 interface、type 与 behavioral contract</li>
+<li><strong>Do</strong> 命名 agent 应查找或修改的具体 type、function signature 或 config shape</li>
+<li><strong>Don't</strong> 引用 file path——会 stale</li>
+<li><strong>Don't</strong> 引用 line number</li>
+<li><strong>Don't</strong> assume 当前实现结构不变</li>
+</ul>
+<h3>行为性，非程序性</h3>
+<p>描述系统 <strong>应做什么</strong>，而非 <strong>如何实现</strong>。agent 会 fresh 探索代码库并自行做实现决策。</p>
+<ul>
+<li><strong>Good:</strong> "The <code>SkillConfig</code> type should accept an optional <code>schedule</code> field of type <code>CronExpression</code>"</li>
+<li><strong>Bad:</strong> "Open src/types/skill.ts and add a schedule field on line 42"</li>
+<li><strong>Good:</strong> "When a user runs <code>/triage</code> with no arguments, they should see a summary of issues needing attention"</li>
+<li><strong>Bad:</strong> "Add a switch statement in the main handler function"</li>
+</ul>
+<h3>完整的 acceptance criteria</h3>
+<p>agent 需要知道何时 done。每个 agent brief 必须有 concrete、可测试的 acceptance criteria。每条 criterion 应可独立验证。</p>
+<ul>
+<li><strong>Good:</strong> "Running <code>gh issue list --label needs-triage</code> returns issues that have been through initial classification"</li>
+<li><strong>Bad:</strong> "Triage should work correctly"</li>
+</ul>
+<h3>明确的 scope 边界</h3>
+<p>说明 out of scope 的内容。防止 agent gold-plating 或对 adjacent feature 做 assume。</p>
+<h2>模板</h2>
+<pre><code class="language-markdown">## Agent Brief
+
+**Category:** bug / enhancement
+**Summary:** one-line description of what needs to happen
+
+**Current behavior:**
+Describe what happens now. For bugs, this is the broken behavior.
+For enhancements, this is the status quo the feature builds on.
+
+**Desired behavior:**
+Describe what should happen after the agent's work is complete.
+Be specific about edge cases and error conditions.
+
+**Key interfaces:**
+- `TypeName` — what needs to change and why
+- `functionName()` return type — what it currently returns vs what it should return
+- Config shape — any new configuration options needed
+
+**Acceptance criteria:**
+- [ ] Specific, testable criterion 1
+- [ ] Specific, testable criterion 2
+- [ ] Specific, testable criterion 3
+
+**Out of scope:**
+- Thing that should NOT be changed or addressed in this issue
+- Adjacent feature that might seem related but is separate
+</code></pre>
+<h2>示例</h2>
+<h3>好的 agent brief（bug）</h3>
+<pre><code class="language-markdown">## Agent Brief
+
+**Category:** bug
+**Summary:** Skill description truncation drops mid-word, producing broken output
+
+**Current behavior:**
+When a skill description exceeds 1024 characters, it is truncated at exactly
+1024 characters regardless of word boundaries. This produces descriptions
+that end mid-word (e.g. &quot;Use when the user wants to confi&quot;).
+
+**Desired behavior:**
+Truncation should break at the last word boundary before 1024 characters
+and append &quot;...&quot; to indicate truncation.
+
+**Key interfaces:**
+- The `SkillMetadata` type's `description` field — no type change needed,
+  but the validation/processing logic that populates it needs to respect
+  word boundaries
+- Any function that reads SKILL.md frontmatter and extracts the description
+
+**Acceptance criteria:**
+- [ ] Descriptions under 1024 chars are unchanged
+- [ ] Descriptions over 1024 chars are truncated at the last word boundary
+      before 1024 chars
+- [ ] Truncated descriptions end with &quot;...&quot;
+- [ ] The total length including &quot;...&quot; does not exceed 1024 chars
+
+**Out of scope:**
+- Changing the 1024 char limit itself
+- Multi-line description support
+</code></pre>
+<h3>好的 agent brief（enhancement）</h3>
+<pre><code class="language-markdown">## Agent Brief
+
+**Category:** enhancement
+**Summary:** Add `.out-of-scope/` directory support for tracking rejected feature requests
+
+**Current behavior:**
+When a feature request is rejected, the issue is closed with a `wontfix` label
+and a comment. There is no persistent record of the decision or reasoning.
+Future similar requests require the maintainer to recall or search for the
+prior discussion.
+
+**Desired behavior:**
+Rejected feature requests should be documented in `.out-of-scope/&lt;concept&gt;.md`
+files that capture the decision, reasoning, and links to all issues that
+requested the feature. When triaging new issues, these files should be
+checked for matches.
+
+**Key interfaces:**
+- Markdown file format in `.out-of-scope/` — each file should have a
+  `# Concept Name` heading, a `**Decision:**` line, a `**Reason:**` line,
+  and a `**Prior requests:**` list with issue links
+- The triage workflow should read all `.out-of-scope/*.md` files early
+  and match incoming issues against them by concept similarity
+
+**Acceptance criteria:**
+- [ ] Closing a feature as wontfix creates/updates a file in `.out-of-scope/`
+- [ ] The file includes the decision, reasoning, and link to the closed issue
+- [ ] If a matching `.out-of-scope/` file already exists, the new issue is
+      appended to its &quot;Prior requests&quot; list rather than creating a duplicate
+- [ ] During triage, existing `.out-of-scope/` files are checked and surfaced
+      when a new issue matches a prior rejection
+
+**Out of scope:**
+- Automated matching (human confirms the match)
+- Reopening previously rejected features
+- Bug reports (only enhancement rejections go to `.out-of-scope/`)
+</code></pre>
+<h3>差的 agent brief</h3>
+<pre><code class="language-markdown">## Agent Brief
+
+**Summary:** Fix the triage bug
+
+**What to do:**
+The triage thing is broken. Look at the main file and fix it.
+The function around line 150 has the issue.
+
+**Files to change:**
+- src/triage/handler.ts (line 150)
+- src/types.ts (line 42)
+</code></pre>
+<p>差的原因：<br>
+- 无 category<br>
+- vague 描述（"the triage thing is broken"）<br>
+- 引用会 stale 的 file path 与 line number<br>
+- 无 acceptance criteria<br>
+- 无 scope 边界<br>
+- 无 current vs desired behavior 描述</p></article>
+    <p class="footer-note">由 <code>skills/engineering/triage/AGENT-BRIEF.zh-CN.md</code> 自动生成。</p>
+    </main>
+  </div>
+</body>
+</html>

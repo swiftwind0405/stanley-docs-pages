@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>README · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / README</nav>
+        <header class="page-header">
+      <h1>README</h1>
+      <div class="page-meta">
+        <span class="source-tag">参考文档</span>
+        <span>README.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><blockquote>
+<p>本文件为 <code>README.md</code> 的中文译文；skill 正文见各目录下的 <code>*.zh-CN.md</code>。</p>
+</blockquote>
+<p>
+  <a href="https://www.aihero.dev/s/skills-newsletter">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://res.cloudinary.com/total-typescript/image/upload/v1777382277/skills-repo-dark_2x.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://res.cloudinary.com/total-typescript/image/upload/v1777382277/skill-repo-light_2x.png">
+      <img alt="Skills" src="https://res.cloudinary.com/total-typescript/image/upload/v1777382277/skill-repo-light_2x.png" width="369">
+    </picture>
+  </a>
+</p>
+
+<h1>给真实工程师的 Skills</h1>
+<p><a href="https://skills.sh/mattpocock/skills"><img alt="skills.sh" src="https://skills.sh/b/mattpocock/skills"></a></p>
+<p>我每天用来做实工程——而非 vibe coding——的 agent skill。</p>
+<p>开发真实应用很难。GSD、BMAD、Spec-Kit 等方法试图通过「 owning 流程」来帮忙，但与此同时它们会夺走你的控制权，并让流程中的 bug 难以修复。</p>
+<p>这些 skill 设计得小而易改、可组合。适用于任何模型。基于数十年工程经验。随意改。变成你的。Enjoy。</p>
+<p>若想跟进这些 skill 的变更以及我创建的新 skill，可加入约 60,000 名开发者的 newsletter：</p>
+<p><a href="https://www.aihero.dev/s/skills-newsletter">订阅 Newsletter</a></p>
+<h2>快速开始（30 秒 setup）</h2>
+<ol>
+<li>运行 skills.sh 安装器：</li>
+</ol>
+<pre><code class="language-bash">npx skills@latest add mattpocock/skills
+</code></pre>
+<ol start="2">
+<li>
+<p>选择想要的 skill，以及要安装到哪些 coding agent 上。<strong>务必选择 <code>/setup-matt-pocock-skills</code></strong>。</p>
+</li>
+<li>
+<p>在 agent 中运行 <code>/setup-matt-pocock-skills</code>。它会：<br>
+   - 询问你想用哪种 issue tracker（GitHub、Linear 或本地文件）<br>
+   - 询问分诊时给 ticket 打什么 label（<code>/triage</code> 使用 label）<br>
+   - 询问要把我们创建的文档保存在哪里</p>
+</li>
+<li>
+<p>搞定——可以开始了。</p>
+</li>
+</ol>
+<h2>这些 Skill 为何存在</h2>
+<p>我创建这些 skill，是为了修复我在 Claude Code、Codex 和其他 coding agent 上常见的失败模式。</p>
+<h3>#1：Agent 没按我想要的方式做</h3>
+<blockquote>
+<p>"No-one knows exactly what they want"<br>
+（没人确切知道自己要什么）</p>
+<p>David Thomas &amp; Andrew Hunt, <a href="https://www.amazon.co.uk/Pragmatic-Programmer-Anniversary-Journey-Mastery/dp/B0833F1T3V">The Pragmatic Programmer</a></p>
+</blockquote>
+<p><strong>问题</strong>。软件开发最常见的失败模式是 misalignment。你以为 dev 懂你要什么。看到成品后——才发现它根本没理解你。</p>
+<p>AI 时代同样如此。你和 agent 之间存在沟通鸿沟。修复方式是 <strong>grilling 质询会话</strong>——让 agent 就你要构建的内容提出详细问题。</p>
+<p><strong>修复</strong>是使用：</p>
+<ul>
+<li><a href="/matt-pocock-skills/skills/grill-me.html"><code>/grill-me</code></a> — 用于非代码场景</li>
+<li><a href="/matt-pocock-skills/skills/grill-with-docs.html"><code>/grill-with-docs</code></a> — 与 <a href="/matt-pocock-skills/skills/grill-me.html"><code>/grill-me</code></a> 相同，但附加更多能力（见下文）</li>
+</ul>
+<p>这是我最受欢迎的 skill。它们帮你在开始前与 agent 对齐，并深入思考你要做的变更。_每次_要做变更时都请使用。</p>
+<h3>#2：Agent 太啰嗦</h3>
+<blockquote>
+<p>With a ubiquitous language, conversations among developers and expressions of the code are all derived from the same domain model.<br>
+（有了通用语言，开发者之间的对话与代码表达都源自同一领域模型。）</p>
+<p>Eric Evans, <a href="https://www.amazon.co.uk/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215">Domain-Driven-Design</a></p>
+</blockquote>
+<p><strong>问题</strong>：项目初期，开发者与他们为之构建软件的人（领域专家）通常说不同的语言。</p>
+<p>我对 agent 也有同样感受。Agent 常被丢进项目，被要求边做边搞懂行话。于是 1 个词能说完的，它用 20 个。</p>
+<p><strong>修复</strong>是共享语言——一份帮助 agent 解码项目行话的文档。</p>
+<details>
+<summary>
+示例
+</summary>
+
+这是我 `course-video-manager` 仓库中的 [`CONTEXT.md`](https://github.com/mattpocock/course-video-manager/blob/076a5a7a182db0fe1e62971dd7a68bcadf010f1c/CONTEXT.md) 示例。哪个更好读？
+
+- **之前**：「当课程某 section 内的 lesson 被 made 'real'（即在文件系统中占一个位置）时会出现问题」
+- **之后**：「materialization cascade 有问题」
+
+这种简洁会在 session  after session 中持续 payoff。
+
+</details>
+
+<p>这内建于 <a href="/matt-pocock-skills/skills/grill-with-docs.html"><code>/grill-with-docs</code></a>。它是 grilling 会话，但帮你与 AI 建立共享语言，并将难以解释的决定记入 ADR。</p>
+<p>很难形容这有多强大。可能是本 repo 最 cool 的技巧之一。试试就知道。</p>
+<blockquote>
+<p>[!TIP]<br>
+共享语言除减少啰嗦外还有许多好处：</p>
+<ul>
+<li><strong>变量、函数和文件命名一致</strong>，使用共享语言</li>
+<li>因此 <strong>代码库对 agent 更易导航</strong></li>
+<li>agent <strong>思考时 token 更少</strong>，因为它有更简洁的语言可用</li>
+</ul>
+</blockquote>
+<h3>#3：代码跑不通</h3>
+<blockquote>
+<p>"Always take small, deliberate steps. The rate of feedback is your speed limit. Never take on a task that's too big."<br>
+（始终小步 deliberate。反馈速率是你的速度上限。不要接过大的任务。）</p>
+<p>David Thomas &amp; Andrew Hunt, <a href="https://www.amazon.co.uk/Pragmatic-Programmer-Anniversary-Journey-Mastery/dp/B0833F1T3V">The Pragmatic Programmer</a></p>
+</blockquote>
+<p><strong>问题</strong>：假设你和 agent 已对齐要构建什么。agent _仍然_产出垃圾怎么办？</p>
+<p>该审视反馈循环了。若没有关于产出代码实际如何运行的反馈，agent 等于盲飞。</p>
+<p><strong>修复</strong>：需要 usual 反馈循环：静态类型、浏览器访问、自动化测试。</p>
+<p>对自动化测试，红-绿-重构循环至关重要。agent 先写失败测试，再修到通过。这给 agent 一致的反馈水平，产出好得多的代码。</p>
+<p>我构建了 <strong><a href="/matt-pocock-skills/skills/tdd.html"><code>/tdd</code></a> skill</strong>，可插入任何项目。它鼓励红-绿-重构，并给 agent 大量关于好测试与坏测试的指导。</p>
+<p>调试方面，还有 <strong><a href="/matt-pocock-skills/skills/diagnose.html"><code>/diagnose</code></a></strong> skill，将最佳调试实践包装成简单循环。</p>
+<h3>#4：我们造了一团泥</h3>
+<blockquote>
+<p>"Invest in the design of the system <em>every day</em>."<br>
+（_每天_投资系统设计。）</p>
+<p>Kent Beck, <a href="https://www.amazon.co.uk/Extreme-Programming-Explained-Embrace-Change/dp/0321278658">Extreme Programming Explained</a></p>
+<p>"The best modules are deep. They allow a lot of functionality to be accessed through a simple interface."<br>
+（最好的 module 是深的。大量功能可通过简单 interface 访问。）</p>
+<p>John Ousterhout, <a href="https://www.amazon.co.uk/Philosophy-Software-Design-2nd/dp/173210221X">A Philosophy Of Software Design</a></p>
+</blockquote>
+<p><strong>问题</strong>：多数 agent 构建的应用复杂难改。agent 能大幅加速编码，也会加速软件熵。代码库以空前速度变复杂。</p>
+<p><strong>修复</strong>是对 AI 驱动开发的 radical 新思路：关心代码设计。</p>
+<p>这内建于这些 skill 的每一层：</p>
+<ul>
+<li><a href="/matt-pocock-skills/skills/to-prd.html"><code>/to-prd</code></a> 在创建 PRD 前会 quiz 你触及哪些 module</li>
+<li><a href="/matt-pocock-skills/skills/zoom-out.html"><code>/zoom-out</code></a> 让 agent 在 whole system 语境下解释代码</li>
+</ul>
+<p>关键的是，<a href="/matt-pocock-skills/skills/improve-codebase-architecture.html"><code>/improve-codebase-architecture</code></a> 帮你 rescue 已成一团泥的代码库。建议每隔几天在代码库上运行一次。</p>
+<h3>总结</h3>
+<p>软件工程 fundamentals 比以往更重要。这些 skill 是我将这些 fundamentals  condensed 成可重复实践的最佳努力，帮你 ship 职业生涯中最好的应用。Enjoy。</p>
+<h2>Reference（参考）</h2>
+<h3>Engineering</h3>
+<p>我日常用于代码工作的 skill。</p>
+<ul>
+<li><strong><a href="/matt-pocock-skills/skills/diagnose.html">diagnose</a></strong> — 针对难 bug 与性能回归的 disciplined 诊断循环：复现 → 最小化 → 假设 → 插桩 → 修复 → 回归测试。</li>
+<li><strong><a href="/matt-pocock-skills/skills/grill-with-docs.html">grill-with-docs</a></strong> — grilling 质询会话，对照现有领域模型挑战计划、 sharpen 术语，并 inline 更新 <code>CONTEXT.md</code> 与 ADR。</li>
+<li><strong><a href="/matt-pocock-skills/skills/triage.html">triage</a></strong> — 通过分诊角色状态机分诊 issue。</li>
+<li><strong><a href="/matt-pocock-skills/skills/improve-codebase-architecture.html">improve-codebase-architecture</a></strong> — 在代码库中寻找 deepening 机会， informed by <code>CONTEXT.md</code> 中的领域语言与 <code>docs/adr/</code> 中的决定。</li>
+<li><strong><a href="/matt-pocock-skills/skills/setup-matt-pocock-skills.html">setup-matt-pocock-skills</a></strong> —  scaffold 其他 engineering skill 消费的 per-repo 配置（issue tracker、分诊 label 词汇表、领域文档布局）。每个 repo 运行一次，再使用 <code>to-issues</code>、<code>to-prd</code>、<code>triage</code>、<code>diagnose</code>、<code>tdd</code>、<code>improve-codebase-architecture</code> 或 <code>zoom-out</code>。</li>
+<li><strong><a href="/matt-pocock-skills/skills/tdd.html">tdd</a></strong> — 红-绿-重构循环的测试驱动开发。一次一个垂直切片构建功能或修 bug。</li>
+<li><strong><a href="/matt-pocock-skills/skills/to-issues.html">to-issues</a></strong> — 用垂直切片将任意计划、spec 或 PRD 拆成可独立 grab 的 GitHub issue。</li>
+<li><strong><a href="/matt-pocock-skills/skills/to-prd.html">to-prd</a></strong> — 将当前对话上下文转为 PRD 并提交为 GitHub issue。无 interview——仅 synthesize 已讨论内容。</li>
+<li><strong><a href="/matt-pocock-skills/skills/zoom-out.html">zoom-out</a></strong> — 让 agent zoom out，对 unfamiliar 代码段给出 broader 语境或更高层视角。</li>
+<li><strong><a href="/matt-pocock-skills/skills/prototype.html">prototype</a></strong> — 构建可丢弃 prototype 以 flesh out 设计——要么是 state/业务逻辑问题的可运行终端 app，要么是从单一路由可切换的多种 radically 不同 UI 变体。</li>
+</ul>
+<h3>Productivity</h3>
+<p>通用工作流工具，非代码专用。</p>
+<ul>
+<li><strong><a href="/matt-pocock-skills/skills/caveman.html">caveman</a></strong> —  ultra-compressed 沟通模式。去掉 filler 将 token 用量削减约 75%，同时保持完整技术准确性。</li>
+<li><strong><a href="/matt-pocock-skills/skills/grill-me.html">grill-me</a></strong> — 就计划或设计被 relentless interview，直到决策树每个分支 resolved。</li>
+<li><strong><a href="/matt-pocock-skills/skills/handoff.html">handoff</a></strong> — 将当前对话 compact 成 handoff 文档，供另一 agent 继续工作。</li>
+<li><strong><a href="/matt-pocock-skills/skills/teach.html">teach</a></strong> — 跨多 session 教用户新 skill 或概念，以当前目录为 stateful 教学 workspace。</li>
+<li><strong><a href="/matt-pocock-skills/skills/write-a-skill.html">write-a-skill</a></strong> — 创建结构正确、渐进披露、bundled resources 的新 skill。</li>
+</ul>
+<h3>Misc</h3>
+<p>保留备用但很少使用的工具。</p>
+<ul>
+<li><strong><a href="/matt-pocock-skills/skills/git-guardrails-claude-code.html">git-guardrails-claude-code</a></strong> — 设置 Claude Code hooks，在 push、reset --hard、clean 等危险 git 命令执行前 block。</li>
+<li><strong><a href="/matt-pocock-skills/skills/migrate-to-shoehorn.html">migrate-to-shoehorn</a></strong> — 将测试文件从 <code>as</code> 类型断言迁移到 @total-typescript/shoehorn。</li>
+<li><strong><a href="/matt-pocock-skills/skills/scaffold-exercises.html">scaffold-exercises</a></strong> — 创建含 section、problem、solution 与 explainer 的练习目录结构。</li>
+<li><strong><a href="/matt-pocock-skills/skills/setup-pre-commit.html">setup-pre-commit</a></strong> — 设置 Husky pre-commit hooks，含 lint-staged、Prettier、类型检查与测试。</li>
+</ul></article>
+    <p class="footer-note">由 <code>README.zh-CN.md</code> 自动生成。</p>
+    </main>
+  </div>
+</body>
+</html>

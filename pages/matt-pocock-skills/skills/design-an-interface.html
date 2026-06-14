@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>design-an-interface · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /design-an-interface</nav>
+        <header class="page-header">
+      <h1>/design-an-interface</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/deprecated/design-an-interface/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>设计界面</h1>
+<p>基于《A Philosophy of Software Design》中的「Design It Twice」：第一个想法未必最好。生成多种截然不同的设计，再比较。</p>
+<h2>工作流</h2>
+<h3>1. 收集需求</h3>
+<p>设计前先理解：</p>
+<ul>
+<li>[ ] 该模块解决什么问题？</li>
+<li>[ ] 调用方是谁？（其他模块、外部用户、测试）</li>
+<li>[ ] 关键操作有哪些？</li>
+<li>[ ] 有何约束？（性能、兼容性、现有模式）</li>
+<li>[ ] 什么应藏在内部、什么应暴露？</li>
+</ul>
+<p>询问：「这个模块需要做什么？谁会使用它？」</p>
+<h3>2. 生成设计（并行子代理）</h3>
+<p>使用 Task 工具同时启动 3+ 子代理。每个必须产出<strong>截然不同</strong>的方案。</p>
+<pre><code>Prompt template for each sub-agent:
+
+Design an interface for: [module description]
+
+Requirements: [gathered requirements]
+
+Constraints for this design: [assign a different constraint to each agent]
+- Agent 1: &quot;Minimize method count - aim for 1-3 methods max&quot;
+- Agent 2: &quot;Maximize flexibility - support many use cases&quot;
+- Agent 3: &quot;Optimize for the most common case&quot;
+- Agent 4: &quot;Take inspiration from [specific paradigm/library]&quot;
+
+Output format:
+1. Interface signature (types/methods)
+2. Usage example (how caller uses it)
+3. What this design hides internally
+4. Trade-offs of this approach
+</code></pre>
+<h3>3. 呈现设计</h3>
+<p>展示每个设计，包含：</p>
+<ol>
+<li><strong>界面签名</strong> — 类型、方法、参数</li>
+<li><strong>使用示例</strong> — 调用方实际如何使用</li>
+<li><strong>隐藏内容</strong> — 留在内部的复杂度</li>
+</ol>
+<p>顺序呈现设计，让用户在比较前吸收每种方案。</p>
+<h3>4. 比较设计</h3>
+<p>展示全部设计后，从以下维度比较：</p>
+<ul>
+<li><strong>界面简洁性</strong>：更少方法、更简单参数</li>
+<li><strong>通用 vs. 专用</strong>：灵活性 vs. 聚焦</li>
+<li><strong>实现效率</strong>：形态是否允许高效内部实现？</li>
+<li><strong>深度</strong>：小界面藏显著复杂度（好）vs. 大界面薄实现（差）</li>
+<li><strong>易于正确使用</strong> vs. <strong>易于误用</strong></li>
+</ul>
+<p>用散文讨论权衡，不用表格。突出设计分歧最大的地方。</p>
+<h3>5. 综合</h3>
+<p>最佳设计常综合多种方案的洞见。询问：</p>
+<ul>
+<li>「哪种设计最贴合你的主要用例？」</li>
+<li>「其他设计中有值得纳入的元素吗？」</li>
+</ul>
+<h2>评估标准</h2>
+<p>来自《A Philosophy of Software Design》：</p>
+<p><strong>界面简洁性</strong>：更少方法、更简单参数 = 更易学习与正确使用。</p>
+<p><strong>通用性</strong>：可应对未来用例而无需改动。但警惕过度泛化。</p>
+<p><strong>实现效率</strong>：界面形态是否允许高效实现？还是迫使别扭的内部结构？</p>
+<p><strong>深度</strong>：小界面藏显著复杂度 = 深模块（好）。大界面薄实现 = 浅模块（避免）。</p>
+<h2>反模式</h2>
+<ul>
+<li>不要让子代理产出相似设计——强制截然不同</li>
+<li>不要跳过比较——价值在对比</li>
+<li>不要实现——这纯粹关于界面形态</li>
+<li>不要按实现工作量评估</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/deprecated/design-an-interface/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

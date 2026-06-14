@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LANGUAGE · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / LANGUAGE</nav>
+        <header class="page-header">
+      <h1>LANGUAGE</h1>
+      <div class="page-meta">
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/improve-codebase-architecture/LANGUAGE.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Language（词汇）</h1>
+<p>本 skill 每条建议使用的共享词汇。精确使用这些 term——不要 substitute「component」「service」「API」或「boundary」。一致语言就是 whole point。</p>
+<h2>Terms（术语）</h2>
+<p><strong>Module</strong>（模块）<br>
+Anything with an interface and an implementation. Deliberately scale-agnostic — 同样适用于 function、class、package 或跨 tier slice。<br>
+<em>避免</em>：unit、component、service。</p>
+<p><strong>Interface</strong>（接口）<br>
+Caller 为正确使用 module 必须知道的一切。包括 type signature，还有 invariants、ordering constraints、error modes、required configuration、performance characteristics。<br>
+<em>避免</em>：API、signature（太窄——仅指 type-level surface）。</p>
+<p><strong>Implementation</strong>（实现）<br>
+Module 内部——其 code body。与 <strong>Adapter</strong> 不同：可以是 small adapter + large implementation（Postgres repo），或 large adapter + small implementation（in-memory fake）。Seam 是话题时用「adapter」；否则用「implementation」。</p>
+<p><strong>Depth</strong>（深度）<br>
+Interface 处的 leverage——caller（或 test）每 unit 需学习的 interface 能 exercise 多少 behavior。<strong>Deep</strong> module 是大量 behavior 在 small interface 后。<strong>Shallow</strong> module 是 interface 几乎与 implementation 一样 complex。</p>
+<p><strong>Seam</strong> <em>(from Michael Feathers)</em>（接缝）<br>
+可 alter behavior 而无需在该处 edit 的位置。Module interface 所在的 <em>location</em>。Seam 放哪是独立 design decision，与后面放什么 distinct。</p>
+<p><em>避免</em>：boundary（与 DDD bounded context  overloaded）。</p>
+<p><strong>Adapter</strong>（适配器）<br>
+在 seam 处 satisfy interface 的 concrete thing。描述 <em>role</em>（填什么 slot），非 substance（里面是什么）。</p>
+<p><strong>Leverage</strong>（杠杆）<br>
+Caller 从 depth 得到什么。每 unit interface 学习得到更多 capability。One implementation 在 N call site 与 M test 上 pay back。</p>
+<p><strong>Locality</strong>（局部性）<br>
+Maintainer 从 depth 得到什么。Change、bug、knowledge、verification 集中在一处而非 spread 到 caller。Fix once，fixed everywhere。</p>
+<h2>Principles（原则）</h2>
+<ul>
+<li><strong>Depth 是 interface 的属性，非 implementation。</strong> Deep module 内部可由 small、mockable、swappable part 组成——它们不是 interface 一部分。Module 可有 <strong>internal seams</strong>（implementation private，own test 用）以及 interface 处的 <strong>external seam</strong>。</li>
+<li><strong>The deletion test。</strong> 想象 delete module。若 complexity 消失，module 没 hide 任何东西（pass-through）。若 complexity 在 N caller 重现，module 在 earn keep。</li>
+<li><strong>The interface is the test surface。</strong> Caller 与 test  cross 同一 seam。若想 test <em>past</em> interface，module 可能 shape 错了。</li>
+<li><strong>One adapter means hypothetical seam. Two adapters means real one.</strong> 除非 something 真的在 seam 上 vary，否则不要 introduce seam。</li>
+</ul>
+<h2>Relationships（关系）</h2>
+<ul>
+<li><strong>Module</strong> 有 exactly one <strong>Interface</strong>（present 给 caller 与 test 的 surface）。</li>
+<li><strong>Depth</strong> 是 <strong>Module</strong> 的属性，相对其 <strong>Interface</strong> 测量。</li>
+<li><strong>Seam</strong> 是 <strong>Module</strong> 的 <strong>Interface</strong> 所在处。</li>
+<li><strong>Adapter</strong> 在 <strong>Seam</strong> 处 satisfy <strong>Interface</strong>。</li>
+<li><strong>Depth</strong> 为 caller 产生 <strong>Leverage</strong>，为 maintainer 产生 <strong>Locality</strong>。</li>
+</ul>
+<h2>Rejected framings（拒绝的 framing）</h2>
+<ul>
+<li><strong>Depth 作为 implementation-lines 与 interface-lines 之比</strong>（Ousterhout）：reward padding implementation。我们用 depth-as-leverage。</li>
+<li><strong>「Interface」仅指 TypeScript <code>interface</code> 或 class public methods</strong>：太窄——此处 interface 包括 caller 必须知道的 every fact。</li>
+<li><strong>「Boundary」</strong>：与 DDD bounded context overloaded。说 <strong>seam</strong> 或 <strong>interface</strong>。</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/engineering/improve-codebase-architecture/LANGUAGE.zh-CN.md</code> 自动生成。</p>
+    </main>
+  </div>
+</body>
+</html>

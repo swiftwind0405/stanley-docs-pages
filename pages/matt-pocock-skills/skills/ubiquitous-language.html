@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ubiquitous-language · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /ubiquitous-language</nav>
+        <header class="page-header">
+      <h1>/ubiquitous-language</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/deprecated/ubiquitous-language/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>通用语言（Ubiquitous Language）</h1>
+<p>从当前对话提取并形式化领域术语，形成一致词汇表，保存到本地文件。</p>
+<h2>流程</h2>
+<ol>
+<li><strong>扫描对话</strong>中的领域相关名词、动词和概念</li>
+<li><strong>识别问题</strong>：<br>
+   - 同一词用于不同概念（歧义）<br>
+   - 不同词用于同一概念（同义词）<br>
+   - 模糊或 overloaded 术语</li>
+<li><strong>提议规范词汇表</strong>，带明确术语选择</li>
+<li><strong>写入工作目录的 <code>UBIQUITOUS_LANGUAGE.md</code></strong>，使用下方格式</li>
+<li><strong>在对话中输出摘要</strong></li>
+</ol>
+<h2>输出格式</h2>
+<p>写入如下结构的 <code>UBIQUITOUS_LANGUAGE.md</code>：</p>
+<pre><code class="language-md"># Ubiquitous Language
+
+## Order lifecycle
+
+| Term        | Definition                                              | Aliases to avoid      |
+| ----------- | ------------------------------------------------------- | --------------------- |
+| **Order**   | A customer's request to purchase one or more items      | Purchase, transaction |
+| **Invoice** | A request for payment sent to a customer after delivery | Bill, payment request |
+
+## People
+
+| Term         | Definition                                  | Aliases to avoid       |
+| ------------ | ------------------------------------------- | ---------------------- |
+| **Customer** | A person or organization that places orders | Client, buyer, account |
+| **User**     | An authentication identity in the system    | Login, account         |
+
+## Relationships
+
+- An **Invoice** belongs to exactly one **Customer**
+- An **Order** produces one or more **Invoices**
+
+## Example dialogue
+
+&gt; **Dev:** &quot;When a **Customer** places an **Order**, do we create the **Invoice** immediately?&quot;
+&gt; **Domain expert:** &quot;No — an **Invoice** is only generated once a **Fulfillment** is confirmed. A single **Order** can produce multiple **Invoices** if items ship in separate **Shipments**.&quot;
+&gt; **Dev:** &quot;So if a **Shipment** is cancelled before dispatch, no **Invoice** exists for it?&quot;
+&gt; **Domain expert:** &quot;Exactly. The **Invoice** lifecycle is tied to the **Fulfillment**, not the **Order**.&quot;
+
+## Flagged ambiguities
+
+- &quot;account&quot; was used to mean both **Customer** and **User** — these are distinct concepts: a **Customer** places orders, while a **User** is an authentication identity that may or may not represent a **Customer**.
+</code></pre>
+<h2>规则</h2>
+<ul>
+<li><strong>要有主见。</strong> 同一概念有多种说法时，选最好的，其余列为应避免的别名。</li>
+<li><strong>明确标记冲突。</strong> 若对话中术语用法歧义，在「Flagged ambiguities」中点名并给出清晰建议。</li>
+<li><strong>只包含领域专家相关的术语。</strong> 除非模块或类名在领域语言中有意义，否则跳过。</li>
+<li><strong>定义要紧凑。</strong> 最多一句。定义它<strong>是什么</strong>，不是它做什么。</li>
+<li><strong>展示关系。</strong> 用加粗术语名，在明显处表达基数。</li>
+<li><strong>只包含领域术语。</strong> 跳过通用编程概念（array、function、endpoint），除非有领域特定含义。</li>
+<li><strong>自然聚类时拆多张表</strong>（例如按子域、生命周期或角色）。每组有自己的标题和表。若所有术语属于单一 cohesive 领域，一张表即可——不要强行分组。</li>
+<li><strong>写示例对话。</strong> 开发与领域专家之间的短对话（3–5 轮），展示术语如何自然交互。对话应澄清相关概念边界并精确使用术语。</li>
+</ul>
+<p><example></p>
+<h2>Example dialogue</h2>
+<blockquote>
+<p><strong>Dev:</strong> "How do I test the <strong>sync service</strong> without Docker?"</p>
+<p><strong>Domain expert:</strong> "Provide the <strong>filesystem layer</strong> instead of the <strong>Docker layer</strong>. It implements the same <strong>Sandbox service</strong> interface but uses a local directory as the <strong>sandbox</strong>."</p>
+<p><strong>Dev:</strong> "So <strong>sync-in</strong> still creates a <strong>bundle</strong> and unpacks it?"</p>
+<p><strong>Domain expert:</strong> "Exactly. The <strong>sync service</strong> doesn't know which layer it's talking to. It calls <code>exec</code> and <code>copyIn</code> — the <strong>filesystem layer</strong> just runs those as local shell commands."</p>
+</blockquote>
+<p></example></p>
+<h2>重新运行</h2>
+<p>在同一会话中再次调用时：</p>
+<ol>
+<li>读取现有 <code>UBIQUITOUS_LANGUAGE.md</code></li>
+<li>纳入后续讨论中的新术语</li>
+<li>若理解演进则更新定义</li>
+<li>重新标记新歧义</li>
+<li>重写示例对话以纳入新术语</li>
+</ol></article>
+    <p class="footer-note">由 <code>skills/deprecated/ubiquitous-language/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

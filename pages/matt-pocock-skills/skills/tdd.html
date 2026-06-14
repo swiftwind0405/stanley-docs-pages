@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tdd · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /tdd</nav>
+        <header class="page-header">
+      <h1>/tdd</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/engineering/tdd/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Test-Driven Development</h1>
+<h2>Philosophy</h2>
+<p><strong>Core principle</strong>: Tests should verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't.</p>
+<p><strong>Good tests</strong> are integration-style: they exercise real code paths through public APIs. They describe <em>what</em> the system does, not <em>how</em> it does it. A good test reads like a specification - "user can checkout with valid cart" tells you exactly what capability exists. These tests survive refactors because they don't care about internal structure.</p>
+<p><strong>Bad tests</strong> are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.</p>
+<p>See <a href="/matt-pocock-skills/docs/skills/engineering/tdd/tests.html">tests.md</a> for examples and <a href="/matt-pocock-skills/docs/skills/engineering/tdd/mocking.html">mocking.md</a> for mocking guidelines.</p>
+<h2>Anti-Pattern: Horizontal Slices</h2>
+<p><strong>DO NOT write all tests first, then all implementation.</strong> This is "horizontal slicing" - treating RED as "write all tests" and GREEN as "write all code."</p>
+<p>This produces <strong>crap tests</strong>:</p>
+<ul>
+<li>Tests written in bulk test <em>imagined</em> behavior, not <em>actual</em> behavior</li>
+<li>You end up testing the <em>shape</em> of things (data structures, function signatures) rather than user-facing behavior</li>
+<li>Tests become insensitive to real changes - they pass when behavior breaks, fail when behavior is fine</li>
+<li>You outrun your headlights, committing to test structure before understanding the implementation</li>
+</ul>
+<p><strong>Correct approach</strong>: Vertical slices via tracer bullets. One test → one implementation → repeat. Each test responds to what you learned from the previous cycle. Because you just wrote the code, you know exactly what behavior matters and how to verify it.</p>
+<pre><code>WRONG (horizontal):
+  RED:   test1, test2, test3, test4, test5
+  GREEN: impl1, impl2, impl3, impl4, impl5
+
+RIGHT (vertical):
+  RED→GREEN: test1→impl1
+  RED→GREEN: test2→impl2
+  RED→GREEN: test3→impl3
+  ...
+</code></pre>
+<h2>Workflow</h2>
+<h3>1. Planning</h3>
+<p>探索代码库时，使用项目领域词汇表，使 test name 与 interface 词汇与项目语言一致，并 respect 你即将改动区域的 ADR。</p>
+<p>写任何代码前：</p>
+<ul>
+<li>[ ] 与用户确认需要哪些 interface 变更</li>
+<li>[ ] 与用户确认要测哪些 behavior（prioritize）</li>
+<li>[ ] 识别 <a href="/matt-pocock-skills/docs/skills/engineering/tdd/deep-modules.html">deep modules</a> 机会（小 interface、深 implementation）</li>
+<li>[ ] 为 <a href="/matt-pocock-skills/docs/skills/engineering/tdd/interface-design.html">testability</a> 设计 interface</li>
+<li>[ ] 列出要测的 behavior（非 implementation step）</li>
+<li>[ ] 获得用户对 plan 的 approval</li>
+</ul>
+<p>Ask: "What should the public interface look like? Which behaviors are most important to test?"</p>
+<p><strong>You can't test everything.</strong> 与用户确认哪些 behavior 最重要。测试 effort 聚焦 critical path 与 complex logic，非每个 possible edge case。</p>
+<h3>2. Tracer Bullet</h3>
+<p>写 <strong>一个</strong> test 确认系统 <strong>一件事</strong>：</p>
+<pre><code>RED:   Write test for first behavior → test fails
+GREEN: Write minimal code to pass → test passes
+</code></pre>
+<p>这是 tracer bullet——证明路径 end-to-end 可行。</p>
+<h3>3. Incremental Loop</h3>
+<p>对每个剩余 behavior：</p>
+<pre><code>RED:   Write next test → fails
+GREEN: Minimal code to pass → passes
+</code></pre>
+<p>Rules:</p>
+<ul>
+<li>One test at a time</li>
+<li>Only enough code to pass current test</li>
+<li>Don't anticipate future tests</li>
+<li>Keep tests focused on observable behavior</li>
+</ul>
+<h3>4. Refactor</h3>
+<p>所有 test pass 后，找 <a href="/matt-pocock-skills/docs/skills/engineering/tdd/refactoring.html">refactor candidates</a>：</p>
+<ul>
+<li>[ ] Extract duplication</li>
+<li>[ ] Deepen modules (move complexity behind simple interfaces)</li>
+<li>[ ] Apply SOLID principles where natural</li>
+<li>[ ] Consider what new code reveals about existing code</li>
+<li>[ ] Run tests after each refactor step</li>
+</ul>
+<p><strong>Never refactor while RED.</strong> Get to GREEN first.</p>
+<h2>Checklist Per Cycle</h2>
+<pre><code>[ ] Test describes behavior, not implementation
+[ ] Test uses public interface only
+[ ] Test would survive internal refactor
+[ ] Code is minimal for this test
+[ ] No speculative features added
+</code></pre></article>
+    <p class="footer-note">由 <code>skills/engineering/tdd/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UI · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / UI</nav>
+        <header class="page-header">
+      <h1>UI</h1>
+      <div class="page-meta">
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/prototype/UI.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>UI Prototype</h1>
+<p>在 <strong>单 route 生成多种截然不同的 UI 变体</strong>，从 floating bottom bar 切换。用户在浏览器间 flip variant，选一个（或从每个偷 bit），然后扔掉其余。</p>
+<p>若问题是 logic/state 而非 looks——wrong branch。用 <a href="/matt-pocock-skills/docs/skills/engineering/prototype/LOGIC.html">LOGIC.md</a>。</p>
+<h2>何时是该形态</h2>
+<ul>
+<li>"What should this page look like?"</li>
+<li>"I want to see a few options for this dashboard before committing."</li>
+<li>"Try a different layout for the settings screen."</li>
+<li>任何用户否则会在脑中花一天在三个 vague mockup 间选的时候。</li>
+</ul>
+<h2>两种 sub-shape — 强烈 prefer sub-shape A</h2>
+<p>UI prototype 在 <strong>与 app 其余部分 butt up</strong> 时更易 judge——real header、sidebar、data、density。孤立 throwaway route 是 vacuum：每个 variant 单独看都 fine。只要有 plausible existing page host variant 就 default sub-shape A。仅当 prototype genuinely 无 nearby home 才 sub-shape B。</p>
+<h3>Sub-shape A — 对现有 page 的调整（preferred）</h3>
+<p>Route 已存在。Variant 在 <strong>同 route</strong> render，由 <code>?variant=</code> URL search param gate。现有 data fetching、params、auth 保留——仅 rendering swap。这是 default；除非 specific reason 否则选它。</p>
+<p>若 prototype 是尚无 page 但 <em>自然住在某 page 内</em> 的东西（dashboard 新 section、settings 新 card、existing flow 新 step）——仍是 sub-shape A。在 host page 内 mount variant。</p>
+<h3>Sub-shape B — 新 page（last resort）</h3>
+<p>仅当被 prototype 的东西 genuinely 无 existing page 可住——如全新 top-level surface，或无法 sensible embed 的 flow。</p>
+<p>Create <strong>throwaway route</strong> obey 项目 routing convention——不要 invent 新 top-level structure。命名 obviously prototype（path 或 filename 含 <code>prototype</code>）。同样 <code>?variant=</code> pattern。</p>
+<p>commit sub-shape B 前 sanity-check：真的无 existing page 可 embed？空 route hide populated page 会 expose 的设计问题。</p>
+<p>两 sub-shape 的 floating bottom bar 相同。</p>
+<h2>流程</h2>
+<h3>1. State the question and pick N</h3>
+<p>Default <strong>3 variants</strong>。超过 5 不再 radically different 而成 noise——cap 在那里。</p>
+<p>一行写下 plan，在 prototype 位置或 file 顶 comment：</p>
+<blockquote>
+<p>"Three variants of the settings page, switchable via <code>?variant=</code>, on the existing <code>/settings</code> route."</p>
+</blockquote>
+<p>无论用户是否在都可 push back。</p>
+<h3>2. Generate radically different variants</h3>
+<p>Draft 每个 variant。Hold each one to:</p>
+<ul>
+<li>The page's purpose and the data it has access to.</li>
+<li>The project's component library / styling system (TailwindCSS, shadcn, MUI, plain CSS, whatever).</li>
+<li>A clear exported component name, e.g. <code>VariantA</code>, <code>VariantB</code>, <code>VariantC</code>.</li>
+</ul>
+<p>Variant 必须 <strong>structurally different</strong>——不同 layout、information hierarchy、primary affordance，非仅 colour。三个略 tweak 的 card grid 不是 UI prototype，是 wallpaper。若两 draft 太 similar，用 explicit "do not use a card grid" guidance redo 一个。</p>
+<h3>3. Wire them together</h3>
+<p>在 route 创建 single switcher component:</p>
+<pre><code class="language-tsx">// pseudo-code — adapt to the project's framework
+const variant = searchParams.get('variant') ?? 'A';
+return (
+  &lt;&gt;
+    {variant === 'A' &amp;&amp; &lt;VariantA {...data} /&gt;}
+    {variant === 'B' &amp;&amp; &lt;VariantB {...data} /&gt;}
+    {variant === 'C' &amp;&amp; &lt;VariantC {...data} /&gt;}
+    &lt;PrototypeSwitcher variants={['A','B','C']} current={variant} /&gt;
+  &lt;/&gt;
+);
+</code></pre>
+<p>Sub-shape A（existing page）：switcher 上方保留所有 existing data fetching；仅 rendered subtree  per variant 变。</p>
+<p>Sub-shape B（new page）：<code>/prototype/&lt;name&gt;</code> throwaway route mount 同样 switcher。</p>
+<h3>4. Build the floating switcher</h3>
+<p>屏幕 bottom-centre 小 fixed bar，三块：</p>
+<ul>
+<li><strong>Left arrow</strong> — 上一 variant（wrap）。</li>
+<li><strong>Variant label</strong> — 当前 variant key，若 variant export name 则一并显示。如 <code>B — Sidebar layout</code>。</li>
+<li><strong>Right arrow</strong> — 下一 variant（wrap）。</li>
+</ul>
+<p>Behaviour:</p>
+<ul>
+<li>Click arrow 更新 URL search param（用 framework router——Next 用 <code>router.replace</code>，React Router 用 <code>navigate</code> 等）使 variant shareable、reload-stable。</li>
+<li>Keyboard：<code>←</code> <code>→</code> 也 cycle。<code>&lt;input&gt;</code>、<code>&lt;textarea&gt;</code>、<code>[contenteditable]</code> focused 时不 intercept arrow。</li>
+<li>与 page visually distinct（如 high-contrast pill、subtle shadow）——obviously 非被 evaluate 的设计一部分。</li>
+<li>Production build hidden——gate <code>process.env.NODE_ENV !== 'production'</code> 或等价，stray prototype merge 不能把 bar ship 给用户。</li>
+</ul>
+<p>Switcher 放 single shared component，两 sub-shape reuse。位置随项目 shared UI。</p>
+<h3>5. Hand it over</h3>
+<p>Surface URL（与 <code>?variant=</code> keys）。用户随时 flip。有趣 feedback 通常是 <strong>"I want the header from B with the sidebar from C"</strong>——那才是他们要的 design。</p>
+<h3>6. Capture the answer and clean up</h3>
+<p>Variant 胜出后，写下哪个及 why（commit message、ADR、issue，或 AFK 且用户未回时在 prototype 旁 <code>NOTES.md</code>）。然后：</p>
+<ul>
+<li><strong>Sub-shape A</strong> — delete 输家 variant 与 switcher；将 winner fold 进 existing page。</li>
+<li><strong>Sub-shape B</strong> — 将 winning variant promote 到 real route，delete throwaway route 与 switcher。</li>
+</ul>
+<p>不要留 variant component 或 switcher lying around。Rot fast，confuse 下一位 reader。</p>
+<h2>Anti-patterns</h2>
+<ul>
+<li><strong>Variants that differ only in colour or copy.</strong> 那是 tweak，非 prototype。Real variant 在 structure 上 disagree。</li>
+<li><strong>Sharing too much code between variants.</strong> Shared <code>&lt;Header&gt;</code> fine；shared <code>&lt;Layout&gt;</code> defeat point。每个 variant 应 free throw out layout。</li>
+<li><strong>Wiring variants to real mutations.</strong> Read-only prototype fine。若 variant 需 mutate，point stub——问题是 "what should this look like"，非 "does the backend work"。</li>
+<li><strong>Promoting the prototype directly to production.</strong> Variant code 在 prototype constraint 下写（无 test、minimal error handling）。fold in 时 properly rewrite。</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/engineering/prototype/UI.zh-CN.md</code> 自动生成。</p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>setup-matt-pocock-skills · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /setup-matt-pocock-skills</nav>
+        <header class="page-header">
+      <h1>/setup-matt-pocock-skills</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/engineering/setup-matt-pocock-skills/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Setup Matt Pocock's Skills</h1>
+<p>Scaffold engineering skill 假设的 per-repo 配置：</p>
+<ul>
+<li><strong>Issue tracker</strong> — issue 所在处（默认 GitHub；本地 markdown 也 out of the box 支持）</li>
+<li><strong>Triage labels</strong> — 五个 canonical 分诊 role 使用的字符串</li>
+<li><strong>Domain docs</strong> — <code>CONTEXT.md</code> 与 ADR 位置，及读取它们的 consumer 规则</li>
+</ul>
+<p>这是 prompt-driven skill，非 deterministic script。Explore、present 发现、与用户 confirm、然后 write。</p>
+<h2>Process（流程）</h2>
+<h3>1. Explore（探索）</h3>
+<p>看当前 repo 理解 starting state。Read 存在的；don't assume：</p>
+<ul>
+<li><code>git remote -v</code> 与 <code>.git/config</code> — 是否 GitHub repo？哪个？</li>
+<li>Repo root 的 <code>AGENTS.md</code> 与 <code>CLAUDE.md</code> — 是否存在？是否已有 <code>## Agent skills</code> section？</li>
+<li>Repo root 的 <code>CONTEXT.md</code> 与 <code>CONTEXT-MAP.md</code></li>
+<li><code>docs/adr/</code> 与任何 <code>src/*/docs/adr/</code> 目录</li>
+<li><code>docs/agents/</code> — 本 skill 先前 output 是否已存在？</li>
+<li><code>.scratch/</code> — 表示 local-markdown issue tracker convention 已在使用</li>
+</ul>
+<h3>2. Present findings and ask（呈现发现并询问）</h3>
+<p>Summarise present 与 missing。然后 <strong>one at a time</strong> 带用户过三个决定——present section、得 answer、再 next。不要一次 dump 三个。</p>
+<p>Assume 用户不知这些 term 含义。每 section 以 short explainer 开头（是什么、为何 skill 需要、选不同会怎样）。然后 show choices 与 default。</p>
+<p><strong>Section A — Issue tracker。</strong></p>
+<blockquote>
+<p>Explainer：「Issue tracker」是本 repo issue 所在处。<code>to-issues</code>、<code>triage</code>、<code>to-prd</code>、<code>qa</code> 等 skill 读写它——须知是 call <code>gh issue create</code>、写 <code>.scratch/</code> 下 markdown，还是你描述的其他 workflow。Pick 你实际 track 本 repo 工作的地方。</p>
+</blockquote>
+<p>Default posture：这些 skill 为 GitHub 设计。<code>git remote</code> 指向 GitHub 则 propose 之。指向 GitLab（<code>gitlab.com</code> 或 self-hosted）则 propose GitLab。否则（或 user prefer）offer：</p>
+<ul>
+<li><strong>GitHub</strong> — issue 在 repo GitHub Issues（用 <code>gh</code> CLI）</li>
+<li><strong>GitLab</strong> — issue 在 repo GitLab Issues（用 <a href="https://gitlab.com/gitlab-org/cli"><code>glab</code></a> CLI）</li>
+<li><strong>Local markdown</strong> — issue 为本 repo <code>.scratch/&lt;feature&gt;/</code> 下文件（solo 或无 remote repo 好）</li>
+<li><strong>Other</strong>（Jira、Linear 等）— 请用户 one paragraph 描述 workflow；skill 记为 freeform prose</li>
+</ul>
+<p><strong>Section B — Triage label vocabulary。</strong></p>
+<blockquote>
+<p>Explainer：<code>triage</code> skill 处理 incoming issue 时将其移过状态机——需 evaluate、等 reporter、ready for AFK agent、ready for human、或 won't fix。为此须 apply label（或 issue tracker 等价物）match <em>你实际配置的</em> 字符串。若 repo 已用不同 label 名（如 <code>bug:triage</code> 而非 <code>needs-triage</code>），在此 map，skill 才 apply 对的而非 duplicate。</p>
+</blockquote>
+<p>五个 canonical role：</p>
+<ul>
+<li><code>needs-triage</code> — maintainer 需 evaluate</li>
+<li><code>needs-info</code> — 等 reporter</li>
+<li><code>ready-for-agent</code> — fully specified、AFK-ready（agent 可无 human context pick up）</li>
+<li><code>ready-for-human</code> — 需 human implementation</li>
+<li><code>wontfix</code> — 不会 action</li>
+</ul>
+<p>Default：每 role 字符串等于其名。问 user 是否 override。Issue tracker 无 existing label 则 default 即可。</p>
+<p><strong>Section C — Domain docs。</strong></p>
+<blockquote>
+<p>Explainer：部分 skill（<code>improve-codebase-architecture</code>、<code>diagnose</code>、<code>tdd</code>）读 <code>CONTEXT.md</code> 学项目 domain language，<code>docs/adr/</code> 学 past architectural decision。须知 repo 是 one global context 还是 multiple（如 monorepo 分离 frontend/backend context）以便 look 对 place。</p>
+</blockquote>
+<p>Confirm layout：</p>
+<ul>
+<li><strong>Single-context</strong> — repo root 一个 <code>CONTEXT.md</code> + <code>docs/adr/</code>。多数 repo 如此。</li>
+<li><strong>Multi-context</strong> — root <code>CONTEXT-MAP.md</code> 指向 per-context <code>CONTEXT.md</code>（通常 monorepo）。</li>
+</ul>
+<h3>3. Confirm and edit（确认并编辑）</h3>
+<p>Show user draft：</p>
+<ul>
+<li>将加到被 edit 的 <code>CLAUDE.md</code> / <code>AGENTS.md</code> 的 <code>## Agent skills</code> block（见 step 4 selection rules）</li>
+<li><code>docs/agents/issue-tracker.md</code>、<code>docs/agents/triage-labels.md</code>、<code>docs/agents/domain.md</code> 内容</li>
+</ul>
+<p>Write 前 let them edit。</p>
+<h3>4. Write（写入）</h3>
+<p><strong>Pick 要 edit 的文件：</strong></p>
+<ul>
+<li>若 <code>CLAUDE.md</code> 存在，edit 它。</li>
+<li>Else 若 <code>AGENTS.md</code> 存在，edit 它。</li>
+<li>若都不存在，ask user 创建哪个——不要替他们 pick。</li>
+</ul>
+<p>Never 在已有 <code>CLAUDE.md</code> 时 create <code>AGENTS.md</code>（或 vice versa）——始终 edit 已有的。</p>
+<p>若 chosen file 已有 <code>## Agent skills</code> block，in-place update 内容而非 append duplicate。Don't overwrite user 对 surrounding section 的 edit。</p>
+<p>Block：</p>
+<pre><code class="language-markdown">## Agent skills
+
+### Issue tracker
+
+[one-line summary of where issues are tracked]. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+[one-line summary of the label vocabulary]. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+[one-line summary of layout — &quot;single-context&quot; or &quot;multi-context&quot;]. See `docs/agents/domain.md`.
+</code></pre>
+<p>然后用本 skill 文件夹 seed template 写三个 docs 文件：</p>
+<ul>
+<li><a href="/matt-pocock-skills/docs/skills/engineering/setup-matt-pocock-skills/issue-tracker-github.html">issue-tracker-github.md</a> — GitHub issue tracker</li>
+<li><a href="/matt-pocock-skills/docs/skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.html">issue-tracker-gitlab.md</a> — GitLab issue tracker</li>
+<li><a href="/matt-pocock-skills/docs/skills/engineering/setup-matt-pocock-skills/issue-tracker-local.html">issue-tracker-local.md</a> — local-markdown issue tracker</li>
+<li><a href="/matt-pocock-skills/docs/skills/engineering/setup-matt-pocock-skills/triage-labels.html">triage-labels.md</a> — label mapping</li>
+<li><a href="/matt-pocock-skills/docs/skills/engineering/setup-matt-pocock-skills/domain.html">domain.md</a> — domain doc consumer rules + layout</li>
+</ul>
+<p>「Other」issue tracker 时，用 user 描述 from scratch 写 <code>docs/agents/issue-tracker.md</code>。</p>
+<h3>5. Done（完成）</h3>
+<p>Tell user setup complete，哪些 engineering skill 现在从这些文件 read。提及可 later 直接 edit <code>docs/agents/*.md</code>——仅 switch issue tracker 或 from scratch restart 时需 re-run 本 skill。</p></article>
+    <p class="footer-note">由 <code>skills/engineering/setup-matt-pocock-skills/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

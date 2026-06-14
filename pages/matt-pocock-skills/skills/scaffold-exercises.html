@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>scaffold-exercises · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /scaffold-exercises</nav>
+        <header class="page-header">
+      <h1>/scaffold-exercises</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/misc/scaffold-exercises/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>搭建习题脚手架</h1>
+<p>创建能通过 <code>pnpm ai-hero-cli internal lint</code> 的习题目录结构，然后用 <code>git commit</code> 提交。</p>
+<h2>目录命名</h2>
+<ul>
+<li><strong>章节</strong>：<code>exercises/</code> 内的 <code>XX-section-name/</code>（例如 <code>01-retrieval-skill-building</code>）</li>
+<li><strong>习题</strong>：章节内的 <code>XX.YY-exercise-name/</code>（例如 <code>01.03-retrieval-with-bm25</code>）</li>
+<li>章节编号 = <code>XX</code>，习题编号 = <code>XX.YY</code></li>
+<li>名称使用 dash-case（小写、连字符）</li>
+</ul>
+<h2>习题变体</h2>
+<p>每个习题至少需要以下子文件夹之一：</p>
+<ul>
+<li><code>problem/</code> — 学生工作区，含 TODO</li>
+<li><code>solution/</code> — 参考实现</li>
+<li><code>explainer/</code> — 概念材料，无 TODO</li>
+</ul>
+<p>搭建存根时，除非计划另有说明，默认使用 <code>explainer/</code>。</p>
+<h2>必需文件</h2>
+<p>每个子文件夹（<code>problem/</code>、<code>solution/</code>、<code>explainer/</code>）都需要一个 <code>readme.md</code>，要求：</p>
+<ul>
+<li><strong>非空</strong>（必须有实际内容，哪怕只有一行标题也可以）</li>
+<li>无损坏链接</li>
+</ul>
+<p>搭建存根时，创建最小 readme，包含标题和描述：</p>
+<pre><code class="language-md"># Exercise Title
+
+Description here
+</code></pre>
+<p>如果子文件夹有代码，还需要 <code>main.ts</code>（&gt;1 行）。但对存根而言，仅含 readme 的习题也可以。</p>
+<h2>工作流</h2>
+<ol>
+<li><strong>解析计划</strong> — 提取章节名、习题名和变体类型</li>
+<li><strong>创建目录</strong> — 为每个路径执行 <code>mkdir -p</code></li>
+<li><strong>创建 readme 存根</strong> — 每个变体文件夹一个带标题的 <code>readme.md</code></li>
+<li><strong>运行 lint</strong> — <code>pnpm ai-hero-cli internal lint</code> 验证</li>
+<li><strong>修复错误</strong> — 迭代直到 lint 通过</li>
+</ol>
+<h2>Lint 规则摘要</h2>
+<p>linter（<code>pnpm ai-hero-cli internal lint</code>）检查：</p>
+<ul>
+<li>每个习题有子文件夹（<code>problem/</code>、<code>solution/</code>、<code>explainer/</code>）</li>
+<li>至少存在 <code>problem/</code>、<code>explainer/</code> 或 <code>explainer.1/</code> 之一</li>
+<li>主变体子文件夹中存在且非空的 <code>readme.md</code></li>
+<li>无 <code>.gitkeep</code> 文件</li>
+<li>无 <code>speaker-notes.md</code> 文件</li>
+<li>readme 中无损坏链接</li>
+<li>readme 中无 <code>pnpm run exercise</code> 命令</li>
+<li>每个子文件夹需要 <code>main.ts</code>，除非是仅 readme 的习题</li>
+</ul>
+<h2>移动/重命名习题</h2>
+<p>重新编号或移动习题时：</p>
+<ol>
+<li>使用 <code>git mv</code>（不是 <code>mv</code>）重命名目录——保留 git 历史</li>
+<li>更新数字前缀以保持顺序</li>
+<li>移动后重新运行 lint</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-bash">git mv exercises/01-retrieval/01.03-embeddings exercises/01-retrieval/01.04-embeddings
+</code></pre>
+<h2>示例：根据计划搭建存根</h2>
+<p>给定如下计划：</p>
+<pre><code>Section 05: Memory Skill Building
+- 05.01 Introduction to Memory
+- 05.02 Short-term Memory (explainer + problem + solution)
+- 05.03 Long-term Memory
+</code></pre>
+<p>创建：</p>
+<pre><code class="language-bash">mkdir -p exercises/05-memory-skill-building/05.01-introduction-to-memory/explainer
+mkdir -p exercises/05-memory-skill-building/05.02-short-term-memory/{explainer,problem,solution}
+mkdir -p exercises/05-memory-skill-building/05.03-long-term-memory/explainer
+</code></pre>
+<p>然后创建 readme 存根：</p>
+<pre><code>exercises/05-memory-skill-building/05.01-introduction-to-memory/explainer/readme.md -&gt; &quot;# Introduction to Memory&quot;
+exercises/05-memory-skill-building/05.02-short-term-memory/explainer/readme.md -&gt; &quot;# Short-term Memory&quot;
+exercises/05-memory-skill-building/05.02-short-term-memory/problem/readme.md -&gt; &quot;# Short-term Memory&quot;
+exercises/05-memory-skill-building/05.02-short-term-memory/solution/readme.md -&gt; &quot;# Short-term Memory&quot;
+exercises/05-memory-skill-building/05.03-long-term-memory/explainer/readme.md -&gt; &quot;# Long-term Memory&quot;
+</code></pre></article>
+    <p class="footer-note">由 <code>skills/misc/scaffold-exercises/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

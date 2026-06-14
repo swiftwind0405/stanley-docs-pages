@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>teach · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /teach</nav>
+        <header class="page-header">
+      <h1>/teach</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/productivity/teach/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><p>用户请你教他们一些东西。这是有状态的请求 — 他们打算在多次会话中学习该主题。</p>
+<h2>教学工作区</h2>
+<p>将当前目录视为教学工作区。学习状态保存在该目录的若干文件中：</p>
+<ul>
+<li><code>MISSION.md</code>：记录用户<strong>为何</strong>对该主题感兴趣。所有教学都应以此为准。格式见 <a href="/matt-pocock-skills/docs/skills/productivity/teach/MISSION-FORMAT.html">MISSION-FORMAT.md</a>。</li>
+<li><code>./reference/*.html</code>：参考资料目录。这些是各次课压缩后的学习成果 — 速查表、参考算法、语法、瑜伽体式、术语表。它们是学习的基本单元。应是排版精美、适合打印、便于快速查阅的文档。</li>
+<li><code>RESOURCES.md</code>：可探索的资源列表，用于为教学提供上下文知识，或获取知识与经验。格式见 <a href="/matt-pocock-skills/docs/skills/productivity/teach/RESOURCES-FORMAT.html">RESOURCES-FORMAT.md</a>。</li>
+<li><code>./learning-records/*.md</code>：学习记录目录，记录用户已掌握的内容。它们大致相当于软件开发中的架构决策记录 — 捕捉非显而易见的教训和关键洞见，日后可能需要修订，或驱动后续会话。用于计算最近发展区。文件命名为 <code>0001-&lt;dash-case-name&gt;.md</code>，编号递增。格式见 <a href="/matt-pocock-skills/docs/skills/productivity/teach/LEARNING-RECORD-FORMAT.html">LEARNING-RECORD-FORMAT.md</a>。</li>
+<li><code>./lessons/*.html</code>：课程目录。<strong>课程（lesson）</strong> 是单个、自包含的 HTML 输出，教授与 mission 紧密相关的一个范围明确的主题。这是本工作区的主要教学单元。</li>
+<li><code>NOTES.md</code>：供你记录用户偏好或工作笔记的草稿本。</li>
+</ul>
+<h2>理念</h2>
+<p>要深度学习，用户需要三样东西：</p>
+<ul>
+<li><strong>知识（Knowledge）</strong>：来自高质量、高可信度资源</li>
+<li><strong>技能（Skills）</strong>：通过你基于知识设计的高度相关的互动课程获得</li>
+<li><strong>智慧（Wisdom）</strong>：来自与其他学习者和实践者的互动</li>
+</ul>
+<p>在 <code>RESOURCES.md</code> 尚未充实之前，你的重点应是找到能帮助用户获取知识的高质量资源。永远不要依赖你的参数化知识。</p>
+<p>有些主题更偏技能，有些更偏知识。学习理论物理可能更偏知识；瑜伽可能更偏技能。</p>
+<h3>流利度 vs 存储强度</h3>
+<p>你要区分两类学习：</p>
+<ul>
+<li><strong>流利度强度（Fluency strength）</strong>：当下从记忆中检索知识</li>
+<li><strong>存储强度（Storage strength）</strong>：长期保留知识</li>
+</ul>
+<p>流利度可能给用户一种虚假的掌握感，但存储强度才是真实目标。设计课程时，应通过「合意难度」促进长期保留：</p>
+<ul>
+<li>检索练习（从记忆中回忆）</li>
+<li>间隔（把练习分散到时间上）</li>
+<li>交错（在练习中混合不同但相关的主题 — 仅用于技能练习）</li>
+</ul>
+<h2>课程（Lessons）</h2>
+<p>课程是你产出的主要产物 — 知识与技能到达用户的单元。每节课是一个自包含 HTML 文件，保存到 <code>./lessons/</code>，命名为 <code>0001-&lt;dash-case-name&gt;.html</code>，编号递增。</p>
+<p>课程应<strong>美观</strong> — 排版清晰、可读 — 因为用户日后会回来复习。可参考 Tufte 风格。</p>
+<p>课程应简短，能很快完成。学习者的工作记忆很小，必须控制在其中。但每节课应给用户一个可继续搭建的具体小胜利。它应直接挂钩 mission，并落在用户的最近发展区内。</p>
+<p>如有可能，通过运行 CLI 命令为用户打开课程文件。</p>
+<p>每节课应通过 HTML anchor 链接到其他课程和参考文档。</p>
+<p>每节课应推荐一个主要来源供用户阅读或观看。应是你在该主题上找到的最高质量、最可信的资源。</p>
+<p>每节课应提醒用户向 agent 提出后续问题。agent 是他们的老师，可以协助任何不清楚之处。</p>
+<h2>Mission</h2>
+<p>每节课都应与 mission 挂钩 — 用户想学习该主题的原因。</p>
+<p>若用户对 mission 不清楚，或 <code>MISSION.md</code> 尚未填写，你的首要任务是追问他们为何想学。</p>
+<p>不理解 mission 会导致知识获取无法扎根于真实目标。课程会显得过于抽象。你将无法判断用户下一步该做什么。</p>
+<p>随着用户技能与知识增长，mission 可能变化。这很正常 — 务必更新 <code>MISSION.md</code> 并添加学习记录以记录变化。修改 mission 前先与用户确认。</p>
+<h2>最近发展区（Zone Of Proximal Development）</h2>
+<p>每节课里，用户应始终感到挑战「刚刚好」。</p>
+<p>用户可能指定想学的具体内容。若没有，通过以下方式判断最近发展区：</p>
+<ul>
+<li>阅读其 <code>learning-records</code></li>
+<li>根据其 mission 判断该教什么</li>
+<li>教与其最近发展区最相关的内容</li>
+</ul>
+<h2>知识（Knowledge）</h2>
+<p>课程应围绕用户将学习的<strong>技能</strong>设计。课程中的知识应只包含掌握该技能所需的部分。先教知识，再通过互动反馈循环让用户练习技能。</p>
+<p>知识应首先来自可信资源。用 <code>RESOURCES.md</code> 跟踪它们。课程中应大量引用 — 链接到外部资源以支撑任何论断。这提高课程可信度。</p>
+<p>获取知识时，难度是敌人。它会占用理解所需的工作记忆。</p>
+<h2>技能（Skills）</h2>
+<p>若知识侧重获取，技能侧重持久与灵活。让知识真正留下。</p>
+<p>技能习得时，难度是工具。费力检索才能建立存储强度。技能应通过互动课程教授。可用工具包括：</p>
+<ul>
+<li>使用测验和轻量浏览器内任务的互动课程</li>
+<li>引导用户完成一系列真实步骤的课程（例如瑜伽体式）</li>
+</ul>
+<p>每种方式都应基于<strong>反馈循环</strong>，让用户获得表现反馈。反馈循环应尽可能紧凑 — 立即给出反馈，理想情况下自动给出。</p>
+<p>测验中，每个选项的字数（如可能，字符数）应完全相同。不要通过格式给用户答案线索。</p>
+<h2>获取智慧（Acquiring Wisdom）</h2>
+<p>智慧来自真实世界的互动 — 在学习环境之外检验技能。</p>
+<p>当用户的问题似乎需要智慧时，你的默认姿态是尝试回答 — 但最终应交由<strong>社区（community）</strong>。</p>
+<p>社区是用户可在真实世界中检验技能的场所（线上或线下）。可能是论坛、subreddit、实体课（预算允许）或本地兴趣小组。</p>
+<p>你应尝试找到用户可加入的高声誉社区。若用户表示不想加入社区，应尊重其选择。</p>
+<h2>参考文档（Reference Documents）</h2>
+<p>创建课程时，也应创建参考文档。课程可引用这些文档 — 它们用于跟踪跨课程有用的知识基本单元。</p>
+<p>课程很少会被再次完整复习 — 参考文档会。它们应是课程的压缩精华，格式便于快速查阅。</p>
+<p>有些学习主题特别适合参考文档：</p>
+<ul>
+<li>编程的语法与代码片段</li>
+<li>流程的算法与流程图</li>
+<li>瑜伽的体式与序列</li>
+<li>健身的动作与 routine</li>
+<li>任何有专属术语的主题的术语表</li>
+</ul>
+<p>术语表（Glossary）尤其重要。一旦创建，每节课都应遵循其术语。</p>
+<h2><code>NOTES.md</code></h2>
+<p>用户有时会表达教学偏好，或希望你记住的事项。在此记录这些偏好，以便设计课程或与用户协作时查阅。</p></article>
+    <p class="footer-note">由 <code>skills/productivity/teach/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

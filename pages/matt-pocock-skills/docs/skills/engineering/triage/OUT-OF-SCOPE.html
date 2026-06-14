@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OUT-OF-SCOPE · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / OUT-OF-SCOPE</nav>
+        <header class="page-header">
+      <h1>OUT-OF-SCOPE</h1>
+      <div class="page-meta">
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/triage/OUT-OF-SCOPE.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Out-of-Scope 知识库</h1>
+<p>repo 中的 <code>.out-of-scope/</code> 目录存储被拒绝功能请求的持久记录。两个用途：</p>
+<ol>
+<li><strong>机构记忆</strong> — 功能为何被拒绝，issue close 后 reasoning 不丢失</li>
+<li><strong>去重</strong> — 新 issue 匹配 prior rejection 时，skill 可 surface 先前决策而非 re-litigate</li>
+</ol>
+<h2>目录结构</h2>
+<pre><code>.out-of-scope/
+├── dark-mode.md
+├── plugin-system.md
+└── graphql-api.md
+</code></pre>
+<p>每个 <strong>concept</strong> 一个文件，非每个 issue。多个 issue 请求同一事物归在一个文件下。</p>
+<h2>文件格式</h2>
+<p>文件应以 relaxed、可读风格撰写——更像短设计文档而非 database entry。用段落、code sample、示例使 reasoning 对首次遇到者 clear 且 useful。</p>
+<pre><code class="language-markdown"># Dark Mode
+
+This project does not support dark mode or user-facing theming.
+
+## Why this is out of scope
+
+The rendering pipeline assumes a single color palette defined in
+`ThemeConfig`. Supporting multiple themes would require:
+
+- A theme context provider wrapping the entire component tree
+- Per-component theme-aware style resolution
+- A persistence layer for user theme preferences
+
+This is a significant architectural change that doesn't align with the
+project's focus on content authoring. Theming is a concern for downstream
+consumers who embed or redistribute the output.
+
+```ts
+// The current ThemeConfig interface is not designed for runtime switching:
+interface ThemeConfig {
+  colors: ColorPalette; // single palette, resolved at build time
+  fonts: FontStack;
+}
+</code></pre>
+<h2>Prior requests</h2>
+<ul>
+<li>
+<h1>42 — "Add dark mode support"</h1>
+</li>
+<li>
+<h1>87 — "Night theme for accessibility"</h1>
+</li>
+<li>
+<h1>134 — "Dark theme option"</h1>
+<br>
+```</li>
+</ul>
+<h3>文件命名</h3>
+<p>concept 用简短 descriptive kebab-case 名：<code>dark-mode.md</code>、<code>plugin-system.md</code>、<code>graphql-api.md</code>。名应 recognizable，浏览目录时不打开文件也能懂被拒内容。</p>
+<h3>撰写 reason</h3>
+<p>reason 应 substantive——不是 "we don't want this" 而是 why。好 reason 引用：</p>
+<ul>
+<li>项目 scope 或哲学（"This project focuses on X; theming is a downstream concern"）</li>
+<li>技术约束（"Supporting this would require Y, which conflicts with our Z architecture"）</li>
+<li>战略决策（"We chose to use A instead of B because..."）</li>
+</ul>
+<p>reason 应 durable。避免引用 temporary 情况（"we're too busy right now"）——那些不是 real rejection，是 deferral。</p>
+<h2>何时检查 <code>.out-of-scope/</code></h2>
+<p>分诊期间（Step 1: Gather context），读 <code>.out-of-scope/</code> 中所有文件。评估新 issue 时：</p>
+<ul>
+<li>检查请求是否匹配 existing out-of-scope concept</li>
+<li>匹配靠 concept similarity，非 keyword——"night theme" 匹配 <code>dark-mode.md</code></li>
+<li>若匹配，surface 给 maintainer：「这与 <code>.out-of-scope/dark-mode.md</code> 类似——我们之前因 [reason] 拒绝。你还这样认为吗？」</li>
+</ul>
+<p>maintainer 可能：</p>
+<ul>
+<li><strong>Confirm</strong> — 新 issue 加入 existing 文件 "Prior requests" 列表，然后 close</li>
+<li><strong>Reconsider</strong> — 删除或更新 out-of-scope 文件，issue 走 normal triage</li>
+<li><strong>Disagree</strong> — issue 相关但 distinct，走 normal triage</li>
+</ul>
+<h2>何时写入 <code>.out-of-scope/</code></h2>
+<p>仅当 <strong>enhancement</strong>（非 bug）以 <code>wontfix</code> 拒绝时。流程：</p>
+<ol>
+<li>maintainer 决定功能请求 out of scope</li>
+<li>检查是否已有 matching <code>.out-of-scope/</code> 文件</li>
+<li>若有：将新 issue append 到 "Prior requests"</li>
+<li>若无：用 concept 名、decision、reason、首个 prior request 创建新文件</li>
+<li>在 issue 上 post comment 解释 decision 并提及 <code>.out-of-scope/</code> 文件</li>
+<li>用 <code>wontfix</code> label close issue</li>
+</ol>
+<h2>更新或移除 out-of-scope 文件</h2>
+<p>若 maintainer 改变对先前 rejected concept 的想法：</p>
+<ul>
+<li>删除 <code>.out-of-scope/</code> 文件</li>
+<li>skill 无需 reopen 旧 issue——它们是 historical record</li>
+<li>触发 reconsideration 的新 issue 走 normal triage</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/engineering/triage/OUT-OF-SCOPE.zh-CN.md</code> 自动生成。</p>
+    </main>
+  </div>
+</body>
+</html>
