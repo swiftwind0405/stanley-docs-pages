@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>考勤自动化技能图谱 · HR Attendance Skills Atlas</title>
+<style>
+:root {
+  --bg: #F7F3EC; --paper: #FFFCF5;
+  --ink: #1C1A18; --ink-2: #4A4641; --ink-3: #8A857F; --ink-4: #C7C0B5;
+  --line: #E4DDD0; --line-soft: #EEE8DC;
+  --p0: #C4453C; --p0-bg: #FBEFEC; --p0-br: #E8C6C2;
+  --p1: #B07A2C; --p1-bg: #FAF1DE; --p1-br: #E8D9B3;
+  --p2: #3F6B96; --p2-bg: #ECF1F7; --p2-br: #C9D7E5;
+  --acc: #2D7D5F; --acc-bg: #E8F1ED; --acc-br: #C7E0D4;
+  --serif: 'Iowan Old Style','Palatino Linotype',Palatino,Charter,Georgia,serif;
+  --sans: -apple-system,BlinkMacSystemFont,'Inter','Helvetica Neue',Arial,sans-serif;
+  --mono: 'SF Mono','JetBrains Mono','Menlo',monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+main { max-width: 1180px; margin: 0 auto; padding: 52px 36px 80px; }
+a { text-decoration: none; color: inherit; }
+
+/* HERO */
+.hero { display: grid; grid-template-columns: auto 1fr auto; gap: 30px; align-items: end; padding-bottom: 30px; border-bottom: 1px solid var(--line); margin-bottom: 44px; }
+.hero-mark { font-family: var(--serif); font-size: 84px; line-height: 1; color: var(--acc); font-weight: 400; letter-spacing: -3px; }
+.hero-title h1 { font-family: var(--serif); font-size: 42px; font-weight: 400; letter-spacing: -1.2px; line-height: 1.05; margin-bottom: 8px; }
+.hero-title .sub { color: var(--ink-3); font-size: 13.5px; font-family: var(--mono); letter-spacing: 0.2px; }
+.hero-stats { display: flex; gap: 22px; font-family: var(--mono); }
+.hero-stat { text-align: center; }
+.hero-stat .n { font-family: var(--serif); font-size: 34px; line-height: 1; font-weight: 400; display: block; }
+.hero-stat .l { font-size: 10.5px; color: var(--ink-3); letter-spacing: 1px; margin-top: 6px; }
+.hero-stat.p0 .n { color: var(--p0); } .hero-stat.p2 .n { color: var(--p2); }
+.hero-stat.acc .n { color: var(--acc); } .hero-stat.p1 .n { color: var(--p1); }
+
+/* Section headers */
+.sec { margin-bottom: 54px; }
+.sec-h { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.sec-h .n { font-family: var(--serif); font-size: 16px; color: var(--ink-3); font-style: italic; }
+.sec-h h2 { font-family: var(--serif); font-size: 24px; font-weight: 400; letter-spacing: -0.3px; }
+.sec-h .meta { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.5px; }
+
+/* Intro lede */
+.lede { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--acc); border-radius: 8px; padding: 22px 26px; }
+.lede p { font-family: var(--serif); font-size: 17px; color: var(--ink-2); line-height: 1.6; max-width: 880px; }
+.lede p + p { margin-top: 12px; }
+.lede strong { color: var(--ink); font-weight: 500; }
+.lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 22px; }
+.lane { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 15px 16px; border-top: 3px solid var(--ink-3); }
+.lane.orch { border-top-color: var(--p0); } .lane.prep { border-top-color: var(--p2); }
+.lane.review { border-top-color: var(--acc); } .lane.config { border-top-color: var(--p1); }
+.lane .ln { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--ink-3); margin-bottom: 7px; }
+.lane h3 { font-family: var(--serif); font-size: 17px; font-weight: 400; margin-bottom: 6px; }
+.lane p { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+
+/* Diagram wrap */
+.svg-wrap { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 22px; overflow-x: auto; }
+.flow-svg { display: block; width: 100%; min-width: 940px; height: auto; }
+svg a { cursor: pointer; }
+svg a:hover rect { filter: brightness(0.97); stroke-width: 2px; }
+svg a:hover .nl, svg a:hover .nt { font-weight: 600; }
+
+/* A/B/C/D matrix */
+.matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.mcard { background: var(--paper); border: 1px solid var(--line); border-radius: 9px; padding: 18px 20px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; }
+.mcard .letter { font-family: var(--serif); font-size: 56px; line-height: 0.8; font-weight: 400; letter-spacing: -2px; }
+.mcard.A .letter { color: var(--p0); } .mcard.B .letter { color: var(--p2); }
+.mcard.C .letter { color: var(--p1); } .mcard.D .letter { color: var(--acc); }
+.mcard h3 { font-family: var(--serif); font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+.mcard .clients { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin-bottom: 10px; letter-spacing: 0.3px; }
+.mcard .feat { font-size: 13px; color: var(--ink-2); line-height: 1.5; margin-bottom: 12px; }
+.mcard .skl { display: flex; flex-wrap: wrap; gap: 6px; }
+.mcard .skl a { font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); color: var(--ink-2); transition: all .15s ease; }
+.mcard .skl a:hover { border-color: var(--acc); color: var(--acc); background: var(--acc-bg); }
+
+/* Skill lanes / cards */
+.domains { display: grid; grid-template-columns: 1fr; gap: 22px; }
+.domain { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px 20px; }
+.domain-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px dashed var(--line-soft); }
+.domain-h .ico { font-size: 16px; }
+.domain-h h3 { font-family: var(--serif); font-size: 18px; font-weight: 400; }
+.domain-h .desc { font-size: 12px; color: var(--ink-3); font-family: var(--mono); letter-spacing: 0.2px; margin-left: auto; }
+.wf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 11px; }
+.wf { border: 1px solid var(--line); border-radius: 7px; padding: 13px 14px 12px; background: var(--paper); display: flex; flex-direction: column; gap: 7px; position: relative; min-height: 118px; transition: all .25s cubic-bezier(.16,1,.3,1); }
+.wf:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(28,26,24,0.07); }
+.wf.p0 { border-left: 3px solid var(--p0); } .wf.p1 { border-left: 3px solid var(--p1); }
+.wf.p2 { border-left: 3px solid var(--p2); } .wf.acc { border-left: 3px solid var(--acc); }
+.wf.p0:hover { border-color: var(--p0); } .wf.p1:hover { border-color: var(--p1); }
+.wf.p2:hover { border-color: var(--p2); } .wf.acc:hover { border-color: var(--acc); }
+.wf .row1 { display: flex; align-items: center; gap: 8px; }
+.wf .num { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.4px; padding: 2px 7px; border-radius: 3px; background: var(--bg); border: 1px solid var(--line); }
+.wf.p0 .num { color: var(--p0); } .wf.p1 .num { color: var(--p1); }
+.wf.p2 .num { color: var(--p2); } .wf.acc .num { color: var(--acc); }
+.wf .glyph { font-size: 17px; margin-left: auto; }
+.wf .title { font-family: var(--serif); font-size: 16px; line-height: 1.2; font-weight: 400; }
+.wf .hint { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin-top: auto; }
+
+/* Legend */
+.legend { display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); padding: 14px 18px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; letter-spacing: 0.3px; }
+.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.legend .dot.p0 { background: var(--p0); } .legend .dot.p1 { background: var(--p1); }
+.legend .dot.p2 { background: var(--p2); } .legend .dot.acc { background: var(--acc); }
+
+footer { text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-4); margin-top: 52px; padding-top: 24px; border-top: 1px dashed var(--line); letter-spacing: 0.5px; }
+
+@media (max-width: 760px) {
+  main { padding: 32px 18px 56px; }
+  .hero { grid-template-columns: 1fr; gap: 18px; align-items: start; }
+  .hero-mark { font-size: 60px; } .hero-title h1 { font-size: 30px; }
+  .hero-stats { justify-content: flex-start; gap: 16px; flex-wrap: wrap; }
+  .lanes { grid-template-columns: 1fr 1fr; }
+  .matrix { grid-template-columns: 1fr; }
+  .sec-h .meta { display: none; }
+}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-mark">⬡</div>
+    <div class="hero-title">
+      <h1>考勤自动化技能图谱</h1>
+      <div class="sub">HR Attendance Skills · 9 skills · 4 lanes · A/B/C/D 客户分型</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat p0"><span class="n">9</span><div class="l">SKILLS</div></div>
+      <div class="hero-stat p2"><span class="n">4</span><div class="l">LANES</div></div>
+      <div class="hero-stat acc"><span class="n">A–D</span><div class="l">客户分型</div></div>
+      <div class="hero-stat p1"><span class="n">5</span><div class="l">试点客户</div></div>
+    </div>
+  </header>
+
+  <!-- §1 WHAT -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">§1</span><h2>这是什么</h2><span class="meta">把 HR 月度考勤重复劳动自动化</span></div>
+    <div class="lede">
+      <p>这 9 个 skill 把 HRO 外包场景下「<strong>原始考勤资料 → 归档 → 异常审核 → 生成考勤备注 → 交付</strong>」的月度流程拆成可复用的环节。每个环节单独可跑，串起来就是一条流水线。</p>
+      <p>两条主线交叉：一条是<strong>数据流水线</strong>（下方 §2），一条是<strong>客户分型 A/B/C/D</strong>（§3）—— 不同客户的考勤系统不同，用到的 skill 组合也不同。先看 §2 的总流程，再用 §3 对号入座，最后点 §4 的卡片进每个 skill 的详情。</p>
+      <div class="lanes">
+        <div class="lane orch"><div class="ln">LANE · 红</div><h3>入口与编排</h3><p>分诊选客户、月度全流程门禁。triage · monthly-reconcile · laoqin-monthly</p></div>
+        <div class="lane prep"><div class="ln">LANE · 蓝</div><h3>数据准备</h3><p>抽附件、视觉识别、按人归档、来源归一。data-prep · source-normalizer</p></div>
+        <div class="lane review"><div class="ln">LANE · 绿</div><h3>审核与计算</h3><p>异常审核工作簿、生成考勤备注与审核报告。exception-review · remarks</p></div>
+        <div class="lane config"><div class="ln">LANE · 琥珀</div><h3>配置与交付</h3><p>规则书面化为 config、交付齐套检查。rule-pack · delivery-pack</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §2 PIPELINE -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">§2</span><h2>数据流水线 · 一个月怎么跑</h2><span class="meta">点节点进详情</span></div>
+    <div class="svg-wrap">
+      <svg class="flow-svg" viewBox="0 0 950 470" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8A857F"/></marker>
+          <marker id="arc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#B07A2C"/></marker>
+        </defs>
+        <style>
+          .nd { stroke-width: 1.4; }
+          .nd-p0 { fill: #FBEFEC; stroke: #C4453C; } .nd-p1 { fill: #FAF1DE; stroke: #B07A2C; }
+          .nd-p2 { fill: #ECF1F7; stroke: #3F6B96; } .nd-acc { fill: #E8F1ED; stroke: #2D7D5F; }
+          .nn { font-family: 'SF Mono',Menlo,monospace; font-size: 10.5px; font-weight: 700; }
+          .nn-p0 { fill: #C4453C; } .nn-p1 { fill: #B07A2C; } .nn-p2 { fill: #3F6B96; } .nn-acc { fill: #2D7D5F; }
+          .nt { font-family: 'Iowan Old Style',Georgia,serif; font-size: 14px; fill: #1C1A18; }
+          .nl { font-family: 'SF Mono',Menlo,monospace; font-size: 9.5px; fill: #8A857F; }
+          .stage { font-family: 'SF Mono',Menlo,monospace; font-size: 10px; fill: #8A857F; letter-spacing: 1px; }
+          .edge { stroke: #8A857F; stroke-width: 1.4; fill: none; }
+          .cfg { stroke: #B07A2C; stroke-width: 1.2; fill: none; stroke-dasharray: 4 3; }
+          .band { fill: none; stroke: #C7C0B5; stroke-width: 1; stroke-dasharray: 3 4; }
+          .bandl { font-family: 'Iowan Old Style',Georgia,serif; font-size: 13px; fill: #8A857F; font-style: italic; }
+          .glyph { font-size: 15px; }
+        </style>
+
+        <!-- ORCHESTRATION BAND -->
+        <text class="bandl" x="20" y="30">编排层 · 月度全流程（按客户 archetype 选一个，门禁驱动下面的流水线）</text>
+        <rect class="band" x="16" y="40" width="918" height="72" rx="9"/>
+        <a href="details/attendance-monthly-reconcile.html">
+          <rect class="nd nd-p0" x="34" y="54" width="430" height="44" rx="7"/>
+          <text class="glyph" x="50" y="82">🔁</text>
+          <text class="nt" x="76" y="73">08 月度核对编排</text>
+          <text class="nl" x="76" y="88">A 型 · 追觅 · 8 阶段门禁 · 飞书打卡</text>
+        </a>
+        <a href="details/attendance-laoqin-monthly.html">
+          <rect class="nd nd-p0" x="486" y="54" width="430" height="44" rx="7"/>
+          <text class="glyph" x="502" y="82">⚛️</text>
+          <text class="nt" x="528" y="73">09 劳勤月度编排</text>
+          <text class="nl" x="528" y="88">D 型 · 国家电投 · 7 阶段门禁 · WTS PDF</text>
+        </a>
+        <!-- band drives pipeline -->
+        <line class="edge" x1="249" y1="112" x2="249" y2="150" marker-end="url(#ar)" stroke-dasharray="4 3"/>
+        <line class="edge" x1="701" y1="112" x2="624" y2="150" marker-end="url(#ar)" stroke-dasharray="4 3"/>
+        <text class="bandl" x="300" y="135" style="font-size:11px;">编排调用 ↓ 下面的流水线环节</text>
+
+        <!-- STAGE LABELS -->
+        <text class="stage" x="75"  y="166" text-anchor="middle">入口·分诊</text>
+        <text class="stage" x="235" y="166" text-anchor="middle">配置·规则</text>
+        <text class="stage" x="395" y="166" text-anchor="middle">数据准备</text>
+        <text class="stage" x="555" y="166" text-anchor="middle">异常审核</text>
+        <text class="stage" x="715" y="166" text-anchor="middle">备注计算</text>
+        <text class="stage" x="875" y="166" text-anchor="middle">齐套交付</text>
+
+        <!-- MAIN PIPELINE ROW (y 180..240) -->
+        <!-- arrows -->
+        <line class="edge" x1="134" y1="210" x2="176" y2="210" marker-end="url(#ar)"/>
+        <line class="edge" x1="294" y1="210" x2="336" y2="210" marker-end="url(#ar)"/>
+        <line class="edge" x1="454" y1="210" x2="496" y2="210" marker-end="url(#ar)"/>
+        <line class="edge" x1="614" y1="210" x2="656" y2="210" marker-end="url(#ar)"/>
+        <line class="edge" x1="774" y1="210" x2="816" y2="210" marker-end="url(#ar)"/>
+
+        <a href="details/attendance-project-triage.html">
+          <rect class="nd nd-p0" x="16" y="180" width="118" height="60" rx="7"/>
+          <text class="nn nn-p0" x="27" y="200">#01</text><text class="glyph" x="108" y="201">🩺</text>
+          <text class="nt" x="27" y="219" style="font-size:13px;">项目分诊</text>
+          <text class="nl" x="27" y="233">耗时·痛点排序</text>
+        </a>
+        <a href="details/attendance-rule-pack.html">
+          <rect class="nd nd-p1" x="176" y="180" width="118" height="60" rx="7"/>
+          <text class="nn nn-p1" x="187" y="200">#02</text><text class="glyph" x="268" y="201">📐</text>
+          <text class="nt" x="187" y="219" style="font-size:13px;">规则包</text>
+          <text class="nl" x="187" y="233">口径→config</text>
+        </a>
+        <a href="details/attendance-data-prep.html">
+          <rect class="nd nd-p2" x="336" y="180" width="118" height="60" rx="7"/>
+          <text class="nn nn-p2" x="347" y="200">#03</text><text class="glyph" x="428" y="201">🗂️</text>
+          <text class="nt" x="347" y="219" style="font-size:13px;">数据准备</text>
+          <text class="nl" x="347" y="233">抽附件·按人归档</text>
+        </a>
+        <a href="details/attendance-exception-review.html">
+          <rect class="nd nd-acc" x="496" y="180" width="118" height="60" rx="7"/>
+          <text class="nn nn-acc" x="507" y="200">#05</text><text class="glyph" x="588" y="201">🔎</text>
+          <text class="nt" x="507" y="219" style="font-size:13px;">异常审核</text>
+          <text class="nl" x="507" y="233">5 sheet 工作簿</text>
+        </a>
+        <a href="details/attendance-remarks.html">
+          <rect class="nd nd-acc" x="656" y="180" width="118" height="60" rx="7"/>
+          <text class="nn nn-acc" x="667" y="200">#06</text><text class="glyph" x="748" y="201">🏷️</text>
+          <text class="nt" x="667" y="219" style="font-size:13px;">考勤备注</text>
+          <text class="nl" x="667" y="233">+ HTML 审核报告</text>
+        </a>
+        <a href="details/attendance-delivery-pack.html">
+          <rect class="nd nd-p1" x="816" y="180" width="118" height="60" rx="7"/>
+          <text class="nn nn-p1" x="827" y="200">#07</text><text class="glyph" x="908" y="201">📦</text>
+          <text class="nt" x="827" y="219" style="font-size:13px;">交付包</text>
+          <text class="nl" x="827" y="233">齐套检查</text>
+        </a>
+
+        <!-- B-TYPE BRANCH: source-normalizer under data-prep -->
+        <line class="edge" x1="395" y1="240" x2="395" y2="296" marker-end="url(#ar)"/>
+        <text class="nl" x="402" y="272" style="font-style:italic;">B 型分支</text>
+        <a href="details/attendance-source-normalizer.html">
+          <rect class="nd nd-p2" x="336" y="298" width="150" height="56" rx="7"/>
+          <text class="nn nn-p2" x="347" y="318">#04</text><text class="glyph" x="458" y="319">🧲</text>
+          <text class="nt" x="347" y="336" style="font-size:13px;">来源归一</text>
+          <text class="nl" x="347" y="349">msg/邮件/PDF 凭证归集</text>
+        </a>
+        <!-- normalizer also feeds exception-review -->
+        <path class="edge" d="M 486 326 Q 560 326 560 244" marker-end="url(#ar)"/>
+
+        <!-- CONFIG FEED from rule-pack down to exception-review + remarks -->
+        <path class="cfg" d="M 235 240 Q 235 410 540 410 Q 560 410 560 244" marker-end="url(#arc)"/>
+        <path class="cfg" d="M 250 240 Q 280 430 700 430 Q 715 430 715 244" marker-end="url(#arc)"/>
+        <text class="nl" x="300" y="406" style="fill:#B07A2C;font-style:italic;">attendance_config.json 喂给审核与计算</text>
+
+        <!-- LEGEND strip -->
+        <text class="nl" x="16" y="460">实线 = 数据流向</text>
+        <text class="nl" x="180" y="460" style="fill:#B07A2C;">琥珀虚线 = config 配置注入</text>
+        <text class="nl" x="420" y="460">顶部虚线框 = 编排层贯穿全月</text>
+        <text class="nl" x="700" y="460">颜色 = lane（见底部图例）</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- §3 A/B/C/D MATRIX -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">§3</span><h2>客户分型 · 对号入座</h2><span class="meta">不同考勤系统 → 不同 skill 组合</span></div>
+    <div class="matrix">
+      <div class="mcard A">
+        <div class="letter">A</div>
+        <div>
+          <h3>数据员宽表型</h3>
+          <div class="clients">代表客户：追觅</div>
+          <div class="feat">数据员按月导出考勤汇总宽表（常无身份证），按考勤部门拆表，80% 飞书打卡。靠按人截图核对闭环。</div>
+          <div class="skl">
+            <a href="details/attendance-monthly-reconcile.html">monthly-reconcile</a>
+            <a href="details/attendance-data-prep.html">data-prep</a>
+            <a href="details/attendance-exception-review.html">exception-review</a>
+            <a href="details/attendance-remarks.html">remarks</a>
+          </div>
+        </div>
+      </div>
+      <div class="mcard B">
+        <div class="letter">B</div>
+        <div>
+          <h3>钉钉导出 + 异常凭证型</h3>
+          <div class="clients">代表客户：珠海基石 · 奥托立夫</div>
+          <div class="feat">钉钉考勤报表 + 大量 .msg 补卡/加班/出差/请假凭证。重点是把散落凭证归一为可审计来源。</div>
+          <div class="skl">
+            <a href="details/attendance-source-normalizer.html">source-normalizer</a>
+            <a href="details/attendance-exception-review.html">exception-review</a>
+            <a href="details/attendance-remarks.html">remarks</a>
+            <a href="details/attendance-rule-pack.html">rule-pack</a>
+          </div>
+        </div>
+      </div>
+      <div class="mcard C">
+        <div class="letter">C</div>
+        <div>
+          <h3>内置核算 + 书面规则型</h3>
+          <div class="clients">代表客户：启云方</div>
+          <div class="feat">钉钉内置核算 + 书面规则 docx（班次、欠工时、加班核算、忘打卡）。重点是把书面规则落成可复核 config。</div>
+          <div class="skl">
+            <a href="details/attendance-rule-pack.html">rule-pack</a>
+            <a href="details/attendance-exception-review.html">exception-review</a>
+            <a href="details/attendance-remarks.html">remarks</a>
+          </div>
+        </div>
+      </div>
+      <div class="mcard D">
+        <div class="letter">D</div>
+        <div>
+          <h3>系统 PDF + 确认单型</h3>
+          <div class="clients">代表客户：国家电投 / 核电</div>
+          <div class="feat">客户自有劳勤 WTS，逐人导出考勤 PDF，按科室填 Excel 并回填工作量确认单，靠科室确认单闭环。</div>
+          <div class="skl">
+            <a href="details/attendance-laoqin-monthly.html">laoqin-monthly</a>
+            <a href="details/attendance-data-prep.html">data-prep</a>
+            <a href="details/attendance-exception-review.html">exception-review</a>
+            <a href="details/attendance-delivery-pack.html">delivery-pack</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §4 SKILL CARDS -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">§4</span><h2>9 个技能 · 按 lane 分组</h2><span class="meta">4 lanes</span></div>
+    <div class="domains">
+
+      <div class="domain">
+        <div class="domain-h"><span class="ico">🧭</span><h3>入口与编排</h3><span class="desc">分诊选客户 · 月度门禁</span></div>
+        <div class="wf-grid">
+          <a class="wf p0" href="details/attendance-project-triage.html">
+            <div class="row1"><span class="num">#01</span><span class="glyph">🩺</span></div>
+            <div class="title">考勤项目分诊</div>
+            <div class="hint">按耗时·痛点排序<br>推荐 skill 组合</div>
+          </a>
+          <a class="wf p0" href="details/attendance-monthly-reconcile.html">
+            <div class="row1"><span class="num">#08</span><span class="glyph">🔁</span></div>
+            <div class="title">月度核对（追觅类）</div>
+            <div class="hint">A 型 · 8 阶段门禁<br>数据员表→发放→跟进</div>
+          </a>
+          <a class="wf p0" href="details/attendance-laoqin-monthly.html">
+            <div class="row1"><span class="num">#09</span><span class="glyph">⚛️</span></div>
+            <div class="title">劳勤月度（核电类）</div>
+            <div class="hint">D 型 · 7 阶段门禁<br>WTS PDF→确认单</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="domain">
+        <div class="domain-h"><span class="ico">🗂️</span><h3>数据准备</h3><span class="desc">从原始资料到结构化输入</span></div>
+        <div class="wf-grid">
+          <a class="wf p2" href="details/attendance-data-prep.html">
+            <div class="row1"><span class="num">#03</span><span class="glyph">🗂️</span></div>
+            <div class="title">考勤数据准备</div>
+            <div class="hint">抽附件·视觉识别<br>按人归档·roster</div>
+          </a>
+          <a class="wf p2" href="details/attendance-source-normalizer.html">
+            <div class="row1"><span class="num">#04</span><span class="glyph">🧲</span></div>
+            <div class="title">考勤来源归一</div>
+            <div class="hint">B 型凭证归集<br>谁的·什么证据</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="domain">
+        <div class="domain-h"><span class="ico">🔬</span><h3>审核与计算</h3><span class="desc">异常清单 · 备注与报告</span></div>
+        <div class="wf-grid">
+          <a class="wf acc" href="details/attendance-exception-review.html">
+            <div class="row1"><span class="num">#05</span><span class="glyph">🔎</span></div>
+            <div class="title">考勤异常审核</div>
+            <div class="hint">来源·覆盖·异常<br>待追问·处理日志</div>
+          </a>
+          <a class="wf acc" href="details/attendance-remarks.html">
+            <div class="row1"><span class="num">#06</span><span class="glyph">🏷️</span></div>
+            <div class="title">考勤备注</div>
+            <div class="hint">配置化生成备注<br>审核明细+HTML</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="domain">
+        <div class="domain-h"><span class="ico">📐</span><h3>配置与交付</h3><span class="desc">规则书面化 · 齐套检查</span></div>
+        <div class="wf-grid">
+          <a class="wf p1" href="details/attendance-rule-pack.html">
+            <div class="row1"><span class="num">#02</span><span class="glyph">📐</span></div>
+            <div class="title">考勤规则包</div>
+            <div class="hint">口径→规则 workbook<br>+ config 草稿</div>
+          </a>
+          <a class="wf p1" href="details/attendance-delivery-pack.html">
+            <div class="row1"><span class="num">#07</span><span class="glyph">📦</span></div>
+            <div class="title">考勤交付包</div>
+            <div class="hint">A/B/C/D 齐套检查<br>能不能交付</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LEGEND -->
+  <section class="sec" style="margin-bottom: 24px;">
+    <div class="legend">
+      <span><span class="dot p0"></span>入口与编排 — 分诊 + 月度全流程门禁</span>
+      <span><span class="dot p2"></span>数据准备 — 归档 + 来源归一</span>
+      <span><span class="dot acc"></span>审核与计算 — 异常审核 + 考勤备注</span>
+      <span><span class="dot p1"></span>配置与交付 — 规则包 + 交付检查</span>
+    </div>
+  </section>
+
+  <footer>
+    考勤自动化技能图谱 · 9 skills distilled from HR Skills repo · skills/attendance/
+  </footer>
+
+</main>
+</body>
+</html>

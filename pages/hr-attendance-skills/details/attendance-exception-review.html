@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 考勤异常审核 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>审核与计算</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-source-normalizer.html">← 04 考勤来源归一</a>
+    <a class="pn" href="attendance-remarks.html">06 考勤备注 →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num acc">05</div>
+    <div class="hero-title">
+      <div class="crumb">审核 · 异常</div>
+      <h1>考勤异常审核</h1>
+      <div class="slug">attendance-exception-review</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">🔎</div>
+      <span class="badge acc">审核与计算</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent acc"><div class="lead">接在 data-prep 之后，把资料来源和异常问题整理成<strong>可复核审核工作簿</strong>。<span class="em">不直接生成最终备注，也不猜截图、审批结论或客户口径。</span></div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>data-prep 跑完，要做异常审核</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>要把缺卡/审批缺失/假别不明/夜班跨天/低置信度集中成清单</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>交付前要可复核的待追问和处理日志</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>attachments/ + reference_roster.xlsx</li><li>attendance_config.json（来自 rule-pack）</li><li>vision_extracted_records.jsonl</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>exception_review.xlsx 固定 5 sheet：来源清单 · 员工覆盖 · 异常清单 · 待追问 · 处理日志</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">建来源清单</div><div class="step-desc">逐文件登记来源类型、归属员工、解析状态、置信度。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">算员工覆盖</div><div class="step-desc">roster 员工是否有资料、来源数；没来源 → <code>missing_attendance_source</code>。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">出异常清单</div><div class="step-desc">缺卡、审批缺失、假别不明、夜班跨天、视觉低置信度逐条列出。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">列待追问</div><div class="step-desc">把无法可靠推导的问题写成面向人的确认项 + 建议动作。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">写处理日志</div><div class="step-desc">规则、文件数、员工数、异常数、解析失败原因可与各 sheet 核对。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">▤</span><h2>OUTPUTS</h2><span class="sec-zh">产物结构</span></div><div class="out-list"><div class="out-item"><div class="on">来源清单</div><div class="od">文件、来源类型、归属员工、解析状态、置信度。</div></div><div class="out-item"><div class="on">员工覆盖</div><div class="od">底表员工、是否有考勤资料、来源数、来源列表。</div></div><div class="out-item"><div class="on">异常清单</div><div class="od">缺卡、审批缺失、假别不明、夜班跨天、视觉低置信度等。</div></div><div class="out-item"><div class="on">待追问</div><div class="od">面向 HR/客户/员工的确认问题和建议动作。</div></div><div class="out-item"><div class="on">处理日志</div><div class="od">本次规则、文件数、员工数、异常数、解析失败原因。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item up"><span class="ar">←</span><div>上游 <a class="wl" href="attendance-data-prep.html">data-prep</a>（A/D 型）或 <a class="wl" href="attendance-source-normalizer.html">source-normalizer</a>（B 型）。</div></div><div class="pipe-item up"><span class="ar">←</span><div>判异常用的口径来自 <a class="wl" href="attendance-rule-pack.html">rule-pack</a> 的 config。</div></div><div class="pipe-item down"><span class="ar">→</span><div>终审后交给 <a class="wl" href="attendance-remarks.html">remarks</a> 算最终备注。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>来源清单 / 员工覆盖 / 异常清单 / 待追问 / 处理日志 5 个 sheet 全在。</span></li><li><span class="ck">✓</span><span>员工覆盖中 roster 员工数与 reference_roster 一致；无来源员工必有 missing_attendance_source。</span></li><li><span class="ck">✓</span><span>低置信度视觉、解析失败、无法确定员工的 Excel 都进异常清单或待追问。</span></li><li><span class="ck">✓</span><span>处理日志的文件数、员工数、异常数与各 sheet 可核对。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>图片/PDF/截图无视觉记录或人工记录，却被写成已解析。</div></div><div class="fail-item"><span class="ico">✗</span><div>来源清单显示解析失败，异常清单和处理日志却没有对应记录。</div></div><div class="fail-item"><span class="ico">✗</span><div>员工在 roster 中无资料，却没有 missing_attendance_source。</div></div><div class="fail-item"><span class="ico">✗</span><div>低置信度视觉记录没有进入待追问。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-exception-review/scripts/build_exception_review.py \
+  outputs/&lt;目录名&gt;/attachments &lt;YYYYMM&gt; \
+  outputs/&lt;目录名&gt;/exception_review.xlsx \
+  --source-dir data/raw/&lt;目录名&gt; \
+  --reference-summary outputs/&lt;目录名&gt;/reference_roster.xlsx \
+  --config &lt;config.json&gt;</code></pre></div></section>
+
+  <footer>
+    attendance-exception-review · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

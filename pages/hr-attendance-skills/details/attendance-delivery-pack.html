@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07 考勤交付包 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>配置与交付</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-remarks.html">← 06 考勤备注</a>
+    <a class="pn" href="attendance-monthly-reconcile.html">08 考勤月度核对（追觅类） →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p1">07</div>
+    <div class="hero-title">
+      <div class="crumb">交付 · 齐套检查</div>
+      <h1>考勤交付包</h1>
+      <div class="slug">attendance-delivery-pack</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">📦</div>
+      <span class="badge p1">配置与交付</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent p1"><div class="lead">在交付 HR / 顾问 / 客户 / 科服前，检查 <code>outputs/&lt;目录名&gt;</code> 是否齐套。<span class="em">不替代业务审核，只把「缺什么文件、能不能交付」变成 Excel 清单。</span></div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FLOW TYPES</h2><span class="sec-zh">流程类型 A/B/C/D</span></div><div class="flow-grid"><div class="flow-card"><div class="ft"><span class="l">A</span>型</div><div class="fd">追觅类宽表：员工清单 + 异常审核 + 考勤备注</div></div><div class="flow-card"><div class="ft"><span class="l">B</span>型</div><div class="fd">凭证型：来源归一 + 异常审核 + 考勤备注</div></div><div class="flow-card"><div class="ft"><span class="l">C</span>型</div><div class="fd">启云方规则核算：规则包 + 规则配置 + 异常审核</div></div><div class="flow-card"><div class="ft"><span class="l">D</span>型</div><div class="fd">国家电投：员工清单 + 确认单 + 劳勤 PDF</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>月底交付前检查包是否齐套</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>想知道差哪些文件、哪些已可交付</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>按 A/B/C/D 型生成交付清单</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>outputs/<目录名>（各上游产物）</li><li>--flow-type A/B/C/D</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>delivery_pack.xlsx：交付清单 · 问题清单 · 汇总（是否可交付）</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">选流程类型</div><div class="step-desc">按 A/B/C/D 选对应交付项集合。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">比对期望文件</div><div class="step-desc">每个交付项的期望文件、状态、匹配文件逐项核对。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">列问题清单</div><div class="step-desc">缺失项 + 建议动作，指回对应上游 skill。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">出汇总</div><div class="step-desc">交付项数、缺失项数、是否可交付。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item up"><span class="ar">←</span><div>汇总 <a class="wl" href="attendance-data-prep.html">data-prep</a> / <a class="wl" href="attendance-source-normalizer.html">normalizer</a> / <a class="wl" href="attendance-exception-review.html">exception-review</a> / <a class="wl" href="attendance-remarks.html">remarks</a> 的产出。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>缺失项回到对应上游 skill 补齐后重跑交付检查。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>汇总中「是否可交付」为是之前，不直接提交最终包。</span></li><li><span class="ck">✓</span><span>D 型必须同时有员工 PDF 和确认单；只有 PDF 不算闭环。</span></li><li><span class="ck">✓</span><span>B 型必须先跑 source-normalizer，否则凭证来源无法审计。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>D 型只有劳勤 PDF，没确认单或确认单未签回。</div></div><div class="fail-item"><span class="ico">✗</span><div>B 型只有 attendance_remarks.xlsx，没来源归一和异常审核。</div></div><div class="fail-item"><span class="ico">✗</span><div>C 型只有规则包，没异常审核或催办闭环记录。</div></div><div class="fail-item"><span class="ico">✗</span><div>文件存在但属历史月份，被误当成本月交付物。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-delivery-pack/scripts/build_delivery_pack.py \
+  outputs/&lt;目录名&gt; outputs/&lt;目录名&gt;/delivery_pack.xlsx \
+  --flow-type B</code></pre></div></section>
+
+  <footer>
+    attendance-delivery-pack · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

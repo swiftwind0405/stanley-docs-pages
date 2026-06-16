@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 考勤数据准备 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>数据准备</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-rule-pack.html">← 02 考勤规则包</a>
+    <a class="pn" href="attendance-source-normalizer.html">04 考勤来源归一 →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p2">03</div>
+    <div class="hero-title">
+      <div class="crumb">数据准备</div>
+      <h1>考勤数据准备</h1>
+      <div class="slug">attendance-data-prep</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">🗂️</div>
+      <span class="badge p2">数据准备</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent p2"><div class="lead">把某客户某月原始考勤源数据整理成<strong>「按员工分文件夹」</strong>的结构化目录，产出标准化员工清单 <code>reference_roster.xlsx</code>，供下游直接消费。<span class="em">负责「数据从哪来、有哪些人、文件归谁」。</span></div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>拿到一个月原始考勤源目录（msg/Excel/PDF/图片混杂）</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>要先抽附件、AI 视觉预处理、按人归档</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>下游 remarks / exception-review 需要 reference_roster</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>data/raw/<目录名> 源目录</li><li>可选底表（账单/工资/人员清单）</li><li>.msg 附件 / 邮件正文 / PDF / 图片</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>reference_roster.xlsx 员工清单</li><li>数据收集汇总.xlsx · 人工复核清单.xlsx</li><li>employees/<姓名>/ 按人归档 + _sources.json</li><li>vision_extracted_records.jsonl + 视觉提取结果.xlsx</li><li>_email_texts.jsonl 邮件正文（供 remarks 消费）</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">抽取 .msg 附件</div><div class="step-desc">解出邮件附件到 <code>attachments/</code>。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">PDF 逐页渲染 PNG</div><div class="step-desc">考勤不依赖 PDF 文本层；即使是文字型 PDF 也逐页出图交给视觉识别。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">AI 视觉结构化预处理</div><div class="step-desc">逐图、逐页 PNG 读取，产出 vision_extracted_records（保留 source_file / page，不猜身份证和小时数）。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">确定底表</div><div class="step-desc">单候选可继续（须说明依据）；多候选必须暂停问用户；无候选进无底表模式。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">确定目标员工范围</div><div class="step-desc">有底表以底表为准；无底表先视觉 + 文件名候选，再由 LLM 语义复核，<strong>人工确认前不生成 roster</strong>。</div></div></li><li class="step"><div class="step-num">6</div><div class="step-body"><div class="step-title">按员工归档</div><div class="step-desc">优先级：Excel 内姓名 > 文件名 > 邮件主题 > 视觉结果 > _unmatched/。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item up"><span class="ar">←</span><div>客户来自 <a class="wl" href="attendance-project-triage.html">triage</a> 分诊；A/D 型由 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a> / <a class="wl" href="attendance-laoqin-monthly.html">laoqin-monthly</a> 编排调用。</div></div><div class="pipe-item down"><span class="ar">→</span><div>归档结果喂给 <a class="wl" href="attendance-exception-review.html">exception-review</a> 做异常审核、<a class="wl" href="attendance-remarks.html">remarks</a> 算备注。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>人类边界：给人看 Excel，给脚本 / LLM 看 JSON / JSONL，不要把中间文件当交付件。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>reference_roster / 数据收集汇总 / 人工复核清单 / _prep_summary / _prep_questions / _vision_manifest 均生成。</span></li><li><span class="ck">✓</span><span>有底表时底表员工全覆盖；无底表时结构化 Excel + 已确认视觉 + 已确认候选均覆盖。</span></li><li><span class="ck">✓</span><span>数字自洽：员工数 = 有文件员工 + 缺数据员工；未归属文件数与 unmatched_file 一致。</span></li><li><span class="ck">✓</span><span>人工复核清单中可处理附件已被读取并回写视觉结果，再重跑归档刷新状态。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>公司名、部门名、月份标签被误识别成人名。</div></div><div class="fail-item"><span class="ico">✗</span><div>manifest 仍 needs_pdf_preprocess，却把 PDF 当已处理。</div></div><div class="fail-item"><span class="ico">✗</span><div>视觉记录缺 source_file / page，下游无法追溯。</div></div><div class="fail-item"><span class="ico">✗</span><div>把签到明细/打卡截图直接当成已审批加班。</div></div><div class="fail-item"><span class="ico">✗</span><div>同名员工只靠姓名归档，未用身份证号或待追问区分。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-data-prep/scripts/extract_msg_attachments.py \
+  data/raw/&lt;目录名&gt; outputs/&lt;目录名&gt;/attachments
+
+uv run python skills/attendance/attendance-data-prep/scripts/preprocess_pdfs_for_vision.py \
+  outputs/&lt;目录名&gt; --source-dir data/raw/&lt;目录名&gt; \
+  --source-dir outputs/&lt;目录名&gt;/attachments
+
+uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_data.py \
+  data/raw/&lt;目录名&gt; outputs/&lt;目录名&gt; \
+  --attachments-dir outputs/&lt;目录名&gt;/attachments \
+  --base-table data/raw/&lt;目录名&gt;/&lt;底表.xlsx&gt;</code></pre></div></section>
+
+  <footer>
+    attendance-data-prep · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

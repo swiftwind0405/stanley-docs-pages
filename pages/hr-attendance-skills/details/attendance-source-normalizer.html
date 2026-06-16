@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04 考勤来源归一 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>数据准备</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-data-prep.html">← 03 考勤数据准备</a>
+    <a class="pn" href="attendance-exception-review.html">05 考勤异常审核 →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p2">04</div>
+    <div class="hero-title">
+      <div class="crumb">数据准备 · 来源归一</div>
+      <h1>考勤来源归一</h1>
+      <div class="slug">attendance-source-normalizer</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">🧲</div>
+      <span class="badge p2">数据准备</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent p2"><div class="lead">把散落在源目录、.msg 附件、邮件正文、视觉记录里的考勤资料整理成<strong>统一审核入口</strong>。<span class="em">负责「资料是什么、属于谁、是什么证据类型」。</span>主要服务 B 型 / 邮件凭证型客户。</div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FLOW TYPES</h2><span class="sec-zh">适用客户</span></div><div class="flow-grid"><div class="flow-card"><div class="ft"><span class="l">珠海基石</span></div><div class="fd">钉钉汇总表 + 大量 .msg 补卡/加班/出差/年假凭证</div></div><div class="flow-card"><div class="ft"><span class="l">奥托立夫</span></div><div class="fd">钉钉考勤报表 + 补卡/加班/出差/请假/外出子表</div></div><div class="flow-card"><div class="ft"><span class="l">复宏汉霖·英伟达</span></div><div class="fd">公司名 + 员工名 + 考勤/审批 .msg，夹杂图片/PDF/Excel</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>大量 .msg 补卡/加班/出差凭证要归集</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>多来源混杂，要先认清「谁的、什么证据」</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>B 型客户交付前要一份可审计的来源清单</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>data/raw/<目录名></li><li>attachments/（已抽附件）</li><li>reference_roster.xlsx</li><li>_email_texts.jsonl · vision_extracted_records.jsonl</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>normalized_sources.xlsx：来源归一 · 归属覆盖 · 待追问</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">汇集所有来源</div><div class="step-desc">msg、Excel、PDF、图片全部进「来源归一」，不漏原始邮件。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">归属员工</div><div class="step-desc">从 roster、邮件主题、文件名、视觉记录多路匹配；匹配不到进「待追问」。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">分证据类型</div><div class="step-desc">至少区分补卡、加班、出差/公出、外出、请假/休假、考勤汇总、审批。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">算归属覆盖</div><div class="step-desc">每个员工已归属来源数和证据类型，缺口一目了然。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item up"><span class="ar">←</span><div>先跑 <a class="wl" href="attendance-data-prep.html">data-prep</a> 抽附件、预渲染 PDF。</div></div><div class="pipe-item down"><span class="ar">→</span><div>来源清单交给 <a class="wl" href="attendance-exception-review.html">exception-review</a> 判异常、<a class="wl" href="attendance-remarks.html">remarks</a> 算备注。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>所有 .msg、Excel、PDF、图片来源均进入「来源归一」。</span></li><li><span class="ck">✓</span><span>员工名能从 roster / 主题 / 文件名 / 视觉记录匹配，匹配不到进待追问。</span></li><li><span class="ck">✓</span><span>证据类型至少区分 7 类。</span></li><li><span class="ck">✓</span><span>交付给 HR 引用 xlsx，不只给 JSON / JSONL。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>.msg 已抽附件，但原始邮件没进来源清单。</div></div><div class="fail-item"><span class="ico">✗</span><div>只按文件名归属，忽略 roster、邮件主题或视觉记录。</div></div><div class="fail-item"><span class="ico">✗</span><div>把客户名、公司名、部门名当成员工名。</div></div><div class="fail-item"><span class="ico">✗</span><div>图片/PDF 仍待识别，却被标成已解析考勤结论。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-source-normalizer/scripts/normalize_attendance_sources.py \
+  data/raw/&lt;目录名&gt; outputs/&lt;目录名&gt;/normalized_sources.xlsx \
+  --attachments-dir outputs/&lt;目录名&gt;/attachments \
+  --reference-roster outputs/&lt;目录名&gt;/reference_roster.xlsx \
+  --email-texts outputs/&lt;目录名&gt;/_email_texts.jsonl \
+  --vision-records outputs/&lt;目录名&gt;/vision_extracted_records.jsonl</code></pre></div></section>
+
+  <footer>
+    attendance-source-normalizer · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

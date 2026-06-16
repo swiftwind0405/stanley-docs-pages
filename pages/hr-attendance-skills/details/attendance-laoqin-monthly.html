@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 劳勤月度考勤（核电类） · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>入口与编排</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-monthly-reconcile.html">← 08 考勤月度核对（追觅类）</a>
+    <span class="pn" style="opacity:.4">终点 →</span>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p0">09</div>
+    <div class="hero-title">
+      <div class="crumb">编排 · D 型（国家电投）</div>
+      <h1>劳勤月度考勤（核电类）</h1>
+      <div class="slug">attendance-laoqin-monthly</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">⚛️</div>
+      <span class="badge p0">入口与编排</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent p0"><div class="lead">把「顾问名单 → 劳勤 WTS 导出 PDF → 科室 Excel 汇总 → 确认单回填 → 科服交付」的月度流程标准化。<span class="em">负责流程编排与阶段门禁；</span>PDF 归档用 data-prep、读取用 pdf-llm-preprocess、公式异常用 exception-review。</div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FLOW TYPES</h2><span class="sec-zh">客户画像 / 流程类型</span></div><div class="flow-grid"><div class="flow-card"><div class="ft"><span class="l">适用画像</span></div><div class="fd">客户自有劳勤 WTS（非飞书/钉钉）；按科室/车间组织；主交付员工 PDF + 工作量确认单；靠科室确认单闭环</div></div><div class="flow-card"><div class="ft"><span class="l">试点客户</span></div><div class="fd">国家电投 / 核电（PMC North Qing wu）</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>国家电投 / 核电月度考勤</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>劳勤 WTS 逐人导出 PDF</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>工作量确认单回填、科服交付</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>目录名 + 薪资月</li><li>顾问当月名单（含劳勤账号密码）</li><li>各科确认单空白模板</li><li>可选已核对跳过名单</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>考勤PDF/<科室>/<姓名>.pdf（+ 出差申请单据）</li><li>科室 Excel + 回填确认单</li><li>科服 PDF 夹 + 确认单 + 加班说明</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>PHASE GATES</h2><span class="sec-zh">阶段门禁（按序）</span><span class="meta">7 阶段 · 不可跳门</span></div><ol class="timeline"><li class="step gate"><div class="step-num">0</div><div class="step-body"><div class="step-title">收名单与确认单<span class="gateflag">GATE</span></div><div class="step-desc">各科模板齐全；已核对跳过名单已标记。</div></div></li><li class="step gate"><div class="step-num">1</div><div class="step-body"><div class="step-title">科室筛人 + 账号<span class="gateflag">GATE</span></div><div class="step-desc">按科室打开顾问名单，复制劳勤工号/密码，与确认单模板逐一比对。</div></div></li><li class="step gate"><div class="step-num">2</div><div class="step-body"><div class="step-title">劳勤导出 PDF<span class="gateflag">GATE</span></div><div class="step-desc">逐人登录 WorkbenchCalendar，切月份，打印保存 PDF，文件名 = 员工姓名。</div></div></li><li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">填科室 Excel<span class="gateflag">GATE</span></div><div class="step-desc">标黄周末加班、法定假日行、批注转调休；出差导 PDF；公式每月按 30/31 天调整，调休列手工。</div></div></li><li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">加班费合计<span class="gateflag">GATE</span></div><div class="step-desc">公休日 + 延长工时 + 法定节假日 − 已执行换休（顾问书面确认后写 config）。</div></div></li><li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">回填确认单<span class="gateflag">GATE</span></div><div class="step-desc">Excel 汇总列复制到确认单对应行；标注出勤工作日天数。</div></div></li><li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">交付科服<span class="gateflag">GATE</span></div><div class="step-desc">各员工考勤 PDF 文件夹（含出差单据）+ 各科签字确认单 + 加班说明。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item down"><span class="ar">→</span><div>编排调用 <a class="wl" href="attendance-data-prep.html">data-prep</a> 归档 PDF → pdf-llm-preprocess 读 PDF → <a class="wl" href="attendance-exception-review.html">exception-review</a> 查公式/单据异常。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>不适用追觅类数据员宽表客户 → 改用 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a>。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>各科确认单人员与顾问名单一致。</span></li><li><span class="ck">✓</span><span>每人有劳勤 PDF（出差另有申请单据 PDF）。</span></li><li><span class="ck">✓</span><span>Excel 加班费合计与确认单一致。</span></li><li><span class="ck">✓</span><span>已核对名单人员已跳过。</span></li><li><span class="ck">✓</span><span>PDF 夹 + 确认单已交付科服。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>套用 monthly-reconcile 的按人截图、飞书凭证流程。</div></div><div class="fail-item"><span class="ico">✗</span><div>未核对顾问名单就开始逐人劳勤导出。</div></div><div class="fail-item"><span class="ico">✗</span><div>确认单回填后未验算 Excel 加班费合计。</div></div><div class="fail-item"><span class="ico">✗</span><div>21 个科室模板结构不一致却未记录在 rules_catalog_draft.md。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code># 编排调用下游 skill
+uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_data.py \
+  data/raw/&lt;目录名&gt; outputs/&lt;目录名&gt;-&lt;YYYYMM&gt; --base-table &lt;顾问名单.xlsx&gt;
+
+uv run python skills/utility/pdf-llm-preprocess/scripts/pdf_llm_preprocess.py \
+  outputs/&lt;目录名&gt;-&lt;YYYYMM&gt;/考勤PDF/&lt;科室&gt;/&lt;姓名&gt;.pdf \
+  --out-dir outputs/&lt;目录名&gt;-&lt;YYYYMM&gt;/pdf_pages/&lt;姓名&gt;
+
+uv run python skills/attendance/attendance-exception-review/scripts/build_exception_review.py \
+  outputs/&lt;目录名&gt;-&lt;YYYYMM&gt; &lt;YYYYMM&gt; ... --config &lt;config.json&gt;</code></pre></div></section>
+
+  <footer>
+    attendance-laoqin-monthly · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

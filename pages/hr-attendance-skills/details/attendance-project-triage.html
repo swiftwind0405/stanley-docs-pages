@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 考勤项目分诊 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>入口与编排</span>
+    <span class="spacer"></span>
+    <span class="pn" style="opacity:.4">← 起点</span>
+    <a class="pn" href="attendance-rule-pack.html">02 考勤规则包 →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p0">01</div>
+    <div class="hero-title">
+      <div class="crumb">入口 · 分诊</div>
+      <h1>考勤项目分诊</h1>
+      <div class="slug">attendance-project-triage</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">🩺</div>
+      <span class="badge p0">入口与编排</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent p0"><div class="lead">读复杂/耗时考勤项目收集表，把客户按耗时和痛点排序，输出<strong>自动化优先级清单</strong>，并推荐每个客户该用哪套 skill 组合。<span class="em">它不替你做考勤，只回答「先做谁、怎么组合」。</span></div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>手上有一张复杂/耗时考勤项目收集表</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>要决定先自动化哪些客户、先投哪条流水线</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>需要把客户按痛点和耗时打分排序</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>想知道每个客户该进哪几个 skill</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>复杂考勤项目收集表（.xlsx）</li><li>客户名 / 员工数 / 耗时 / 痛点列</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>项目分诊：客户·员工数·耗时·痛点标签·是否试点·优先级分·建议 Skill</li><li>汇总：项目数·试点数·总耗时·试点耗时·试点客户</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">定位表头</div><div class="step-desc">找到客户名、耗时、痛点列；找不到先检查表头行，不手工猜列号。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">过滤有效行</div><div class="step-desc">排除 <code>eg</code>、样例行、说明行、空客户行，只留真实客户。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">痛点打标签</div><div class="step-desc">归类：催收/反馈慢、格式不统一、异常缺卡审批、人工汇总誊写、规则复杂、客户系统限制、归档截图验收、账单补贴结算。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">命中试点</div><div class="step-desc">默认试点：追觅 / 珠海基石 / 奥托立夫 / 启云方 / 国家电投，命中即「是」。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">打分 + 建议 skill</div><div class="step-desc">每个有效项目给优先级分、痛点标签和推荐进入的后续 skill。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item down"><span class="ar">→</span><div>高优先级客户进入数据流水线 <a class="wl" href="attendance-data-prep.html">data-prep</a> → <a class="wl" href="attendance-exception-review.html">exception-review</a> → <a class="wl" href="attendance-remarks.html">remarks</a>。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>C 型规则核算客户先做 <a class="wl" href="attendance-rule-pack.html">rule-pack</a> 落规则；A 型走 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a>，D 型走 <a class="wl" href="attendance-laoqin-monthly.html">laoqin-monthly</a>。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>项目分诊、汇总两个 sheet 均存在。</span></li><li><span class="ck">✓</span><span>输出项目数等于输入表中有效客户行数，不含样例/说明/空行。</span></li><li><span class="ck">✓</span><span>试点客户命中后「是否试点」为是，汇总中试点数与名单一致。</span></li><li><span class="ck">✓</span><span>每个有效项目都有优先级分、痛点标签和建议 skill。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>把 <code>eg</code>、样例行、表头说明行计入项目。</div></div><div class="fail-item"><span class="ico">✗</span><div>耗时单位解析失败后默认为 0，却不提示。</div></div><div class="fail-item"><span class="ico">✗</span><div>痛点文本含缺卡/截图/规则复杂等关键词，标签却为空。</div></div><div class="fail-item"><span class="ico">✗</span><div>试点客户名单变更后只改文档不改测试。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-project-triage/scripts/triage_attendance_projects.py \
+  &lt;复杂考勤项目收集表.xlsx&gt; \
+  outputs/attendance_project_triage.xlsx</code></pre></div></section>
+
+  <footer>
+    attendance-project-triage · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

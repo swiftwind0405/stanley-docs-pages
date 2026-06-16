@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 考勤备注 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>审核与计算</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-exception-review.html">← 05 考勤异常审核</a>
+    <a class="pn" href="attendance-delivery-pack.html">07 考勤交付包 →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num acc">06</div>
+    <div class="hero-title">
+      <div class="crumb">审核 · 备注计算</div>
+      <h1>考勤备注</h1>
+      <div class="slug">attendance-remarks</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">🏷️</div>
+      <span class="badge acc">审核与计算</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent acc"><div class="lead">基于已归档考勤数据，按配置生成每个员工的<strong>「考勤备注」</strong>，输出审核工作簿 + HTML 审核报告。<span class="em">把数据变成最终交付文案的计算核心。</span>支持结构化 Excel / 邮件正文 / 视觉结果 / overrides 多来源合并。</div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>数据准备好了，要生成「考勤备注」列</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>标准工时 / 综合工时的月度汇总</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>要审核明细 + flags + HTML 报告做人工复核</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>attachments/ + reference_roster.xlsx / 底表</li><li>attendance_config.json（来自 rule-pack）</li><li>_email_texts.jsonl · vision_extracted_records.jsonl</li><li>可选 overrides.json</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>attendance_remarks.xlsx：考勤备注 · 审核明细 · 待追问</li><li>HTML 对比审核报告（可启动服务在线审阅）</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">先建配置</div><div class="step-desc">周期、计薪天、法定假日、加班去向、假别映射、输出文案都进 config，<strong>不写死</strong>。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">合并多来源</div><div class="step-desc">结构化 Excel > 邮件正文 > 视觉结果 > overrides，按优先级合并。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">算休假</div><div class="step-desc">按小时汇总，默认 8h = 1 天；小时数为空时从原因里抽取。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">算加班</div><div class="step-desc">法定日 → legal_settle；周末/休息日按配置；关键词命中去向优先；未明确 → generic_settle 并 flag。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">算计薪 / 全勤</div><div class="step-desc">结合入离职空白、法定日是否在雇佣区间、审批确认，<strong>不机械相加</strong>出勤小时。</div></div></li><li class="step"><div class="step-num">6</div><div class="step-body"><div class="step-title">拼接备注 + 明细 + 待追问</div><div class="step-desc">按推荐顺序拼接备注，逐片段留审核明细，不确定项进待追问。</div></div></li><li class="step"><div class="step-num">7</div><div class="step-body"><div class="step-title">生成并启动 HTML 报告</div><div class="step-desc">用 compare_remarks → build_compare_report → serve_review_report 起审阅服务。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">▤</span><h2>OUTPUTS</h2><span class="sec-zh">产物结构</span></div><div class="out-list"><div class="out-item"><div class="on">考勤备注</div><div class="od">最终给业务用的汇总结果，含审核状态、审核明细数、flags。</div></div><div class="out-item"><div class="on">审核明细</div><div class="od">每个备注片段的判断依据：证据层级、类型、分类、规则、来源定位、是否需复核。</div></div><div class="out-item"><div class="on">待追问</div><div class="od">自动流程无法可靠推导的问题，供人工补信息或生成 overrides。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item up"><span class="ar">←</span><div>上游 <a class="wl" href="attendance-data-prep.html">data-prep</a>（数据/roster）、<a class="wl" href="attendance-exception-review.html">exception-review</a>（终审）、<a class="wl" href="attendance-rule-pack.html">rule-pack</a>（config）。</div></div><div class="pipe-item down"><span class="ar">→</span><div>产物交给 <a class="wl" href="attendance-delivery-pack.html">delivery-pack</a> 做齐套检查后交付。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>考勤备注 / 审核明细 / 待追问三 sheet 齐全。</span></li><li><span class="ck">✓</span><span>汇总行数覆盖 reference_roster 或底表中所有目标员工。</span></li><li><span class="ck">✓</span><span>考勤备注无空值；非全勤片段必须有可追溯审核明细。</span></li><li><span class="ck">✓</span><span>法定加班只出现在配置里的法定日；周末/休息日来自配置不硬编码。</span></li><li><span class="ck">✓</span><span>待追问不阻断 Excel/HTML 生成，但必须进工作簿和 HTML；HTML 服务已启动。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>备注非空但没有审核明细，尤其是非全勤备注。</div></div><div class="fail-item"><span class="ico">✗</span><div>法定日、休息日、计薪天来自硬编码或历史月配置。</div></div><div class="fail-item"><span class="ico">✗</span><div>扫描件、截图、邮件正文、低置信度视觉结果没标记需复核。</div></div><div class="fail-item"><span class="ico">✗</span><div>有 generic_settle 或未写明去向的加班，却没有待追问或 flags。</div></div><div class="fail-item"><span class="ico">✗</span><div>无底表自检报告被误当作与客户底表的正式对比报告。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-remarks/scripts/build_attendance_remarks.py \
+  outputs/&lt;目录名&gt;/attachments &lt;YYYYMM&gt; \
+  outputs/&lt;目录名&gt;/attendance_remarks.xlsx \
+  --config &lt;config.json&gt; --source-dir data/raw/&lt;目录名&gt; \
+  --reference-summary outputs/&lt;目录名&gt;/reference_roster.xlsx
+
+# 生成并启动 HTML 审核报告
+uv run python skills/attendance/attendance-remarks/scripts/serve_review_report.py \
+  outputs/&lt;目录名&gt; --allow-root data/raw/&lt;目录名&gt;</code></pre></div></section>
+
+  <footer>
+    attendance-remarks · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>

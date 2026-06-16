@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 考勤规则包 · 考勤技能图谱</title>
+<link rel="stylesheet" href="_detail.css">
+</head>
+<body>
+<main>
+  <nav class="topnav">
+    <a href="../">⬡ 考勤技能图谱</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>配置与交付</span>
+    <span class="spacer"></span>
+    <a class="pn" href="attendance-project-triage.html">← 01 考勤项目分诊</a>
+    <a class="pn" href="attendance-data-prep.html">03 考勤数据准备 →</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-num p1">02</div>
+    <div class="hero-title">
+      <div class="crumb">配置 · 规则</div>
+      <h1>考勤规则包</h1>
+      <div class="slug">attendance-rule-pack</div>
+    </div>
+    <div class="hero-meta">
+      <div class="glyph-big">📐</div>
+      <span class="badge p1">配置与交付</span>
+      <span>skills/attendance/</span>
+    </div>
+  </header>
+
+  <div class="intent p1"><div class="lead">把客户考勤口径先落成<strong>「可复核规则 workbook + attendance_config.json 草稿」</strong>，再交给 remarks / exception-review 使用。<span class="em">先把规则说清楚，再算备注。</span></div></div>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FLOW TYPES</h2><span class="sec-zh">流程类型 A/B/C/D</span></div><div class="flow-grid"><div class="flow-card"><div class="ft"><span class="l">A</span>型</div><div class="fd">数据员宽表型 —— 追觅</div></div><div class="flow-card"><div class="ft"><span class="l">B</span>型</div><div class="fd">钉钉导出 + 异常凭证型 —— 珠海基石、奥托立夫</div></div><div class="flow-card"><div class="ft"><span class="l">C</span>型</div><div class="fd">钉钉内置核算 + 书面规则型 —— 启云方</div></div><div class="flow-card"><div class="ft"><span class="l">D</span>型</div><div class="fd">客户系统 PDF + 确认单型 —— 国家电投</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>启云方书面规则 docx 要落成机器配置</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>奥托立夫早班/中班/夜班/上海班次规则要书面化</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>国家电投确认单加班费合计公式要确认</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>新客户口径先书面化再算备注</span></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>客户名 + 月份 YYYYMM</li><li>客户口径：班次/假别/加班去向/法定日/计薪天</li><li>书面规则 docx、顾问确认表</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>attendance_config.json：给 remarks 的配置草稿</li><li>attendance_rule_pack.xlsx：规则参数·异常类型·流程规则·待确认项</li></ul></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>STEPS</h2><span class="sec-zh">处理流程</span></div><ol class="timeline"><li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">选流程类型</div><div class="step-desc">确定 A / B / C / D 型，套对应规则骨架。</div></div></li><li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">填当月日期口径</div><div class="step-desc">计薪天、法定假日、休息日、补班日必须来自<strong>当月</strong>客户口径，不复用历史月。</div></div></li><li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">拆解客户规则</div><div class="step-desc">班次、欠工时、加班核算、忘打卡、补签、弹性班次逐条拆入配置。</div></div></li><li class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">列异常类型与待确认</div><div class="step-desc">把不确定项写进 workbook 的「待确认」，不凭经验补值。</div></div></li><li class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">产出 config + 规则 workbook</div><div class="step-desc">config 给脚本用，workbook 给顾问/HR 复核。</div></div></li></ol></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item up"><span class="ar">←</span><div>客户由 <a class="wl" href="attendance-project-triage.html">triage</a> 分诊选出（尤其 C 型）。</div></div><div class="pipe-item down"><span class="ar">→</span><div>config 交给 <a class="wl" href="attendance-remarks.html">remarks</a> 算备注、<a class="wl" href="attendance-exception-review.html">exception-review</a> 判异常。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>D 型确认单口径供 <a class="wl" href="attendance-laoqin-monthly.html">laoqin-monthly</a> 回填确认单。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>workbook 中「待确认」不为空时，不能把 config 当最终规则。</span></li><li><span class="ck">✓</span><span>日期、计薪天、法定假日、休息日、补班日来自当月口径。</span></li><li><span class="ck">✓</span><span>新增客户专属异常类型先进 workbook 复核，再补脚本规则和测试。</span></li></ul></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>直接复用历史月份的法定日、休息日或计薪天。</div></div><div class="fail-item"><span class="ico">✗</span><div>把「待确认」未关闭的 config 当成最终配置跑备注。</div></div><div class="fail-item"><span class="ico">✗</span><div>C 型只写假期/加班关键词，漏掉欠工时、补签、弹性班次、月中催办。</div></div><div class="fail-item"><span class="ico">✗</span><div>D 型未确认加班费合计公式就回填确认单。</div></div></div></section>
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code>uv run python skills/attendance/attendance-rule-pack/scripts/build_rule_pack.py \
+  &lt;客户名&gt; &lt;YYYYMM&gt; outputs/&lt;目录名&gt;/rule_pack \
+  --flow-type B</code></pre></div></section>
+
+  <footer>
+    attendance-rule-pack · 考勤自动化技能图谱 · HR Skills · 单文件详情页
+  </footer>
+</main>
+</body>
+</html>
