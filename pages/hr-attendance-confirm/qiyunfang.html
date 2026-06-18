@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>启云方 · 考勤流程与规则确认表</title>
+<link rel="stylesheet" href="assets/form.css">
+</head>
+<body>
+<main data-form-id="qiyunfang" data-project-name="启云方">
+
+  <nav class="topnav">
+    <a href="./">考勤确认表</a>
+    <span style="color: var(--ink-4);">›</span>
+    <span>启云方</span>
+  </nav>
+
+  <header class="hero">
+    <div class="crumb">启云方项目 · 考勤月度流程与规则确认表</div>
+    <h1>启云方考勤确认表</h1>
+    <div class="lede">供顾问 / 客服核对我们对启云方考勤处理流程的理解是否准确，并补全自动化所需的规则与操作细节。<br>来源：<code>data/raw/PMC North Kara Jin 启云方/</code> 样例数据（2026-04）+ <code>启云方(在岸服务外包)考勤及费用结算规则-v1.0定稿版.docx</code> + 考勤报表「含步骤」sheet</div>
+  </header>
+
+  <div class="progress-bar">
+    <div class="progress-inner">
+      <div class="progress-track"><div class="progress-fill"></div></div>
+      <div class="progress-text">0 / 0 (0%)</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 一、请确认：以下流程理解是否正确 -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- 1. 每月整体顺序 -->
+  <section class="sec" data-sec-id="s1_flow">
+    <div class="sec-h">
+      <span class="sec-num">一·1</span>
+      <h2>每月整体顺序</h2>
+      <span class="sec-sub">月中滚动 + 月末结算</span>
+    </div>
+
+    <table class="confirm-table">
+      <thead><tr><th>序号</th><th>我们理解的步骤</th><th>确认</th></tr></thead>
+      <tbody>
+        <tr class="confirm-row"><td>1</td><td><strong>月中滚动</strong>：按截止日（如 4.27、4.28、4.29）反复导出钉钉考勤，生成「考勤异常催办」表发员工/中台跟进</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step1" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step1" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step1" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step1_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>2</td><td>催办前在报表中：合并行去掉合并、核对部门、（离职）替空白、入离职日期后删无效行</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step2" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step2" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step2" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step2_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>3</td><td>月底入职员工可能尚无班次，需加急完善班次后再催办</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step3" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step3" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step3" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step3_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>4</td><td><strong>月末结算</strong>：导出完整「编辑版」考勤报表（含多个核算 sheet）</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step4" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step4" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step4" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step4_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>5</td><td>在 workbook 内完成：应工作量/排班量、欠工时、加班核算、忘打卡、请假等 sheet 核算</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step5" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step5" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step5" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step5_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>6</td><td>「月末小周六」工作时长<strong>不剔除晚休时间</strong>（文件名及欠工时 sheet 备注）</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step6" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step6" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step6" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step6_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>7</td><td>发账单给数据员前：原始记录删掉 N 列之后的内容；提供「拆分版」考勤数据</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step7" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step7" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step7" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step7_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>8</td><td>异常统计终版（如「楚玲终版」）发给中台跟进</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step8" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step8" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step8" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step8_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>9</td><td>书面规则 v1.0 为现行结算与考勤申请依据</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s1_step9" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s1_step9" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s1_step9" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s1_step9_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+      </tbody>
+    </table>
+
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">如有遗漏步骤或顺序不对，请在此说明：</label>
+      <textarea class="form-input" name="s1_extra" placeholder="补充说明..."></textarea>
+    </div>
+  </section>
+
+  <!-- 2. 月中异常催办：异常分类 -->
+  <section class="sec" data-sec-id="s2_exceptions">
+    <div class="sec-h">
+      <span class="sec-num">一·2</span>
+      <h2>月中异常催办：异常分类</h2>
+      <span class="sec-sub">来源：考勤报表「含步骤」sheet</span>
+    </div>
+
+    <p class="form-hint">请确认分类是否完整、登记口径是否正确。</p>
+
+    <table class="confirm-table">
+      <thead><tr><th>编号</th><th>异常类型</th><th>我们理解的处理方式</th><th>确认</th></tr></thead>
+      <tbody>
+        <tr class="confirm-row"><td>①</td><td>上班+下班都缺卡</td><td>登记「请假电子流待闭环」或统一写「需提醒员工处理闭环」</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e1" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e1" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e1" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e1_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>②</td><td>上班缺卡</td><td>查电子流是否有补卡/外出；有则「补卡/外出电子流待闭环」</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e2" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e2" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e2" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e2_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>③</td><td>下班缺卡</td><td>同上</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e3" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e3" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e3" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e3_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>④</td><td>早退但上班正常</td><td>「请假电子流待闭环」</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e4" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e4" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e4" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e4_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑤</td><td>迟到（弹性班次）</td><td>核心时段迟到较短（≤1h）视为真迟到，可不追问修复；否则补卡闭环</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e5" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e5" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e5" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e5_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑥</td><td>出差</td><td>有打卡可不走外出电子流；无打卡须「需提醒提交外出电子流」</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e6" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e6" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e6" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e6_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑦</td><td>休息日疑似加班</td><td>筛选班次列，应休息时若有正常上下班卡，提示发起加班电子流（夜班除外）</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e7" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e7" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e7" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e7_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑧</td><td>截止日未打下班卡</td><td>如 26 日下午导出，当日周末加班可能尚未下班打卡</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e8" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e8" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e8" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e8_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑨</td><td>半天请假下午返岗</td><td>须打上班卡+下班卡；原始记录与每日统计可能不一致需人工对</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e9" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e9" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e9" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e9_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑩</td><td>原始记录备注换班次</td><td>需结合备注调整统计</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e10" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e10" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e10" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e10_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>⑪</td><td>外出公干含休息日</td><td>算正常休息，不额外处理</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s2_e11" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s2_e11" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s2_e11" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s2_e11_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+      </tbody>
+    </table>
+
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">简化口径：是否允许异常统一登记为「需提醒员工处理闭环」？</label>
+      <div class="choice-group">
+        <label><input type="radio" name="s2_simplify" value="允许"><span>允许</span></label>
+        <label><input type="radio" name="s2_simplify" value="不允许"><span>不允许，必须细分</span></label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">补充或修正：</label>
+      <textarea class="form-input" name="s2_extra" placeholder="补充说明..."></textarea>
+    </div>
+  </section>
+
+  <!-- 3. 月末核算 workbook：关键 sheet 用途 -->
+  <section class="sec" data-sec-id="s3_workbook">
+    <div class="sec-h">
+      <span class="sec-num">一·3</span>
+      <h2>月末核算 workbook：关键 sheet 用途</h2>
+    </div>
+
+    <table class="confirm-table">
+      <thead><tr><th>Sheet 名称（样例）</th><th>我们理解的用途</th><th>确认</th></tr></thead>
+      <tbody>
+        <tr class="confirm-row"><td>原始记录</td><td>全量打卡明细；发数据员前删 N 列后</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh1" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh1" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh1" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh1_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>每日统计（多版本）</td><td>核算过程拉数 / 发账单参考</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh2" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh2" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh2" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh2_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>月度汇总</td><td>每人每月汇总</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh3" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh3" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh3" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh3_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>应工作量和排班量核算</td><td>排班与应出勤核对</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh4" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh4" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh4" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh4_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>欠工时核算</td><td>扣午休、晚休（小周六规则例外）</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh5" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh5" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh5" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh5_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>加班核算</td><td>申请时间与打卡交集 → 工作日/周末/节假日小时数</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh6" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh6" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh6" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh6_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>忘打卡次数</td><td>补签次数统计</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh7" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh7" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh7" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh7_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>请假</td><td>年假/事假/病假/调休等分列</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh8" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh8" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh8" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh8_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>打卡时间</td><td>辅助核对</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s3_sh9" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s3_sh9" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s3_sh9" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s3_sh9_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+      </tbody>
+    </table>
+
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">各 sheet 是否有固定处理顺序？</label>
+      <div class="choice-group">
+        <label><input type="radio" name="s3_order" value="有"><span>有（请列出）</span></label>
+        <label><input type="radio" name="s3_order" value="无"><span>无固定顺序</span></label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">补充说明：</label>
+      <textarea class="form-input" name="s3_extra" placeholder="如有固定顺序请在此列出..."></textarea>
+    </div>
+  </section>
+
+  <!-- 4. 书面规则 v1.0：核心规则 -->
+  <section class="sec" data-sec-id="s4_rules">
+    <div class="sec-h">
+      <span class="sec-num">一·4</span>
+      <h2>书面规则 v1.0：核心规则</h2>
+      <span class="sec-sub">摘自 启云方(在岸服务外包)考勤及费用结算规则-v1.0定稿版.docx</span>
+    </div>
+
+    <p class="form-hint">请确认是否为现行有效版本。</p>
+
+    <table class="confirm-table">
+      <thead><tr><th>规则域</th><th>我们理解</th><th>确认</th></tr></thead>
+      <tbody>
+        <tr class="confirm-row"><td>班次类型</td><td>固定班次 A/B/E、白班/夜班/白班2/夜班2/白班3；弹性 C（弹1H）、D（弹0.5H）</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r1" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r1" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r1" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r1_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>工作日历</td><td>正常工作日历 vs 非正常（排班制）</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r2" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r2" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r2" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r2_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>加班认定</td><td>加班流程与有效打卡记录的<strong>交集</strong>；不跨天按次日 05:00 切日，跨天按 12:00 切日</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r3" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r3" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r3" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r3_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>月度加班上限</td><td>当月累计 ≤36H；单日原则 ≤8H；白班/夜班单日 ≤10.5H</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r4" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r4" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r4" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r4_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>加班转调休</td><td>可选转加班费或调休；调休原则上当月清零，有效期 6 月</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r5" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r5" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r5" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r5_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>补签到</td><td>一天一次；每月最多 4 次，超次按旷工</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r6" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r6" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r6" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r6_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>迟到/早退（固定班）</td><td>按实际请休，最小 1 分钟；账单出勤保留 4 位小数</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r7" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r7" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r7" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r7_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>迟到/早退（弹性班）</td><td>核心时段迟到须含弹性时段时长</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r8" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r8" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r8" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r8_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>费用结算</td><td>人天单价制：(工作日出勤 + 加班×0.8) ÷ 8 × 人天单价</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r9" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r9" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r9" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r9_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>证明材料留存</td><td>科锐需保留 1.5 年</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s4_r10" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s4_r10" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s4_r10" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s4_r10_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+      </tbody>
+    </table>
+
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">v1.0 是否仍为现行版？</label>
+      <div class="choice-group">
+        <label><input type="radio" name="s4_current" value="是"><span>是</span></label>
+        <label><input type="radio" name="s4_current" value="否"><span>否，最新版为：</span></label>
+        <input class="inline-input" type="text" name="s4_current_ver" placeholder="版本号...">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">是否有 v1.0 未覆盖但实操在用的口头规则？</label>
+      <div class="choice-group">
+        <label><input type="radio" name="s4_verbal" value="无"><span>无</span></label>
+        <label><input type="radio" name="s4_verbal" value="有"><span>有（请说明）</span></label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">补充说明：</label>
+      <textarea class="form-input" name="s4_extra" placeholder="补充说明..."></textarea>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 二、班次规则明细表 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="sec" data-sec-id="s5_shifts">
+    <div class="sec-h">
+      <span class="sec-num">二</span>
+      <h2>班次规则明细表</h2>
+      <span class="sec-sub">逐班次补全，便于自动化配置</span>
+    </div>
+
+    <p class="form-hint">请按实际在用的班次补全。书面规则已列 A/B/C/D/E、白班/夜班等，下表供核对与自动化配置。</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table" id="shift_rules">
+        <thead><tr>
+          <th>班次名称</th><th>工作日历类型</th><th>班次时间</th><th>休息时段1</th><th>休息时段2</th><th>日标准工时</th><th>排班制</th><th>备注</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><input class="cell-input" type="text" value="A班" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 08:00-17:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 12:00-13:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 17:30-18:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="B班" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 08:00-17:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 12:00-13:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 17:30-18:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="C班（弹1H）" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 08:00-17:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 12:00-13:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 17:30-18:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="D班（弹0.5H）" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 08:00-17:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 12:00-13:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 17:30-18:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="E班" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 08:00-17:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 12:00-13:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 17:30-18:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="白班" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 08:00-17:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 12:00-13:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 17:30-18:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="夜班" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="如 20:00-08:00"></td>
+            <td><input class="cell-input" type="text" placeholder="如 00:00-01:00"></td>
+            <td><input class="cell-input" type="text"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="白班2/夜班2/白班3" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="班次时间"></td>
+            <td><input class="cell-input" type="text" placeholder="休息时段1"></td>
+            <td><input class="cell-input" type="text"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" placeholder="新增班次..."></td>
+            <td><input class="cell-input" type="text" placeholder="正常/排班"></td>
+            <td><input class="cell-input" type="text" placeholder="班次时间"></td>
+            <td><input class="cell-input" type="text" placeholder="休息时段1"></td>
+            <td><input class="cell-input" type="text"></td>
+            <td><input class="cell-input" type="text" placeholder="如 8h"></td>
+            <td><input class="cell-check" type="checkbox"></td>
+            <td><input class="cell-input" type="text"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" data-table="shift_rules">+ 添加班次</button>
+
+    <div class="form-group" style="margin-top: 20px;">
+      <label class="form-label">「启云方小周末」如何认定？（影响欠工时/加班是否剔除晚休）</label>
+      <textarea class="form-input" name="s5_extra" placeholder="请说明认定规则..."></textarea>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 三、范围与分工 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="sec" data-sec-id="s6_scope">
+    <div class="sec-h">
+      <span class="sec-num">三</span>
+      <h2>范围与分工</h2>
+    </div>
+
+    <div class="feedback-card">
+      <div class="feedback-row">
+        <div class="fr-label">在岸外包人数（约）</div>
+        <div><input class="form-input" type="text" name="s6_headcount" placeholder="______ 人（样例月度汇总约 157 人）"></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">负责考勤的 HR/客服人数</div>
+        <div><input class="form-input" type="text" name="s6_hr_count" placeholder="______ 人"></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">月中「考勤催办」由谁执行、频率</div>
+        <div class="choice-group">
+          <label><input type="radio" name="s6_urge_freq" value="每日"><span>每日</span></label>
+          <label><input type="radio" name="s6_urge_freq" value="每周"><span>每周</span></label>
+          <label><input type="radio" name="s6_urge_freq" value="其他"><span>其他</span></label>
+        </div>
+        <input class="form-input" type="text" name="s6_urge_other" placeholder="其他频率说明 / 执行人..." style="margin-top: 6px;">
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">月末「编辑版」核算由谁执行</div>
+        <div><input class="form-input" type="text" name="s6_calc_by" placeholder="执行人..."></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">钉钉「考勤组」与 HRO「部门」不一致时如何处理</div>
+        <div class="choice-group">
+          <label><input type="radio" name="s6_dept_diff" value="有对照表"><span>有对照表</span></label>
+          <label><input type="radio" name="s6_dept_diff" value="手工核对"><span>手工核对</span></label>
+          <label><input type="radio" name="s6_dept_diff" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">发中台跟进的固定渠道与截止时点</div>
+        <div><input class="form-input" type="text" name="s6_channel_midtai" placeholder="渠道与截止时点..."></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">发数据员/账单的固定渠道与截止时点</div>
+        <div><input class="form-input" type="text" name="s6_channel_data" placeholder="渠道与截止时点..."></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">遗留问题 sheet 中的项是否每月重复出现</div>
+        <div class="choice-group">
+          <label><input type="radio" name="s6_legacy_repeat" value="是"><span>是</span></label>
+          <label><input type="radio" name="s6_legacy_repeat" value="否"><span>否</span></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 四、凭证与交付要求 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="sec" data-sec-id="s7_delivery">
+    <div class="sec-h">
+      <span class="sec-num">四</span>
+      <h2>凭证与交付要求</h2>
+    </div>
+
+    <table class="confirm-table">
+      <thead><tr><th>项目</th><th>我们理解</th><th>确认</th></tr></thead>
+      <tbody>
+        <tr class="confirm-row"><td>月中催办交付物</td><td>「考勤异常催办-YYYYMM」类 xlsx</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d1" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d1" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d1" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d1_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>月末交付物</td><td>编辑版考勤报表 + 拆分版 + 异常统计终版</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d2" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d2" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d2" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d2_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>加班凭证</td><td>钉钉加班电子流 + 打卡记录交集</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d3" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d3" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d3" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d3_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>补签凭证</td><td>带时间戳工作记录截图或主管邮件</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d4" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d4" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d4" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d4_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>外出/出差</td><td>外出电子流；出差超 5 日无打卡需报备邮件</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d5" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d5" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d5" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d5_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>调休未清零清单</td><td>每月账单须附员工未清零调休工时清单</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d6" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d6" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d6" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d6_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+        <tr class="confirm-row"><td>补收补退</td><td>月度汇总后发邮件采购、行管确认</td><td>
+          <div class="tri-state">
+            <label><input type="radio" name="s7_d7" value="correct"><span>正确</span></label>
+            <label><input type="radio" name="s7_d7" value="wrong"><span>有误</span></label>
+            <label><input type="radio" name="s7_d7" value="partial"><span>部分正确</span></label>
+          </div>
+          <div class="confirm-comment hidden"><textarea name="s7_d7_comment" placeholder="请说明..."></textarea></div>
+        </td></tr>
+      </tbody>
+    </table>
+
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">客户/中台是否还有其他强制交付物？</label>
+      <textarea class="form-input" name="s7_extra" placeholder="补充说明..."></textarea>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 五、耗时与人力 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="sec" data-sec-id="s8_effort">
+    <div class="sec-h">
+      <span class="sec-num">五</span>
+      <h2>耗时与人力</h2>
+      <span class="sec-sub">用于评估自动化价值</span>
+    </div>
+
+    <div class="data-table-wrap">
+      <table class="data-table" id="effort_table">
+        <thead><tr><th>环节</th><th>样例/推断量级</th><th>请确认或修正</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><input class="cell-input" type="text" value="单次月中催办（导出+标异常+发送）" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="______ 小时"></td>
+            <td><input class="cell-input" type="text" placeholder="确认或修正..."></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="每月催办次数" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="______ 次"></td>
+            <td><input class="cell-input" type="text" placeholder="确认或修正..."></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="月末完整核算（编辑版全 sheet）" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="______ 小时"></td>
+            <td><input class="cell-input" type="text" placeholder="确认或修正..."></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="单人异常闭环跟进" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="______ 分钟/人"></td>
+            <td><input class="cell-input" type="text" placeholder="确认或修正..."></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="每月异常人数（约）" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="______ 人（样例约 11 人）"></td>
+            <td><input class="cell-input" type="text" placeholder="确认或修正..."></td>
+          </tr>
+          <tr>
+            <td><input class="cell-input" type="text" value="发中台/数据员收尾" readonly style="color:var(--ink-2);"></td>
+            <td><input class="cell-input" type="text" placeholder="______ 小时"></td>
+            <td><input class="cell-input" type="text" placeholder="确认或修正..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 六、待提供附件清单 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="sec" data-sec-id="s9_attachments">
+    <div class="sec-h">
+      <span class="sec-num">六</span>
+      <h2>待提供附件清单</h2>
+      <span class="sec-sub">有则勾选，可后续邮件补发</span>
+    </div>
+
+    <div class="feedback-card">
+      <div class="feedback-row"><div class="fr-label">考勤及费用结算规则<strong>最新版</strong>（若已更新 v1.0）</div><div class="choice-group"><label><input type="checkbox" name="s9_a1" value="yes"><span>可提供</span></label></div></div>
+      <div class="feedback-row"><div class="fr-label">空白「考勤异常催办」模板</div><div class="choice-group"><label><input type="checkbox" name="s9_a2" value="yes"><span>可提供</span></label></div></div>
+      <div class="feedback-row"><div class="fr-label">一份<strong>完整月度样例包</strong>（催办迭代 + 月末编辑版 + 终版发中台，可脱敏）</div><div class="choice-group"><label><input type="checkbox" name="s9_a3" value="yes"><span>可提供</span></label></div></div>
+      <div class="feedback-row"><div class="fr-label">钉钉考勤组 ↔ HRO 部门对照表</div><div class="choice-group"><label><input type="checkbox" name="s9_a4" value="yes"><span>可提供</span></label></div></div>
+      <div class="feedback-row"><div class="fr-label">「含步骤」类操作说明是否还有更新版</div><div class="choice-group"><label><input type="checkbox" name="s9_a5" value="yes"><span>可提供</span></label></div></div>
+      <div class="feedback-row"><div class="fr-label">月末小周六/晚休规则的日历说明或样例月</div><div class="choice-group"><label><input type="checkbox" name="s9_a6" value="yes"><span>可提供</span></label></div></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 七、确认反馈 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="sec" data-sec-id="s10_feedback">
+    <div class="sec-h">
+      <span class="sec-num">七</span>
+      <h2>确认反馈</h2>
+    </div>
+
+    <div class="feedback-card">
+      <div class="feedback-row">
+        <div class="fr-label">确认人（顾问/客服）</div>
+        <div><input class="form-input" type="text" name="confirmed_by" placeholder="姓名"></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">确认日期</div>
+        <div><input class="form-input" type="date" name="confirmed_at"></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">整体流程理解</div>
+        <div class="choice-group">
+          <label><input type="radio" name="s10_overall" value="基本正确"><span>基本正确，可按此推进自动化</span></label>
+          <label><input type="radio" name="s10_overall" value="需修订"><span>需修订（见上文批注）</span></label>
+          <label><input type="radio" name="s10_overall" value="暂缓"><span>暂缓</span></label>
+        </div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">班次/规则表预计补全日期</div>
+        <div><input class="form-input" type="date" name="s10_rule_eta"></div>
+      </div>
+      <div class="feedback-row">
+        <div class="fr-label">其他说明</div>
+        <div><textarea class="form-input" name="s10_notes" placeholder="其他补充说明..."></textarea></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- Actions -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="actions">
+    <button class="btn btn-primary btn-export-json">导出 JSON</button>
+    <button class="btn btn-danger btn-clear">清空表单</button>
+  </div>
+
+</main>
+
+<footer>启云方 · 考勤流程与规则确认表</footer>
+
+<script src="assets/form.js"></script>
+</body>
+</html>
