@@ -294,9 +294,9 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
       <div class="mcard B">
         <div class="letter">B</div>
         <div>
-          <h3>钉钉导出 + 异常凭证型</h3>
+          <h3>考勤报表 + 异常凭证型</h3>
           <div class="clients">代表客户：珠海基石 · 奥托立夫</div>
-          <div class="feat">钉钉汇总表/考勤报表 + 大量 .msg 补卡/加班/出差/请假凭证。需先跑 source-normalizer 把散落凭证归一为可审计来源，再走异常审核与考勤备注。</div>
+          <div class="feat">考勤报表（珠海基石为客户系统导出原始记录、奥托立夫为钉钉）+ 大量 .msg 补卡/加班/出差/请假凭证。需先跑 source-normalizer 把散落凭证归一为可审计来源，再走异常审核与考勤备注。</div>
           <div class="skl">
             <a href="details/attendance-source-normalizer.html">source-normalizer</a>
             <a href="details/attendance-exception-review.html">exception-review</a>
@@ -323,7 +323,7 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
         <div>
           <h3>客户系统 PDF + 确认单型</h3>
           <div class="clients">代表客户：国家电投 / 核电</div>
-          <div class="feat">客户自有劳勤 WTS，逐人导出考勤 PDF，按科室填 Excel 并回填人员工作量及考核结果确认单。必须同时有员工 PDF 和确认单才算闭环，靠科室确认单闭环。</div>
+          <div class="feat">客户自有劳勤 WTS，逐人导出考勤 PDF，按科室填 Excel 并回填人员工作量及考核结果确认单。靠考勤表 + 确认单签字回流闭环；2026-06 起客户侧不再需要劳勤 PDF（转内部留存）。</div>
           <div class="skl">
             <a href="details/attendance-laoqin-monthly.html">laoqin-monthly</a>
             <a href="details/attendance-data-prep.html">data-prep</a>

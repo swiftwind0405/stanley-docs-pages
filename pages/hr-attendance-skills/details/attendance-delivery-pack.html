@@ -37,7 +37,7 @@
     <div class="flow-card"><div class="ft"><span class="l">A</span>追觅类</div><div class="fd">数据员宽表：需要员工清单 + 异常审核 + 考勤备注。</div></div>
     <div class="flow-card"><div class="ft"><span class="l">B</span>凭证型</div><div class="fd">珠海基石 / 奥托立夫类：需要来源归一 + 异常审核 + 考勤备注。</div></div>
     <div class="flow-card"><div class="ft"><span class="l">C</span>规则核算型</div><div class="fd">启云方类：需要规则包 + 规则配置 + 异常审核。</div></div>
-    <div class="flow-card"><div class="ft"><span class="l">D</span>PDF+确认单型</div><div class="fd">国家电投类：需要员工清单 + 确认单 + 劳勤 PDF。</div></div>
+    <div class="flow-card"><div class="ft"><span class="l">D</span>PDF+确认单型</div><div class="fd">国家电投类：需要员工清单 + 确认单 + 劳勤 PDF（2026-06 起客户侧不含 PDF，转内部留存）。</div></div>
   </div></section>
 
   <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid">
@@ -76,7 +76,7 @@
 
   <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist">
     <li><span class="ck">✓</span><span>「汇总」中「是否可交付」为「是」前，不应直接提交最终包。</span></li>
-    <li><span class="ck">✓</span><span>D 型客户必须同时有员工 PDF 和确认单；只有 PDF 不算闭环。</span></li>
+    <li><span class="ck">✓</span><span>D 型客户内部留存须同时有员工 PDF 和确认单；客户侧闭环以考勤表 + 确认单签字回流为准（国家电投 2026-06 起客户侧不含劳勤 PDF）。</span></li>
     <li><span class="ck">✓</span><span>B 型客户必须先跑 <a class="wl" href="attendance-source-normalizer.html">attendance-source-normalizer</a>，否则凭证来源无法审计。</span></li>
   </ul></section>
 

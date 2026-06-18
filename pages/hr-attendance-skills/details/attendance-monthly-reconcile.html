@@ -147,21 +147,21 @@ OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"</code></pre></div>
     <div class="rule-block">
       <div class="rb-h">5.1 加班<span class="pct">飞书考勤日历截图</span></div>
       <ul>
-        <li>按<strong>考勤部门</strong>查班次规则（见 <code>rules_catalog_draft.md</code>）。</li>
-        <li>工作日加班 = 实际下班 − 规定下班 − 晚餐 0.5h。</li>
+        <li>先按<strong>考勤部门</strong>查班次规则（见 <code>rules_catalog_draft.md</code>），再叠加<strong>职位</strong>维度（来源 HRO）：工程师无工作日加班；追觅测试中心工程师工作日加班到 8 点后有补贴；技术员工作日/节假日/休息日均可能有加班。</li>
+        <li>工作日加班 = 实际下班 − 规定下班 − 晚餐 0.5h（部分考勤部门<strong>不扣</strong>晚餐，见 LESSONS 考勤部门明细）。</li>
         <li>周末看「小月亮」+ 加班申请「是否关联调休」：<strong>是</strong> → 整天计入关联调休；<strong>否</strong> → 计入不关联调休（加班费）。</li>
         <li>改表：标黄 + 批注，更新工作日/休息日/节假日合计。</li>
       </ul>
     </div>
     <div class="rule-block">
-      <div class="rb-h">5.2 夜班<span class="pct">约 3%</span></div>
+      <div class="rb-h">5.2 夜班<span class="pct">每月约 10+ 人 · 单方</span></div>
       <ul>
-        <li>顾问月初提供名单；跨天取 Day1 上班卡 + Day2 下班卡。</li>
-        <li>涉及 MOVA、洗地机测评中心等；系统常误显迟到。</li>
+        <li>顾问<strong>吴轲</strong>月初提供名单；跨天取 Day1 上班卡 + Day2 下班卡。</li>
+        <li>确认有夜班的考勤部门：<strong>MOVA、追觅测试中心</strong>（洗地机测评中心无夜班）；系统常误显迟到。</li>
       </ul>
     </div>
     <div class="rule-block">
-      <div class="rb-h">5.3 公出<span class="pct">约 3%</span></div>
+      <div class="rb-h">5.3 公出<span class="pct">每月约 10+ 人 · 单方</span></div>
       <ul><li>有出勤天数无打卡时间 → 索要<strong>每日</strong>打卡截图。</li></ul>
     </div>
     <div class="rule-block">
@@ -170,6 +170,18 @@ OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"</code></pre></div>
         <li>迟到：无补卡/请假 → 扣 0.5 天；首次发放不预扣。</li>
         <li>事假：问清假别；年假查邮件；填「考勤特殊事项模板」发顾问。</li>
       </ul>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✦</span><h2>CONFIRMED · 2026-06</h2><span class="sec-zh">顾问确认口径</span><span class="meta">八阶段「正确」· 总体「需修订」</span></div>
+    <div class="note-grid">
+      <div class="note-card"><div class="nk">标准计薪天</div><div class="nv">320 天/月口径（约 320 人 / 2 HR）。</div></div>
+      <div class="note-card"><div class="nk">职位影响加班</div><div class="nv">来源 HRO，阶段 5 须叠加：工程师无工作日加班；追觅测试中心工程师 8 点后有补贴；技术员均可能加班。</div></div>
+      <div class="note-card"><div class="nk">夜班</div><div class="nv">名单由顾问<strong>吴轲</strong>月初提供；有夜班部门 = MOVA、追觅测试中心。</div></div>
+      <div class="note-card"><div class="nk">数据员表差异</div><div class="nv">链接打卡、表头格式不同；考勤部门命名由客户确定。</div></div>
+      <div class="note-card"><div class="nk">交付追加</div><div class="nv">除审核包外，需附<strong>考勤表差异文字说明</strong>。</div></div>
+      <div class="note-card"><div class="nk">考勤部门明细</div><div class="nv">32 个考勤部门的晚餐扣 0.5h / 夜班 / 链接打卡口径见 <code>LESSONS.md</code>（如割草机有链接打卡、直播排班/客户体验中心不扣晚餐）。</div></div>
+      <div class="note-card"><div class="nk">规则补全 ETA</div><div class="nv">顾问承诺 <code>rules_catalog_draft.md</code> 于 <strong>2026-06-30</strong> 前补全。</div></div>
     </div>
   </section>
 
@@ -207,7 +219,7 @@ uv run python skills/attendance/attendance-remarks/scripts/build_attendance_rema
     <div class="bench-grid">
       <div class="bench-item"><div class="bl">整理数据员表</div><div class="bv">~3h <span style="font-size:11px;color:var(--ink-3);">两人合计</span></div></div>
       <div class="bench-item"><div class="bl">按人发放</div><div class="bv">~50–60min</div></div>
-      <div class="bench-item"><div class="bl">问题跟进</div><div class="bv">~15min/人 <span style="font-size:11px;color:var(--ink-3);">夜班/公出</span></div></div>
+      <div class="bench-item"><div class="bl">问题跟进</div><div class="bv">~12–20min/人 <span style="font-size:11px;color:var(--ink-3);">夜班/公出</span></div></div>
       <div class="bench-item"><div class="bl">合计（含跟进）</div><div class="bv">约 1 人日/月</div></div>
     </div>
   </section>
