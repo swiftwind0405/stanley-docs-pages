@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>zoom-out · Matt Pocock Skills</title>
+  <title>CHANGELOG · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,16 +248,78 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /zoom-out</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / CHANGELOG</nav>
         <header class="page-header">
-      <h1>/zoom-out</h1>
+      <h1>CHANGELOG</h1>
       <div class="page-meta">
-        <span class="source-tag">面向用户的技能文档</span>
-        <span>skills/engineering/zoom-out/SKILL.zh-CN.md</span>
+        <span class="source-tag">参考文档</span>
+        <span>CHANGELOG.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><p>我不熟悉这段代码。请上升一层抽象。用项目领域词汇表词汇，给我所有相关 module 与 caller 的 map。</p></article>
-    <p class="footer-note">由 <code>skills/engineering/zoom-out/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    <article class="content"><h1>mattpocock-skills</h1>
+<h2>1.0.1</h2>
+<h3>Patch Changes</h3>
+<ul>
+<li><a href="https://github.com/mattpocock/skills/commit/d20ee2684e2a9442698ac3c1e0f2c5b68c4cf296"><code>d20ee26</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 让 <strong><code>teach</code></strong> skill 复用优先。课程现由 <code>./assets/</code> 中可复用的 <strong>components</strong> 构建——样式表、quiz widget、simulator、diagram helper。复用为默认：agent 在 authoring 课程前先读 <code>./assets/</code>，从现有内容构建，并将新的可复用内容 extract 为 component 而非 inline。</li>
+</ul>
+<h2>1.0.0</h2>
+<h3>Major Changes</h3>
+<ul>
+<li><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 新增 <strong><code>ask-matt</code></strong> skill——user-invoked router，指向适合你情况的 skill 或 flow。</li>
+</ul>
+<p><strong>Breaking：</strong> <code>ask-matt</code> 路由本 repo 中其他 user-invoked skill，因此期望它们已安装。</p>
+<ul>
+<li>
+<p><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 新增共享设计 skill，并将现有 skill 重接到它们上。</p>
+</li>
+<li>
+<p>新 <strong><code>codebase-design</code></strong> skill——deep-module 词汇（module、interface、depth、seam、adapter）及大量行为置于小 interface 后的原则。此前 living 于 <code>improve-codebase-architecture/LANGUAGE.md</code> 的语言现 living 于此，generalized 供跨 skill 复用。</p>
+</li>
+<li>新 <strong><code>domain-modeling</code></strong> skill——主动 build 并 sharpen 项目领域模型，对照 glossary stress-test 术语，保持 <code>CONTEXT.md</code> 与 ADR current。</li>
+<li><code>improve-codebase-architecture</code> 现从 <code>/codebase-design</code> 取 architecture 词汇，从 <code>/domain-modeling</code> 取 domain model。</li>
+<li><code>tdd</code> 现 lean on <code>/codebase-design</code> 获取 interface-design 指导——inline <code>deep-modules.md</code> / <code>interface-design.md</code> 笔记已移除， favour 共享 skill。</li>
+<li><code>grill-with-docs</code> 现通过 <code>/domain-modeling</code> inline build domain model。</li>
+</ul>
+<p><strong>Breaking：</strong> 这些 skill 现依赖新 <code>codebase-design</code> / <code>domain-modeling</code> skill，因此必须一并安装。</p>
+<ul>
+<li>
+<p><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 移除 <strong><code>caveman</code></strong> 与 <strong><code>zoom-out</code></strong> skill。</p>
+</li>
+<li>
+<p><code>caveman</code> 是 duplicate 的另一个我在测试的 skill，从未 meant 公开。</p>
+</li>
+<li><code>zoom-out</code> 实践中 unused，已从 repo 移除。</li>
+</ul>
+<p><strong>Breaking：</strong> 两个 skill 均已移除。</p>
+<ul>
+<li><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 将 <strong><code>diagnose</code></strong> skill 重命名为 <strong><code>diagnosing-bugs</code></strong>。</li>
+</ul>
+<p><strong>Breaking：</strong> 以 <code>/diagnosing-bugs</code> 调用——旧 <code>/diagnose</code> 名称不再存在。</p>
+<ul>
+<li>
+<p><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 用 <strong><code>writing-great-skills</code></strong> 替换 <strong><code>write-a-skill</code></strong>。</p>
+</li>
+<li>
+<p>移除 <code>write-a-skill</code>。</p>
+</li>
+<li>新增 <code>writing-great-skills</code>（及其 <code>GLOSSARY.md</code>）——写好、改好 skill 的参考：让 skill 可预测的词汇与原则，逐句 hunt no-ops。</li>
+<li>将 <code>grilling</code> 暴露为 model-invoked skill——<code>grill-me</code> 与 <code>grill-with-docs</code> 背后的可复用 interview loop。</li>
+</ul>
+<p><strong>Breaking：</strong> <code>write-a-skill</code> 已移除；请用 <code>writing-great-skills</code>。</p>
+<h3>Minor Changes</h3>
+<ul>
+<li>
+<p><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 新增 <strong><code>resolving-merge-conflicts</code></strong> skill——解决进行中 git merge 或 rebase conflict 的 loop。Standalone，不依赖其他 skill。</p>
+</li>
+<li>
+<p><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - 将 skill 分类法从 <strong>Commands / Skills</strong> 重命名为 <strong>User-invoked / Model-invoked</strong>，并新增 <code>docs/invocation.md</code> 定义划分：user-invoked skill 仅当你输入时可调用，用于 orchestrate；model-invoked skill 在任务 fit 时也可被自动 reach。User-invoked skill 可调用 model-invoked skill，但 never 另一个 user-invoked。</p>
+</li>
+</ul>
+<h3>Patch Changes</h3>
+<ul>
+<li><a href="https://github.com/mattpocock/skills/commit/47bde84da032afb2e5058f997f3bbca47d321dbd"><code>47bde84</code></a> Thanks <a href="https://github.com/mattpocock">@mattpocock</a>! - Tighten <strong><code>review</code></strong> skill：fail-fast ref check、single-sourced rules、no-op cuts。</li>
+</ul></article>
+    <p class="footer-note">由 <code>CHANGELOG.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

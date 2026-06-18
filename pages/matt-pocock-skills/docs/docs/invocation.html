@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>to-prd · Matt Pocock Skills</title>
+  <title>invocation · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,69 +248,27 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /to-prd</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / invocation</nav>
         <header class="page-header">
-      <h1>/to-prd</h1>
+      <h1>invocation</h1>
       <div class="page-meta">
-        <span class="source-tag">面向用户的技能文档</span>
-        <span>skills/engineering/to-prd/SKILL.zh-CN.md</span>
+        <span class="source-tag">参考文档</span>
+        <span>docs/invocation.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><p>本 skill 取当前对话 context 与代码库理解产出 PRD。<strong>不要</strong> interview 用户 — 只 synthesize 已知内容。</p>
-<p>issue tracker 与 triage label 词汇表应已提供 — 若没有，运行 <code>/setup-matt-pocock-skills</code>。</p>
-<h2>Process</h2>
-<ol>
-<li>
-<p>若尚未探索，explore repo 理解代码库当前 state。PRD 全文使用项目领域词汇表，并 respect 你即将改动区域的 ADR。</p>
-</li>
-<li>
-<p>Sketch 将测试 feature 的 seam。prefer existing seam over new。用尽可能高的 seam。若需 new seam，在能到的最高点 propose。代码库中 seam 越少越好 — 理想数量是一。</p>
-</li>
-</ol>
-<p>与用户确认这些 seam 符合预期。</p>
-<ol start="3">
-<li>用下方 template 写 PRD，然后 publish 到 issue tracker。Apply <code>ready-for-agent</code> triage label — 无需额外 triage。</li>
-</ol>
-<p><prd-template></p>
-<h2>Problem Statement</h2>
-<p>The problem that the user is facing, from the user's perspective.</p>
-<h2>Solution</h2>
-<p>The solution to the problem, from the user's perspective.</p>
-<h2>User Stories</h2>
-<p>A LONG, numbered list of user stories. Each user story should be in the format of:</p>
-<ol>
-<li>As an <actor>, I want a <feature>, so that <benefit></li>
-</ol>
-<p><user-story-example><br>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending<br>
-</user-story-example></p>
-<p>This list of user stories should be extremely extensive and cover all aspects of the feature.</p>
-<h2>Implementation Decisions</h2>
-<p>A list of implementation decisions that were made. This can include:</p>
+    <article class="content"><h1>Model-invoked 与 user-invoked</h1>
+<p>本 repo 中每个 <code>SKILL.md</code> 都是一个 skill。划分它们的唯一轴是 <strong>invocation</strong>——谁可以调用它：</p>
 <ul>
-<li>The modules that will be built/modified</li>
-<li>The interfaces of those modules that will be modified</li>
-<li>Technical clarifications from the developer</li>
-<li>Architectural decisions</li>
-<li>Schema changes</li>
-<li>API contracts</li>
-<li>Specific interactions</li>
+<li><strong>User-invoked</strong>——<strong>仅当你输入其名称</strong>时可调用。在 frontmatter 中设置 <code>disable-model-invocation: true</code>。<code>description</code> 面向<strong>人类</strong>：浏览 slash 命令时阅读的一行摘要。去掉触发列表（「Use when the user says…」）。</li>
+<li><strong>Model-invoked</strong>——<strong>模型或用户</strong>均可调用。默认：省略 <code>disable-model-invocation</code>。<code>description</code> 面向<strong>模型</strong>，保留丰富的触发措辞（「Use when the user wants…, mentions…, asks for…」），以便自动调用。判断 skill 是否应保持 model-invoked 的测试：<em>模型能否在合适时自主调用它？</em>（复用是提取 skill 的理由，不是测试标准。）</li>
 </ul>
-<p>Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.</p>
-<p>Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.</p>
-<h2>Testing Decisions</h2>
-<p>A list of testing decisions that were made. Include:</p>
-<ul>
-<li>A description of what makes a good test (only test external behavior, not implementation details)</li>
-<li>Which modules will be tested</li>
-<li>Prior art for the tests (i.e. similar types of tests in the codebase)</li>
-</ul>
-<h2>Out of Scope</h2>
-<p>A description of the things that are out of scope for this PRD.</p>
-<h2>Further Notes</h2>
-<p>Any further notes about the feature.</p>
-<p></prd-template></p></article>
-    <p class="footer-note">由 <code>skills/engineering/to-prd/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+<p>因为 user-invoked skill 没有 description，除人类外 nothing 能调用它——其他 skill 无法触发它。因此 user-invoked skill 可以调用 model-invoked skill，但 never 调用另一个 user-invoked skill。</p>
+<p>Bucket 的 <code>README.md</code> 与顶层 <code>README.md</code> 将条目分为 <strong>User-invoked</strong> 与 <strong>Model-invoked</strong> 两组。</p>
+<h2>二者之间的依赖</h2>
+<p>依赖以 <strong><code>/skill</code> 式 prose 调用</strong>表达（「Run the <code>/grilling</code> skill」），而非 <code>../other-skill/FILE.md</code> 式 deep 交叉引用。共享 reference 文档放在拥有它的 skill 内部；其他 skill 通过调用该 skill 来触及材料，而非跨文件夹链接。</p>
+<h2>被动 vs 主动领域工作</h2>
+<p>仅 <em>读取</em> <code>CONTEXT.md</code> 获取词汇是一行 prose 指针，不是 <code>domain-modeling</code> skill。只有主动的 build/sharpen 纪律（挑战术语、边缘场景、写 ADR、inline 更新 <code>CONTEXT.md</code>）才是 <code>domain-modeling</code>。</p></article>
+    <p class="footer-note">由 <code>docs/invocation.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

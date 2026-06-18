@@ -257,42 +257,28 @@ main {
       </div>
     </header>
     <article class="content"><h1>Improve Codebase Architecture</h1>
-<p>Surface 架构摩擦并 propose <strong>deepening opportunities</strong>——将 shallow module 变为 deep module 的 refactor。目标是 testability 与 AI-navigability。</p>
-<h2>词汇表</h2>
-<p>每个建议中 <strong>精确</strong> 使用这些术语。一致语言是重点——不要 drift 到 "component"、"service"、"API" 或 "boundary"。完整定义见 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a>。</p>
+<p>Surface 架构摩擦并 propose <strong>deepening opportunities</strong> — 将 shallow module 变为 deep module 的 refactor。目标是 testability 与 AI-navigability。</p>
+<p>本命令 <em>informed by</em> 项目领域模型，建立在共享设计词汇之上：</p>
 <ul>
-<li><strong>Module</strong> — 有 interface 与 implementation 的任何东西（function、class、package、slice）。</li>
-<li><strong>Interface</strong> — caller 使用该 module 必须知道的一切：type、invariant、error mode、ordering、config。不只是 type signature。</li>
-<li><strong>Implementation</strong> — 内部代码。</li>
-<li><strong>Depth</strong> — interface 处的 leverage：小 interface 背后大量行为。<strong>Deep</strong> = 高 leverage。<strong>Shallow</strong> = interface 几乎与 implementation 一样复杂。</li>
-<li><strong>Seam</strong> — interface 所在处；可 alter 行为而无需就地编辑的位置。（用这个，不用 "boundary"。）</li>
-<li><strong>Adapter</strong> — 在 seam 处 satisfy interface 的具体事物。</li>
-<li><strong>Leverage</strong> — caller 从 depth 得到什么。</li>
-<li><strong>Locality</strong> — maintainer 从 depth 得到什么：change、bug、knowledge 集中一处。</li>
+<li>运行 <code>/codebase-design</code> skill 获取架构词汇（<strong>module</strong>、<strong>interface</strong>、<strong>depth</strong>、<strong>seam</strong>、<strong>adapter</strong>、<strong>leverage</strong>、<strong>locality</strong>）及其原则（deletion test、「interface 就是 test surface」、「one adapter = hypothetical seam，two = real」）。每个建议中 <strong>精确</strong> 使用这些术语 — 不要 drift 到 "component"、"service"、"API" 或 "boundary"。</li>
+<li><code>CONTEXT.md</code> 中的领域语言为 good seam 命名；<code>docs/adr/</code> 中的 ADR 记录本命令不应 re-litigate 的决策。</li>
 </ul>
-<p>关键原则（完整列表见 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a>）：</p>
-<ul>
-<li><strong>Deletion test</strong>：想象删除该 module。若 complexity 消失，它是 pass-through。若 complexity 在 N 个 caller 重现，它在 earn keep。</li>
-<li><strong>The interface is the test surface.</strong></li>
-<li><strong>One adapter = hypothetical seam. Two adapters = real seam.</strong></li>
-</ul>
-<p>本技能 <em>informed by</em> 项目 domain model。领域语言为 good seam 命名；ADR 记录 skill 不应 re-litigate 的决策。</p>
-<h2>流程</h2>
+<h2>Process</h2>
 <h3>1. Explore</h3>
-<p>先读项目领域词汇表及你即将改动区域的 ADR。</p>
-<p>然后用 Agent tool、<code>subagent_type=Explore</code> 遍历代码库。不要 rigid heuristics——有机探索并 note friction：</p>
+<p>先读项目领域词汇表（<code>CONTEXT.md</code>）及你即将改动区域的 ADR。</p>
+<p>然后用 Agent tool、<code>subagent_type=Explore</code> 遍历代码库。不要 rigid heuristics — 有机探索并 note friction：</p>
 <ul>
 <li>理解一个概念是否要在许多小 module 间 bounce？</li>
-<li>哪些 module <strong>shallow</strong>——interface 几乎与 implementation 一样复杂？</li>
+<li>哪些 module <strong>shallow</strong> — interface 几乎与 implementation 一样复杂？</li>
 <li>纯函数是否仅为 testability 抽出，但 real bug 藏在如何被调用（无 <strong>locality</strong>）？</li>
 <li>紧耦合 module 是否 leak 过 seam？</li>
 <li>哪些部分 untested，或难以通过当前 interface 测试？</li>
 </ul>
 <p>对 suspect shallow 的 apply <strong>deletion test</strong>：删除会 concentrate complexity 还是 merely move？「会 concentrate」是你要的信号。</p>
-<h3>2. 以 HTML report 呈现候选</h3>
-<p>写 self-contained HTML 到 OS temp directory，repo 中不留痕迹。从 <code>$TMPDIR</code> 解析 temp dir，fallback <code>/tmp</code>（Windows 为 <code>%TEMP%</code>），写到 <code>&lt;tmpdir&gt;/architecture-review-&lt;timestamp&gt;.html</code>，每次 run 新文件。为用户打开——Linux <code>xdg-open &lt;path&gt;</code>、macOS <code>open &lt;path&gt;</code>、Windows <code>start &lt;path&gt;</code>——并告知 absolute path。</p>
-<p>report 用 <strong>Tailwind via CDN</strong> 布局样式，<strong>Mermaid via CDN</strong> 在 graph/flow/sequence 能可靠传达结构时画图。Mix Mermaid 与 hand-crafted CSS/SVG——graph-shaped 关系用 Mermaid（call graph、dependency、sequence），editorial 感（mass diagram、cross-section、collapse animation）用 hand-built div/SVG。每个候选有 <strong>before/after visualisation</strong>。要 visual。</p>
-<p>每个候选用原 template，但 render 为 card：</p>
+<h3>2. Present candidates as an HTML report</h3>
+<p>写 self-contained HTML 到 OS temp directory，repo 中不留痕迹。从 <code>$TMPDIR</code> 解析 temp dir，fallback <code>/tmp</code>（Windows 为 <code>%TEMP%</code>），写到 <code>&lt;tmpdir&gt;/architecture-review-&lt;timestamp&gt;.html</code>，每次 run 新文件。为用户打开 — Linux <code>xdg-open &lt;path&gt;</code>、macOS <code>open &lt;path&gt;</code>、Windows <code>start &lt;path&gt;</code> — 并告知 absolute path。</p>
+<p>report 用 <strong>Tailwind via CDN</strong> 布局样式，<strong>Mermaid via CDN</strong> 在 graph/flow/sequence 能可靠传达结构时画图。Mix Mermaid 与 hand-crafted CSS/SVG — graph-shaped 关系用 Mermaid（call graph、dependency、sequence），editorial 感（mass diagram、cross-section、collapse animation）用 hand-built div/SVG。每个候选有 <strong>before/after visualisation</strong>。要 visual。</p>
+<p>每个候选 render 为 card：</p>
 <ul>
 <li><strong>Files</strong> — 涉及哪些 file/module</li>
 <li><strong>Problem</strong> — 当前架构为何 friction</li>
@@ -302,18 +288,18 @@ main {
 <li><strong>Recommendation strength</strong> — <code>Strong</code>、<code>Worth exploring</code>、<code>Speculative</code> 之一，render 为 badge</li>
 </ul>
 <p>report 末尾 <strong>Top recommendation</strong>：你会先 tackle 哪个候选及 why。</p>
-<p><strong>domain 用 CONTEXT.md 词汇，architecture 用 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a> 词汇。</strong> 若 <code>CONTEXT.md</code> 定义 "Order"，谈 "the Order intake module"——不是 "the FooBarHandler"，也不是 "the Order service"。</p>
+<p><strong>domain 用 CONTEXT.md 词汇，architecture 用 <code>/codebase-design</code> 词汇。</strong> 若 <code>CONTEXT.md</code> 定义 "Order"，谈 "the Order intake module" — 不是 "the FooBarHandler"，也不是 "the Order service"。</p>
 <p><strong>ADR conflicts</strong>：若候选 contradict existing ADR，仅当 friction real 到 worth revisiting ADR 时才 surface。在 card 中 clear 标记（如 warning callout：<em>"contradicts ADR-0007 — but worth reopening because…"</em>）。不要列出 ADR forbid 的每个 theoretical refactor。</p>
 <p>见 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/HTML-REPORT.html">HTML-REPORT.md</a> 完整 HTML scaffold、diagram pattern、styling guidance。</p>
 <p><strong>尚不要</strong> propose interface。文件写完后问用户：「你想 explore 哪些？」</p>
-<h3>3. Grilling 循环</h3>
-<p>用户 pick 候选后，进入 grilling 对话。与用户走 design tree——constraint、dependency、deepened module 形状、seam 背后是什么、哪些 test survive。</p>
-<p>决策 crystallize 时 inline 副作用：</p>
+<h3>3. Grilling loop</h3>
+<p>用户 pick 候选后，运行 <code>/grilling</code> skill 与用户走 design tree — constraint、dependency、deepened module 形状、seam 后是什么、哪些 test survive。</p>
+<p>决策 crystallize 时 inline 副作用 — 运行 <code>/domain-modeling</code> skill 保持领域模型 current：</p>
 <ul>
-<li><strong>deepened module 命名用了 CONTEXT.md 中没有的概念？</strong> 加 term 到 <code>CONTEXT.md</code>——与 <code>/grill-with-docs</code> 同 discipline（见 <a href="/matt-pocock-skills/docs/skills/engineering/grill-with-docs/CONTEXT-FORMAT.html">CONTEXT-FORMAT.md</a>）。不存在则懒创建。</li>
+<li><strong>deepened module 命名用了 CONTEXT.md 中没有的概念？</strong> 加 term 到 <code>CONTEXT.md</code>。不存在则 lazy 创建。</li>
 <li><strong>对话中 sharpen fuzzy term？</strong> 当场更新 <code>CONTEXT.md</code>。</li>
-<li><strong>用户用 load-bearing reason reject 候选？</strong> 提供 ADR，frame 为：<em>"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"</em> 仅当 future explorer 需要该 reason 避免 re-suggest 同一件事时 offer——跳过 ephemeral（"not worth it right now"）与 self-evident。</li>
-<li><strong>想 explore deepened module 的 alternative interface？</strong> 见 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/INTERFACE-DESIGN.html">INTERFACE-DESIGN.md</a>。</li>
+<li><strong>用户用 load-bearing reason reject 候选？</strong> 提供 ADR，frame 为：<em>"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"</em> 仅当 future explorer 需要该 reason 避免 re-suggest 同一件事时 offer — 跳过 ephemeral（"not worth it right now"）与 self-evident。</li>
+<li><strong>想 explore deepened module 的 alternative interface？</strong> 运行 <code>/codebase-design</code> skill 并使用其 design-it-twice 并行 sub-agent 模式。</li>
 </ul></article>
     <p class="footer-note">由 <code>skills/engineering/improve-codebase-architecture/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
     </main>

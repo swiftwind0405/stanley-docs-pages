@@ -256,8 +256,8 @@ main {
         <span>skills/engineering/improve-codebase-architecture/HTML-REPORT.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>HTML Report Format（HTML 报告格式）</h1>
-<p>架构 review 渲染为 OS temp 目录中的 single self-contained HTML file。Tailwind 与 Mermaid 均来自 CDN。Mermaid 可靠处理 graph-shaped diagram；hand-built div 与 inline SVG 处理更 editorial 视觉（mass diagram、cross-section）。Mix 两者——不要全 lean Mermaid，会 generic。</p>
+    <article class="content"><h1>HTML Report Format</h1>
+<p>架构 review 渲染为 OS temp 目录中的 single self-contained HTML file。Tailwind 与 Mermaid 均来自 CDN。Mermaid 可靠处理 graph-shaped diagram；hand-built div 与 inline SVG 处理更 editorial 视觉（mass diagram、cross-section）。Mix 两者 — 不要全 lean Mermaid，会 generic。</p>
 <h2>Scaffold</h2>
 <pre><code class="language-html">&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
@@ -286,10 +286,10 @@ main {
   &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<h2>Header（页眉）</h2>
-<p>Repo name、date、compact legend：solid box = module，dashed line = seam，red arrow = leakage，thick dark box = deep module。无 introduction paragraph——straight into candidates。</p>
-<h2>Candidate card（候选卡片）</h2>
-<p>Diagram  carry weight。Prose sparse、plain，使用 glossary term（<a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a>）without ceremony。</p>
+<h2>Header</h2>
+<p>Repo name、date、compact legend：solid box = module，dashed line = seam，red arrow = leakage，thick dark box = deep module。无 introduction paragraph — straight into candidates。</p>
+<h2>Candidate card</h2>
+<p>Diagram carry weight。Prose sparse、plain，使用 glossary term（来自 <code>/codebase-design</code> skill）without ceremony。</p>
 <p>Each candidate 一个 <code>&lt;article&gt;</code>：</p>
 <ul>
 <li><strong>Title</strong> — short，names deepening（如「Collapse the Order intake pipeline」）。</li>
@@ -302,8 +302,8 @@ main {
 <li><strong>ADR callout</strong>（若 applicable）— one line amber-tinted box。</li>
 </ul>
 <p>无 explanation paragraph。若 diagram 需 paragraph 才懂，redraw diagram。</p>
-<h2>Diagram patterns（图模式）</h2>
-<p>Pick fit candidate 的 pattern。Mix。不要每个 diagram 一样——variety 是 point 一部分。</p>
+<h2>Diagram patterns</h2>
+<p>Pick fit candidate 的 pattern。Mix。不要每个 diagram 一样 — variety 是 point 一部分。</p>
 <h3>Mermaid graph（dependency / call flow 的 workhorse）</h3>
 <p>Point 是「X calls Y calls Z，看 mess」时用 Mermaid <code>flowchart</code> 或 <code>graph</code>。Wrap 在 Tailwind-styled card。classDef 将 leakage edge 标红、deep module 标 dark。Sequence diagram 适合「before: 6 round-trips; after: 1」。</p>
 <pre><code class="language-html">&lt;div class=&quot;rounded-lg border border-slate-200 bg-white p-4&quot;&gt;
@@ -318,25 +318,25 @@ main {
 &lt;/div&gt;
 </code></pre>
 <h3>Hand-built boxes-and-arrows（Mermaid layout 打架时）</h3>
-<p>Module 为带 border label 的 <code>&lt;div&gt;</code>。Arrow 为 inline SVG <code>&lt;line&gt;</code> 或 <code>&lt;path&gt;</code>，absolute over relative container。「After」要 one thick-bordered deep module、greyed internals 时用——Mermaid  weight 不对。</p>
+<p>Module 为带 border label 的 <code>&lt;div&gt;</code>。Arrow 为 inline SVG <code>&lt;line&gt;</code> 或 <code>&lt;path&gt;</code>，absolute over relative container。「After」要 one thick-bordered deep module、greyed internals 时用 — Mermaid weight 不对。</p>
 <h3>Cross-section（layered shallowness）</h3>
 <p>Stack horizontal band（<code>h-12 border-l-4</code>）展示 call 穿过的 layer。Before：6 thin layer 各 doing nothing。After：1 thick band 标 consolidated responsibility。</p>
 <h3>Mass diagram（「interface 与 implementation 一样宽」）</h3>
-<p>每 module 两个 rectangle——interface surface area 与 implementation。Before：interface 几乎与 implementation 一样高（shallow）。After：interface 短、implementation 高（deep）。</p>
+<p>每 module 两个 rectangle — interface surface area 与 implementation。Before：interface 几乎与 implementation 一样高（shallow）。After：interface 短、implementation 高（deep）。</p>
 <h3>Call-graph collapse</h3>
 <p>Before：function call tree 为 nested box。After：collapse 成 one box，internal call faded inside。</p>
-<h2>Style guidance（风格指南）</h2>
+<h2>Style guidance</h2>
 <ul>
 <li>Lean editorial，非 corporate-dashboard。Generous whitespace。Heading 可选 serif（<code>font-serif</code> 与 stone/slate 好配）。</li>
 <li>Colour sparingly：one accent（emerald 或 indigo）plus red leakage、amber warning。</li>
 <li>Diagram ~320px tall，before/after side by side 不 scroll。</li>
-<li>Diagram 内 module label 用 <code>text-xs uppercase tracking-wider</code>——schematic，非 UI。</li>
-<li>仅 Tailwind CDN 与 Mermaid ESM import script。Report 否则 static——无 app code，无 Mermaid 外 interactivity。</li>
+<li>Diagram 内 module label 用 <code>text-xs uppercase tracking-wider</code> — schematic，非 UI。</li>
+<li>仅 Tailwind CDN 与 Mermaid ESM import script。Report 否则 static — 无 app code，无 Mermaid 外 interactivity。</li>
 </ul>
 <h2>Top recommendation section</h2>
 <p>One larger card。Candidate name、one sentence why、anchor link 到 card。That's it。</p>
-<h2>Tone（语气）</h2>
-<p>Plain English、concise——但 architectural noun/verb  straight from <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a>。Concision 不是 drift 借口。</p>
+<h2>Tone</h2>
+<p>Plain English、concise — 但 architectural noun/verb  straight from <code>/codebase-design</code> skill。Concision 不是 drift 借口。</p>
 <p><strong>精确使用：</strong> module、interface、implementation、depth、deep、shallow、seam、adapter、leverage、locality。</p>
 <p><strong>Never substitute：</strong> component、service、unit（for module）· API、signature（for interface）· boundary（for seam）· layer、wrapper（for module，当你 mean module）。</p>
 <p><strong>Fit style 的 phrasing：</strong></p>
@@ -346,8 +346,8 @@ main {
 <li>「Deepen: one interface, one place to test.」</li>
 <li>「Two adapters justify the seam: HTTP in prod, in-memory in tests.」</li>
 </ul>
-<p><strong>Wins bullets</strong> 用 glossary term 命名 gain：<em>「locality: bugs concentrate in one module」</em>、<em>「leverage: one interface, N call sites」</em>、<em>「interface shrinks; implementation absorbs the wrappers」</em>。不要写 <em>「easier to maintain」</em> 或 <em>「cleaner code」</em>——不在 glossary，不 earn place。</p>
-<p>No hedging、no throat-clearing、no「it's worth noting that…」。Sentence 能变 bullet 就变 bullet。Bullet 能 cut 就 cut。Term 不在 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a> 时，先 reach glossary term 再 invent。</p></article>
+<p><strong>Wins bullets</strong> 用 glossary term 命名 gain：<em>「locality: bugs concentrate in one module」</em>、<em>「leverage: one interface, N call sites」</em>、<em>「interface shrinks; implementation absorbs the wrappers」</em>。不要写 <em>「easier to maintain」</em> 或 <em>「cleaner code」</em> — 不在 glossary，不 earn place。</p>
+<p>No hedging、no throat-clearing、no「it's worth noting that…」。Sentence 能变 bullet 就变 bullet。Bullet 能 cut 就 cut。Term 不在 <code>/codebase-design</code> glossary 时，先 reach glossary term 再 invent。</p></article>
     <p class="footer-note">由 <code>skills/engineering/improve-codebase-architecture/HTML-REPORT.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>

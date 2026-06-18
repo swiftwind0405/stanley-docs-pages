@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>diagnosing-bugs · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /diagnosing-bugs</nav>
+        <header class="page-header">
+      <h1>/diagnosing-bugs</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/engineering/diagnosing-bugs/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><h1>Diagnosing Bugs</h1>
+<p>针对难 bug 的 discipline。仅在有明确理由时跳过阶段。</p>
+<p>探索代码库时，读 <code>CONTEXT.md</code>（若存在）以建立相关 module 的清晰 mental model，并检查你即将改动区域的 ADR。</p>
+<h2>Phase 1 — Build a feedback loop</h2>
+<p><strong>这就是本 skill。</strong> 其余都是机械步骤。若你对 bug 有 <strong>tight</strong> 的 pass/fail 信号 — 在此 bug 上会 red — 你会找到原因；bisection、hypothesis-testing、instrumentation 只是消费它。若没有，盯代码救不了你。</p>
+<p>在此 disproportionate 投入精力。<strong>要激进。要创意。拒绝放弃。</strong></p>
+<h3>Ways to construct one — try them in roughly this order</h3>
+<ol>
+<li><strong>Failing test</strong> — 在能触及 bug 的 seam 上，unit、integration、e2e 皆可。</li>
+<li><strong>Curl / HTTP script</strong> — 对运行中的 dev server。</li>
+<li><strong>CLI invocation</strong> — 带 fixture input，将 stdout diff 与 known-good snapshot。</li>
+<li><strong>Headless browser script</strong>（Playwright / Puppeteer）— 驱动 UI，断言 DOM/console/network。</li>
+<li><strong>Replay a captured trace。</strong> 把真实 network request / payload / event log 存盘；在隔离中 replay 过代码路径。</li>
+<li><strong>Throwaway harness。</strong> 启动系统最小子集（一个 service、mocked deps），单次 function call 走 bug 代码路径。</li>
+<li><strong>Property / fuzz loop。</strong> 若 bug 是「有时输出错」，跑 1000 随机 input 找 failure mode。</li>
+<li><strong>Bisection harness。</strong> 若 bug 出现在两个已知 state 之间（commit、dataset、version），自动化「boot at state X, check, repeat」以便 <code>git bisect run</code>。</li>
+<li><strong>Differential loop。</strong> 同一 input 过 old-version vs new-version（或两种 config），diff 输出。</li>
+<li><strong>HITL bash script。</strong> 最后手段。若必须人工点击，用 <code>scripts/hitl-loop.template.sh</code> 驱动 <em>他们</em>，循环仍有结构。捕获的输出反馈给你。</li>
+</ol>
+<p>建好 feedback loop，bug 就 90% 修了。</p>
+<h3>Tighten the loop</h3>
+<p>把 loop 当产品。一旦有了 <em>某个</em> loop，<strong>tighten</strong> 它：</p>
+<ul>
+<li>能否更快？（Cache setup、跳过无关 init、缩小 test scope。）</li>
+<li>能否 signal 更 sharp？（断言具体 symptom，非「没 crash」。）</li>
+<li>能否更 deterministic？（Pin time、seed RNG、隔离 filesystem、freeze network。）</li>
+</ul>
+<p>30 秒 flaky loop 几乎不比没有好；2 秒 deterministic loop 是 tight — debugging superpower。</p>
+<h3>Non-deterministic bugs</h3>
+<p>目标不是干净 repro，而是 <strong>更高 reproduction rate</strong>。循环触发 100×、并行、加压、缩小 timing window、注入 sleep。50% flake bug 可 debug；1% 不行 — 持续提高 rate 直到可 debug。</p>
+<h3>When you genuinely cannot build a loop</h3>
+<p>停下并明确说明。列出你试过的。向用户要：(a) 能 repro 的环境访问，(b) 捕获的 artifact（HAR file、log dump、core dump、带时间戳的 screen recording），或 (c) 添加临时生产 instrumentation 的许可。没有 loop <strong>不要</strong> 进入 hypothesise。</p>
+<h3>Completion criterion — a tight loop that goes red</h3>
+<p>Phase 1 完成当 loop <strong>tight</strong> 且 <strong>red-capable</strong>：你能说出 <strong>一条命令</strong> — script path、test invocation、curl — 且你 <strong>至少已运行过一次</strong>（粘贴 invocation 与输出），且：</p>
+<ul>
+<li>[ ] <strong>Red-capable</strong> — 走实际 bug 代码路径，断言 <strong>用户 exact symptom</strong>，因此可在此 bug 上 red、修好后 green。不是「runs without erroring」— 必须能 <em>catch this specific bug</em>。</li>
+<li>[ ] <strong>Deterministic</strong> — 每次运行同一 verdict（flaky bug：按上文 pinned、高 reproduction rate）。</li>
+<li>[ ] <strong>Fast</strong> — 秒级，非分钟。</li>
+<li>[ ] <strong>Agent-runnable</strong> — 你可 unattended 运行；人工在 loop 中仅通过 <code>scripts/hitl-loop.template.sh</code>。</li>
+</ul>
+<p>若你发现自己在该命令存在前读代码建理论，<strong>停下 — 直接跳假设正是本 skill 要防止的失败。</strong> 无 red-capable 命令，无 Phase 2。</p>
+<h2>Phase 2 — Reproduce + minimise</h2>
+<p>运行 loop。看它 red — bug 出现。</p>
+<p>确认：</p>
+<ul>
+<li>[ ] loop 产生 <strong>用户</strong> 描述的 failure mode — 非碰巧附近的另一种 failure。错 bug = 错 fix。</li>
+<li>[ ] failure 多次运行可复现（或非确定性 bug 有足够高 rate 可 debug）。</li>
+<li>[ ] 已捕获 exact symptom（error message、wrong output、slow timing），后续阶段可验证 fix 是否针对它。</li>
+</ul>
+<h3>Minimise</h3>
+<p>一旦 red，把 repro 缩到 <strong>仍 red 的最小场景</strong>。一次 cut 一个 input、caller、config、data、step，每次 cut 后重跑 loop — 只保留对 failure load-bearing 的。</p>
+<p>为何 bother：minimal repro 缩小 Phase 3 hypothesis space（更少 moving part 可怀疑），并成为 Phase 5 的干净 regression test。</p>
+<p>完成当 <strong>每个剩余元素都 load-bearing</strong> — 去掉任一都会让 loop green。</p>
+<p>在 reproduce <strong>且</strong> minimise 之前不要 proceed。</p>
+<h2>Phase 3 — Hypothesise</h2>
+<p>测试前生成 <strong>3–5 个 ranked hypothesis</strong>。单 hypothesis 会锚在第一个 plausible idea。</p>
+<p>每个 hypothesis 必须 <strong>可证伪</strong>：陈述它做出的 prediction。</p>
+<blockquote>
+<p>Format: "If <X> is the cause, then <changing Y> will make the bug disappear / <changing Z> will make it worse."</p>
+</blockquote>
+<p>若无法陈述 prediction，hypothesis 是 vibe — 丢弃或 sharpen。</p>
+<p><strong>测试前把 ranked list 展示给用户。</strong> 他们常有 domain knowledge 可 instant re-rank（「我们刚 deploy 了 #3 的改动」），或知道已排除的 hypothesis。便宜 checkpoint，大 time saver。不要 block — 用户 AFK 则按你的 ranking proceed。</p>
+<h2>Phase 4 — Instrument</h2>
+<p>每个 probe 必须映射到 Phase 3 的 specific prediction。<strong>一次只改一个变量。</strong></p>
+<p>工具偏好：</p>
+<ol>
+<li><strong>Debugger / REPL inspection</strong> — 若环境支持。一个 breakpoint 胜过十条 log。</li>
+<li><strong>Targeted logs</strong> — 在能区分 hypothesis 的 boundary。</li>
+<li>永远不要「log everything and grep」。</li>
+</ol>
+<p><strong>给每条 debug log 打唯一前缀 tag</strong>，如 <code>[DEBUG-a4f2]</code>。结束时一次 grep 清理。无 tag log 会存活；有 tag 的会死。</p>
+<p><strong>Perf branch。</strong> 性能回归通常 log 是错的。改为：建立 baseline measurement（timing harness、<code>performance.now()</code>、profiler、query plan），然后 bisect。先 measure，再 fix。</p>
+<h2>Phase 5 — Fix + regression test</h2>
+<p>在 fix <strong>之前</strong> 写 regression test — 但仅当有 <strong>correct seam</strong>。</p>
+<p>correct seam 是 test 在 call site 按 <strong>真实 bug pattern</strong> exercise 的 seam。若唯一可用 seam 太 shallow（单 caller test 而 bug 需多 caller、unit test 无法 replicate 触发链），那里的 regression test 给 false confidence。</p>
+<p><strong>若不存在 correct seam，这本身就是 finding。</strong> 记下。代码库架构阻止 bug 被锁住。标给下一阶段。</p>
+<p>若存在 correct seam：</p>
+<ol>
+<li>把 minimised repro 变成该 seam 上的 failing test。</li>
+<li>看它 fail。</li>
+<li>Apply fix。</li>
+<li>看它 pass。</li>
+<li>对原始（未 minimise）场景重跑 Phase 1 feedback loop。</li>
+</ol>
+<h2>Phase 6 — Cleanup + post-mortem</h2>
+<p>宣布 done 前必须：</p>
+<ul>
+<li>[ ] 原始 repro 不再 repro（重跑 Phase 1 loop）</li>
+<li>[ ] Regression test pass（或 absence of seam 已文档化）</li>
+<li>[ ] 所有 <code>[DEBUG-...]</code> instrumentation 已移除（<code>grep</code> 该 prefix）</li>
+<li>[ ] Throwaway prototype 已删除（或移到明确标记的 debug 位置）</li>
+<li>[ ] 最终正确的 hypothesis 写在 commit / PR message 中 — 让下一个 debugger 学到</li>
+</ul>
+<p><strong>然后问：什么能 prevent 这个 bug？</strong> 若答案涉及架构变更（无好 test seam、tangled caller、hidden coupling），把 specifics hand off 给 <code>/improve-codebase-architecture</code> skill。在 fix 落地 <strong>之后</strong> 再推荐，不是之前 — 你现在比开始时信息更多。</p></article>
+    <p class="footer-note">由 <code>skills/engineering/diagnosing-bugs/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

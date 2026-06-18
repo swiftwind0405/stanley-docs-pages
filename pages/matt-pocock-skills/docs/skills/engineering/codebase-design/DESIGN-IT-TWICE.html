@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>to-prd · Matt Pocock Skills</title>
+  <title>DESIGN-IT-TWICE · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,69 +248,48 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /to-prd</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / DESIGN-IT-TWICE</nav>
         <header class="page-header">
-      <h1>/to-prd</h1>
+      <h1>DESIGN-IT-TWICE</h1>
       <div class="page-meta">
-        <span class="source-tag">面向用户的技能文档</span>
-        <span>skills/engineering/to-prd/SKILL.zh-CN.md</span>
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/codebase-design/DESIGN-IT-TWICE.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><p>本 skill 取当前对话 context 与代码库理解产出 PRD。<strong>不要</strong> interview 用户 — 只 synthesize 已知内容。</p>
-<p>issue tracker 与 triage label 词汇表应已提供 — 若没有，运行 <code>/setup-matt-pocock-skills</code>。</p>
+    <article class="content"><h1>Design It Twice</h1>
+<p>当用户想为选定的 deepening 候选探索 alternative interface 时，使用此并行 sub-agent 模式。基于 "Design It Twice"（Ousterhout）— 第一个想法 unlikely 是最好的。</p>
+<p>使用 <a href="/matt-pocock-skills/skills/codebase-design.html">SKILL.md</a> 中的词汇 — <strong>module</strong>、<strong>interface</strong>、<strong>seam</strong>、<strong>adapter</strong>、<strong>leverage</strong>。</p>
 <h2>Process</h2>
-<ol>
-<li>
-<p>若尚未探索，explore repo 理解代码库当前 state。PRD 全文使用项目领域词汇表，并 respect 你即将改动区域的 ADR。</p>
-</li>
-<li>
-<p>Sketch 将测试 feature 的 seam。prefer existing seam over new。用尽可能高的 seam。若需 new seam，在能到的最高点 propose。代码库中 seam 越少越好 — 理想数量是一。</p>
-</li>
-</ol>
-<p>与用户确认这些 seam 符合预期。</p>
-<ol start="3">
-<li>用下方 template 写 PRD，然后 publish 到 issue tracker。Apply <code>ready-for-agent</code> triage label — 无需额外 triage。</li>
-</ol>
-<p><prd-template></p>
-<h2>Problem Statement</h2>
-<p>The problem that the user is facing, from the user's perspective.</p>
-<h2>Solution</h2>
-<p>The solution to the problem, from the user's perspective.</p>
-<h2>User Stories</h2>
-<p>A LONG, numbered list of user stories. Each user story should be in the format of:</p>
-<ol>
-<li>As an <actor>, I want a <feature>, so that <benefit></li>
-</ol>
-<p><user-story-example><br>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending<br>
-</user-story-example></p>
-<p>This list of user stories should be extremely extensive and cover all aspects of the feature.</p>
-<h2>Implementation Decisions</h2>
-<p>A list of implementation decisions that were made. This can include:</p>
+<h3>1. Frame the problem space</h3>
+<p>spawn sub-agent 前，为选定候选写面向用户的 problem space 说明：</p>
 <ul>
-<li>The modules that will be built/modified</li>
-<li>The interfaces of those modules that will be modified</li>
-<li>Technical clarifications from the developer</li>
-<li>Architectural decisions</li>
-<li>Schema changes</li>
-<li>API contracts</li>
-<li>Specific interactions</li>
+<li>任何新 interface 须满足的 constraint</li>
+<li>将依赖什么，属于哪类（见 <a href="/matt-pocock-skills/docs/skills/engineering/codebase-design/DEEPENING.html">DEEPENING.md</a>）</li>
+<li>粗略示意代码 sketch 以 ground constraint — 非提案，只是让 constraint 具体</li>
 </ul>
-<p>Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.</p>
-<p>Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.</p>
-<h2>Testing Decisions</h2>
-<p>A list of testing decisions that were made. Include:</p>
+<p>展示给用户，然后立即进行 Step 2。用户阅读思考时 sub-agent 并行工作。</p>
+<h3>2. Spawn sub-agents</h3>
+<p>用 Agent tool 并行 spawn 3+ sub-agent。每个须为 deepened module 产出 <strong>radically different</strong> 的 interface。</p>
+<p>给每个 sub-agent 独立 technical brief（file path、coupling 细节、<a href="/matt-pocock-skills/docs/skills/engineering/codebase-design/DEEPENING.html">DEEPENING.md</a> 的 dependency category、seam 后是什么）。brief 与 Step 1 面向用户的 problem-space 说明独立。给每个 agent 不同设计 constraint：</p>
 <ul>
-<li>A description of what makes a good test (only test external behavior, not implementation details)</li>
-<li>Which modules will be tested</li>
-<li>Prior art for the tests (i.e. similar types of tests in the codebase)</li>
+<li>Agent 1："Minimize the interface — aim for 1–3 entry points max. Maximise leverage per entry point."</li>
+<li>Agent 2："Maximise flexibility — support many use cases and extension."</li>
+<li>Agent 3："Optimise for the most common caller — make the default case trivial."</li>
+<li>Agent 4（若适用）："Design around ports &amp; adapters for cross-seam dependencies."</li>
 </ul>
-<h2>Out of Scope</h2>
-<p>A description of the things that are out of scope for this PRD.</p>
-<h2>Further Notes</h2>
-<p>Any further notes about the feature.</p>
-<p></prd-template></p></article>
-    <p class="footer-note">由 <code>skills/engineering/to-prd/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+<p>brief 中同时包含 <a href="/matt-pocock-skills/skills/codebase-design.html">SKILL.md</a> 词汇与 CONTEXT.md 词汇，使各 sub-agent 与架构语言和项目领域语言一致命名。</p>
+<p>每个 sub-agent 输出：</p>
+<ol>
+<li>Interface（types、methods、params — 加 invariant、ordering、error mode）</li>
+<li>Usage example 展示 caller 如何用</li>
+<li>implementation 在 seam 后藏什么</li>
+<li>Dependency strategy 与 adapter（见 <a href="/matt-pocock-skills/docs/skills/engineering/codebase-design/DEEPENING.html">DEEPENING.md</a>）</li>
+<li>Trade-offs — leverage 高处在哪、薄处在哪</li>
+</ol>
+<h3>3. Present and compare</h3>
+<p>依次呈现设计以便用户吸收，再用 prose 比较。按 <strong>depth</strong>（interface 处 leverage）、<strong>locality</strong>（change 集中处）、<strong>seam placement</strong> 对比。</p>
+<p>比较后给出你的推荐：哪个设计最强及 why。若不同设计的元素可组合，提出 hybrid。要有主见 — 用户要的是强判断，不是菜单。</p></article>
+    <p class="footer-note">由 <code>skills/engineering/codebase-design/DESIGN-IT-TWICE.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

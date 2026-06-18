@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>to-prd · Matt Pocock Skills</title>
+  <title>DEEPENING · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,69 +248,40 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /to-prd</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / DEEPENING</nav>
         <header class="page-header">
-      <h1>/to-prd</h1>
+      <h1>DEEPENING</h1>
       <div class="page-meta">
-        <span class="source-tag">面向用户的技能文档</span>
-        <span>skills/engineering/to-prd/SKILL.zh-CN.md</span>
+        <span class="source-tag">参考文档</span>
+        <span>skills/engineering/codebase-design/DEEPENING.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><p>本 skill 取当前对话 context 与代码库理解产出 PRD。<strong>不要</strong> interview 用户 — 只 synthesize 已知内容。</p>
-<p>issue tracker 与 triage label 词汇表应已提供 — 若没有，运行 <code>/setup-matt-pocock-skills</code>。</p>
-<h2>Process</h2>
-<ol>
-<li>
-<p>若尚未探索，explore repo 理解代码库当前 state。PRD 全文使用项目领域词汇表，并 respect 你即将改动区域的 ADR。</p>
-</li>
-<li>
-<p>Sketch 将测试 feature 的 seam。prefer existing seam over new。用尽可能高的 seam。若需 new seam，在能到的最高点 propose。代码库中 seam 越少越好 — 理想数量是一。</p>
-</li>
-</ol>
-<p>与用户确认这些 seam 符合预期。</p>
-<ol start="3">
-<li>用下方 template 写 PRD，然后 publish 到 issue tracker。Apply <code>ready-for-agent</code> triage label — 无需额外 triage。</li>
-</ol>
-<p><prd-template></p>
-<h2>Problem Statement</h2>
-<p>The problem that the user is facing, from the user's perspective.</p>
-<h2>Solution</h2>
-<p>The solution to the problem, from the user's perspective.</p>
-<h2>User Stories</h2>
-<p>A LONG, numbered list of user stories. Each user story should be in the format of:</p>
-<ol>
-<li>As an <actor>, I want a <feature>, so that <benefit></li>
-</ol>
-<p><user-story-example><br>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending<br>
-</user-story-example></p>
-<p>This list of user stories should be extremely extensive and cover all aspects of the feature.</p>
-<h2>Implementation Decisions</h2>
-<p>A list of implementation decisions that were made. This can include:</p>
+    <article class="content"><h1>Deepening</h1>
+<p>如何在给定依赖下安全地加深一组 shallow module。假设 <a href="/matt-pocock-skills/skills/codebase-design.html">SKILL.md</a> 中的词汇 — <strong>module</strong>、<strong>interface</strong>、<strong>seam</strong>、<strong>adapter</strong>。</p>
+<h2>Dependency categories</h2>
+<p>评估 deepening 候选时，对其依赖分类。类别决定 deepened module 如何跨 seam 测试。</p>
+<h3>1. In-process</h3>
+<p>纯计算、内存 state、无 I/O。始终可 deepen — 合并 module 并直接通过新 interface 测试。无需 adapter。</p>
+<h3>2. Local-substitutable</h3>
+<p>有本地 test stand-in 的依赖（Postgres 用 PGLite、in-memory filesystem）。若 stand-in 存在则可 deepen。deepened module 在 test suite 中用 stand-in 测试。seam 在内部；module 的 external interface 上无 port。</p>
+<h3>3. Remote but owned (Ports &amp; Adapters)</h3>
+<p>跨网络边界的自有服务（microservice、内部 API）。在 seam 处定义 <strong>port</strong>（interface）。deep module 拥有 logic；transport 作为 <strong>adapter</strong> 注入。test 用 in-memory adapter。生产用 HTTP/gRPC/queue adapter。</p>
+<p>推荐表述：<em>"Define a port at the seam, implement an HTTP adapter for production and an in-memory adapter for testing, so the logic sits in one deep module even though it's deployed across a network."</em></p>
+<h3>4. True external (Mock)</h3>
+<p>你无法控制的第三方服务（Stripe、Twilio 等）。deepened module 将外部依赖作为注入 port；test 提供 mock adapter。</p>
+<h2>Seam discipline</h2>
 <ul>
-<li>The modules that will be built/modified</li>
-<li>The interfaces of those modules that will be modified</li>
-<li>Technical clarifications from the developer</li>
-<li>Architectural decisions</li>
-<li>Schema changes</li>
-<li>API contracts</li>
-<li>Specific interactions</li>
+<li><strong>One adapter 意味着 hypothetical seam。Two adapters 意味着 real seam。</strong> 除非至少两个 adapter 有理由（通常 production + test），否则不要引入 port。单 adapter seam 只是 indirection。</li>
+<li><strong>Internal seam vs external seam。</strong> deep module 可有 internal seam（implementation 私有，供自身 test）以及 interface 处的 external seam。不要因为 test 用它们就把 internal seam 暴露到 interface。</li>
 </ul>
-<p>Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.</p>
-<p>Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts — not a working demo, just the important bits.</p>
-<h2>Testing Decisions</h2>
-<p>A list of testing decisions that were made. Include:</p>
+<h2>Testing strategy: replace, don't layer</h2>
 <ul>
-<li>A description of what makes a good test (only test external behavior, not implementation details)</li>
-<li>Which modules will be tested</li>
-<li>Prior art for the tests (i.e. similar types of tests in the codebase)</li>
-</ul>
-<h2>Out of Scope</h2>
-<p>A description of the things that are out of scope for this PRD.</p>
-<h2>Further Notes</h2>
-<p>Any further notes about the feature.</p>
-<p></prd-template></p></article>
-    <p class="footer-note">由 <code>skills/engineering/to-prd/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+<li>shallow module 上的旧 unit test，一旦 deepened module interface 处有 test 就成 waste — 删掉。</li>
+<li>在 deepened module 的 interface 写新 test。<strong>interface 就是 test surface</strong>。</li>
+<li>test 断言 interface 上的可观察 outcome，非 internal state。</li>
+<li>test 应 survive internal refactor — 描述 behavior，非 implementation。若 implementation 变 test 就要变，说明在 test 穿过 interface。</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/engineering/codebase-design/DEEPENING.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

@@ -264,8 +264,8 @@ main {
 <li><strong>Domain docs</strong> — <code>CONTEXT.md</code> 与 ADR 位置，及读取它们的 consumer 规则</li>
 </ul>
 <p>这是 prompt-driven skill，非 deterministic script。Explore、present 发现、与用户 confirm、然后 write。</p>
-<h2>Process（流程）</h2>
-<h3>1. Explore（探索）</h3>
+<h2>Process</h2>
+<h3>1. Explore</h3>
 <p>看当前 repo 理解 starting state。Read 存在的；don't assume：</p>
 <ul>
 <li><code>git remote -v</code> 与 <code>.git/config</code> — 是否 GitHub repo？哪个？</li>
@@ -275,12 +275,12 @@ main {
 <li><code>docs/agents/</code> — 本 skill 先前 output 是否已存在？</li>
 <li><code>.scratch/</code> — 表示 local-markdown issue tracker convention 已在使用</li>
 </ul>
-<h3>2. Present findings and ask（呈现发现并询问）</h3>
-<p>Summarise present 与 missing。然后 <strong>one at a time</strong> 带用户过三个决定——present section、得 answer、再 next。不要一次 dump 三个。</p>
+<h3>2. Present findings and ask</h3>
+<p>Summarise present 与 missing。然后 <strong>one at a time</strong> 带用户过三个决定 — present section、得 answer、再 next。不要一次 dump 三个。</p>
 <p>Assume 用户不知这些 term 含义。每 section 以 short explainer 开头（是什么、为何 skill 需要、选不同会怎样）。然后 show choices 与 default。</p>
 <p><strong>Section A — Issue tracker。</strong></p>
 <blockquote>
-<p>Explainer：「Issue tracker」是本 repo issue 所在处。<code>to-issues</code>、<code>triage</code>、<code>to-prd</code>、<code>qa</code> 等 skill 读写它——须知是 call <code>gh issue create</code>、写 <code>.scratch/</code> 下 markdown，还是你描述的其他 workflow。Pick 你实际 track 本 repo 工作的地方。</p>
+<p>Explainer：「Issue tracker」是本 repo issue 所在处。<code>to-issues</code>、<code>triage</code>、<code>to-prd</code>、<code>qa</code> 等 skill 读写它 — 须知是 call <code>gh issue create</code>、写 <code>.scratch/</code> 下 markdown，还是你描述的其他 workflow。Pick 你实际 track 本 repo 工作的地方。</p>
 </blockquote>
 <p>Default posture：这些 skill 为 GitHub 设计。<code>git remote</code> 指向 GitHub 则 propose 之。指向 GitLab（<code>gitlab.com</code> 或 self-hosted）则 propose GitLab。否则（或 user prefer）offer：</p>
 <ul>
@@ -291,7 +291,7 @@ main {
 </ul>
 <p><strong>Section B — Triage label vocabulary。</strong></p>
 <blockquote>
-<p>Explainer：<code>triage</code> skill 处理 incoming issue 时将其移过状态机——需 evaluate、等 reporter、ready for AFK agent、ready for human、或 won't fix。为此须 apply label（或 issue tracker 等价物）match <em>你实际配置的</em> 字符串。若 repo 已用不同 label 名（如 <code>bug:triage</code> 而非 <code>needs-triage</code>），在此 map，skill 才 apply 对的而非 duplicate。</p>
+<p>Explainer：<code>triage</code> skill 处理 incoming issue 时将其移过状态机 — 需 evaluate、等 reporter、ready for AFK agent、ready for human、或 won't fix。为此须 apply label（或 issue tracker 等价物）match <em>你实际配置的</em> 字符串。若 repo 已用不同 label 名（如 <code>bug:triage</code> 而非 <code>needs-triage</code>），在此 map，skill 才 apply 对的而非 duplicate。</p>
 </blockquote>
 <p>五个 canonical role：</p>
 <ul>
@@ -304,28 +304,28 @@ main {
 <p>Default：每 role 字符串等于其名。问 user 是否 override。Issue tracker 无 existing label 则 default 即可。</p>
 <p><strong>Section C — Domain docs。</strong></p>
 <blockquote>
-<p>Explainer：部分 skill（<code>improve-codebase-architecture</code>、<code>diagnose</code>、<code>tdd</code>）读 <code>CONTEXT.md</code> 学项目 domain language，<code>docs/adr/</code> 学 past architectural decision。须知 repo 是 one global context 还是 multiple（如 monorepo 分离 frontend/backend context）以便 look 对 place。</p>
+<p>Explainer：部分 skill（<code>improve-codebase-architecture</code>、<code>diagnosing-bugs</code>、<code>tdd</code>）读 <code>CONTEXT.md</code> 学项目 domain language，<code>docs/adr/</code> 学 past architectural decision。须知 repo 是 one global context 还是 multiple（如 monorepo 分离 frontend/backend context）以便 look 对 place。</p>
 </blockquote>
 <p>Confirm layout：</p>
 <ul>
 <li><strong>Single-context</strong> — repo root 一个 <code>CONTEXT.md</code> + <code>docs/adr/</code>。多数 repo 如此。</li>
 <li><strong>Multi-context</strong> — root <code>CONTEXT-MAP.md</code> 指向 per-context <code>CONTEXT.md</code>（通常 monorepo）。</li>
 </ul>
-<h3>3. Confirm and edit（确认并编辑）</h3>
+<h3>3. Confirm and edit</h3>
 <p>Show user draft：</p>
 <ul>
 <li>将加到被 edit 的 <code>CLAUDE.md</code> / <code>AGENTS.md</code> 的 <code>## Agent skills</code> block（见 step 4 selection rules）</li>
 <li><code>docs/agents/issue-tracker.md</code>、<code>docs/agents/triage-labels.md</code>、<code>docs/agents/domain.md</code> 内容</li>
 </ul>
 <p>Write 前 let them edit。</p>
-<h3>4. Write（写入）</h3>
+<h3>4. Write</h3>
 <p><strong>Pick 要 edit 的文件：</strong></p>
 <ul>
 <li>若 <code>CLAUDE.md</code> 存在，edit 它。</li>
 <li>Else 若 <code>AGENTS.md</code> 存在，edit 它。</li>
-<li>若都不存在，ask user 创建哪个——不要替他们 pick。</li>
+<li>若都不存在，ask user 创建哪个 — 不要替他们 pick。</li>
 </ul>
-<p>Never 在已有 <code>CLAUDE.md</code> 时 create <code>AGENTS.md</code>（或 vice versa）——始终 edit 已有的。</p>
+<p>Never 在已有 <code>CLAUDE.md</code> 时 create <code>AGENTS.md</code>（或 vice versa）— 始终 edit 已有的。</p>
 <p>若 chosen file 已有 <code>## Agent skills</code> block，in-place update 内容而非 append duplicate。Don't overwrite user 对 surrounding section 的 edit。</p>
 <p>Block：</p>
 <pre><code class="language-markdown">## Agent skills
@@ -351,8 +351,8 @@ main {
 <li><a href="/matt-pocock-skills/docs/skills/engineering/setup-matt-pocock-skills/domain.html">domain.md</a> — domain doc consumer rules + layout</li>
 </ul>
 <p>「Other」issue tracker 时，用 user 描述 from scratch 写 <code>docs/agents/issue-tracker.md</code>。</p>
-<h3>5. Done（完成）</h3>
-<p>Tell user setup complete，哪些 engineering skill 现在从这些文件 read。提及可 later 直接 edit <code>docs/agents/*.md</code>——仅 switch issue tracker 或 from scratch restart 时需 re-run 本 skill。</p></article>
+<h3>5. Done</h3>
+<p>Tell user setup complete，哪些 engineering skill 现在从这些文件 read。提及可 later 直接 edit <code>docs/agents/*.md</code> — 仅 switch issue tracker 或 from scratch restart 时需 re-run 本 skill。</p></article>
     <p class="footer-note">由 <code>skills/engineering/setup-matt-pocock-skills/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
     </main>
   </div>

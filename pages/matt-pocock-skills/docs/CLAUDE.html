@@ -267,7 +267,8 @@ main {
 </ul>
 <p><code>engineering/</code>、<code>productivity/</code> 或 <code>misc/</code> 中的每个 skill 都必须在顶层 <code>README.md</code> 中有引用，并在 <code>.claude-plugin/plugin.json</code> 中有条目。<code>personal/</code>、<code>in-progress/</code> 和 <code>deprecated/</code> 中的 skill 不得出现在上述两处。</p>
 <p>顶层 <code>README.md</code> 中的每个 skill 条目必须将 skill 名称链接到其 <code>SKILL.md</code>。</p>
-<p>每个 bucket 文件夹都有一个 <code>README.md</code>，列出该 bucket 中的每个 skill 及一行描述，skill 名称链接到其 <code>SKILL.md</code>。</p></article>
+<p>每个 bucket 文件夹都有一个 <code>README.md</code>，列出该 bucket 中的每个 skill 及一行描述，skill 名称链接到其 <code>SKILL.md</code>。Bucket 的 <code>README.md</code> 与顶层 <code>README.md</code> 将条目分为 <strong>User-invoked</strong> 与 <strong>Model-invoked</strong> 两组。</p>
+<p>每个 <code>SKILL.md</code> 要么是 user-invoked（<code>disable-model-invocation: true</code>，仅人类可调用），要么是 model-invoked（模型或用户均可调用）。完整定义、description 约定，以及为何 user-invoked skill 可调用 model-invoked skill 但 never 调用另一个 user-invoked skill，见 <a href="/matt-pocock-skills/docs/docs/invocation.html">docs/invocation.md</a>。</p></article>
     <p class="footer-note">由 <code>CLAUDE.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>

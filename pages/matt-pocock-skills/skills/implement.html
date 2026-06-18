@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>deep-modules · Matt Pocock Skills</title>
+  <title>implement · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,41 +248,20 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / deep-modules</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /implement</nav>
         <header class="page-header">
-      <h1>deep-modules</h1>
+      <h1>/implement</h1>
       <div class="page-meta">
-        <span class="source-tag">参考文档</span>
-        <span>skills/engineering/tdd/deep-modules.zh-CN.md</span>
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/engineering/implement/SKILL.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>Deep Modules</h1>
-<p>来自 "A Philosophy of Software Design"：</p>
-<p><strong>Deep module</strong> = small interface + lots of implementation</p>
-<pre><code>┌─────────────────────┐
-│   Small Interface   │  ← Few methods, simple params
-├─────────────────────┤
-│                     │
-│                     │
-│  Deep Implementation│  ← Complex logic hidden
-│                     │
-│                     │
-└─────────────────────┘
-</code></pre>
-<p><strong>Shallow module</strong> = large interface + little implementation (avoid)</p>
-<pre><code>┌─────────────────────────────────┐
-│       Large Interface           │  ← Many methods, complex params
-├─────────────────────────────────┤
-│  Thin Implementation            │  ← Just passes through
-└─────────────────────────────────┘
-</code></pre>
-<p>设计 interface 时问：</p>
-<ul>
-<li>能否减少 method 数量？</li>
-<li>能否简化 parameter？</li>
-<li>能否在内部 hide 更多 complexity？</li>
-</ul></article>
-    <p class="footer-note">由 <code>skills/engineering/tdd/deep-modules.zh-CN.md</code> 自动生成。</p>
+    <article class="content"><p>实现用户在 PRD 或 issue 中描述的工作。</p>
+<p>在 pre-agreed seam 上尽可能使用 /tdd。</p>
+<p>定期运行 typechecking、定期跑单个 test file，结束时跑完整 test suite。</p>
+<p>完成后用 /review 审查工作。</p>
+<p>将工作 commit 到当前 branch。</p></article>
+    <p class="footer-note">由 <code>skills/engineering/implement/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
     </main>
   </div>
 </body>

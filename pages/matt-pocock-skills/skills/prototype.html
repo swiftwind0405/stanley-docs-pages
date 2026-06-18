@@ -258,21 +258,21 @@ main {
     </header>
     <article class="content"><h1>Prototype</h1>
 <p>原型是 <strong>回答问题的可丢弃代码</strong>。问题决定形态。</p>
-<h2>选择分支</h2>
+<h2>Pick a branch</h2>
 <p>从用户 prompt、周围代码识别，或用户在时询问，正在回答哪个问题：</p>
 <ul>
 <li><strong>「这套 logic / state model 感觉对吗？」</strong> → <a href="/matt-pocock-skills/docs/skills/engineering/prototype/LOGIC.html">LOGIC.md</a>。构建 tiny interactive terminal app，将 state machine 推过纸上难推理的 case。</li>
 <li><strong>「这应该长什么样？」</strong> → <a href="/matt-pocock-skills/docs/skills/engineering/prototype/UI.html">UI.md</a>。在单 route 生成多种截然不同的 UI 变体，通过 URL search param 与 floating bottom bar 切换。</li>
 </ul>
-<p>两分支产出 very different artifact——选错浪费整个 prototype。若问题 genuinely ambiguous 且用户 unreachable，default 到更 match 周围代码的分支（backend module → logic；page 或 component → UI），并在 prototype 顶部 state assumption。</p>
-<h2>两分支共同规则</h2>
+<p>两分支产出 very different artifact — 选错浪费整个 prototype。若问题 genuinely ambiguous 且用户 unreachable，default 到更 match 周围代码的分支（backend module → logic；page 或 component → UI），并在 prototype 顶部 state assumption。</p>
+<h2>Rules that apply to both</h2>
 <ol>
-<li><strong>Day one 即可丢弃，且 clearly marked。</strong> 将 prototype code 放在实际会用到的附近（所 prototype 的 module 或 page 旁）以便 context obvious——但命名让 casual reader 看出是 prototype 非 production。可丢弃 UI route  obey 项目已有 routing convention；不要 invent 新 top-level structure。</li>
-<li><strong>One command to run.</strong> 用项目现有 task runner——<code>pnpm &lt;name&gt;</code>、<code>python &lt;path&gt;</code>、<code>bun &lt;path&gt;</code> 等。用户须能无脑启动。</li>
+<li><strong>Day one 即可丢弃，且 clearly marked。</strong> 将 prototype code 放在实际会用到的附近（所 prototype 的 module 或 page 旁）以便 context obvious — 但命名让 casual reader 看出是 prototype 非 production。可丢弃 UI route  obey 项目已有 routing convention；不要 invent 新 top-level structure。</li>
+<li><strong>One command to run.</strong> 用项目现有 task runner — <code>pnpm &lt;name&gt;</code>、<code>python &lt;path&gt;</code>、<code>bun &lt;path&gt;</code> 等。用户须能无脑启动。</li>
 <li><strong>默认无 persistence。</strong> State 在内存。Persistence 是 prototype 在 <em>检查</em> 的事，非它应依赖的。若问题 explicitly 涉及 database，hit scratch DB 或带 clear "PROTOTYPE — wipe me" 名的 local file。</li>
 <li><strong>Skip polish。</strong> 无 test、无超出使 prototype <em>runnable</em> 的 error handling、无 abstraction。目的是 fast learn 然后 delete。</li>
 <li><strong>Surface the state。</strong> 每次 action（logic）或每次 variant switch（UI）后，print 或 render 完整 relevant state，用户能看到什么变了。</li>
-<li><strong>Done 时 delete 或 absorb。</strong> prototype 回答问题后，要么 delete，要么将 validated decision fold 进 real code——不要留在 repo rot。</li>
+<li><strong>Done 时 delete 或 absorb。</strong> prototype 回答问题后，要么 delete，要么将 validated decision fold 进 real code — 不要留在 repo rot。</li>
 </ol>
 <h2>When done</h2>
 <p>prototype 唯一 worth keeping 的是 <em>answer</em>。Capture 到 durable 处（commit message、ADR、issue，或 prototype 旁 <code>NOTES.md</code>），连同它回答的问题。若用户在，capture 是 quick conversation；若不在，留 placeholder 供他们（或你下次）在 delete prototype 前填 verdict。</p></article>

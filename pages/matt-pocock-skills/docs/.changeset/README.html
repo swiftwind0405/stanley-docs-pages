@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INTERFACE-DESIGN · Matt Pocock Skills</title>
+  <title>README · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,48 +248,18 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / INTERFACE-DESIGN</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / README</nav>
         <header class="page-header">
-      <h1>INTERFACE-DESIGN</h1>
+      <h1>README</h1>
       <div class="page-meta">
         <span class="source-tag">参考文档</span>
-        <span>skills/engineering/improve-codebase-architecture/INTERFACE-DESIGN.zh-CN.md</span>
+        <span>.changeset/README.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>Interface Design（接口设计）</h1>
-<p>用户想 explore chosen deepening candidate 的 alternative interface 时，使用此 parallel sub-agent pattern。基于 Ousterhout 的「Design It Twice」——第一个 idea  unlikely 是 best。</p>
-<p>使用 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a> 词汇——<strong>module</strong>、<strong>interface</strong>、<strong>seam</strong>、<strong>adapter</strong>、<strong>leverage</strong>。</p>
-<h2>Process（流程）</h2>
-<h3>1. Frame the problem space（框定问题空间）</h3>
-<p>Spawn sub-agent 前，为 chosen candidate 写 user-facing 问题空间说明：</p>
-<ul>
-<li>任何新 interface 须 satisfy 的 constraints</li>
-<li>将 rely 的 dependencies，及 fall into 哪类（见 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/DEEPENING.html">DEEPENING.md</a>）</li>
-<li>Rough illustrative code sketch 使 constraints concrete——不是 proposal，只是 grounding</li>
-</ul>
-<p>Show 给用户，然后 immediately proceed Step 2。用户 read 与 think 时 sub-agent parallel 工作。</p>
-<h3>2. Spawn sub-agents</h3>
-<p>用 Agent tool parallel spawn 3+ sub-agent。每个须为 deepened module 产出 <strong>radically different</strong> interface。</p>
-<p>Each sub-agent 用 separate technical brief（file path、coupling detail、dependency category from <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/DEEPENING.html">DEEPENING.md</a>、seam 后是什么）。Brief 独立于 Step 1 user-facing 说明。给每个 agent different design constraint：</p>
-<ul>
-<li>Agent 1：「Minimize interface——aim 1–3 entry point max。Maximise leverage per entry point。」</li>
-<li>Agent 2：「Maximise flexibility——support many use case 与 extension。」</li>
-<li>Agent 3：「Optimise for most common caller——make default case trivial。」</li>
-<li>Agent 4（若适用）：「Design around ports &amp; adapters for cross-seam dependencies。」</li>
-</ul>
-<p>Brief 中 include <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/LANGUAGE.html">LANGUAGE.md</a> 与 CONTEXT.md 词汇，使 sub-agent 与 architecture language 及项目 domain language 一致命名。</p>
-<p>Each sub-agent 输出：</p>
-<ol>
-<li>Interface（types、methods、params——plus invariants、ordering、error modes）</li>
-<li>Usage example 展示 caller 如何用</li>
-<li>Seam 后 implementation hide 什么</li>
-<li>Dependency strategy 与 adapter（见 <a href="/matt-pocock-skills/docs/skills/engineering/improve-codebase-architecture/DEEPENING.html">DEEPENING.md</a>）</li>
-<li>Trade-offs——leverage 高在哪、thin 在哪</li>
-</ol>
-<h3>3. Present and compare（呈现与比较）</h3>
-<p>Sequential present 以便 user absorb，然后 prose compare。按 <strong>depth</strong>（interface 处 leverage）、<strong>locality</strong>（change 集中处）、<strong>seam placement</strong> contrast。</p>
-<p>Compare 后给 own recommendation：哪个 design 最强及 why。若不同 design 元素可 combine，propose hybrid。Be opinionated——user 要 strong read，不是 menu。</p></article>
-    <p class="footer-note">由 <code>skills/engineering/improve-codebase-architecture/INTERFACE-DESIGN.zh-CN.md</code> 自动生成。</p>
+    <article class="content"><h1>Changesets</h1>
+<p>你好，欢迎！此文件夹由 <code>@changesets/cli</code> 自动生成——一个适用于 monorepo 或单包 repo 的构建工具，帮助你版本化并发布代码。完整文档见<a href="https://github.com/changesets/changesets">其仓库</a>。</p>
+<p>我们有一份常见问题的快速清单，帮助你开始参与本项目，见<a href="https://github.com/changesets/changesets/blob/main/docs/common-questions.md">我们的文档</a>。</p></article>
+    <p class="footer-note">由 <code>.changeset/README.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

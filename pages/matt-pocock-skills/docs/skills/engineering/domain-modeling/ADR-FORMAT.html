@@ -253,46 +253,46 @@ main {
       <h1>ADR-FORMAT</h1>
       <div class="page-meta">
         <span class="source-tag">参考文档</span>
-        <span>skills/engineering/grill-with-docs/ADR-FORMAT.zh-CN.md</span>
+        <span>skills/engineering/domain-modeling/ADR-FORMAT.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>ADR 格式</h1>
+    <article class="content"><h1>ADR Format</h1>
 <p>ADR 位于 <code>docs/adr/</code>，使用顺序编号：<code>0001-slug.md</code>、<code>0002-slug.md</code> 等。</p>
-<p>懒创建 <code>docs/adr/</code> 目录——仅在第一个 ADR 需要时创建。</p>
-<h2>模板</h2>
-<pre><code class="language-md"># {决策的简短标题}
+<p>Lazy 创建 <code>docs/adr/</code> 目录 — 仅在第一个 ADR 需要时。</p>
+<h2>Template</h2>
+<pre><code class="language-md"># {Short title of the decision}
 
-{1-3 句：背景是什么、我们决定了什么、为什么。}
+{1-3 sentences: what's the context, what did we decide, and why.}
 </code></pre>
-<p>仅此而已。ADR 可以只是一段。价值在于记录 <em>做出了</em> 决策以及 <em>为什么</em>——而非填章节。</p>
-<h2>可选章节</h2>
-<p>仅在有 genuine 价值时包含。多数 ADR 不需要。</p>
+<p>就这样。ADR 可以只是一段。价值在于记录 <em>做出了</em> 决策及 <em>为何</em> — 不是填 section。</p>
+<h2>Optional sections</h2>
+<p>仅在有 genuine value 时包含。多数 ADR 不需要。</p>
 <ul>
-<li><strong>Status</strong> frontmatter（<code>proposed | accepted | deprecated | superseded by ADR-NNNN</code>）——决策被 revisiting 时有用</li>
-<li><strong>Considered Options</strong>——仅当被拒替代方案值得记住</li>
-<li><strong>Consequences</strong>——仅当非 obvious 的下游效应需要指出</li>
+<li><strong>Status</strong> frontmatter（<code>proposed | accepted | deprecated | superseded by ADR-NNNN</code>）— 决策被 revisit 时有用</li>
+<li><strong>Considered Options</strong> — 仅当 rejected alternative 值得记住</li>
+<li><strong>Consequences</strong> — 仅当非显而易见的下游效应需 call out</li>
 </ul>
-<h2>编号</h2>
-<p>扫描 <code>docs/adr/</code> 找最高现有编号并加一。</p>
-<h2>何时提供 ADR</h2>
-<p>以下三者必须 <strong>全部</strong> 为真：</p>
+<h2>Numbering</h2>
+<p>扫描 <code>docs/adr/</code> 找最高现有编号，加一。</p>
+<h2>When to offer an ADR</h2>
+<p>以下三者必须皆真：</p>
 <ol>
-<li><strong>难以逆转</strong> — 日后改主意成本 meaningful</li>
-<li><strong>无上下文时令人惊讶</strong> — 未来读者看代码会 wonder「他们到底为何这样做？」</li>
-<li><strong>真实 trade-off 的结果</strong> — 有 genuine 替代方案，你因具体理由选了其一</li>
+<li><strong>Hard to reverse</strong> — 之后改主意的 cost meaningful</li>
+<li><strong>Surprising without context</strong> — future reader 看代码会 wonder「why on earth did they do it this way?」</li>
+<li><strong>The result of a real trade-off</strong> — 有 genuine alternative，因 specific reason 选了一个</li>
 </ol>
-<p>若决策易逆转，跳过——你会直接逆转。若不 surprising，没人会 wonder why。若无真实替代，除「我们做了 obvious 的事」外无需记录。</p>
-<h3>什么算 qualify</h3>
+<p>若决策易 reverse，skip — 你会直接 reverse。若不 surprising，没人会 wonder why。若无 real alternative，除了「我们做了显而易见的事」没什么可记。</p>
+<h3>What qualifies</h3>
 <ul>
-<li><strong>架构形态。</strong>「我们用 monorepo。」「Write model 是 event-sourced，read model project 到 Postgres。」</li>
-<li><strong>Context 之间的集成模式。</strong>「Ordering 与 Billing 通过 domain event 通信，而非同步 HTTP。」</li>
-<li><strong>带 lock-in 的技术选择。</strong> 数据库、message bus、auth provider、部署目标。不是每个 library——只是换起来要一个 quarter 的那些。</li>
-<li><strong>边界与 scope 决策。</strong>「Customer 数据由 Customer context 拥有；其他 context 仅通过 ID 引用。」明确的 no 与 yes 同样 valuable。</li>
-<li><strong>对 obvious 路径的有意偏离。</strong>「我们用 manual SQL 而非 ORM 因为 X。」任何 reasonable 读者会 assume 相反的。阻止下一位工程师「修复」 deliberate 的东西。</li>
-<li><strong>代码中不可见的约束。</strong>「因 compliance 不能用 AWS。」「响应必须 &lt;200ms 因 partner API 合同。」</li>
-<li><strong>拒绝非 obvious 的替代方案。</strong> 若考虑过 GraphQL 因 subtle 理由选 REST，记录——否则六个月后有人再提 GraphQL。</li>
+<li><strong>Architectural shape.</strong> "We're using a monorepo." "The write model is event-sourced, the read model is projected into Postgres."</li>
+<li><strong>Integration patterns between contexts.</strong> "Ordering and Billing communicate via domain events, not synchronous HTTP."</li>
+<li><strong>Technology choices that carry lock-in.</strong> Database、message bus、auth provider、deployment target。不是每个 library — 只是换起来要一个 quarter 的那些。</li>
+<li><strong>Boundary and scope decisions.</strong> "Customer data is owned by the Customer context; other contexts reference it by ID only." 明确的 no 与 yes 一样有价值。</li>
+<li><strong>Deliberate deviations from the obvious path.</strong> "We're using manual SQL instead of an ORM because X." 合理读者会 assume 相反的任何事。阻止下一个工程师「修」掉 deliberate 的东西。</li>
+<li><strong>Constraints not visible in the code.</strong> "We can't use AWS because of compliance requirements." "Response times must be under 200ms because of the partner API contract."</li>
+<li><strong>Rejected alternatives when the rejection is non-obvious.</strong> 若考虑过 GraphQL 因 subtle reason 选 REST，记下来 — 否则六个月后有人会再 suggest GraphQL。</li>
 </ul></article>
-    <p class="footer-note">由 <code>skills/engineering/grill-with-docs/ADR-FORMAT.zh-CN.md</code> 自动生成。</p>
+    <p class="footer-note">由 <code>skills/engineering/domain-modeling/ADR-FORMAT.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

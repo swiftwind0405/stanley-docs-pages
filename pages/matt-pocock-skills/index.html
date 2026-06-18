@@ -353,7 +353,7 @@ main {
 <p><strong>修复</strong>：需要 usual 反馈循环：静态类型、浏览器访问、自动化测试。</p>
 <p>对自动化测试，红-绿-重构循环至关重要。agent 先写失败测试，再修到通过。这给 agent 一致的反馈水平，产出好得多的代码。</p>
 <p>我构建了 <strong><a href="/matt-pocock-skills/skills/tdd.html"><code>/tdd</code></a> skill</strong>，可插入任何项目。它鼓励红-绿-重构，并给 agent 大量关于好测试与坏测试的指导。</p>
-<p>调试方面，还有 <strong><a href="/matt-pocock-skills/skills/diagnose.html"><code>/diagnose</code></a></strong> skill，将最佳调试实践包装成简单循环。</p>
+<p>调试方面，还有 <strong><a href="/matt-pocock-skills/skills/diagnosing-bugs.html"><code>/diagnosing-bugs</code></a></strong> skill，将最佳调试实践包装成简单循环。</p>
 <h3>#4：我们造了一团泥</h3>
 <blockquote>
 <p>"Invest in the design of the system <em>every day</em>."<br>
@@ -368,34 +368,44 @@ main {
 <p>这内建于这些 skill 的每一层：</p>
 <ul>
 <li><a href="/matt-pocock-skills/skills/to-prd.html"><code>/to-prd</code></a> 在创建 PRD 前会 quiz 你触及哪些 module</li>
-<li><a href="/matt-pocock-skills/skills/zoom-out.html"><code>/zoom-out</code></a> 让 agent 在 whole system 语境下解释代码</li>
 </ul>
 <p>关键的是，<a href="/matt-pocock-skills/skills/improve-codebase-architecture.html"><code>/improve-codebase-architecture</code></a> 帮你 rescue 已成一团泥的代码库。建议每隔几天在代码库上运行一次。</p>
 <h3>总结</h3>
 <p>软件工程 fundamentals 比以往更重要。这些 skill 是我将这些 fundamentals  condensed 成可重复实践的最佳努力，帮你 ship 职业生涯中最好的应用。Enjoy。</p>
 <h2>Reference（参考）</h2>
+<p>划分依据只有一个轴——谁可以调用。<strong>User-invoked</strong> skill 仅当你输入时可调用（如 <code>/grill-me</code>）；其职责是 orchestrate。<strong>Model-invoked</strong> skill 可由你调用，或在任务 fit 时被 agent 自动 reach；它们承载可复用的 discipline。User-invoked skill 可调用 model-invoked skill，但 never 另一个 user-invoked skill。</p>
 <h3>Engineering</h3>
 <p>我日常用于代码工作的 skill。</p>
+<p><strong>User-invoked</strong></p>
 <ul>
-<li><strong><a href="/matt-pocock-skills/skills/diagnose.html">diagnose</a></strong> — 针对难 bug 与性能回归的 disciplined 诊断循环：复现 → 最小化 → 假设 → 插桩 → 修复 → 回归测试。</li>
-<li><strong><a href="/matt-pocock-skills/skills/grill-with-docs.html">grill-with-docs</a></strong> — grilling 质询会话，对照现有领域模型挑战计划、 sharpen 术语，并 inline 更新 <code>CONTEXT.md</code> 与 ADR。</li>
-<li><strong><a href="/matt-pocock-skills/skills/triage.html">triage</a></strong> — 通过分诊角色状态机分诊 issue。</li>
-<li><strong><a href="/matt-pocock-skills/skills/improve-codebase-architecture.html">improve-codebase-architecture</a></strong> — 在代码库中寻找 deepening 机会， informed by <code>CONTEXT.md</code> 中的领域语言与 <code>docs/adr/</code> 中的决定。</li>
-<li><strong><a href="/matt-pocock-skills/skills/setup-matt-pocock-skills.html">setup-matt-pocock-skills</a></strong> —  scaffold 其他 engineering skill 消费的 per-repo 配置（issue tracker、分诊 label 词汇表、领域文档布局）。每个 repo 运行一次，再使用 <code>to-issues</code>、<code>to-prd</code>、<code>triage</code>、<code>diagnose</code>、<code>tdd</code>、<code>improve-codebase-architecture</code> 或 <code>zoom-out</code>。</li>
-<li><strong><a href="/matt-pocock-skills/skills/tdd.html">tdd</a></strong> — 红-绿-重构循环的测试驱动开发。一次一个垂直切片构建功能或修 bug。</li>
-<li><strong><a href="/matt-pocock-skills/skills/to-issues.html">to-issues</a></strong> — 用垂直切片将任意计划、spec 或 PRD 拆成可独立 grab 的 GitHub issue。</li>
-<li><strong><a href="/matt-pocock-skills/skills/to-prd.html">to-prd</a></strong> — 将当前对话上下文转为 PRD 并提交为 GitHub issue。无 interview——仅 synthesize 已讨论内容。</li>
-<li><strong><a href="/matt-pocock-skills/skills/zoom-out.html">zoom-out</a></strong> — 让 agent zoom out，对 unfamiliar 代码段给出 broader 语境或更高层视角。</li>
+<li><strong><a href="/matt-pocock-skills/skills/ask-matt.html">ask-matt</a></strong> — 询问哪种 skill 或 flow 适合你的情况。本 repo 中 user-invoked skill 的 router。</li>
+<li><strong><a href="/matt-pocock-skills/skills/grill-with-docs.html">grill-with-docs</a></strong> — grilling 质询会话，同时 build 项目领域模型，sharpen 术语，并 inline 更新 <code>CONTEXT.md</code> 与 ADR。</li>
+<li><strong><a href="/matt-pocock-skills/skills/triage.html">triage</a></strong> — 通过分诊角色状态机移动 issue。</li>
+<li><strong><a href="/matt-pocock-skills/skills/improve-codebase-architecture.html">improve-codebase-architecture</a></strong> — 扫描代码库寻找 deepening 机会，以 visual HTML report 呈现，然后对你选中的项进行 grill。</li>
+<li><strong><a href="/matt-pocock-skills/skills/setup-matt-pocock-skills.html">setup-matt-pocock-skills</a></strong> — 为 engineering skill 配置本 repo（issue tracker、分诊 label、领域文档 layout）。使用其他 engineering skill 前每个 repo 运行一次。</li>
+<li><strong><a href="/matt-pocock-skills/skills/to-issues.html">to-issues</a></strong> — 用垂直切片将任意计划、spec 或 PRD 拆成可独立 grab 的 issue。</li>
+<li><strong><a href="/matt-pocock-skills/skills/to-prd.html">to-prd</a></strong> — 将当前对话转为 PRD 并发布到 issue tracker。无 interview——仅 synthesize 已讨论内容。</li>
 <li><strong><a href="/matt-pocock-skills/skills/prototype.html">prototype</a></strong> — 构建可丢弃 prototype 以 flesh out 设计——要么是 state/业务逻辑问题的可运行终端 app，要么是从单一路由可切换的多种 radically 不同 UI 变体。</li>
+</ul>
+<p><strong>Model-invoked</strong></p>
+<ul>
+<li><strong><a href="/matt-pocock-skills/skills/diagnosing-bugs.html">diagnosing-bugs</a></strong> — 针对难 bug 与性能回归的 disciplined 诊断循环：复现 → 最小化 → 假设 → 插桩 → 修复 → 回归测试。</li>
+<li><strong><a href="/matt-pocock-skills/skills/tdd.html">tdd</a></strong> — 红-绿-重构循环的测试驱动开发。一次一个垂直切片构建功能或修 bug。</li>
+<li><strong><a href="/matt-pocock-skills/skills/domain-modeling.html">domain-modeling</a></strong> — 主动 build 并 sharpen 项目领域模型——对照 glossary 挑战术语，用边缘场景 stress-test，并 inline 更新 <code>CONTEXT.md</code> 与 ADR。</li>
+<li><strong><a href="/matt-pocock-skills/skills/codebase-design.html">codebase-design</a></strong> — 设计 deep module 的共享 discipline 与词汇：大量行为置于小 interface 后，放在 clean seam，经 interface 可测试。</li>
 </ul>
 <h3>Productivity</h3>
 <p>通用工作流工具，非代码专用。</p>
+<p><strong>User-invoked</strong></p>
 <ul>
-<li><strong><a href="/matt-pocock-skills/skills/caveman.html">caveman</a></strong> —  ultra-compressed 沟通模式。去掉 filler 将 token 用量削减约 75%，同时保持完整技术准确性。</li>
 <li><strong><a href="/matt-pocock-skills/skills/grill-me.html">grill-me</a></strong> — 就计划或设计被 relentless interview，直到决策树每个分支 resolved。</li>
 <li><strong><a href="/matt-pocock-skills/skills/handoff.html">handoff</a></strong> — 将当前对话 compact 成 handoff 文档，供另一 agent 继续工作。</li>
 <li><strong><a href="/matt-pocock-skills/skills/teach.html">teach</a></strong> — 跨多 session 教用户新 skill 或概念，以当前目录为 stateful 教学 workspace。</li>
-<li><strong><a href="/matt-pocock-skills/skills/write-a-skill.html">write-a-skill</a></strong> — 创建结构正确、渐进披露、bundled resources 的新 skill。</li>
+<li><strong><a href="/matt-pocock-skills/skills/writing-great-skills.html">writing-great-skills</a></strong> — 写好、改好 skill 的参考：让 skill 可预测的词汇与原则。</li>
+</ul>
+<p><strong>Model-invoked</strong></p>
+<ul>
+<li><strong><a href="/matt-pocock-skills/skills/grilling.html">grilling</a></strong> — 就计划或设计对用户 relentless interview，直到决策树每个分支 resolved。<code>grill-me</code> 与 <code>grill-with-docs</code> 背后的可复用 loop。</li>
 </ul>
 <h3>Misc</h3>
 <p>保留备用但很少使用的工具。</p>

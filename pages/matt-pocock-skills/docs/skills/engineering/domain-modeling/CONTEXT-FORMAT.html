@@ -253,39 +253,39 @@ main {
       <h1>CONTEXT-FORMAT</h1>
       <div class="page-meta">
         <span class="source-tag">参考文档</span>
-        <span>skills/engineering/grill-with-docs/CONTEXT-FORMAT.zh-CN.md</span>
+        <span>skills/engineering/domain-modeling/CONTEXT-FORMAT.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>CONTEXT.md 格式</h1>
-<h2>结构</h2>
-<pre><code class="language-md"># {Context 名称}
+    <article class="content"><h1>CONTEXT.md Format</h1>
+<h2>Structure</h2>
+<pre><code class="language-md"># {Context Name}
 
-{一两句描述该 context 是什么、为何存在。}
+{One or two sentence description of what this context is and why it exists.}
 
 ## Language
 
 **Order**:
-{该术语的一两句描述}
+{A one or two sentence description of the term}
 _Avoid_: Purchase, transaction
 
 **Invoice**:
-交付后发给客户的付款请求。
+A request for payment sent to a customer after delivery.
 _Avoid_: Bill, payment request
 
 **Customer**:
-下单的个人或组织。
+A person or organization that places orders.
 _Avoid_: Client, buyer, account
 </code></pre>
-<h2>规则</h2>
+<h2>Rules</h2>
 <ul>
-<li><strong>要有主见。</strong> 同一概念有多种说法时，选最好的，其余列在 <code>_Avoid_</code> 下。</li>
-<li><strong>定义要 tight。</strong> 最多一两句。定义它 <strong>是什么</strong>，而非做什么。</li>
-<li><strong>只包含本项目 context 特有的术语。</strong> 通用编程概念（timeout、error type、utility pattern）即使项目大量使用也不 belong。添加术语前问：这是 context 独有概念还是通用编程概念？只有前者 belong。</li>
-<li><strong>自然聚类出现时按小标题分组。</strong> 若所有术语属于单一 cohesive 区域，扁平列表即可。</li>
+<li><strong>Be opinionated.</strong> 同一概念有多种词时，选最好的，其余列在 <code>_Avoid_</code> 下。</li>
+<li><strong>Keep definitions tight.</strong> 最多一两句。定义它 <em>是什么</em>，不是它 <em>做什么</em>。</li>
+<li><strong>Only include terms specific to this project's context.</strong> 一般编程概念（timeout、error type、utility pattern）即使项目大量使用也不属于。加 term 前问：这是本 context 独有概念，还是一般编程概念？只有前者属于。</li>
+<li><strong>Group terms under subheadings</strong> — 自然 cluster 出现时。若所有 term 属于单一 cohesive 区域，flat list 即可。</li>
 </ul>
-<h2>单 context 与多 context repo</h2>
-<p><strong>单 context（多数 repo）：</strong> repo 根目录一个 <code>CONTEXT.md</code>。</p>
-<p><strong>多 context：</strong> repo 根目录 <code>CONTEXT-MAP.md</code> 列出 context、位置及彼此关系：</p>
+<h2>Single vs multi-context repos</h2>
+<p><strong>Single context（多数 repo）：</strong> repo root 一个 <code>CONTEXT.md</code>。</p>
+<p><strong>Multiple contexts：</strong> repo root 的 <code>CONTEXT-MAP.md</code> 列出 context、位置及彼此关系：</p>
 <pre><code class="language-md"># Context Map
 
 ## Contexts
@@ -296,18 +296,18 @@ _Avoid_: Client, buyer, account
 
 ## Relationships
 
-- **Ordering → Fulfillment**: Ordering 发出 `OrderPlaced` 事件；Fulfillment 消费以开始拣货
-- **Fulfillment → Billing**: Fulfillment 发出 `ShipmentDispatched` 事件；Billing 消费以生成发票
-- **Ordering ↔ Billing**: 共享 `CustomerId` 与 `Money` 类型
+- **Ordering → Fulfillment**: Ordering emits `OrderPlaced` events; Fulfillment consumes them to start picking
+- **Fulfillment → Billing**: Fulfillment emits `ShipmentDispatched` events; Billing consumes them to generate invoices
+- **Ordering ↔ Billing**: Shared types for `CustomerId` and `Money`
 </code></pre>
-<p>技能推断适用哪种结构：</p>
+<p>skill 推断适用哪种结构：</p>
 <ul>
-<li>若存在 <code>CONTEXT-MAP.md</code>，读取以找 context</li>
-<li>若仅有根 <code>CONTEXT.md</code>，单 context</li>
-<li>若都不存在，第一个术语 resolved 时懒创建根 <code>CONTEXT.md</code></li>
+<li>若存在 <code>CONTEXT-MAP.md</code>，读取找 context</li>
+<li>若仅有 root <code>CONTEXT.md</code>，single context</li>
+<li>若都不存在，第一个 term resolved 时 lazy 创建 root <code>CONTEXT.md</code></li>
 </ul>
-<p>多 context 时，推断当前主题 relate 到哪个。若不 clear，询问。</p></article>
-    <p class="footer-note">由 <code>skills/engineering/grill-with-docs/CONTEXT-FORMAT.zh-CN.md</code> 自动生成。</p>
+<p>multiple context 时，推断当前话题属于哪个。若不 clear，问。</p></article>
+    <p class="footer-note">由 <code>skills/engineering/domain-modeling/CONTEXT-FORMAT.zh-CN.md</code> 自动生成。</p>
     </main>
   </div>
 </body>

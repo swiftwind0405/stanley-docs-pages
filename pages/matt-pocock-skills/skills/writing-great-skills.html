@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>writing-great-skills · Matt Pocock Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5c5c5c;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --border: #e5e2dc;
+  --code-bg: #f4f2ee;
+  --sidebar-w: 280px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .75rem;
+}
+.sidebar-brand h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.sidebar-brand p {
+  margin: .35rem 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.nav-group { margin-bottom: .75rem; }
+.nav-group-title {
+  padding: .35rem 1.25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.nav-link {
+  display: block;
+  padding: .35rem 1.25rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-left: 3px solid transparent;
+}
+.nav-link:hover { background: var(--accent-soft); text-decoration: none; }
+.nav-link.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 600;
+  color: var(--accent);
+}
+.nav-link code { font-size: .8rem; }
+main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+  max-width: 920px;
+}
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 700; }
+.hero p { margin: 0; opacity: .92; max-width: 52ch; }
+.category-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.category-card h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.15rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.skill-grid { display: grid; gap: .65rem; }
+.skill-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .75rem 1rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: border-color .15s, background .15s;
+}
+.skill-card:hover {
+  border-color: var(--border);
+  background: var(--accent-soft);
+}
+.skill-card:hover a { text-decoration: none; }
+.skill-cmd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.skill-desc { font-size: .9rem; color: var(--muted); margin: 0; }
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  margin-left: .4rem;
+  vertical-align: middle;
+}
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .35rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.source-tag {
+  background: var(--code-bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: .78rem;
+}
+.content :is(h2, h3, h4) { margin-top: 1.75rem; margin-bottom: .65rem; }
+.content h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+.content h3 { font-size: 1.1rem; }
+.content p, .content li { max-width: 72ch; }
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .84rem;
+  line-height: 1.5;
+}
+.content code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .12em .35em;
+  border-radius: 4px;
+}
+.content pre code { background: none; padding: 0; font-size: inherit; }
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+.content th, .content td {
+  border: 1px solid var(--border);
+  padding: .5rem .75rem;
+  text-align: left;
+}
+.content th { background: var(--code-bg); font-weight: 600; }
+.content blockquote {
+  margin: 1rem 0;
+  padding: .75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--muted);
+}
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.content details { margin: 1rem 0; }
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8rem;
+  color: var(--muted);
+}
+.crumb {
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+.crumb a { color: var(--accent); }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-height: 40vh;
+  }
+  main { padding: 1.25rem 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+  <div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h1><a href="/matt-pocock-skills/index.html" style="color:inherit">Matt Pocock Skills</a></h1>
+      <p>技能使用文档（简体中文）</p>
+    </div>
+    <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
+  </aside>
+    <main>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /writing-great-skills</nav>
+        <header class="page-header">
+      <h1>/writing-great-skills</h1>
+      <div class="page-meta">
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/productivity/writing-great-skills/SKILL.zh-CN.md</span>
+      </div>
+    </header>
+    <article class="content"><p>Skill 的存在，是为了从随机系统中 wrangle 出 determinism。<strong>Predictability</strong>——agent 每次运行走同一 <em>process</em>，而非产出同一 output——是根 virtue；下面每个 lever 都服务于它。</p>
+<p><strong>加粗术语</strong>在 <a href="/matt-pocock-skills/docs/skills/productivity/writing-great-skills/GLOSSARY.html"><code>GLOSSARY.zh-CN.md</code></a> 中定义；查那里获取完整含义。</p>
+<h2>Invocation</h2>
+<p>两种选择，trade 不同成本：</p>
+<ul>
+<li><strong>Model-invoked</strong> skill 保留 <strong>description</strong>，agent 可自主触发 <em>且</em> 其他 skill 可触及（你仍可输入名称）。它贡献 <strong>context load</strong>——description 每 turn 都在窗口里。机制：省略 <code>disable-model-invocation</code>，写面向模型的 description，含丰富触发措辞（「Use when the user wants…, mentions…」）。</li>
+<li><strong>User-invoked</strong> skill 将 description 从 agent 触及范围剥离：只有你输入名称才能调用——其他 skill 不能。零 context load，但花费 <strong>cognitive load</strong>：<em>你</em> 是必须记住它存在的 index。机制：设置 <code>disable-model-invocation: true</code>；<code>description</code> 面向人类——一行摘要，去掉 trigger 列表。</li>
+</ul>
+<p>仅当 agent 必须自主触及 skill，或另一 skill 必须触及时，才选 model-invocation。若它只用手动触发，做成 user-invoked，不付 context load。</p>
+<p>当 user-invoked skill 多到记不住时， piled-up cognitive load 由 <strong>router skill</strong> 治愈：一个 user-invoked skill 列出其他 skill 及何时选用。</p>
+<h2>Writing the description</h2>
+<p>Model-invoked 的 <strong>description</strong> 做两件事——说明 skill 是什么，并列出应触发它的 <strong>branches</strong>。每个词都增加 <strong>context load</strong>，因此 description 比正文更需要 prune：</p>
+<ul>
+<li><strong>Front-load skill 的 leading word</strong>——description 是它做 invocation 工作的地方。</li>
+<li><strong>每个 branch 一个 trigger。</strong> 给同一 branch 改名的同义词是 <strong>duplication</strong>——「build features using TDD … asks for test-first development」是一个 branch 写了两遍。合并；只保留真正 distinct 的 branches。</li>
+<li><strong>砍掉 body 里已有的 identity。</strong> Description 只保留 triggers，以及任何「when another skill needs…」 reach 子句。</li>
+</ul>
+<h2>Information hierarchy</h2>
+<p>Skill 由两种内容类型构成——<strong>steps</strong> 与 <strong>reference</strong>——可自由混合：skill 可以全是 steps、全是 reference，或二者兼有。核心决策是用哪种、每种在 <strong>information hierarchy</strong> 上占哪一层——按 agent 多 urgently 需要材料排序的 ladder：</p>
+<ol>
+<li><strong>In-skill step</strong>——<code>SKILL.md</code> 中的有序动作，primary tier：agent 按序做什么。每步以 <strong>completion criterion</strong> 结束——告诉 agent 工作完成的条件。要 <em>checkable</em>（agent 能否区分 done 与 not-done？）并在重要处 <em>exhaustive</em>（「every modified model accounted for」，而非「produce a change list」）——模糊 criterion 招致 <strong>premature completion</strong>。</li>
+<li><strong>In-skill reference</strong>——<code>SKILL.md</code> 中的定义、规则或事实，按需查阅。常常是 legitimately flat peer-set（review 的每条规则在同一 rung）——fine arrangement，不是 smell。<em>本 skill 全是 reference。</em></li>
+<li><strong>External reference</strong>——reference 推出 <code>SKILL.md</code> 到单独文件，经 <strong>context pointer</strong> 触及，仅在 pointer 触发时加载。（跨度从 <em>disclosed</em> reference——如 <code>GLOSSARY.md</code> 的 sibling 文件，仍是 skill 一部分——到完全 <strong>external reference</strong>，活在 skill 系统外，任何 skill 可指向。）</li>
+</ol>
+<p>苛刻的 completion criterion 驱动 thorough <strong>legwork</strong>——工作内的 digging——无论 skill 有无 steps，因为「every rule applied」绑定 flat reference，如同「every step done」绑定 sequence。</p>
+<p>Push 太少则 top 膨胀；push 太多则隐藏 agent 实际需要的材料。这 tension 就是整个决策。</p>
+<p><strong>Progressive disclosure</strong> 是沿 ladder 下移——出 <code>SKILL.md</code> 进 linked file——让 top 保持 legible。机制：skill 文件夹内 linked <code>.md</code>，按内容命名（本 skill 将完整定义 disclose 到 <code>GLOSSARY.md</code>）。有些 skill 有多种用法，每种 distinct 方式是一个 <strong>branch</strong>——不同 run 走 skill 内不同 path。Branching 是最 clean 的 disclosure 测试：inline 每个 branch 都需要的；pointer 后 push 仅部分 branches 触及的。<strong>Context pointer</strong> 的 <em>wording</em>，而非 target，决定 agent 何时、多 reliably 触及材料。</p>
+<p>Ladder 决定 <em>how far down</em>；<strong>co-location</strong> 决定到那里后 <em>what sits beside it</em>：概念的定义、规则、caveats 放在同一 heading 下，而非 scattered，读一处时邻居一并带入。</p>
+<h2>When to split</h2>
+<p><strong>Granularity</strong> 是 skill 切多细；每切一刀花费两种 load 之一，因此只有 cut 值得时才 split。两种 cut：</p>
+<ul>
+<li><strong>By invocation</strong>——当有 distinct <strong>leading word</strong> 应独立触发，或另一 skill 必须触及时，拆出 <strong>model-invoked</strong> skill。你为新的 always-loaded <strong>description</strong> 付 <strong>context load</strong>，因此 independent reach 必须值得。</li>
+<li><strong>By sequence</strong>——当后续 <strong>steps</strong>（某 step 的 <strong>post-completion steps</strong>）诱使 agent rush 当前步（<strong>premature completion</strong>）时，拆分 step run。把它们移出视野鼓励 agent 在当前 task 做更多 <strong>legwork</strong>。</li>
+</ul>
+<h2>Pruning</h2>
+<p>每个 meaning 保持 <strong>single source of truth</strong>：一处 authoritative，改行为只需改一处。</p>
+<p>逐行检查 <strong>relevance</strong>：它是否仍 bear on skill 做什么？</p>
+<p>然后 hunt <strong>no-ops</strong>，逐句而非逐行：对每句单独跑 no-op test，失败则删整句而非 trim 词。要 aggressive——多数失败的 prose 应删，而非 rewrite。</p>
+<h2>Leading words</h2>
+<p><strong>Leading word</strong> 是 model pretraining 中已有的 compact concept，agent 运行 skill 时用它思考（如 <em>lesson</em>、<em>fog of war</em>、<em>tracer bullets</em>）。全文重复（不必处处——强 leading word 可能只需一次），它积累 distributed definition，用最少 token anchor 整片行为，recruit 模型已有的 priors。</p>
+<p>它 twice 服务 predictability。Body 中 anchor <em>execution</em>：词出现时 agent 每次 reach 同一行为。Description 中 anchor <em>invocation</em>：同一词 living 于 prompts、docs、code 时，agent 将 shared language 链到 skill，更 reliably 触发。</p>
+<p>Hunt 用 leading words refactor skill 的机会。三处 spell out 的 triad（<strong>duplication</strong>）、description 用一句 gesture 一个 idea——每段都在 beg <strong>collapse</strong> 成 single token。例如：</p>
+<ul>
+<li>"fast, deterministic, low-overhead" -&gt; <em>tight</em>——一 quality 跨 phase restate——into single pretrained word（<em>tight</em> loop）。</li>
+<li>"a loop you believe in" -&gt; <em>red</em>——将 fuzzy gate 转为 binary observable state（loop 在 bug 上 <em>red</em>，否则不）。</li>
+</ul>
+<p>你 win twice：更少 token，<em>且</em> sharper hook 供 agent hang thinking。<strong>Assume</strong> 每个 skill 都 carrying restatements，leading words 可 retire——去找它们。</p>
+<h2>Failure modes</h2>
+<p>用于诊断用户可能遇到的 skill 问题。</p>
+<ul>
+<li><strong>Premature completion</strong>——step 未 genuinely done 就结束，attention slip 到 <em>being done</em>。Defence，按序：先 sharpen completion criterion（cheap、local）；仅当 irreducibly fuzzy <em>且</em> 观察到 rush 时，hide post-completion steps by splitting（sequence cut）。</li>
+<li><strong>Duplication</strong>——同一 meaning 多于一处。Cost maintenance 与 tokens，并将 meaning prominence 在 ladder 上 inflate 超过 real rank。</li>
+<li><strong>Sediment</strong>——stale layers 因 adding  feels safe、removing feels risky 而 settle。任何无 pruning discipline 的 skill 的 default fate。</li>
+<li><strong>Sprawl</strong>——skill  simply 太长，即使每行 live 且 unique。hurt readability、maintainability，浪费 tokens。Cure 是 ladder：disclose <strong>reference</strong> 到 pointers 后，按 <strong>branch</strong> 或 sequence split，使每条 path 只 carry 所需。</li>
+<li><strong>No-op</strong>——模型默认已 obey 的行，付 load 说 nothing。Test：相对 default 是否改变行为？弱 leading word（agent 已 thorough-ish 时的 <em>be thorough</em>）是 no-op；fix 是更强词（<em>relentless</em>），非不同 technique。</li>
+</ul></article>
+    <p class="footer-note">由 <code>skills/productivity/writing-great-skills/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
+    </main>
+  </div>
+</body>
+</html>

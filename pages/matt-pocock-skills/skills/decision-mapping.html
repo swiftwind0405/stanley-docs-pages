@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LANGUAGE · Matt Pocock Skills</title>
+  <title>decision-mapping · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,58 +248,70 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / LANGUAGE</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /decision-mapping</nav>
         <header class="page-header">
-      <h1>LANGUAGE</h1>
+      <h1>/decision-mapping</h1>
       <div class="page-meta">
-        <span class="source-tag">参考文档</span>
-        <span>skills/engineering/improve-codebase-architecture/LANGUAGE.zh-CN.md</span>
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/in-progress/decision-mapping/SKILL.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>Language（词汇）</h1>
-<p>本 skill 每条建议使用的共享词汇。精确使用这些 term——不要 substitute「component」「service」「API」或「boundary」。一致语言就是 whole point。</p>
-<h2>Terms（术语）</h2>
-<p><strong>Module</strong>（模块）<br>
-Anything with an interface and an implementation. Deliberately scale-agnostic — 同样适用于 function、class、package 或跨 tier slice。<br>
-<em>避免</em>：unit、component、service。</p>
-<p><strong>Interface</strong>（接口）<br>
-Caller 为正确使用 module 必须知道的一切。包括 type signature，还有 invariants、ordering constraints、error modes、required configuration、performance characteristics。<br>
-<em>避免</em>：API、signature（太窄——仅指 type-level surface）。</p>
-<p><strong>Implementation</strong>（实现）<br>
-Module 内部——其 code body。与 <strong>Adapter</strong> 不同：可以是 small adapter + large implementation（Postgres repo），或 large adapter + small implementation（in-memory fake）。Seam 是话题时用「adapter」；否则用「implementation」。</p>
-<p><strong>Depth</strong>（深度）<br>
-Interface 处的 leverage——caller（或 test）每 unit 需学习的 interface 能 exercise 多少 behavior。<strong>Deep</strong> module 是大量 behavior 在 small interface 后。<strong>Shallow</strong> module 是 interface 几乎与 implementation 一样 complex。</p>
-<p><strong>Seam</strong> <em>(from Michael Feathers)</em>（接缝）<br>
-可 alter behavior 而无需在该处 edit 的位置。Module interface 所在的 <em>location</em>。Seam 放哪是独立 design decision，与后面放什么 distinct。</p>
-<p><em>避免</em>：boundary（与 DDD bounded context  overloaded）。</p>
-<p><strong>Adapter</strong>（适配器）<br>
-在 seam 处 satisfy interface 的 concrete thing。描述 <em>role</em>（填什么 slot），非 substance（里面是什么）。</p>
-<p><strong>Leverage</strong>（杠杆）<br>
-Caller 从 depth 得到什么。每 unit interface 学习得到更多 capability。One implementation 在 N call site 与 M test 上 pay back。</p>
-<p><strong>Locality</strong>（局部性）<br>
-Maintainer 从 depth 得到什么。Change、bug、knowledge、verification 集中在一处而非 spread 到 caller。Fix once，fixed everywhere。</p>
-<h2>Principles（原则）</h2>
+    <article class="content"><p>当松散想法需要多个 agent session 才能变成计划时调用本 skill。它在 markdown 文件中创建有状态的 decision map，并驱动用户按序 resolve 开放问题 — 可能需要 prototype、research 或 discussion。</p>
+<h2>The Decision Map</h2>
+<p>decision map 是单个紧凑 Markdown 文件，每个规划 effort 一份，与项目一起 git-track。它是 canonical artifact — <strong>整张 map 作为 context 载入每个 session</strong>，因此必须保持 compact。</p>
+<p>ticket 期间创建的 asset 应从 map link，不要在 map 内 duplicate。</p>
+<h3>Structure</h3>
+<p>编号条目（「ticket」），每条以编号为 key 的独立 section：</p>
+<pre><code class="language-markdown">## #1: Relational Or Non-Relational Database?
+
+Blocked by: #&lt;ticket-number&gt;, #&lt;ticket-number&gt;
+Type: Research | Prototype | Discuss
+
+### Question
+
+&lt;question-here&gt;
+
+### Answer
+
+&lt;answer-here&gt;
+</code></pre>
+<p>每个 ticket 须能在一个 100K token agent session 内完成。</p>
+<h2>Ticket Types</h2>
+<p>三种 ticket 类型：</p>
 <ul>
-<li><strong>Depth 是 interface 的属性，非 implementation。</strong> Deep module 内部可由 small、mockable、swappable part 组成——它们不是 interface 一部分。Module 可有 <strong>internal seams</strong>（implementation private，own test 用）以及 interface 处的 <strong>external seam</strong>。</li>
-<li><strong>The deletion test。</strong> 想象 delete module。若 complexity 消失，module 没 hide 任何东西（pass-through）。若 complexity 在 N caller 重现，module 在 earn keep。</li>
-<li><strong>The interface is the test surface。</strong> Caller 与 test  cross 同一 seam。若想 test <em>past</em> interface，module 可能 shape 错了。</li>
-<li><strong>One adapter means hypothetical seam. Two adapters means real one.</strong> 除非 something 真的在 seam 上 vary，否则不要 introduce seam。</li>
+<li><strong>Research</strong>：读文档、第三方 API 或本地资源如 knowledge base。创建 markdown summary 作为 asset。需要当前工作目录外知识时用。</li>
+<li><strong>Prototype</strong>：写 UI 或 logic 代码测试 hypothesis 或探索设计空间。使用 /prototype skill。创建 prototype 作为 asset。当「应该长什么样」或「应该如何行为」是 key question 时用。</li>
+<li><strong>Discuss</strong>：与 agent 对话。使用 /grilling 和 /domain-modelling skill。默认情况。</li>
 </ul>
-<h2>Relationships（关系）</h2>
-<ul>
-<li><strong>Module</strong> 有 exactly one <strong>Interface</strong>（present 给 caller 与 test 的 surface）。</li>
-<li><strong>Depth</strong> 是 <strong>Module</strong> 的属性，相对其 <strong>Interface</strong> 测量。</li>
-<li><strong>Seam</strong> 是 <strong>Module</strong> 的 <strong>Interface</strong> 所在处。</li>
-<li><strong>Adapter</strong> 在 <strong>Seam</strong> 处 satisfy <strong>Interface</strong>。</li>
-<li><strong>Depth</strong> 为 caller 产生 <strong>Leverage</strong>，为 maintainer 产生 <strong>Locality</strong>。</li>
-</ul>
-<h2>Rejected framings（拒绝的 framing）</h2>
-<ul>
-<li><strong>Depth 作为 implementation-lines 与 interface-lines 之比</strong>（Ousterhout）：reward padding implementation。我们用 depth-as-leverage。</li>
-<li><strong>「Interface」仅指 TypeScript <code>interface</code> 或 class public methods</strong>：太窄——此处 interface 包括 caller 必须知道的 every fact。</li>
-<li><strong>「Boundary」</strong>：与 DDD bounded context overloaded。说 <strong>seam</strong> 或 <strong>interface</strong>。</li>
-</ul></article>
-    <p class="footer-note">由 <code>skills/engineering/improve-codebase-architecture/LANGUAGE.zh-CN.md</code> 自动生成。</p>
+<h2>Fog of war</h2>
+<p>map 在 frontier 之外 <em>刻意</em> 不完整。你的工作是调查 frontier，按序 resolve ticket 以推进 frontier。一次推回一个节点的 fog of war。</p>
+<p>Eventually fog of war 应被推得足够远，终点路径 clear。那时不再需要 ticket，decision map 可视为「done」。</p>
+<h2>Invocation</h2>
+<p>本 skill 有两种调用方式：<strong>bootstrap</strong> 和 <strong>resume</strong>。</p>
+<h3>Bootstrap</h3>
+<p>用户以松散想法调用。</p>
+<ol>
+<li>运行 /grilling 和 /domain-modelling session 以 surface 开放决策。</li>
+<li>写新 decision map — 多为 fog，frontier 已识别，trivially-decidable 条目 inline resolve。</li>
+<li>停止。建 map 是一个 session 的工作；不要同时 resolve ticket。</li>
+</ol>
+<h3>Resume</h3>
+<p>用户传入现有 map 路径和 ticket 编号。</p>
+<ol>
+<li>将 <strong>整张 map</strong> 作为 context 载入。</li>
+<li>运行 session resolve ticket，按需 invoke skill。不确定时用 <code>/grilling</code> 和 <code>/domain-modelling</code>。</li>
+<li>在 ticket body 记录 session resolve 的内容。</li>
+<li>添加新发现的 ticket（带正确 <code>blocked_by</code> 边）。</li>
+<li>停止。</li>
+</ol>
+<p>若所做决策使 map 其他部分 invalid，更新或删除那些节点。</p>
+<h2>Parallelism</h2>
+<p>用户可能选择并行跑 ticket，因此 expect 其他 agent 会改 map。</p>
+<h2>Skipping The Decision Map</h2>
+<p>很多时候，初始 grilling 结果没有 fog of war。无 unresolved ticket。无事可做，除了 implement。</p>
+<p>此时应 offer 用户跳过 decision map 的机会 — 因为 decision map 仅在需要多 session 决策时才需要。</p>
+<p>若他们跳过，应建议直接 implement 或用 <code>/to-prd</code> 安排多 session implementation。</p></article>
+    <p class="footer-note">由 <code>skills/in-progress/decision-mapping/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
     </main>
   </div>
 </body>

@@ -256,59 +256,7 @@ main {
         <span>skills/engineering/grill-with-docs/SKILL.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><p><what-to-do></p>
-<p>就本计划的每个方面 relentless interview 我，直到 shared understanding。沿设计树每个 branch 走下去，逐一 resolve 决定间依赖。每个问题给出你的 recommended answer。</p>
-<p>一次只问一个问题，等每个问题的 feedback 再继续。</p>
-<p>若问题可通过探索代码库回答，则探索代码库。</p>
-<p></what-to-do></p>
-<p><supporting-info></p>
-<h2>Domain awareness（领域感知）</h2>
-<p>探索代码库时，同时查找现有文档：</p>
-<h3>File structure（文件结构）</h3>
-<p>多数 repo 有 single context：</p>
-<pre><code>/
-├── CONTEXT.md
-├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
-└── src/
-</code></pre>
-<p>若根有 <code>CONTEXT-MAP.md</code>，repo 有 multiple context。Map 指向各 context 位置：</p>
-<pre><code>/
-├── CONTEXT-MAP.md
-├── docs/
-│   └── adr/                          ← system-wide decisions
-├── src/
-│   ├── ordering/
-│   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← context-specific decisions
-│   └── billing/
-│       ├── CONTEXT.md
-│       └── docs/adr/
-</code></pre>
-<p>Lazy 创建文件——仅有内容可写时。若无 <code>CONTEXT.md</code>，第一个 term resolved 时创建。若无 <code>docs/adr/</code>，第一个 ADR 需要时创建。</p>
-<h2>During the session（会话中）</h2>
-<h3>Challenge against the glossary（对照词汇表挑战）</h3>
-<p>用户使用的 term 与 <code>CONTEXT.md</code> 现有 language 冲突时，立即 call out。「你的词汇表将 'cancellation' 定义为 X，但你似乎指 Y——到底是哪个？」</p>
-<h3>Sharpen fuzzy language（ sharpen 模糊语言）</h3>
-<p>用户使用 vague 或 overloaded term 时，propose precise canonical term。「你说 'account'——是指 Customer 还是 User？那是不同事物。」</p>
-<h3>Discuss concrete scenarios（讨论具体场景）</h3>
-<p>讨论 domain relationship 时，用 specific scenario stress-test。发明 probe edge case、迫使用户 precise 概念边界的 scenario。</p>
-<h3>Cross-reference with code（与代码交叉引用）</h3>
-<p>用户陈述某物如何工作时，检查 code 是否 agree。若发现矛盾，surface：「你的 code 取消 entire Order，但你刚说 partial cancellation 可能——哪个对？」</p>
-<h3>Update CONTEXT.md inline</h3>
-<p>Term resolved 时，right there 更新 <code>CONTEXT.md</code>。不要 batch——发生时 capture。格式见 <a href="/matt-pocock-skills/docs/skills/engineering/grill-with-docs/CONTEXT-FORMAT.html">CONTEXT-FORMAT.md</a>。</p>
-<p><code>CONTEXT.md</code> 应 totally devoid of implementation details。不要把 <code>CONTEXT.md</code> 当 spec、scratch pad 或 implementation 决定仓库。它只是 glossary，nothing else。</p>
-<h3>Offer ADRs sparingly（谨慎 offer ADR）</h3>
-<p>仅当三者皆真时才 offer 创建 ADR：</p>
-<ol>
-<li><strong>Hard to reverse</strong>——之后改主意的 cost meaningful</li>
-<li><strong>Surprising without context</strong>——future reader 会 wonder「为何这样做？」</li>
-<li><strong>The result of a real trade-off</strong>——有 genuine alternative，因 specific reason 选了一个</li>
-</ol>
-<p>任一缺失则 skip ADR。格式见 <a href="/matt-pocock-skills/docs/skills/engineering/grill-with-docs/ADR-FORMAT.html">ADR-FORMAT.md</a>。</p>
-<p></supporting-info></p></article>
+    <article class="content"><p>运行 <code>/grilling</code> session，使用 <code>/domain-modeling</code> skill。</p></article>
     <p class="footer-note">由 <code>skills/engineering/grill-with-docs/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
     </main>
   </div>

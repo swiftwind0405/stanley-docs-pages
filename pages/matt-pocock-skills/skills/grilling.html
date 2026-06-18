@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>interface-design · Matt Pocock Skills</title>
+  <title>grilling · Matt Pocock Skills</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -248,44 +248,18 @@ main {
     <a class="nav-link" href="/matt-pocock-skills/index.html">概览</a>
   </aside>
     <main>
-    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / interface-design</nav>
+    <nav class="crumb" aria-label="breadcrumb"><a href="/">README 目录</a> / <a href="/matt-pocock-skills/index.html">matt-pocock-skills</a> / /grilling</nav>
         <header class="page-header">
-      <h1>interface-design</h1>
+      <h1>/grilling</h1>
       <div class="page-meta">
-        <span class="source-tag">参考文档</span>
-        <span>skills/engineering/tdd/interface-design.zh-CN.md</span>
+        <span class="source-tag">面向用户的技能文档</span>
+        <span>skills/productivity/grilling/SKILL.zh-CN.md</span>
       </div>
     </header>
-    <article class="content"><h1>可测试性 Interface 设计</h1>
-<p>好 interface 使测试 natural：</p>
-<ol>
-<li><strong>接受 dependency，不要内部创建</strong></li>
-</ol>
-<p>```typescript<br>
-   // Testable<br>
-   function processOrder(order, paymentGateway) {}</p>
-<p>// Hard to test<br>
-   function processOrder(order) {<br>
-     const gateway = new StripeGateway();<br>
-   }<br>
-   ```</p>
-<ol start="2">
-<li><strong>返回结果，不要产生 side effect</strong></li>
-</ol>
-<p>```typescript<br>
-   // Testable<br>
-   function calculateDiscount(cart): Discount {}</p>
-<p>// Hard to test<br>
-   function applyDiscount(cart): void {<br>
-     cart.total -= discount;<br>
-   }<br>
-   ```</p>
-<ol start="3">
-<li><strong>小 surface area</strong><br>
-   - 方法越少 = 所需 test 越少<br>
-   - 参数越少 = test setup 越简单</li>
-</ol></article>
-    <p class="footer-note">由 <code>skills/engineering/tdd/interface-design.zh-CN.md</code> 自动生成。</p>
+    <article class="content"><p>就本计划的每个方面 relentless interview 我，直到 shared understanding。沿设计树每个 branch 走下去，逐一 resolve 决定间依赖。每个问题给出你的 recommended answer。</p>
+<p>一次只问一个问题，等每个问题的 feedback 再继续。一次问多个问题会让人困惑。</p>
+<p>若问题可通过探索代码库回答，则探索代码库。</p></article>
+    <p class="footer-note">由 <code>skills/productivity/grilling/SKILL.zh-CN.md</code> 自动生成。英文原版见 mattpocock-skills 仓库。</p>
     </main>
   </div>
 </body>
