@@ -5,6 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>08 考勤月度核对（追觅类） · 考勤技能图谱</title>
 <link rel="stylesheet" href="_detail.css">
+<style>
+  .note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .note-card { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 11px 14px; border-left: 3px solid var(--ink-3); }
+  .note-card .nk { font-family: var(--mono); font-size: 11px; letter-spacing: 0.6px; color: var(--ink-3); margin-bottom: 4px; }
+  .note-card .nv { font-size: 13px; color: var(--ink-2); line-height: 1.45; }
+  .redline { background: var(--p0-bg); border: 1px solid var(--p0-br); border-radius: 6px; padding: 13px 16px; display: flex; gap: 11px; align-items: flex-start; font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+  .redline .rl { font-family: var(--mono); font-weight: 700; color: var(--p0); letter-spacing: 1px; flex-shrink: 0; }
+  .redline ul { margin: 0; padding-left: 16px; }
+  .redline li { padding: 2px 0; }
+  .rule-block { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; padding: 14px 17px; border-left: 3px solid var(--p1); margin-bottom: 10px; }
+  .rule-block .rb-h { font-family: var(--serif); font-size: 16px; color: var(--ink); margin-bottom: 6px; }
+  .rule-block .rb-h .pct { font-family: var(--mono); font-size: 11px; color: var(--p1); background: var(--p1-bg); border: 1px solid var(--p1-br); padding: 1px 7px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
+  .rule-block ul { margin: 0; padding-left: 18px; }
+  .rule-block li { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; padding: 1px 0; }
+  .bench-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .bench-item { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 12px 15px; border-left: 3px solid var(--p2); }
+  .bench-item .bl { font-size: 13px; color: var(--ink-2); margin-bottom: 4px; }
+  .bench-item .bv { font-family: var(--mono); font-size: 15px; color: var(--p2); font-weight: 600; }
+  .road-item .on .st { font-family: var(--mono); font-size: 11px; padding: 1px 7px; border-radius: 99px; margin-left: 8px; letter-spacing: 0.4px; }
+  .road-item .st.p0t { color: var(--p0); background: var(--p0-bg); border: 1px solid var(--p0-br); }
+  .road-item .st.p1t { color: var(--p1); background: var(--p1-bg); border: 1px solid var(--p1-br); }
+</style>
 </head>
 <body>
 <main>
@@ -20,7 +42,7 @@
   <header class="hero">
     <div class="hero-num p0">08</div>
     <div class="hero-title">
-      <div class="crumb">编排 · A 型（追觅）</div>
+      <div class="crumb">入口与编排 · 月度核对编排</div>
       <h1>考勤月度核对（追觅类）</h1>
       <div class="slug">attendance-monthly-reconcile</div>
     </div>
@@ -31,23 +53,217 @@
     </div>
   </header>
 
-  <div class="intent p0"><div class="lead">把 HRO 外包场景「数据员考勤表 → 员工核对 → 问题跟进 → HR 审核包」的月度流程标准化。<span class="em">负责流程编排与阶段门禁；</span>归档用 data-prep、异常用 exception-review、备注用 remarks。从 HR 操作录屏蒸馏，覆盖 80% 飞书打卡场景。</div></div>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FLOW TYPES</h2><span class="sec-zh">客户画像 / 流程类型</span></div><div class="flow-grid"><div class="flow-card"><div class="ft"><span class="l">适用画像</span></div><div class="fd">数据员按月导出考勤汇总（常无身份证）；80% 飞书打卡，20% 链接打卡需分支；按考勤部门拆表；数百人 / 2 名 HR</div></div><div class="flow-card"><div class="ft"><span class="l">试点客户</span></div><div class="fd">追觅（本 skill 首发来源）</div></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>追觅类月度考勤核对</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>数据员表整理、按人发考勤</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>飞书凭证跟进、夜班/公出/迟到处理</span></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>客户/目录名 + 薪资月 YYYYMM</li><li>当月花名册（含离职但当月计薪）</li><li>数据员原始考勤表（多 sheet/多文件按考勤部门）</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>reference_roster.xlsx（含考勤部门）</li><li>整理后数据员表 + 按人切片截图 + 画数</li><li>改表凭证 + 员工确认的审核包</li></ul></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>PHASE GATES</h2><span class="sec-zh">阶段门禁（按序）</span><span class="meta">7 阶段 · 不可跳门</span></div><ol class="timeline"><li class="step gate"><div class="step-num">0</div><div class="step-body"><div class="step-title">花名册与考勤部门<span class="gateflag">GATE</span></div><div class="step-desc">每人有考勤部门；职位与 HRO 已核对。新增员工对比上月表归入对应考勤部门。</div></div></li><li class="step gate"><div class="step-num">1–2</div><div class="step-body"><div class="step-title">原始表备份 + 先对人头<span class="gateflag">GATE</span></div><div class="step-desc">整表复制留原始版；working copy 补身份证/职位；只统计人数与花名册比对，<strong>未改考勤数据</strong>。</div></div></li><li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">整理数据员表<span class="gateflag">GATE</span></div><div class="step-desc">隐藏求和为 0 的列；请假只留事假/调休；调休加入实际出勤；迟到首次发放前不扣。</div></div></li><li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">按人截图发放<span class="gateflag">GATE</span></div><div class="step-desc">截员工行至「总计」列 + 画数模板，飞书/微信发，核对无误标记通过。</div></div></li><li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">问题跟进<span class="gateflag">GATE</span></div><div class="step-desc">加班按考勤部门班次规则；夜班跨天 Day1 上班 + Day2 下班；公出索要每日截图；迟到扣 0.5 天；事假追问假别。</div></div></li><li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">二次确认<span class="gateflag">GATE</span></div><div class="step-desc">改表后必须员工回复「核对无误」才闭环。</div></div></li><li class="step gate"><div class="step-num">7</div><div class="step-body"><div class="step-title">审核包<span class="gateflag">GATE</span></div><div class="step-desc">问题员工归档改表截图 + 凭证 + 确认；无问题员工保留「核对无误」文字。</div></div></li></ol></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item down"><span class="ar">→</span><div>编排调用 <a class="wl" href="attendance-data-prep.html">data-prep</a> 归档 → <a class="wl" href="attendance-exception-review.html">exception-review</a> 异常 → <a class="wl" href="attendance-remarks.html">remarks</a> 终审备注。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>不适用劳勤 WTS / PDF + 确认单客户 → 改用 <a class="wl" href="attendance-laoqin-monthly.html">laoqin-monthly</a>。</div></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>花名册每人有考勤部门。</span></li><li><span class="ck">✓</span><span>人头核对记录无未解释差异。</span></li><li><span class="ck">✓</span><span>首次发放前已完成阶段 3 三项整理。</span></li><li><span class="ck">✓</span><span>每名员工有「核对无误」或完整问题处理链。</span></li><li><span class="ck">✓</span><span>有问题员工审核包含改表 + 凭证 + 确认。</span></li></ul></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>未核对花名册人头差异就开始按人发放。</div></div><div class="fail-item"><span class="ico">✗</span><div>把链接打卡员工（约 20%）硬套飞书打卡流程，不单独分支。</div></div><div class="fail-item"><span class="ico">✗</span><div>数据员表未统一格式就跳过阶段 3 整理。</div></div><div class="fail-item"><span class="ico">✗</span><div>员工反馈问题后只改表、不收集凭证或未记录处理链。</div></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code># 编排调用下游 skill
+  <div class="intent p0"><div class="lead">把 HRO 外包场景下「数据员考勤表 → 员工核对 → 问题跟进 → HR 审核包」的月度流程标准化。<span class="em">本 skill 负责流程编排与八阶段门禁（阶段 0–7，不可跳门）；</span>数据归档交 <strong>data-prep</strong>、异常清单交 <strong>exception-review</strong>、备注生成交 <strong>remarks</strong>。从追觅考勤组操作录屏蒸馏，覆盖 80% 飞书打卡场景。</div></div>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>CLIENT PROFILE</h2><span class="sec-zh">适用客户画像 / 试点</span></div>
+    <div class="flow-grid">
+      <div class="flow-card"><div class="ft"><span class="l">数据源</span>数据员月导出</div><div class="fd">数据员按月导出考勤汇总表，常无身份证号。</div></div>
+      <div class="flow-card"><div class="ft"><span class="l">打卡</span>80 / 20</div><div class="fd">80% 员工飞书打卡，20% 可能链接打卡或其他，需单独分支。</div></div>
+      <div class="flow-card"><div class="ft"><span class="l">拆表</span>按考勤部门</div><div class="fd">按考勤部门拆分多表，每部门一套加班班次规则。</div></div>
+      <div class="flow-card"><div class="ft"><span class="l">规模</span>数百人 / 2 HR</div><div class="fd">数百人，2 名 HR 各负责约一半。</div></div>
+      <div class="flow-card"><div class="ft"><span class="l">试点</span>追觅</div><div class="fd">追觅（本 skill 首发来源），约 320 人 / 2 人。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div>
+    <div class="trigger-grid">
+      <div class="trigger-chip"><span class="bullet">▸</span><span>追觅考勤 / 月度考勤核对</span></div>
+      <div class="trigger-chip"><span class="bullet">▸</span><span>考勤表整理 / 数据员表整理</span></div>
+      <div class="trigger-chip"><span class="bullet">▸</span><span>按人发考勤</span></div>
+      <div class="trigger-chip"><span class="bullet">▸</span><span>attendance monthly reconcile / 考勤月度核对</span></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊞</span><h2>SESSION ENTRY</h2><span class="sec-zh">会话入口</span></div>
+    <div class="note-grid" style="margin-bottom:12px;">
+      <div class="note-card"><div class="nk">1 · 客户/目录名</div><div class="nv"><code>data/raw/</code> 下子目录名</div></div>
+      <div class="note-card"><div class="nk">2 · 薪资月</div><div class="nv"><code>YYYYMM</code></div></div>
+      <div class="note-card"><div class="nk">3 · 当月花名册</div><div class="nv">HRO 导出，含离职但当月计薪人员</div></div>
+      <div class="note-card"><div class="nk">4 · 数据员原始表</div><div class="nv">可能多 sheet / 多文件，按考勤部门拆分</div></div>
+    </div>
+    <div class="code-wrap"><div class="code-bar">ENV · 环境变量</div><pre class="code"><code>DATASET_NAME="&lt;目录名&gt;"
+PAY_PERIOD="&lt;YYYYMM&gt;"
+SOURCE_DIR="data/raw/${DATASET_NAME}"
+OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"</code></pre></div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div>
+    <div class="io-row">
+      <div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul>
+        <li>当月花名册（含离职但当月计薪，姓名/身份证/部门/职位/入离职日期）</li>
+        <li>顾问各考勤部门当月人员清单</li>
+        <li>数据员原始考勤表（多 sheet/多文件按考勤部门拆分）</li>
+      </ul></div>
+      <div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul>
+        <li>reference_roster.xlsx（含「考勤部门」列）</li>
+        <li>整理后数据员表 + 按人切片截图（个人切片 + 画数）</li>
+        <li>问题员工审核包：改表截图 + 飞书凭证 + 「核对无误」确认</li>
+        <li>下游产物 exception_review.xlsx / attendance_remarks.xlsx</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>PHASE GATES</h2><span class="sec-zh">阶段门禁（必须按序）</span><span class="meta">阶段 0–7 · 八阶段 · 不可跳门</span></div>
+    <ol class="timeline">
+      <li class="step gate"><div class="step-num">0</div><div class="step-body"><div class="step-title">花名册与考勤部门<span class="gateflag">GATE</span></div><div class="step-desc">每人有「考勤部门」列（HR 维护，非原始字段）；职位与 HRO 按身份证号已核对。新增员工对比本月各表 vs 上月，出现在哪张表即属该考勤部门。产出 <code>reference_roster.xlsx</code>。</div></div></li>
+      <li class="step gate"><div class="step-num">1</div><div class="step-body"><div class="step-title">原始表备份 + 补字段<span class="gateflag">GATE</span></div><div class="step-desc">数据员表整表复制保留原始版；working copy 用 VLOOKUP 花名册补身份证号、职位。</div></div></li>
+      <li class="step gate"><div class="step-num">2</div><div class="step-body"><div class="step-title">先对人头<span class="gateflag">GATE</span></div><div class="step-desc">只统计人数与花名册比对、记录差异，<strong>此阶段不改任何考勤数据</strong>。</div></div></li>
+      <li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">整理数据员表（发员工前）<span class="gateflag">GATE</span></div><div class="step-desc">隐藏求和为 0 的列；请假只留事假/调休；调休假天数加入实际出勤；迟到早退首次发放前不扣。</div></div></li>
+      <li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">按人截图发放<span class="gateflag">GATE</span></div><div class="step-desc">截员工行到「总计」列（含按日明细）+ 附「画数」汇总模板，飞书/微信发送。每人已发「个人切片 + 画数」。</div></div></li>
+      <li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">问题跟进<span class="gateflag">GATE</span></div><div class="step-desc">仅处理反馈有问题的员工：加班、夜班、公出、迟到、事假（细则见下）。改表标黄 + 批注。</div></div></li>
+      <li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">二次确认<span class="gateflag">GATE</span></div><div class="step-desc">改表后必须员工回复「<strong>核对无误</strong>」才闭环。</div></div></li>
+      <li class="step gate"><div class="step-num">7</div><div class="step-body"><div class="step-title">审核包<span class="gateflag">GATE</span></div><div class="step-desc">问题员工 Sheet 附改表截图 + 原始确认 + 飞书凭证一并归档；无问题员工保留「核对无误」文字即可。</div></div></li>
+    </ol>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⛔</span><h2>RED LINES</h2><span class="sec-zh">门禁红线 · 禁止</span></div>
+    <div class="redline"><span class="rl">禁止</span><ul>
+      <li>未做人头核对就改数据。</li>
+      <li>未首次发放就预扣迟到。</li>
+      <li>未员工确认就提交 HR。</li>
+    </ul></div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">▤</span><h2>STAGE 3 DETAIL</h2><span class="sec-zh">阶段 3 整理细则</span></div>
+    <div class="rule-block">
+      <div class="rb-h">按序执行</div>
+      <ul>
+        <li><strong>3.1</strong> 隐藏求和为 0 的列（严重迟到、旷工等本月无数据列）。</li>
+        <li><strong>3.2</strong> 请假列只保留：事假、调休假（其余隐藏）。</li>
+        <li><strong>3.3</strong> 调休假天数 += 实际出勤天数（系统实际出勤不含调休）。</li>
+        <li><strong>3.4</strong> 迟到早退：首次发放前不扣，等员工反馈。</li>
+      </ul>
+    </div>
+    <div class="rule-block">
+      <div class="rb-h">参考列 / 不做</div>
+      <ul>
+        <li>参考列：应出勤天数、实际出勤天数、事假、调休假、工作日/休息日/节假日加班、关联调休、不关联调休、按日明细列。</li>
+        <li><strong>不做</strong>：预核加班、预处夜班/公出。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌖</span><h2>STAGE 5 DETAIL</h2><span class="sec-zh">阶段 5 问题跟进细则</span></div>
+    <div class="rule-block">
+      <div class="rb-h">5.1 加班<span class="pct">飞书考勤日历截图</span></div>
+      <ul>
+        <li>按<strong>考勤部门</strong>查班次规则（见 <code>rules_catalog_draft.md</code>）。</li>
+        <li>工作日加班 = 实际下班 − 规定下班 − 晚餐 0.5h。</li>
+        <li>周末看「小月亮」+ 加班申请「是否关联调休」：<strong>是</strong> → 整天计入关联调休；<strong>否</strong> → 计入不关联调休（加班费）。</li>
+        <li>改表：标黄 + 批注，更新工作日/休息日/节假日合计。</li>
+      </ul>
+    </div>
+    <div class="rule-block">
+      <div class="rb-h">5.2 夜班<span class="pct">约 3%</span></div>
+      <ul>
+        <li>顾问月初提供名单；跨天取 Day1 上班卡 + Day2 下班卡。</li>
+        <li>涉及 MOVA、洗地机测评中心等；系统常误显迟到。</li>
+      </ul>
+    </div>
+    <div class="rule-block">
+      <div class="rb-h">5.3 公出<span class="pct">约 3%</span></div>
+      <ul><li>有出勤天数无打卡时间 → 索要<strong>每日</strong>打卡截图。</li></ul>
+    </div>
+    <div class="rule-block">
+      <div class="rb-h">5.4 迟到 / 5.5 事假追问</div>
+      <ul>
+        <li>迟到：无补卡/请假 → 扣 0.5 天；首次发放不预扣。</li>
+        <li>事假：问清假别；年假查邮件；填「考勤特殊事项模板」发顾问。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div>
+    <div class="pipe-list">
+      <div class="pipe-item down"><span class="ar">→</span><div>源数据归档（推荐先做）：<a class="wl" href="attendance-data-prep.html">data-prep</a> · <code>prepare_attendance_data.py</code></div></div>
+      <div class="pipe-item down"><span class="ar">→</span><div>异常审核（阶段 5 之后）：<a class="wl" href="attendance-exception-review.html">exception-review</a> · <code>build_exception_review.py</code></div></div>
+      <div class="pipe-item down"><span class="ar">→</span><div>备注生成（终审后）：<a class="wl" href="attendance-remarks.html">remarks</a> · <code>build_attendance_remarks.py</code></div></div>
+      <div class="pipe-item side"><span class="ar">⤳</span><div>约 20% 链接打卡员工 / 数据员表格式不统一 → 流程未在本 skill 完整覆盖，需单独分支。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div>
+    <div class="code-wrap"><div class="code-bar">RUN · 编排调用三个下游 skill</div><pre class="code"><code># 源数据归档（推荐先做）
 uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_data.py \
-  data/raw/&lt;目录名&gt; outputs/&lt;目录名&gt;-&lt;YYYYMM&gt; --base-table &lt;花名册.xlsx&gt;
+  "${SOURCE_DIR}" "${OUTPUT_DIR}" \
+  --base-table &lt;花名册.xlsx&gt;
 
+# 异常审核（阶段 5 之后）
 uv run python skills/attendance/attendance-exception-review/scripts/build_exception_review.py \
-  outputs/&lt;目录名&gt;-&lt;YYYYMM&gt;/attachments &lt;YYYYMM&gt; ... --config &lt;config.json&gt;
+  "${OUTPUT_DIR}/attachments" "${PAY_PERIOD}" \
+  "${OUTPUT_DIR}/exception_review.xlsx" \
+  --reference-summary "${OUTPUT_DIR}/reference_roster.xlsx" \
+  --config &lt;attendance_config.json&gt;
 
+# 备注生成（终审后）
 uv run python skills/attendance/attendance-remarks/scripts/build_attendance_remarks.py \
-  outputs/&lt;目录名&gt;-&lt;YYYYMM&gt;/attachments &lt;YYYYMM&gt; ... --config &lt;config.json&gt;</code></pre></div></section>
+  "${OUTPUT_DIR}/attachments" "${PAY_PERIOD}" \
+  "${OUTPUT_DIR}/attendance_remarks.xlsx" \
+  --config &lt;attendance_config.json&gt; \
+  --reference-summary "${OUTPUT_DIR}/reference_roster.xlsx"</code></pre></div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◷</span><h2>BENCHMARK</h2><span class="sec-zh">耗时基准</span><span class="meta">追觅 320 人 / 2 人</span></div>
+    <div class="bench-grid">
+      <div class="bench-item"><div class="bl">整理数据员表</div><div class="bv">~3h <span style="font-size:11px;color:var(--ink-3);">两人合计</span></div></div>
+      <div class="bench-item"><div class="bl">按人发放</div><div class="bv">~50–60min</div></div>
+      <div class="bench-item"><div class="bl">问题跟进</div><div class="bv">~15min/人 <span style="font-size:11px;color:var(--ink-3);">夜班/公出</span></div></div>
+      <div class="bench-item"><div class="bl">合计（含跟进）</div><div class="bv">约 1 人日/月</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚙</span><h2>ROADMAP</h2><span class="sec-zh">自动化路线图</span></div>
+    <div class="out-list">
+      <div class="out-item road-item"><div class="on">normalize_attendance_workbook.py<span class="st p0t">P0 · 待实现</span></div><div class="od">数据员表规范化。</div></div>
+      <div class="out-item road-item"><div class="on">roster_headcount_diff.py<span class="st p0t">P0 · 待实现</span></div><div class="od">花名册与考勤表人头差异比对。</div></div>
+      <div class="out-item road-item"><div class="on">split_employee_slices.py<span class="st p1t">P1 · 待实现</span></div><div class="od">按人切片自动截图发放。</div></div>
+      <div class="out-item road-item"><div class="on">加班规则验算<span class="st p1t">P1 · 扩展现有</span></div><div class="od">扩展现有 exception-review，自动验算加班/关联调休。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✎</span><h2>NOTES</h2><span class="sec-zh">注意事项 / 蒸馏来源</span></div>
+    <div class="note-grid">
+      <div class="note-card"><div class="nk">数据员表不统一</div><div class="nv">约 80% 适用本流程，20% 需分支。</div></div>
+      <div class="note-card"><div class="nk">考勤部门命名</div><div class="nv">由<strong>客户</strong>定，非 HR 自定。</div></div>
+      <div class="note-card"><div class="nk">规则表前置</div><div class="nv"><code>rules_catalog_draft.md</code> 须顾问补全后才能自动化。</div></div>
+      <div class="note-card"><div class="nk">蒸馏来源</div><div class="nv">追觅（考勤组）视频会议录屏：workflow_draft.md（八阶段）、rules_catalog_draft.md、skill_outline.md、60 分钟访谈转写、关键操作截图。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div>
+    <ul class="checklist">
+      <li><span class="ck">✓</span><span>花名册每人有考勤部门。</span></li>
+      <li><span class="ck">✓</span><span>人头核对记录无未解释差异。</span></li>
+      <li><span class="ck">✓</span><span>首次发放前已完成阶段 3 三项整理。</span></li>
+      <li><span class="ck">✓</span><span>每名员工有「核对无误」或完整问题处理链。</span></li>
+      <li><span class="ck">✓</span><span>有问题员工审核包含改表 + 凭证 + 确认。</span></li>
+    </ul>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS &amp; RETRY</h2><span class="sec-zh">反例检查 / 失败重试</span></div>
+    <div class="fail-paths" style="margin-bottom:12px;">
+      <div class="fail-item"><span class="ico">✗</span><div>未核对花名册人头差异就开始按人发放。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>把链接打卡员工（约 20%）硬套飞书打卡流程，不单独分支。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>数据员表未统一格式就跳过阶段 3 整理。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>员工反馈问题后只改表、不收集凭证或未记录处理链。</div></div>
+    </div>
+    <div class="rule-block">
+      <div class="rb-h">失败重试</div>
+      <ul>
+        <li>人头差异无法解释 → 暂停发放，回阶段 1–2 核对花名册与考勤部门。</li>
+        <li>加班/夜班规则不清 → 先补 <code>rules_catalog_draft.md</code> 再验算，不凭经验改表。</li>
+        <li>下游 data-prep / exception-review 失败 → 修复输入目录后从失败阶段重跑，不跳过门禁。</li>
+        <li>凭证缺失 → 标记待追问，不将问题员工当作「核对无误」结案。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⟲</span><h2>RETROSPECTIVE</h2><span class="sec-zh">复盘沉淀</span></div>
+    <div class="note-grid">
+      <div class="note-card"><div class="nk">写入 LESSONS.md</div><div class="nv">新客户分支（链接打卡、特殊班次、数据员表格式）写入 LESSONS.md，稳定后再更新阶段门禁或自动化路线图。</div></div>
+      <div class="note-card"><div class="nk">已知高频风险</div><div class="nv">格式不统一跳过阶段 3 致口径不一致；链接打卡硬套分支；人头差异未解释发放会在阶段 5–6 放大为批量返工。</div></div>
+    </div>
+  </section>
 
   <footer>
     attendance-monthly-reconcile · 考勤自动化技能图谱 · HR Skills · 单文件详情页

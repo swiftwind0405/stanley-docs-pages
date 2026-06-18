@@ -5,6 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>09 劳勤月度考勤（核电类） · 考勤技能图谱</title>
 <link rel="stylesheet" href="_detail.css">
+<style>
+  /* 极小补充：仅复用既有变量，无新色值 */
+  .note-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 8px; }
+  .note-card { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 11px 14px; border-left: 3px solid var(--ink-3); font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .note-card .nt { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .6px; color: var(--ink); margin-bottom: 4px; }
+  .forbid { background: var(--p0-bg); border: 1px solid var(--p0-br); border-radius: 6px; padding: 11px 15px; margin-top: 12px; display: flex; gap: 11px; align-items: flex-start; }
+  .forbid .fl { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--p0); background: var(--paper); border: 1px solid var(--p0-br); border-radius: 99px; padding: 2px 8px; flex-shrink: 0; }
+  .forbid ul { list-style: none; display: grid; gap: 5px; }
+  .forbid li { font-size: 13px; color: var(--ink-2); line-height: 1.45; }
+  .forbid li:before { content: "✗ "; color: var(--p0); font-weight: 700; }
+  .road-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .road-table th, .road-table td { text-align: left; padding: 8px 12px; border-bottom: 1px dotted var(--line-soft); color: var(--ink-2); }
+  .road-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--ink-3); border-bottom: 1px solid var(--line); font-weight: 600; }
+  .road-table td.pri { font-family: var(--mono); font-weight: 700; color: var(--p1); }
+  .road-table td.scr { font-family: var(--mono); color: var(--ink); font-size: 12px; }
+  .road-table td.st { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .formula { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--p1); border-radius: 6px; padding: 14px 17px; font-family: var(--mono); font-size: 13px; line-height: 1.9; color: var(--ink-2); }
+  .formula .res { color: var(--ink); font-weight: 600; }
+  .formula .op { color: var(--p0); }
+</style>
 </head>
 <body>
 <main>
@@ -31,24 +51,176 @@
     </div>
   </header>
 
-  <div class="intent p0"><div class="lead">把「顾问名单 → 劳勤 WTS 导出 PDF → 科室 Excel 汇总 → 确认单回填 → 科服交付」的月度流程标准化。<span class="em">负责流程编排与阶段门禁；</span>PDF 归档用 data-prep、读取用 pdf-llm-preprocess、公式异常用 exception-review。</div></div>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FLOW TYPES</h2><span class="sec-zh">客户画像 / 流程类型</span></div><div class="flow-grid"><div class="flow-card"><div class="ft"><span class="l">适用画像</span></div><div class="fd">客户自有劳勤 WTS（非飞书/钉钉）；按科室/车间组织；主交付员工 PDF + 工作量确认单；靠科室确认单闭环</div></div><div class="flow-card"><div class="ft"><span class="l">试点客户</span></div><div class="fd">国家电投 / 核电（PMC North Qing wu）</div></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div><div class="trigger-grid"><div class="trigger-chip"><span class="bullet">▸</span><span>国家电投 / 核电月度考勤</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>劳勤 WTS 逐人导出 PDF</span></div><div class="trigger-chip"><span class="bullet">▸</span><span>工作量确认单回填、科服交付</span></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div><div class="io-row"><div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul><li>目录名 + 薪资月</li><li>顾问当月名单（含劳勤账号密码）</li><li>各科确认单空白模板</li><li>可选已核对跳过名单</li></ul></div><div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul><li>考勤PDF/<科室>/<姓名>.pdf（+ 出差申请单据）</li><li>科室 Excel + 回填确认单</li><li>科服 PDF 夹 + 确认单 + 加班说明</li></ul></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>PHASE GATES</h2><span class="sec-zh">阶段门禁（按序）</span><span class="meta">7 阶段 · 不可跳门</span></div><ol class="timeline"><li class="step gate"><div class="step-num">0</div><div class="step-body"><div class="step-title">收名单与确认单<span class="gateflag">GATE</span></div><div class="step-desc">各科模板齐全；已核对跳过名单已标记。</div></div></li><li class="step gate"><div class="step-num">1</div><div class="step-body"><div class="step-title">科室筛人 + 账号<span class="gateflag">GATE</span></div><div class="step-desc">按科室打开顾问名单，复制劳勤工号/密码，与确认单模板逐一比对。</div></div></li><li class="step gate"><div class="step-num">2</div><div class="step-body"><div class="step-title">劳勤导出 PDF<span class="gateflag">GATE</span></div><div class="step-desc">逐人登录 WorkbenchCalendar，切月份，打印保存 PDF，文件名 = 员工姓名。</div></div></li><li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">填科室 Excel<span class="gateflag">GATE</span></div><div class="step-desc">标黄周末加班、法定假日行、批注转调休；出差导 PDF；公式每月按 30/31 天调整，调休列手工。</div></div></li><li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">加班费合计<span class="gateflag">GATE</span></div><div class="step-desc">公休日 + 延长工时 + 法定节假日 − 已执行换休（顾问书面确认后写 config）。</div></div></li><li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">回填确认单<span class="gateflag">GATE</span></div><div class="step-desc">Excel 汇总列复制到确认单对应行；标注出勤工作日天数。</div></div></li><li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">交付科服<span class="gateflag">GATE</span></div><div class="step-desc">各员工考勤 PDF 文件夹（含出差单据）+ 各科签字确认单 + 加班说明。</div></div></li></ol></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div><div class="pipe-list"><div class="pipe-item down"><span class="ar">→</span><div>编排调用 <a class="wl" href="attendance-data-prep.html">data-prep</a> 归档 PDF → pdf-llm-preprocess 读 PDF → <a class="wl" href="attendance-exception-review.html">exception-review</a> 查公式/单据异常。</div></div><div class="pipe-item side"><span class="ar">⤳</span><div>不适用追觅类数据员宽表客户 → 改用 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a>。</div></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div><ul class="checklist"><li><span class="ck">✓</span><span>各科确认单人员与顾问名单一致。</span></li><li><span class="ck">✓</span><span>每人有劳勤 PDF（出差另有申请单据 PDF）。</span></li><li><span class="ck">✓</span><span>Excel 加班费合计与确认单一致。</span></li><li><span class="ck">✓</span><span>已核对名单人员已跳过。</span></li><li><span class="ck">✓</span><span>PDF 夹 + 确认单已交付科服。</span></li></ul></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div><div class="fail-paths"><div class="fail-item"><span class="ico">✗</span><div>套用 monthly-reconcile 的按人截图、飞书凭证流程。</div></div><div class="fail-item"><span class="ico">✗</span><div>未核对顾问名单就开始逐人劳勤导出。</div></div><div class="fail-item"><span class="ico">✗</span><div>确认单回填后未验算 Excel 加班费合计。</div></div><div class="fail-item"><span class="ico">✗</span><div>21 个科室模板结构不一致却未记录在 rules_catalog_draft.md。</div></div></div></section>
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div><div class="code-wrap"><div class="code-bar">RUN · 运行命令</div><pre class="code"><code># 编排调用下游 skill
+  <div class="intent p0"><div class="lead">把「顾问名单 → 劳勤 WTS 逐人导出 PDF → 科室 Excel 汇总 → 确认单回填 → 科服交付」的月度流程标准化。<span class="em">本 skill 只负责流程编排与阶段门禁；</span>PDF 归档交 <strong>data-prep</strong>、PDF 读取交 <strong>pdf-llm-preprocess</strong>、公式/单据异常交 <strong>exception-review</strong>。</div></div>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">◧</span><h2>FIT &amp; CLIENTS</h2><span class="sec-zh">适用画像 / 试点 / 不适用</span></div>
+    <div class="flow-grid">
+      <div class="flow-card"><div class="ft"><span class="l">D</span>适用画像</div><div class="fd">客户自有<strong>劳勤 WTS</strong> 考勤系统（非飞书/钉钉宽表）；按<strong>客户科室/车间</strong>组织（非「考勤部门」）；主交付员工考勤 PDF + 「人员工作量及考核结果确认单」；靠科室确认单闭环，不逐一截图核对。</div></div>
+      <div class="flow-card"><div class="ft"><span class="l">✦</span>试点客户</div><div class="fd">国家电投 / 核电（PMC North Qing wu）。21 个科室，各科一份确认单模板。</div></div>
+      <div class="flow-card"><div class="ft"><span class="l">✗</span>不适用</div><div class="fd">追觅类数据员宽表流程 → 改用 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a>，勿套用按人截图、飞书凭证。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚡</span><h2>TRIGGERS</h2><span class="sec-zh">触发场景</span></div>
+    <div class="trigger-grid">
+      <div class="trigger-chip"><span class="bullet">▸</span><span>国家电投 / 核电月度考勤</span></div>
+      <div class="trigger-chip"><span class="bullet">▸</span><span>劳勤 WTS 逐人导出 PDF</span></div>
+      <div class="trigger-chip"><span class="bullet">▸</span><span>工作量确认单回填、核电确认单</span></div>
+      <div class="trigger-chip"><span class="bullet">▸</span><span>约每月 10–11 日接收月度名单</span></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↹</span><h2>INPUT &amp; OUTPUT</h2><span class="sec-zh">输入 / 产出</span></div>
+    <div class="io-row">
+      <div class="io-col io-in"><div class="io-label">↘ INPUT · 输入</div><ul>
+        <li>目录名（<code>data/raw/</code> 下）+ 薪资月 <code>YYYYMM</code></li>
+        <li>顾问提供的当月核对名单（含劳勤账号/密码）</li>
+        <li>各科确认单空白模板路径</li>
+        <li>可选：已核对跳过名单（本月不做劳勤）</li>
+      </ul></div>
+      <div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul>
+        <li>考勤PDF/&lt;科室&gt;/&lt;姓名&gt;.pdf（出差另有 &lt;姓名&gt;-申请单据.pdf）</li>
+        <li>科室 Excel 汇总表</li>
+        <li>回填的「人员工作量及考核结果确认单」</li>
+        <li>交付科服：PDF 文件夹 + 确认单 + 加班说明</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊞</span><h2>CONFIRMATION COLS</h2><span class="sec-zh">确认单关键回填列</span></div>
+    <div class="out-list">
+      <div class="out-item"><div class="on">出勤工作日天数</div><div class="od">科服津贴据此计；阶段 5 回填时单独标注。</div></div>
+      <div class="out-item"><div class="on">公休日加班小时数 / 延长工作时间小时数 / 法定节假日加班小时数</div><div class="od">三项加班口径，分别对应 Excel 标黄列、延长工时列、法定假日行。</div></div>
+      <div class="out-item"><div class="on">已执行/计划执行换休小时数</div><div class="od">含计划换休，从合计中扣减；勿只算已执行。</div></div>
+      <div class="out-item"><div class="on">计算加班费小时数（本月合计）</div><div class="od">由上述三加班项减换休得出，须顾问书面确认后写入 <code>attendance_config.json</code>。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">🪜</span><h2>PHASE GATES</h2><span class="sec-zh">阶段门禁（必须按序）</span><span class="meta">7 阶段 0–6 · 不可跳门</span></div>
+    <ol class="timeline">
+      <li class="step gate"><div class="step-num">0</div><div class="step-body"><div class="step-title">收名单与确认单<span class="gateflag">GATE</span></div><div class="step-desc">约每月 10–11 日接收。各科模板齐全；已核对跳过名单已标记。</div></div></li>
+      <li class="step gate"><div class="step-num">1</div><div class="step-body"><div class="step-title">科室筛人 + 账号<span class="gateflag">GATE</span></div><div class="step-desc">按科室打开顾问名单（如「生产技术部-结构科」），复制每人劳勤工号/密码，与确认单模板逐一比对。门禁：本科室人员与确认单行数一致。</div></div></li>
+      <li class="step gate"><div class="step-num">2</div><div class="step-body"><div class="step-title">劳勤导出 PDF<span class="gateflag">GATE</span></div><div class="step-desc">逐人登录 WorkbenchCalendar 切月份，看汇总（出勤/差旅/加班/审批状态），打印保存 PDF，文件名=员工姓名。门禁：每人有 &lt;姓名&gt;.pdf（出差另有单据）。</div></div></li>
+      <li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">填科室 Excel<span class="gateflag">GATE</span></div><div class="step-desc">标黄周末加班、法定假日行、批注加班转调休；差旅&gt;0 走出差分支。门禁：日出勤/加班/调休与劳勤一致。</div></div></li>
+      <li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">加班费合计<span class="gateflag">GATE</span></div><div class="step-desc">公休日 + 延长工时 + 法定节假日 − 已执行/计划执行换休小时数。门禁：公式已按月调整；合计列已算。</div></div></li>
+      <li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">回填确认单<span class="gateflag">GATE</span></div><div class="step-desc">Excel 汇总列复制到确认单对应行，标注出勤工作日天数。门禁：各科确认单与 Excel 一致。</div></div></li>
+      <li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">交付科服<span class="gateflag">GATE</span></div><div class="step-desc">各员工考勤 PDF 文件夹（含出差单据）+ 各科签字确认单 + 加班情况说明。门禁：PDF 夹 + 确认单已发出。</div></div></li>
+    </ol>
+    <div class="forbid"><span class="fl">禁止</span><ul>
+      <li>未导出劳勤 PDF 就填确认单。</li>
+      <li>未处理出差单据就交付科服。</li>
+      <li>跳过公式按月（30/31 天）调整。</li>
+    </ul></div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊟</span><h2>LAOQIN SYSTEM</h2><span class="sec-zh">劳勤系统操作与状态口径</span></div>
+    <div class="note-grid">
+      <div class="note-card"><div class="nt">系统路径</div>劳勤 WTS 4.0 → 考勤日历 <code>WorkbenchCalendar</code>。登录需账号 + 密码 + 验证码；切换用户 = 右上角退出后下一员工登录。</div>
+      <div class="note-card"><div class="nt">延长工作时间审批中</div>员工已申请、领导未批 —— <strong>仍按申请/实际时长填 Excel</strong>，不因审批未过而漏记。</div>
+      <div class="note-card"><div class="nt">双休日加班</div>表现为日历<strong>橙色格</strong>；填 Excel 时该列标黄（公休日加班）。</div>
+      <div class="note-card"><div class="nt">差旅 &gt; 0</div>进入阶段 3 <strong>出差分支</strong>，须导出出差审批 PDF 与考勤同目录归档。</div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✈</span><h2>TRAVEL &amp; FORMULA</h2><span class="sec-zh">出差分支与 Excel 公式注意</span></div>
+    <ol class="timeline">
+      <li class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">打开已通过出差申请单据</div><div class="step-desc">在劳勤中定位该员工已审批通过的出差申请。</div></div></li>
+      <li class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">展开跨月全部时段</div><div class="step-desc">确保跨月出差的所有时段都展开可见。</div></div></li>
+      <li class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">导出出差审批 PDF</div><div class="step-desc">与考勤 PDF 同目录命名：<code>姓名.pdf</code> + <code>姓名-申请单据.pdf</code>。</div></div></li>
+    </ol>
+    <div class="note-grid" style="margin-top:12px;">
+      <div class="note-card"><div class="nt">公休日 / 工作日加班列</div>有公式，<strong>每月须按 30/31 天调整</strong>，否则合计偏差。</div>
+      <div class="note-card"><div class="nt">调休列</div><strong>无公式，手工记录</strong>（批注加班转调休，如 7.5h）。</div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">∑</span><h2>OVERTIME TOTAL</h2><span class="sec-zh">加班费合计公式</span></div>
+    <div class="formula">
+      <span class="res">计算加班费小时数（本月合计）</span><br>
+      &nbsp;&nbsp;<span class="op">=</span> 公休日加班小时数<br>
+      &nbsp;&nbsp;<span class="op">+</span> 延长工作时间小时数<br>
+      &nbsp;&nbsp;<span class="op">+</span> 法定节假日加班小时数<br>
+      &nbsp;&nbsp;<span class="op">−</span> 已执行/计划执行换休小时数
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⇄</span><h2>PIPELINE</h2><span class="sec-zh">与其他 skill 衔接</span></div>
+    <div class="pipe-list">
+      <div class="pipe-item down"><span class="ar">→</span><div>归档劳勤 PDF（推荐）→ <a class="wl" href="attendance-data-prep.html">data-prep</a> 的 <code>prepare_attendance_data.py</code>。</div></div>
+      <div class="pipe-item down"><span class="ar">→</span><div>PDF 视觉/文本预处理（辅助读取出勤加班）→ pdf-llm-preprocess 的 <code>pdf_llm_preprocess.py</code>。</div></div>
+      <div class="pipe-item down"><span class="ar">→</span><div>异常审核（审批中、出差缺单据、公式不平）→ <a class="wl" href="attendance-exception-review.html">exception-review</a> 的 <code>build_exception_review.py</code>。</div></div>
+      <div class="pipe-item side"><span class="ar">⤳</span><div>追觅类数据员宽表客户不适用 → 改用 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a>。</div></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令（编排调用下游）</span></div>
+    <div class="code-wrap"><div class="code-bar">RUN · 会话入口变量 + 下游 skill</div><pre class="code"><code>DATASET_NAME="PMC North Qing wu 国家电投考勤"
+PAY_PERIOD="&lt;YYYYMM&gt;"
+SOURCE_DIR="data/raw/${DATASET_NAME}"
+OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"
+
+# 1. 按人/科室归档劳勤 PDF（推荐）
 uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_data.py \
-  data/raw/&lt;目录名&gt; outputs/&lt;目录名&gt;-&lt;YYYYMM&gt; --base-table &lt;顾问名单.xlsx&gt;
+  "${SOURCE_DIR}" "${OUTPUT_DIR}" \
+  --base-table &lt;顾问名单.xlsx&gt;
 
+# 2. PDF 视觉/文本预处理（辅助读取出勤加班）
 uv run python skills/utility/pdf-llm-preprocess/scripts/pdf_llm_preprocess.py \
-  outputs/&lt;目录名&gt;-&lt;YYYYMM&gt;/考勤PDF/&lt;科室&gt;/&lt;姓名&gt;.pdf \
-  --out-dir outputs/&lt;目录名&gt;-&lt;YYYYMM&gt;/pdf_pages/&lt;姓名&gt;
+  "${OUTPUT_DIR}/考勤PDF/&lt;科室&gt;/&lt;姓名&gt;.pdf" \
+  --out-dir "${OUTPUT_DIR}/pdf_pages/&lt;姓名&gt;"
 
+# 3. 异常审核（审批中、出差缺单据、公式不平）
 uv run python skills/attendance/attendance-exception-review/scripts/build_exception_review.py \
-  outputs/&lt;目录名&gt;-&lt;YYYYMM&gt; &lt;YYYYMM&gt; ... --config &lt;config.json&gt;</code></pre></div></section>
+  "${OUTPUT_DIR}" "${PAY_PERIOD}" \
+  "${OUTPUT_DIR}/exception_review.xlsx" \
+  --source-dir "${SOURCE_DIR}" \
+  --config &lt;attendance_config.json&gt;</code></pre></div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⚙</span><h2>ROADMAP</h2><span class="sec-zh">自动化路线图</span><span class="meta">耗时 · 约 1 人日/月</span></div>
+    <table class="road-table">
+      <thead><tr><th>优先级</th><th>脚本</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td class="pri">P0</td><td class="scr">fill_confirmation_form.py</td><td class="st">待实现</td></tr>
+        <tr><td class="pri">P1</td><td class="scr">validate_overtime_totals.py</td><td class="st">待实现</td></tr>
+        <tr><td class="pri">P1</td><td class="scr">organize_laoqin_pdfs.py</td><td class="st">待实现</td></tr>
+        <tr><td class="pri">P2</td><td class="scr">劳勤批量导出</td><td class="st">依赖系统 API，短期 SOP 为主</td></tr>
+      </tbody>
+    </table>
+    <div class="note-grid" style="margin-top:12px;">
+      <div class="note-card"><div class="nt">耗时基准</div>逐人劳勤登录+导出 数分钟/人；科室 Excel + 确认单视人数；全项目（专注考勤）约 <strong>1 人日/月</strong>。</div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">↺</span><h2>RETRY &amp; NOTES</h2><span class="sec-zh">失败重试 / 注意事项</span></div>
+    <div class="note-grid">
+      <div class="note-card"><div class="nt">登录/导出失败</div>记录失败人员单独重试，<strong>不跳门</strong>继续汇总。</div>
+      <div class="note-card"><div class="nt">PDF 识别失败</div>先跑 data-prep / pdf-llm-preprocess 修复后再回填确认单。</div>
+      <div class="note-card"><div class="nt">合计不一致</div>回到对应科室 Excel 逐行核对，<strong>不直接交付</strong>科服。</div>
+      <div class="note-card"><div class="nt">域名/界面变更</div>以顾问最新 SOP 为准（视频为 <code>att.snpmc.com</code>），不沿用过期录屏。</div>
+      <div class="note-card"><div class="nt">21 个科室模板</div>结构应一致，差异须记录在 <code>rules_catalog_draft.md</code>。</div>
+      <div class="note-card"><div class="nt">操作视频</div>两段内容基本一致，处理一份即可。</div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收</span></div>
+    <ul class="checklist">
+      <li><span class="ck">✓</span><span>各科确认单人员与顾问名单一致。</span></li>
+      <li><span class="ck">✓</span><span>每人有劳勤 PDF（出差另有申请单据 PDF）。</span></li>
+      <li><span class="ck">✓</span><span>Excel 加班费合计与确认单一致。</span></li>
+      <li><span class="ck">✓</span><span>已核对名单人员已跳过。</span></li>
+      <li><span class="ck">✓</span><span>PDF 夹 + 确认单已交付科服。</span></li>
+    </ul>
+  </section>
+
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⊘</span><h2>ANTI-PATTERNS</h2><span class="sec-zh">反例检查</span></div>
+    <div class="fail-paths">
+      <div class="fail-item"><span class="ico">✗</span><div>套用 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a> 的按人截图、飞书凭证流程。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>未核对顾问名单就开始逐人劳勤导出。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>确认单回填后未验算 Excel 加班费合计。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>21 个科室模板结构不一致却未记录在 <code>rules_catalog_draft.md</code>。</div></div>
+    </div>
+  </section>
 
   <footer>
     attendance-laoqin-monthly · 考勤自动化技能图谱 · HR Skills · 单文件详情页

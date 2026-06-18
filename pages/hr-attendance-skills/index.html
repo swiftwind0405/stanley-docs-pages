@@ -141,10 +141,10 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
       <p>这 9 个 skill 把 HRO 外包场景下「<strong>原始考勤资料 → 归档 → 异常审核 → 生成考勤备注 → 交付</strong>」的月度流程拆成可复用的环节。每个环节单独可跑，串起来就是一条流水线。</p>
       <p>两条主线交叉：一条是<strong>数据流水线</strong>（下方 §2），一条是<strong>客户分型 A/B/C/D</strong>（§3）—— 不同客户的考勤系统不同，用到的 skill 组合也不同。先看 §2 的总流程，再用 §3 对号入座，最后点 §4 的卡片进每个 skill 的详情。</p>
       <div class="lanes">
-        <div class="lane orch"><div class="ln">LANE · 红</div><h3>入口与编排</h3><p>分诊选客户、月度全流程门禁。triage · monthly-reconcile · laoqin-monthly</p></div>
-        <div class="lane prep"><div class="ln">LANE · 蓝</div><h3>数据准备</h3><p>抽附件、视觉识别、按人归档、来源归一。data-prep · source-normalizer</p></div>
-        <div class="lane review"><div class="ln">LANE · 绿</div><h3>审核与计算</h3><p>异常审核工作簿、生成考勤备注与审核报告。exception-review · remarks</p></div>
-        <div class="lane config"><div class="ln">LANE · 琥珀</div><h3>配置与交付</h3><p>规则书面化为 config、交付齐套检查。rule-pack · delivery-pack</p></div>
+        <div class="lane orch"><div class="ln">LANE · 红</div><h3>入口与编排</h3><p>分诊给客户排优先级、月度全流程按序门禁。triage · monthly-reconcile · laoqin-monthly</p></div>
+        <div class="lane prep"><div class="ln">LANE · 蓝</div><h3>数据准备</h3><p>抽 .msg 附件、AI 视觉、按人归档出 reference_roster.xlsx、多来源归一。data-prep · source-normalizer</p></div>
+        <div class="lane review"><div class="ln">LANE · 绿</div><h3>审核与计算</h3><p>异常审核工作簿、生成考勤备注与 HTML 审核报告。exception-review · remarks</p></div>
+        <div class="lane config"><div class="ln">LANE · 琥珀</div><h3>配置与交付</h3><p>客户口径落成 attendance_config.json、按流程类型查齐套。rule-pack · delivery-pack</p></div>
       </div>
     </div>
   </section>
@@ -175,19 +175,19 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
         </style>
 
         <!-- ORCHESTRATION BAND -->
-        <text class="bandl" x="20" y="30">编排层 · 月度全流程（按客户 archetype 选一个，门禁驱动下面的流水线）</text>
+        <text class="bandl" x="20" y="30">编排层 · 月度全流程（按客户分型选一个，阶段门禁驱动下面的流水线）</text>
         <rect class="band" x="16" y="40" width="918" height="72" rx="9"/>
         <a href="details/attendance-monthly-reconcile.html">
           <rect class="nd nd-p0" x="34" y="54" width="430" height="44" rx="7"/>
           <text class="glyph" x="50" y="82">🔁</text>
           <text class="nt" x="76" y="73">08 月度核对编排</text>
-          <text class="nl" x="76" y="88">A 型 · 追觅 · 8 阶段门禁 · 飞书打卡</text>
+          <text class="nl" x="76" y="88">A 型 · 追觅 · 8 阶段门禁（0–7） · 80% 飞书打卡</text>
         </a>
         <a href="details/attendance-laoqin-monthly.html">
           <rect class="nd nd-p0" x="486" y="54" width="430" height="44" rx="7"/>
           <text class="glyph" x="502" y="82">⚛️</text>
           <text class="nt" x="528" y="73">09 劳勤月度编排</text>
-          <text class="nl" x="528" y="88">D 型 · 国家电投 · 7 阶段门禁 · WTS PDF</text>
+          <text class="nl" x="528" y="88">D 型 · 国家电投/核电 · 7 阶段门禁（0–6） · 劳勤 WTS PDF</text>
         </a>
         <!-- band drives pipeline -->
         <line class="edge" x1="249" y1="112" x2="249" y2="150" marker-end="url(#ar)" stroke-dasharray="4 3"/>
@@ -232,7 +232,7 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
           <rect class="nd nd-acc" x="496" y="180" width="118" height="60" rx="7"/>
           <text class="nn nn-acc" x="507" y="200">#05</text><text class="glyph" x="588" y="201">🔎</text>
           <text class="nt" x="507" y="219" style="font-size:13px;">异常审核</text>
-          <text class="nl" x="507" y="233">5 sheet 工作簿</text>
+          <text class="nl" x="507" y="233">5 个固定 sheet</text>
         </a>
         <a href="details/attendance-remarks.html">
           <rect class="nd nd-acc" x="656" y="180" width="118" height="60" rx="7"/>
@@ -254,7 +254,7 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
           <rect class="nd nd-p2" x="336" y="298" width="150" height="56" rx="7"/>
           <text class="nn nn-p2" x="347" y="318">#04</text><text class="glyph" x="458" y="319">🧲</text>
           <text class="nt" x="347" y="336" style="font-size:13px;">来源归一</text>
-          <text class="nl" x="347" y="349">msg/邮件/PDF 凭证归集</text>
+          <text class="nl" x="347" y="349">.msg/邮件/PDF 凭证归集</text>
         </a>
         <!-- normalizer also feeds exception-review -->
         <path class="edge" d="M 486 326 Q 560 326 560 244" marker-end="url(#ar)"/>
@@ -282,7 +282,7 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
         <div>
           <h3>数据员宽表型</h3>
           <div class="clients">代表客户：追觅</div>
-          <div class="feat">数据员按月导出考勤汇总宽表（常无身份证），按考勤部门拆表，80% 飞书打卡。靠按人截图核对闭环。</div>
+          <div class="feat">数据员按月导出考勤汇总宽表（常无身份证），按考勤部门拆表，80% 飞书打卡。需要员工清单、异常审核、考勤备注，靠按人切片截图核对闭环。</div>
           <div class="skl">
             <a href="details/attendance-monthly-reconcile.html">monthly-reconcile</a>
             <a href="details/attendance-data-prep.html">data-prep</a>
@@ -296,7 +296,7 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
         <div>
           <h3>钉钉导出 + 异常凭证型</h3>
           <div class="clients">代表客户：珠海基石 · 奥托立夫</div>
-          <div class="feat">钉钉考勤报表 + 大量 .msg 补卡/加班/出差/请假凭证。重点是把散落凭证归一为可审计来源。</div>
+          <div class="feat">钉钉汇总表/考勤报表 + 大量 .msg 补卡/加班/出差/请假凭证。需先跑 source-normalizer 把散落凭证归一为可审计来源，再走异常审核与考勤备注。</div>
           <div class="skl">
             <a href="details/attendance-source-normalizer.html">source-normalizer</a>
             <a href="details/attendance-exception-review.html">exception-review</a>
@@ -308,9 +308,9 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
       <div class="mcard C">
         <div class="letter">C</div>
         <div>
-          <h3>内置核算 + 书面规则型</h3>
+          <h3>钉钉内置核算 + 书面规则型</h3>
           <div class="clients">代表客户：启云方</div>
-          <div class="feat">钉钉内置核算 + 书面规则 docx（班次、欠工时、加班核算、忘打卡）。重点是把书面规则落成可复核 config。</div>
+          <div class="feat">钉钉内置核算 + 书面规则 docx（班次、欠工时、加班核算、忘打卡）。重点是把书面规则落成可复核 attendance_config.json，再做规则配置与异常审核。</div>
           <div class="skl">
             <a href="details/attendance-rule-pack.html">rule-pack</a>
             <a href="details/attendance-exception-review.html">exception-review</a>
@@ -321,9 +321,9 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
       <div class="mcard D">
         <div class="letter">D</div>
         <div>
-          <h3>系统 PDF + 确认单型</h3>
+          <h3>客户系统 PDF + 确认单型</h3>
           <div class="clients">代表客户：国家电投 / 核电</div>
-          <div class="feat">客户自有劳勤 WTS，逐人导出考勤 PDF，按科室填 Excel 并回填工作量确认单，靠科室确认单闭环。</div>
+          <div class="feat">客户自有劳勤 WTS，逐人导出考勤 PDF，按科室填 Excel 并回填人员工作量及考核结果确认单。必须同时有员工 PDF 和确认单才算闭环，靠科室确认单闭环。</div>
           <div class="skl">
             <a href="details/attendance-laoqin-monthly.html">laoqin-monthly</a>
             <a href="details/attendance-data-prep.html">data-prep</a>
@@ -341,22 +341,22 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
     <div class="domains">
 
       <div class="domain">
-        <div class="domain-h"><span class="ico">🧭</span><h3>入口与编排</h3><span class="desc">分诊选客户 · 月度门禁</span></div>
+        <div class="domain-h"><span class="ico">🧭</span><h3>入口与编排</h3><span class="desc">分诊给客户排优先级 · 月度阶段门禁</span></div>
         <div class="wf-grid">
           <a class="wf p0" href="details/attendance-project-triage.html">
             <div class="row1"><span class="num">#01</span><span class="glyph">🩺</span></div>
             <div class="title">考勤项目分诊</div>
-            <div class="hint">按耗时·痛点排序<br>推荐 skill 组合</div>
+            <div class="hint">按耗时·痛点排优先级<br>推荐 data-prep/exception-review/remarks 组合</div>
           </a>
           <a class="wf p0" href="details/attendance-monthly-reconcile.html">
             <div class="row1"><span class="num">#08</span><span class="glyph">🔁</span></div>
             <div class="title">月度核对（追觅类）</div>
-            <div class="hint">A 型 · 8 阶段门禁<br>数据员表→发放→跟进</div>
+            <div class="hint">A 型 · 8 阶段门禁（0–7）<br>数据员表→按人发放→跟进→审核包</div>
           </a>
           <a class="wf p0" href="details/attendance-laoqin-monthly.html">
             <div class="row1"><span class="num">#09</span><span class="glyph">⚛️</span></div>
             <div class="title">劳勤月度（核电类）</div>
-            <div class="hint">D 型 · 7 阶段门禁<br>WTS PDF→确认单</div>
+            <div class="hint">D 型 · 7 阶段门禁（0–6）<br>劳勤 WTS PDF→科室 Excel→确认单</div>
           </a>
         </div>
       </div>
@@ -367,44 +367,44 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
           <a class="wf p2" href="details/attendance-data-prep.html">
             <div class="row1"><span class="num">#03</span><span class="glyph">🗂️</span></div>
             <div class="title">考勤数据准备</div>
-            <div class="hint">抽附件·视觉识别<br>按人归档·roster</div>
+            <div class="hint">抽 .msg 附件·AI 视觉<br>按人归档·出 reference_roster.xlsx</div>
           </a>
           <a class="wf p2" href="details/attendance-source-normalizer.html">
             <div class="row1"><span class="num">#04</span><span class="glyph">🧲</span></div>
             <div class="title">考勤来源归一</div>
-            <div class="hint">B 型凭证归集<br>谁的·什么证据</div>
+            <div class="hint">B 型/邮件凭证型多来源归集<br>是什么·属于谁·什么证据类型</div>
           </a>
         </div>
       </div>
 
       <div class="domain">
-        <div class="domain-h"><span class="ico">🔬</span><h3>审核与计算</h3><span class="desc">异常清单 · 备注与报告</span></div>
+        <div class="domain-h"><span class="ico">🔬</span><h3>审核与计算</h3><span class="desc">异常审核工作簿 · 备注与报告</span></div>
         <div class="wf-grid">
           <a class="wf acc" href="details/attendance-exception-review.html">
             <div class="row1"><span class="num">#05</span><span class="glyph">🔎</span></div>
             <div class="title">考勤异常审核</div>
-            <div class="hint">来源·覆盖·异常<br>待追问·处理日志</div>
+            <div class="hint">5 个固定 sheet：来源清单·员工覆盖<br>异常清单·待追问·处理日志</div>
           </a>
           <a class="wf acc" href="details/attendance-remarks.html">
             <div class="row1"><span class="num">#06</span><span class="glyph">🏷️</span></div>
             <div class="title">考勤备注</div>
-            <div class="hint">配置化生成备注<br>审核明细+HTML</div>
+            <div class="hint">配置化生成考勤备注列<br>审核明细+待追问+HTML 审核报告</div>
           </a>
         </div>
       </div>
 
       <div class="domain">
-        <div class="domain-h"><span class="ico">📐</span><h3>配置与交付</h3><span class="desc">规则书面化 · 齐套检查</span></div>
+        <div class="domain-h"><span class="ico">📐</span><h3>配置与交付</h3><span class="desc">规则落成 config · 齐套检查</span></div>
         <div class="wf-grid">
           <a class="wf p1" href="details/attendance-rule-pack.html">
             <div class="row1"><span class="num">#02</span><span class="glyph">📐</span></div>
             <div class="title">考勤规则包</div>
-            <div class="hint">口径→规则 workbook<br>+ config 草稿</div>
+            <div class="hint">A/B/C/D 客户口径→规则 workbook<br>+ attendance_config.json 草稿</div>
           </a>
           <a class="wf p1" href="details/attendance-delivery-pack.html">
             <div class="row1"><span class="num">#07</span><span class="glyph">📦</span></div>
             <div class="title">考勤交付包</div>
-            <div class="hint">A/B/C/D 齐套检查<br>能不能交付</div>
+            <div class="hint">A/B/C/D 齐套检查<br>缺什么文件·能不能交付</div>
           </a>
         </div>
       </div>
@@ -415,10 +415,10 @@ footer { text-align: center; font-family: var(--mono); font-size: 11px; color: v
   <!-- LEGEND -->
   <section class="sec" style="margin-bottom: 24px;">
     <div class="legend">
-      <span><span class="dot p0"></span>入口与编排 — 分诊 + 月度全流程门禁</span>
-      <span><span class="dot p2"></span>数据准备 — 归档 + 来源归一</span>
+      <span><span class="dot p0"></span>入口与编排 — 分诊 + 月度全流程阶段门禁</span>
+      <span><span class="dot p2"></span>数据准备 — 按人归档 + 多来源归一</span>
       <span><span class="dot acc"></span>审核与计算 — 异常审核 + 考勤备注</span>
-      <span><span class="dot p1"></span>配置与交付 — 规则包 + 交付检查</span>
+      <span><span class="dot p1"></span>配置与交付 — 规则包 + 齐套检查</span>
     </div>
   </section>
 
