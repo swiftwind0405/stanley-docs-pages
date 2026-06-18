@@ -19,6 +19,7 @@
     updateProgress();
 
     document.querySelectorAll('.btn-export-json').forEach(b => b.addEventListener('click', exportJSON));
+    document.querySelectorAll('.btn-copy-json').forEach(b => b.addEventListener('click', copyJSON));
     document.querySelectorAll('.btn-clear').forEach(b => b.addEventListener('click', clearForm));
   }
 
@@ -291,6 +292,39 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('JSON 已导出', 'ok');
+  }
+
+  /* ─── Copy JSON to clipboard ─── */
+  function copyJSON() {
+    const data = collectFormData();
+    if (!data.meta.confirmed_at) data.meta.confirmed_at = new Date().toISOString();
+    const json = JSON.stringify(data, null, 2);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).then(
+        () => showToast('JSON 已复制到剪贴板', 'ok'),
+        () => fallbackCopy(json)
+      );
+    } else {
+      fallbackCopy(json);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('JSON 已复制到剪贴板', 'ok');
+    } catch (e) {
+      showToast('复制失败，请手动复制', 'err');
+      prompt('复制以下内容：', text);
+    }
+    document.body.removeChild(ta);
   }
 
   /* ─── Clear form ─── */
