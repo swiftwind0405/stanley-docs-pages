@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aida 用户身份与权限体系全景</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", flowchart: { useMaxWidth: true, htmlLabels: true } });
+  </script>
+  <style>
+    .mermaid { font-size: 13px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; }
+    .chip { display:inline-flex; align-items:center; gap:.25rem; padding:.1rem .5rem; border-radius:9999px; font-size:.72rem; font-weight:600; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 leading-relaxed">
+  <main class="max-w-5xl mx-auto px-5 sm:px-6 py-10 space-y-10">
+
+    <!-- 1. Header -->
+    <header class="border-b border-slate-200 pb-6">
+      <p class="text-xs font-medium uppercase tracking-widest text-slate-400">架构梳理 · 可视化文档</p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-900">Aida 用户身份与权限体系全景</h1>
+      <p class="mt-2 text-slate-500">范围:aida-agent(server) + aida-desktop(client) · 生成于 2026-06-26</p>
+      <div class="mt-4 flex flex-wrap gap-2 text-xs">
+        <span class="chip bg-slate-200 text-slate-700">3 套身份空间</span>
+        <span class="chip bg-slate-200 text-slate-700">5 步权限过滤管线</span>
+        <span class="chip bg-slate-200 text-slate-700">双令牌 + 端点绑定</span>
+        <span class="chip bg-slate-200 text-slate-700">Hybrid 本机授权</span>
+        <span class="chip bg-rose-100 text-rose-700">34 条核验问题</span>
+      </div>
+    </header>
+
+    <!-- 2. Verdict -->
+    <section class="rounded-lg bg-white border border-slate-200 p-6 shadow-sm">
+      <h2 class="text-xs font-medium uppercase tracking-wide text-slate-400">核心判断 · Verdict</h2>
+      <p class="mt-2 text-xl font-medium text-slate-900">「user」不是一个概念,而是<strong class="text-indigo-600">三套并存身份空间</strong>在 <code>users</code> 表与 <code>resolveAssignmentSubjectId</code> 单点桥接后,经 <code>TenantContext</code> 跨链路传播;权限是一条<strong class="text-indigo-600">「域准入 → 角色 → 资源门」的顺序过滤管线</strong>。</p>
+      <p class="mt-3 text-sm text-slate-500">整体设计稳健,真正的风险集中在两处:server 侧 <code>api-my</code> 的<strong class="text-rose-600">跨域角色提升(水平越权)</strong>,与 desktop 侧 <strong class="text-rose-600">standalone 写路径未绑定原生对话框(任意写入面)</strong>。</p>
+    </section>
+
+    <!-- legend -->
+    <section class="flex flex-wrap items-center gap-4 text-xs text-slate-500 -mt-4">
+      <span class="font-medium text-slate-600">严重度图例:</span>
+      <span class="chip bg-rose-100 text-rose-700">● 高危</span>
+      <span class="chip bg-amber-100 text-amber-700">● 中危</span>
+      <span class="chip bg-slate-200 text-slate-600">● 低危</span>
+      <span class="ml-auto text-slate-400">事实(file:line 证据) · <span class="text-indigo-500">判断/建议</span> · <span class="text-slate-400">假设</span> 已分列</span>
+    </section>
+
+    <!-- 3. Structure Map -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">全景结构图 · Structure Map</h2>
+      <p class="text-sm text-slate-500 mb-4">读图坐标系:身份从哪来 → 在哪汇合 → 怎么传播 → 被谁消费。</p>
+      <div class="rounded-lg bg-white border border-slate-200 p-5 overflow-x-auto shadow-sm">
+        <pre class="mermaid">
+flowchart TB
+  subgraph SRC["身份来源 · 3 套身份空间"]
+    direction LR
+    B["Business 终端用户<br/>Backend Token"]
+    I["Internal 后台用户<br/>账号 + 密码"]
+    C["Channel / IM 用户<br/>飞书 union_id"]
+  end
+  B -->|"/api/auth/exchange"| AJ["Aida JWT"]
+  I -->|"/api/auth/internal-login"| IJ["Internal JWT"]
+  C -->|"webhook 命中 channel_user_binding"| RT["运行时身份"]
+  AJ --> TC
+  IJ --> TC
+  RT --> TC
+  TC["TenantContext<br/>tenantId · userId · empId · roles · department · backendToken"]
+  TC -->|"AsyncLocalStorage 全链路传播"| CONS["下游消费"]
+  CONS --> MY["api-my:投影『当前用户可见面』"]
+  CONS --> BK["backendToken:调后端业务工具"]
+  TC -.->|"resolveAssignmentSubjectId 单点桥"| U["users 表 (identity_type)"]
+  U --> ASG["user_domain_assignments<br/>用户 ↔ 域 ↔ 角色"]
+  MY -.->|"读"| ASG
+        </pre>
+      </div>
+      <p class="text-xs text-slate-400 mt-2">关键认知:<code>channel_user_binding.user_id</code> 存的是「运行时 userId」而非 <code>users.id</code>,所以 IM 绑定不直接关联内部用户/域分配,只在 <code>resolveAssignmentSubjectId</code> 单点对齐。</p>
+    </section>
+
+    <!-- 4a. 身份空间对比 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4 text-slate-900">① 三套身份空间对比</h2>
+      <div class="rounded-lg bg-white border border-slate-200 overflow-x-auto shadow-sm">
+        <table class="w-full text-left text-sm border-collapse min-w-[640px]">
+          <thead>
+            <tr class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wide">
+              <th class="py-3 px-4 font-medium">身份空间</th>
+              <th class="py-3 px-4 font-medium">来源凭证</th>
+              <th class="py-3 px-4 font-medium">tenantId</th>
+              <th class="py-3 px-4 font-medium">运行时 userId</th>
+              <th class="py-3 px-4 font-medium">backendToken</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="py-3 px-4 font-medium text-slate-800">Business<br/><span class="text-xs text-slate-400">终端用户</span></td>
+              <td class="py-3 px-4">Backend Token → Aida JWT</td>
+              <td class="py-3 px-4">后端实证的租户</td>
+              <td class="py-3 px-4">上游外部 id<br/><code>external_user_id</code></td>
+              <td class="py-3 px-4"><span class="chip bg-emerald-100 text-emerald-700">有</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-medium text-slate-800">Internal<br/><span class="text-xs text-slate-400">后台用户</span></td>
+              <td class="py-3 px-4">用户名 + 密码 → Internal JWT</td>
+              <td class="py-3 px-4"><code>internal:team</code><br/>保留命名空间</td>
+              <td class="py-3 px-4"><code>users.id</code> 本身</td>
+              <td class="py-3 px-4"><span class="chip bg-slate-200 text-slate-600">无(恒空)</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-medium text-slate-800">Channel<br/><span class="text-xs text-slate-400">IM 用户</span></td>
+              <td class="py-3 px-4">飞书 union_id → 绑定表</td>
+              <td class="py-3 px-4">绑定行里的 tenantId</td>
+              <td class="py-3 px-4">绑定行里的运行时 userId</td>
+              <td class="py-3 px-4"><span class="chip bg-amber-100 text-amber-700">取缓存,无则重登</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 grid gap-3 sm:grid-cols-3">
+        <div class="rounded-lg bg-indigo-50 border border-indigo-100 p-4">
+          <p class="text-sm font-semibold text-indigo-800">汇合点 1 · users 表</p>
+          <p class="text-xs text-indigo-700/80 mt-1">统一身份表,<code>identity_type = business | internal</code> 区分。</p>
+        </div>
+        <div class="rounded-lg bg-indigo-50 border border-indigo-100 p-4">
+          <p class="text-sm font-semibold text-indigo-800">汇合点 2 · 单点桥</p>
+          <p class="text-xs text-indigo-700/80 mt-1"><code>resolveAssignmentSubjectId</code>:运行时 userId → <code>users.id</code>,fail-closed。</p>
+        </div>
+        <div class="rounded-lg bg-indigo-50 border border-indigo-100 p-4">
+          <p class="text-sm font-semibold text-indigo-800">汇合点 3 · 绑定表</p>
+          <p class="text-xs text-indigo-700/80 mt-1"><code>channel_user_binding</code>:IM 平台 id → 运行时 userId。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4b. 身份生命周期 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">② 请求身份生命周期</h2>
+      <p class="text-sm text-slate-500 mb-4">一次 <code>/api/*</code> 请求如何「取得身份 → 装进上下文 → 传播 → 消费」。</p>
+      <div class="rounded-lg bg-white border border-slate-200 p-5 overflow-x-auto shadow-sm">
+        <pre class="mermaid">
+flowchart LR
+  R["请求带 token"] --> AM["authMiddleware<br/>3 分支识别"]
+  AM --> A1["admin static token"]
+  AM --> A2["internal JWT"]
+  AM --> A3["主 Aida JWT(验签)"]
+  A3 --> TP["tokenProvider.resolve<br/>取缓存 backendToken"]
+  TP -->|"缓存 miss"| E401["AuthError → 401<br/>需重新 exchange"]
+  TP --> DEP["fetchUserDepartment<br/>(5min 缓存)"]
+  DEP --> CTX["createTenantContext"]
+  CTX --> ALS["withTenantContext<br/>AsyncLocalStorage"]
+  ALS --> DS["orchestrator / tool-client / scheduler"]
+        </pre>
+      </div>
+    </section>
+
+    <!-- 5. api-my 权限过滤管线 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">③ 权限过滤管线(api-my 可见面)</h2>
+      <p class="text-sm text-slate-500 mb-4">某用户「能看到哪些 Agent / Capability / Skill / Workspace」是一条顺序短路的过滤链。</p>
+      <div class="rounded-lg bg-white border border-slate-200 p-5 overflow-x-auto shadow-sm">
+        <pre class="mermaid">
+flowchart TD
+  S["authMiddleware:取 ctx.roles"] --> D["domainResolverMiddleware<br/>X-Aida-Domain 改写 ctx.roles"]
+  D --> SUB["resolveAssignmentSubjectId<br/>运行时 userId → users.id(fail-closed)"]
+  SUB -->|"null"| F1["403"]
+  SUB --> GA["getActiveAssignment(subjectId, query.domainId)"]
+  GA -->|"无 assignment"| F2["403 Domain access denied"]
+  GA --> CER["computeEffectiveRoles<br/>assignment.roles 空 → 回退 ctx.roles"]
+  CER --> FILT{"逐类资源过滤"}
+  FILT --> M1["① 域成员过滤"]
+  M1 --> M2["② 租户覆盖(仅 capability)"]
+  M2 --> M3["③ 域授权角色门"]
+  M3 --> M4["④ 全局默认角色门"]
+  M4 --> M5["⑤ 部门门(仅 agent)"]
+  M5 --> OUT["返回可见资源"]
+        </pre>
+      </div>
+      <div class="mt-3 rounded-md bg-rose-50 border border-rose-200 p-4 text-sm">
+        <span class="chip bg-rose-100 text-rose-700">高危关联</span>
+        <span class="ml-2 text-rose-800">第 ② 步 <code>domainResolverMiddleware</code> 按 <strong>header</strong> 改写 <code>ctx.roles</code>,而过滤用 <strong>query domainId</strong>——两个 domain 源无一致性校验,叠加「assignment.roles 空回退 ctx.roles」即构成 <strong>apimy-1 跨域角色提升</strong>。</span>
+      </div>
+    </section>
+
+    <!-- 6. 决策矩阵 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">④ 资源放行决策矩阵(evaluateResourceAccess)</h2>
+      <p class="text-sm text-slate-500 mb-4">单个资源是否对当前用户可见,按下表自上而下短路。</p>
+      <div class="rounded-lg bg-white border border-slate-200 overflow-x-auto shadow-sm">
+        <table class="w-full text-left text-sm border-collapse min-w-[640px]">
+          <thead>
+            <tr class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wide">
+              <th class="py-3 px-4 font-medium">优先级</th>
+              <th class="py-3 px-4 font-medium">条件</th>
+              <th class="py-3 px-4 font-medium">结果</th>
+              <th class="py-3 px-4 font-medium">说明</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="py-3 px-4 font-mono text-slate-400">0</td>
+              <td class="py-3 px-4"><code>tenantOverride.enabled === false</code></td>
+              <td class="py-3 px-4"><span class="chip bg-rose-100 text-rose-700">deny</span></td>
+              <td class="py-3 px-4 text-slate-500">租户级显式关停,最高优先</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-mono text-slate-400">1</td>
+              <td class="py-3 px-4">角色来源取:<br/><code>租户覆盖 &gt; 域授权 &gt; 全局默认</code></td>
+              <td class="py-3 px-4"><span class="chip bg-slate-200 text-slate-600">选定 requiredRoles</span></td>
+              <td class="py-3 px-4 text-slate-500">三级覆盖,就近优先</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-mono text-slate-400">2</td>
+              <td class="py-3 px-4"><code>requiredRoles</code> 为空</td>
+              <td class="py-3 px-4"><span class="chip bg-emerald-100 text-emerald-700">allow</span></td>
+              <td class="py-3 px-4 text-slate-500">无要求即放行(no_requirement)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-mono text-slate-400">3</td>
+              <td class="py-3 px-4"><code>effectiveRoles ∩ requiredRoles</code> 非空</td>
+              <td class="py-3 px-4"><span class="chip bg-emerald-100 text-emerald-700">allow</span></td>
+              <td class="py-3 px-4 text-slate-500">角色交集命中则放行,否则 deny</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7. Desktop 双令牌 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">⑤ Desktop 双令牌与凭证隔离</h2>
+      <p class="text-sm text-slate-500 mb-4">桌面端是 Business 身份的客户端,扮演「可信凭证持有方」。</p>
+      <div class="rounded-lg bg-white border border-slate-200 p-5 overflow-x-auto shadow-sm">
+        <pre class="mermaid">
+flowchart LR
+  subgraph MAIN["Electron Main(可信)"]
+    V["Credential Vault<br/>Backend Token(safeStorage 加密 0600)"]
+    EX["exchange → Aida JWT"]
+    V --> EX
+  end
+  subgraph REN["Renderer(不可信)"]
+    AJ["Aida JWT(模块级内存)"]
+  end
+  EX -->|"IPC get-access-token:只下发短时 JWT"| AJ
+  AJ -->|"Authorization: Bearer"| API["agent API"]
+  V -.->|"绝不进"| X["config / renderer / IPC / 日志"]
+        </pre>
+      </div>
+      <div class="mt-4 grid gap-3 sm:grid-cols-3 text-sm">
+        <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-4">
+          <p class="font-semibold text-emerald-800">凭证只在 Main</p>
+          <p class="text-xs text-emerald-700/80 mt-1">Backend Token 加密落 vault,renderer 永远拿不到。</p>
+        </div>
+        <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-4">
+          <p class="font-semibold text-emerald-800">端点绑定</p>
+          <p class="text-xs text-emerald-700/80 mt-1">token 绑 <code>endpoint identity = origin + basePath</code>,换端点即弃旧 token。</p>
+        </div>
+        <div class="rounded-lg bg-emerald-50 border border-emerald-100 p-4">
+          <p class="font-semibold text-emerald-800">登录硬化</p>
+          <p class="text-xs text-emerald-700/80 mt-1">loopback 回调 + 32B state 常量时间比对 + origin allowlist + 单次使用 + 5min TTL。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Hybrid 本机授权 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">⑥ Hybrid 本机授权模型(desktop)</h2>
+      <p class="text-sm text-slate-500 mb-4">server 仍是唯一 agent loop;要碰本机文件时下发 <code>domain=desktop</code> 的 delegated tool_call,desktop 决定「这一轮能碰什么」。</p>
+      <div class="rounded-lg bg-white border border-slate-200 p-5 overflow-x-auto shadow-sm">
+        <pre class="mermaid">
+flowchart TB
+  SRV["server agent loop(唯一 loop)"] -->|"SSE delegated tool_call"| REN["renderer(转发)"]
+  REN -->|"IPC dispatch-tool-call"| LE["LocalExecutorService(Main)"]
+  LE --> G1["trusted root + skill 同意态"]
+  LE --> G2["Selected File Grant(opaque fileId)"]
+  LE --> G3["Transient Grant(snapshot + 30min TTL + revoke)"]
+  LE --> G4["approval-gate(本机确认 + 10min TTL)"]
+  LE --> G5["path-policy(容器化 / 拒 symlink 越界)"]
+  G1 --> EXn["执行本机 primitive"]
+  G2 --> EXn
+  G3 --> EXn
+  G4 --> EXn
+  G5 --> EXn
+  EXn --> LED["egress-ledger(脱敏出口审计)"]
+        </pre>
+      </div>
+      <div class="mt-4 rounded-lg bg-white border border-slate-200 overflow-x-auto shadow-sm">
+        <table class="w-full text-left text-sm border-collapse min-w-[640px]">
+          <thead>
+            <tr class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wide">
+              <th class="py-3 px-4 font-medium">授权类型</th>
+              <th class="py-3 px-4 font-medium">server 可见</th>
+              <th class="py-3 px-4 font-medium">生命周期</th>
+              <th class="py-3 px-4 font-medium">现状</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="py-3 px-4 font-medium">Selected File Grant</td>
+              <td class="py-3 px-4">opaque <code>fileId</code></td>
+              <td class="py-3 px-4">仅 sessionId 绑定</td>
+              <td class="py-3 px-4"><span class="chip bg-amber-100 text-amber-700">无快照锁 / 无 TTL</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-medium">Transient Grant</td>
+              <td class="py-3 px-4">opaque <code>grantId</code></td>
+              <td class="py-3 px-4">snapshot + 30min TTL + revoke</td>
+              <td class="py-3 px-4"><span class="chip bg-emerald-100 text-emerald-700">完整</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-medium">Output Target Grant</td>
+              <td class="py-3 px-4">opaque <code>outputTargetId</code></td>
+              <td class="py-3 px-4">—</td>
+              <td class="py-3 px-4"><span class="chip bg-slate-200 text-slate-600">两端预留,未落地</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-medium">approval-gate</td>
+              <td class="py-3 px-4">—(本机确认)</td>
+              <td class="py-3 px-4">10min TTL</td>
+              <td class="py-3 px-4"><span class="chip bg-emerald-100 text-emerald-700">完整</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9. Risks and Proof -->
+    <section>
+      <h2 class="text-xl font-semibold mb-1 text-slate-900">⑦ 风险摘要(已对抗核验)</h2>
+      <p class="text-sm text-slate-500 mb-4">两轮 workflow 共确认 <strong>34 条</strong>真问题(server 18 + desktop 16),另驳回 15 条误报。下列为重点。</p>
+
+      <h3 class="text-sm font-semibold text-slate-600 mb-2 mt-2">Server 侧(aida-agent)</h3>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-lg bg-white border-l-4 border-rose-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">apimy-1 · 跨域角色提升</p><span class="chip bg-rose-100 text-rose-700">高</span></div>
+          <p class="text-xs text-slate-500 mt-1">header 域角色污染 query 域评估 → 列出本应被拦截的资源。<strong>水平越权。</strong></p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">auth-2 · 未验签 claims 兜底签 JWT</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">后端模糊失败时用 <code>decodeJwt</code>(未验签)身份签发 30d Aida JWT。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">apimy-2 · archived 域仍可枚举</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">粒度路由不校验 <code>domain.status</code>,与 /domains、/domain-view 读路径不一致。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">userdata-1 · embedding 被覆盖 NULL</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">embedder 临时不可用时加固偏好会清空已有向量,双列不一致。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">chan-2 · 孤儿绑定</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1"><code>channel_user_binding</code> 无 FK,删用户后 IM 绑定残留且仍可命中。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">chan-5 · team 无白名单</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">服务端不校验 team 取值 → internal 用户落到孤立 <code>internal:team</code> 命名空间。</p>
+        </div>
+      </div>
+
+      <h3 class="text-sm font-semibold text-slate-600 mb-2 mt-5">Desktop 侧(aida-desktop)</h3>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">localexec-3 · 任意路径写盘</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">standalone <code>save_dialog</code> 的 finalPath 未与原生对话框绑定,renderer 可传任意绝对路径(仍受确认门)。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">localexec-1 · grant 无快照锁</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">Selected File Grant 无 TTL/revoke/snapshot,文件被替换后读到新内容。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-amber-400 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">dlogin-3 · exchange 无超时</p><span class="chip bg-amber-100 text-amber-700">中</span></div>
+          <p class="text-xs text-slate-500 mt-1">换 JWT 热路径无 AbortController,server hang 时挂住调用方(含 chat 窗口)。</p>
+        </div>
+        <div class="rounded-lg bg-white border-l-4 border-slate-300 border border-slate-200 p-4">
+          <div class="flex items-center justify-between"><p class="font-semibold text-slate-800">系统性 · grant 只进不出</p><span class="chip bg-slate-200 text-slate-600">低×4</span></div>
+          <p class="text-xs text-slate-500 mt-1"><code>revokeSessionGrants</code> 无调用、logout 不撤 grant、tombstone 不删——靠 TTL 被动兜底。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Next Move -->
+    <section class="rounded-lg bg-slate-900 text-slate-50 p-6">
+      <h2 class="text-xs font-medium uppercase tracking-wide text-slate-400">下一步 · Next Move</h2>
+      <ol class="mt-3 space-y-3 text-sm">
+        <li class="flex gap-3"><span class="chip bg-rose-500/20 text-rose-300 shrink-0">1</span><span><strong>修 apimy-1(水平越权)</strong>:对 <code>X-Aida-Domain</code> header 与 query <code>domainId</code> 做一致性校验,或粒度路由不依赖被改写的 <code>ctx.roles</code>。</span></li>
+        <li class="flex gap-3"><span class="chip bg-rose-500/20 text-rose-300 shrink-0">2</span><span><strong>修 localexec-3(任意写入面)</strong>:用一次性令牌把 standalone finalPath 与本次 pick-save-path 选择绑定。</span></li>
+        <li class="flex gap-3"><span class="chip bg-amber-500/20 text-amber-300 shrink-0">3</span><span><strong>补授权生命周期回收</strong>:接通 <code>revokeSessionGrants</code>,session/logout 时撤销 grant + selected-file 快照锁。</span></li>
+        <li class="flex gap-3"><span class="chip bg-slate-500/30 text-slate-300 shrink-0">4</span><span>批量收口正确性中危(userdata-1 / chan-2 / chan-5)与清理类(死代码、文档漂移、双导出)。</span></li>
+      </ol>
+      <p class="mt-4 text-xs text-slate-400">本文档由源码实读 + 多 agent 对抗核验生成;每条问题均有 file:line 证据。需要单条修复方案或 server↔desktop 完整时序图可继续。</p>
+    </section>
+
+  </main>
+</body>
+</html>
