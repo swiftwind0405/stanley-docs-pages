@@ -679,7 +679,7 @@
       <li><kbd>n/e/u/i</kbd> 被当作方向键使用：左/下/上/右（Colemak 风格）</li>
       <li>Session 会被自动编号成 <code>1-xxx</code>、<code>2-xxx</code>，方便用 <kbd>C-1</kbd> / <kbd>F1</kbd> 切换</li>
       <li>状态栏会显示 Agent 任务、未读、失败、等待问题等状态</li>
-      <li>配了 <code>tmux-resurrect</code> 和 <code>tmux-continuum</code>，每 5 分钟自动保存状态，但自动恢复已关闭</li>
+      <li>当前启用 <code>tmux-resurrect</code> 手动保存状态；<code>tmux-continuum</code> 保留配置但已禁用自动保存</li>
     </ul>
   </div>
 </section>
@@ -1055,7 +1055,7 @@
 
 <!-- ======== 7. 插件 & 会话恢复 ======== -->
 <section id="plugins">
-  <h2><span class="num">7</span> 插件 &amp; 会话恢复 <span class="badge">tmux-resurrect + continuum</span></h2>
+  <h2><span class="num">7</span> 插件 &amp; 会话恢复 <span class="badge">tmux-resurrect</span></h2>
 
   <div class="config-grid">
     <div class="config-card">
@@ -1077,9 +1077,10 @@
     <div class="config-card">
       <h4>♻️ tmux-continuum</h4>
       <ul>
-        <li>每 5 分钟自动保存 resurrect 状态</li>
+        <li>当前未加载插件，避免周期性保存带来的开销</li>
+        <li>自动保存间隔设为 <code>0</code>（<code>@continuum-save-interval 0</code>）</li>
         <li>自动恢复已关闭（<code>@continuum-restore off</code>）</li>
-        <li>启动 tmux 时不会自动恢复</li>
+        <li>启动 tmux 时不会自动保存或自动恢复</li>
       </ul>
     </div>
   </div>
@@ -1087,10 +1088,10 @@
   <div class="callout callout-tip">
     <div class="callout-title">💡 手动保存 / 恢复会话</div>
     <ul>
-      <li><kbd>prefix</kbd> <kbd>C-s</kbd> — 保存当前 tmux 状态（即 Ctrl+S → Ctrl+S）</li>
+      <li><kbd>prefix</kbd> <kbd>M-s</kbd> — 保存当前 tmux 状态（即 Ctrl+S → Option+S）</li>
       <li><kbd>prefix</kbd> <kbd>C-r</kbd> — 恢复上次保存的状态（即 Ctrl+S → Ctrl+R）</li>
     </ul>
-    <p style="margin-top:6px;">注意：Prefix 是 <kbd>C-s</kbd>，所以 <code>prefix C-s</code> 实际上是按两次 <kbd>Ctrl+S</kbd>。</p>
+    <p style="margin-top:6px;">注意：裸 <kbd>M-s</kbd> 仍是 Agent palette；保存必须先按 <kbd>prefix</kbd>，再按 <kbd>M-s</kbd>。旧的 <code>prefix C-s</code> 已解绑，避免误触保存。</p>
   </div>
 </section>
 
@@ -1246,7 +1247,7 @@
       <li>history-limit：<strong>10000</strong></li>
       <li>状态栏每 <strong>1s</strong> 刷新</li>
       <li>detach-on-destroy <strong>off</strong>：关闭最后一个 window 不会退出 tmux</li>
-      <li>TPM 插件：tmux-resurrect + tmux-continuum（每 5 分钟自动保存）</li>
+      <li>TPM 插件：当前加载 tmux-resurrect；tmux-continuum 自动保存已禁用</li>
     </ul>
   </div>
 
@@ -1382,7 +1383,7 @@
     </div>
     <div class="dep-item dep-optional">
       <div class="dep-icon">♻️</div>
-      <div><div class="dep-name">tmux-continuum</div><div class="dep-label">TPM · 每 5 分钟自动保存</div></div>
+      <div><div class="dep-name">tmux-continuum</div><div class="dep-label">TPM · 可选 · 当前禁用</div></div>
     </div>
   </div>
 </section>
@@ -1456,7 +1457,7 @@
       <li>Status line 显示各 session/window 的任务状态</li>
       <li>Pane title 结合 starship 和 opencode 展示上下文</li>
       <li>长命令或 Agent 任务结束后能显示未读、失败、等待确认</li>
-      <li>通过 tmux-resurrect + continuum 自动保存和恢复 agent 相关 pane</li>
+      <li>通过 tmux-resurrect 手动保存和恢复 agent 相关 pane，避免后台周期性保存干扰工作流</li>
       <li>Colemak 风格的方向键映射（n/e/u/i = 左/下/上/右）贯穿所有模式</li>
     </ul>
     <p style="margin-top:8px;">
