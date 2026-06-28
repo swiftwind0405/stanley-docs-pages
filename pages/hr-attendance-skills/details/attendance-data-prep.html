@@ -78,6 +78,8 @@
       <div class="out-item"><div class="on">_vision_manifest.json · 机器件 / 门禁</div><div class="od">需 LLM 视觉处理的图片与 PDF 逐页 PNG 清单；含 <code>status: pending/processed</code> 与 <code>needs_pdf_preprocess</code>。</div></div>
       <div class="out-item"><div class="on">_pdf_preprocess.json · 机器件</div><div class="od">PDF 逐页预渲染结果索引；预渲染失败时先看其 <code>errors</code>。</div></div>
       <div class="out-item"><div class="on">vision_extracted_records.jsonl · 机器件</div><div class="od">AI / 人工视觉中间结果，下游脚本消费。每条须有 <code>source_file</code> 与 <code>page_or_image</code>。</div></div>
+      <div class="out-item"><div class="on">vision_extracted_records.reviewed.jsonl · 机器件</div><div class="od">人工在视觉复核清单填「人工结论」后，<code>apply_vision_review.py</code> 回填生成的下游输入；确认/剔除写回 <code>confidence</code> / <code>needs_review</code> / <code>record_status</code>。</div></div>
+      <div class="out-item"><div class="on">vision_review_apply_report.xlsx · 人类件</div><div class="od">回填汇总/明细；「是否可继续下游」须为「是」（无未匹配结论、无待追问）才把 reviewed JSONL 作为 <code>--vision-records</code> 传回。</div></div>
       <div class="out-item"><div class="on">_email_texts.jsonl · 机器件</div><div class="od">邮件正文（按员工归属），remarks 的 <code>--email-texts</code> 消费。</div></div>
       <div class="out-item"><div class="on">employees/&lt;姓名&gt;/_sources.json · 机器件</div><div class="od">每个员工目录归档依据：<code>original_path</code> / <code>match_reason</code> / <code>match_confidence</code>。</div></div>
       <div class="out-item"><div class="on">config_draft.json · 机器件</div><div class="od">配置草稿：<code>attendance_start/end</code>、候选法定假日等。</div></div>
@@ -118,6 +120,7 @@
       <div class="fail-item"><span class="ico">▸</span><div>小 logo / 二维码 / 签名图等无信息图片也写入并标 <code>unknown</code>，从待识别清单闭环移除。</div></div>
       <div class="fail-item"><span class="ico">▸</span><div><strong>PDF 文本层 fallback：</strong>无批量视觉 / OCR 时不能只停在渲染 + pending，须用 PyMuPDF 按页提文本层兜底（<code>confidence=high</code>，<code>review_reason=pdf_text_layer_fallback</code>）。</div></div>
       <div class="fail-item"><span class="ico">▸</span><div><strong>复核清单不是终点：</strong>可处理附件须被打开 / 读取 / 提取并回写 <code>视觉提取结果.xlsx</code> + <code>vision_extracted_records.jsonl</code>，再带 <code>--vision-records</code> 重跑刷新状态。</div></div>
+      <div class="fail-item"><span class="ico">▸</span><div><strong>人工结论回填：</strong>在 <code>视觉复核清单.xlsx</code> 填「人工结论」（确认 / 剔除 / 需追问）后，用 <code>apply_vision_review.py</code> 回填为 <code>vision_extracted_records.reviewed.jsonl</code>；逐页结论按「来源文件 + 页码」精确匹配，不串到同文件其它页。</div></div>
     </div>
   </section>
 
@@ -160,7 +163,14 @@ uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_
   --attachments-dir "$ATTACHMENTS_DIR" \
   --base-table "$SOURCE_DIR/&lt;底表文件名&gt;" \        # 有底表时
   --vision-records "${OUTPUT_DIR}/vision_extracted_records.jsonl" \  # 有视觉结果时
-  --name-candidate-review "${OUTPUT_DIR}/姓名候选复核.xlsx"          # 无底表且用了候选复核时必传</code></pre></div>
+  --name-candidate-review "${OUTPUT_DIR}/姓名候选复核.xlsx"          # 无底表且用了候选复核时必传
+
+# 可选：人工在视觉复核清单填「人工结论」后回填为 reviewed JSONL，再带 --vision-records 重跑
+uv run python skills/attendance/attendance-data-prep/scripts/apply_vision_review.py \
+  --records "${OUTPUT_DIR}/vision_extracted_records.jsonl" \
+  --review-workbook "${OUTPUT_DIR}/视觉复核清单.xlsx" \
+  --output-records "${OUTPUT_DIR}/vision_extracted_records.reviewed.jsonl" \
+  --report "${OUTPUT_DIR}/vision_review_apply_report.xlsx"</code></pre></div>
   </section>
 
   <section class="sec"><div class="sec-h"><span class="sec-glyph">✓</span><h2>ACCEPTANCE</h2><span class="sec-zh">闭环验收 · 6 条门禁</span></div>
@@ -171,6 +181,7 @@ uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_
       <li><span class="ck">✓</span><span>每个员工文件夹都有 <code>_sources.json</code>，能说明归档来源和匹配原因。</span></li>
       <li><span class="ck">✓</span><span>仍需人工处理的问题进入 <code>人工复核清单.xlsx</code>，并同步保留在 <code>_prep_questions.json</code>，不能只写在对话里。</span></li>
       <li><span class="ck">✓</span><span>复核清单中可处理附件已被打开 / 读取 / 提取并回写视觉结果，再重跑归档刷新状态。</span></li>
+      <li><span class="ck">✓</span><span>视觉低置信记录已人工复核并经 <code>apply_vision_review.py</code> 回填，<code>vision_review_apply_report.xlsx</code> 显示可继续下游。</span></li>
     </ul>
   </section>
 

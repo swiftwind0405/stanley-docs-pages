@@ -115,7 +115,7 @@
       <li class="step gate"><div class="step-num">2</div><div class="step-body"><div class="step-title">劳勤导出 PDF<span class="gateflag">GATE</span></div><div class="step-desc">逐人登录 WorkbenchCalendar 切月份，看汇总（出勤/差旅/加班/审批状态），打印保存 PDF，文件名=<strong>姓名+工号</strong>（如 于洋L361）。门禁：每人有 &lt;姓名工号&gt;.pdf（出差/审批单据线下补充）。</div></div></li>
       <li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">填科室 Excel<span class="gateflag">GATE</span></div><div class="step-desc">标黄周末加班、法定假日行、批注加班转调休；差旅&gt;0 走出差分支。门禁：日出勤/加班/调休与劳勤一致。</div></div></li>
       <li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">加班费合计<span class="gateflag">GATE</span></div><div class="step-desc">公休日 + 延长工时 + 法定节假日 − 已执行/计划执行换休小时数。门禁：公式已按月调整；合计列已算。</div></div></li>
-      <li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">回填确认单 + 送科室签字<span class="gateflag">GATE</span></div><div class="step-desc">Excel 汇总列复制到确认单对应行，标注出勤工作日天数；<strong>考勤表 + 确认单一并</strong>发科室负责人签字（确认单含考核结果）。退回则改 Excel 重出确认单再送签。门禁：各科确认单与 Excel 一致。</div></div></li>
+      <li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">回填确认单 + 送科室签字<span class="gateflag">GATE</span></div><div class="step-desc">Excel 汇总列复制到确认单对应行，标注出勤工作日天数；可用 <code>fill_confirmation_form.py</code> 自动回填并生成 <code>confirmation_fill_report.xlsx</code>，送签前用 <code>validate_laoqin_consistency.py</code> 做三方校验。<strong>考勤表 + 确认单一并</strong>发科室负责人签字（确认单含考核结果）。退回则改 Excel 重出确认单再送签。门禁：各科确认单与 Excel 一致。</div></div></li>
       <li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">交付科服<span class="gateflag">GATE</span></div><div class="step-desc">各科签字确认单 + 加班情况说明。门禁：考勤表 + 确认单已送签并回流。<strong>2026-06 起客户侧不再需要劳勤 PDF</strong>，PDF 转内部留存。</div></div></li>
     </ol>
     <div class="forbid"><span class="fl">禁止</span><ul>
@@ -165,8 +165,8 @@
     </div>
   </section>
 
-  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令（编排调用下游）</span></div>
-    <div class="code-wrap"><div class="code-bar">RUN · 会话入口变量 + 下游 skill</div><pre class="code"><code>DATASET_NAME="PMC North Qing wu 国家电投考勤"
+  <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令（编排下游 + 本 skill 校验/回填/签回）</span></div>
+    <div class="code-wrap"><div class="code-bar">RUN · 入口变量 · 下游 skill · 校验/回填/签回</div><pre class="code"><code>DATASET_NAME="PMC North Qing wu 国家电投考勤"
 PAY_PERIOD="&lt;YYYYMM&gt;"
 SOURCE_DIR="data/raw/${DATASET_NAME}"
 OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"
@@ -186,21 +186,43 @@ uv run python skills/attendance/attendance-exception-review/scripts/build_except
   "${OUTPUT_DIR}" "${PAY_PERIOD}" \
   "${OUTPUT_DIR}/exception_review.xlsx" \
   --source-dir "${SOURCE_DIR}" \
-  --config &lt;attendance_config.json&gt;</code></pre></div>
+  --config &lt;attendance_config.json&gt;
+
+# 4. 三方一致性校验（科室 Excel / 确认单 / PDF 留存 + 加班费合计）
+uv run python skills/attendance/attendance-laoqin-monthly/scripts/validate_laoqin_consistency.py \
+  "${OUTPUT_DIR}/laoqin_consistency_check.xlsx" \
+  --department-excel &lt;科室Excel.xlsx&gt; \
+  --confirmation &lt;确认单.xlsx&gt; \
+  --pdf-dir "${OUTPUT_DIR}/考勤PDF"
+
+# 5. 从科室 Excel 回填确认单模板（识别两行合并表头）
+uv run python skills/attendance/attendance-laoqin-monthly/scripts/fill_confirmation_form.py \
+  --department-excel &lt;科室Excel.xlsx&gt; \
+  --template &lt;确认单模板.xlsx&gt; \
+  --output "${OUTPUT_DIR}/已回填确认单.xlsx" \
+  --report "${OUTPUT_DIR}/confirmation_fill_report.xlsx"
+
+# 6. 检查考勤表 + 确认单签回件
+uv run python skills/attendance/attendance-laoqin-monthly/scripts/check_laoqin_signbacks.py \
+  "${OUTPUT_DIR}/laoqin_signback_check.xlsx" \
+  --department-excel &lt;科室Excel.xlsx&gt; \
+  --signback-dir "${OUTPUT_DIR}/签回件"</code></pre></div>
   </section>
 
   <section class="sec"><div class="sec-h"><span class="sec-glyph">⚙</span><h2>ROADMAP</h2><span class="sec-zh">自动化路线图</span><span class="meta">耗时 · 约 5 人日/月</span></div>
     <table class="road-table">
       <thead><tr><th>优先级</th><th>脚本</th><th>状态</th></tr></thead>
       <tbody>
-        <tr><td class="pri">P0</td><td class="scr">fill_confirmation_form.py</td><td class="st">待实现</td></tr>
-        <tr><td class="pri">P1</td><td class="scr">validate_overtime_totals.py</td><td class="st">待实现</td></tr>
+        <tr><td class="pri">P0</td><td class="scr">validate_laoqin_consistency.py</td><td class="st">已实现首版 · 科室Excel/确认单/PDF 三方一致 + 加班费合计</td></tr>
+        <tr><td class="pri">P0</td><td class="scr">fill_confirmation_form.py</td><td class="st">已实现首版 · 科室Excel 回填确认单（识别两行合并表头）</td></tr>
+        <tr><td class="pri">P0</td><td class="scr">check_laoqin_signbacks.py</td><td class="st">已实现首版 · 按科室检查考勤表/确认单签回件</td></tr>
         <tr><td class="pri">P1</td><td class="scr">organize_laoqin_pdfs.py</td><td class="st">待实现</td></tr>
         <tr><td class="pri">P2</td><td class="scr">劳勤批量导出</td><td class="st">依赖系统 API，短期 SOP 为主</td></tr>
       </tbody>
     </table>
     <div class="note-grid" style="margin-top:12px;">
       <div class="note-card"><div class="nt">耗时基准</div>逐人导出约 1.5 分钟/人（约 180 人）；科室 Excel 约 40–50 分钟/科室；客户签字回流约 2 工作日；退回重做约 20–25 分钟/次；全项目约 <strong>5 人日/月</strong>。</div>
+      <div class="note-card"><div class="nt">回填 / 校验门禁</div>确认单为<strong>两行合并表头</strong>（「加班情况」横跨 5 个加班子列）；脚本已识别合并表头，6 个对比列全部回填/比对。只有<strong>对比列全部映射、确有回填、且无缺员</strong>时 <code>confirmation_fill_report.xlsx</code> 才报「可送签：是」。</div>
     </div>
   </section>
 
@@ -220,6 +242,9 @@ uv run python skills/attendance/attendance-exception-review/scripts/build_except
       <li><span class="ck">✓</span><span>各科确认单人员与顾问名单一致。</span></li>
       <li><span class="ck">✓</span><span>每人有劳勤 PDF（出差/审批单据为线下补充，按需补齐）。</span></li>
       <li><span class="ck">✓</span><span>Excel 加班费合计与确认单一致。</span></li>
+      <li><span class="ck">✓</span><span><code>laoqin_consistency_check.xlsx</code> 无高优先级问题。</span></li>
+      <li><span class="ck">✓</span><span><code>confirmation_fill_report.xlsx</code> 无问题项（可送签：是）。</span></li>
+      <li><span class="ck">✓</span><span><code>laoqin_signback_check.xlsx</code> 全部为已签回。</span></li>
       <li><span class="ck">✓</span><span>已核对名单人员已跳过。</span></li>
       <li><span class="ck">✓</span><span>考勤表 + 确认单已送科室签字并回流（2026-06 起客户侧不再需要劳勤 PDF）。</span></li>
     </ul>
@@ -230,6 +255,7 @@ uv run python skills/attendance/attendance-exception-review/scripts/build_except
       <div class="fail-item"><span class="ico">✗</span><div>套用 <a class="wl" href="attendance-monthly-reconcile.html">monthly-reconcile</a> 的按人截图、飞书凭证流程。</div></div>
       <div class="fail-item"><span class="ico">✗</span><div>未核对顾问名单就开始逐人劳勤导出。</div></div>
       <div class="fail-item"><span class="ico">✗</span><div>确认单回填后未验算 Excel 加班费合计。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>确认单两行表头只映射到出勤天数列，5 个加班列空着却报「可送签」。</div></div>
       <div class="fail-item"><span class="ico">✗</span><div>科室模板结构不一致却未记录在 <code>rules_catalog_draft.md</code>。</div></div>
     </div>
   </section>

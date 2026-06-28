@@ -96,7 +96,7 @@ OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"</code></pre></div>
       </ul></div>
       <div class="io-col io-out"><div class="io-label">↗ OUTPUT · 产出</div><ul>
         <li>reference_roster.xlsx（含「考勤部门」列）</li>
-        <li>整理后数据员表 + 按人切片截图（个人切片 + 画数）</li>
+        <li>整理后数据员表 + 按人 HTML 切片（脱敏后个人切片 + 画数）</li>
         <li>问题员工审核包：改表截图 + 飞书凭证 + 「核对无误」确认</li>
         <li>下游产物 exception_review.xlsx / attendance_remarks.xlsx</li>
       </ul></div>
@@ -109,7 +109,7 @@ OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"</code></pre></div>
       <li class="step gate"><div class="step-num">1</div><div class="step-body"><div class="step-title">原始表备份 + 补字段<span class="gateflag">GATE</span></div><div class="step-desc">数据员表整表复制保留原始版；working copy 用 VLOOKUP 花名册补身份证号、职位。</div></div></li>
       <li class="step gate"><div class="step-num">2</div><div class="step-body"><div class="step-title">先对人头<span class="gateflag">GATE</span></div><div class="step-desc">只统计人数与花名册比对、记录差异，<strong>此阶段不改任何考勤数据</strong>。</div></div></li>
       <li class="step gate"><div class="step-num">3</div><div class="step-body"><div class="step-title">整理数据员表（发员工前）<span class="gateflag">GATE</span></div><div class="step-desc">隐藏求和为 0 的列；请假只留事假/调休；调休假天数加入实际出勤；迟到早退首次发放前不扣。</div></div></li>
-      <li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">按人截图发放<span class="gateflag">GATE</span></div><div class="step-desc">截员工行到「总计」列（含按日明细）+ 附「画数」汇总模板，飞书/微信发送。每人已发「个人切片 + 画数」。</div></div></li>
+      <li class="step gate"><div class="step-num">4</div><div class="step-body"><div class="step-title">按人截图发放<span class="gateflag">GATE</span></div><div class="step-desc">截员工行到「总计」列（含按日明细）+ 附「画数」汇总模板，飞书/微信发送。可用 <code>split_employee_slices.py</code> 把宽表按员工生成 HTML 切片 + 索引（默认脱敏身份证/工资等敏感列）。每人已发「个人切片 + 画数」。</div></div></li>
       <li class="step gate"><div class="step-num">5</div><div class="step-body"><div class="step-title">问题跟进<span class="gateflag">GATE</span></div><div class="step-desc">仅处理反馈有问题的员工：加班、夜班、公出、迟到、事假（细则见下）。改表标黄 + 批注。</div></div></li>
       <li class="step gate"><div class="step-num">6</div><div class="step-body"><div class="step-title">二次确认<span class="gateflag">GATE</span></div><div class="step-desc">改表后必须员工回复「<strong>核对无误</strong>」才闭环。</div></div></li>
       <li class="step gate"><div class="step-num">7</div><div class="step-body"><div class="step-title">审核包<span class="gateflag">GATE</span></div><div class="step-desc">问题员工 Sheet 附改表截图 + 原始确认 + 飞书凭证一并归档；无问题员工保留「核对无误」文字即可。</div></div></li>
@@ -195,7 +195,7 @@ OUTPUT_DIR="outputs/${DATASET_NAME}-${PAY_PERIOD}"</code></pre></div>
   </section>
 
   <section class="sec"><div class="sec-h"><span class="sec-glyph">⌘</span><h2>RUN</h2><span class="sec-zh">运行命令</span></div>
-    <div class="code-wrap"><div class="code-bar">RUN · 编排调用三个下游 skill</div><pre class="code"><code># 源数据归档（推荐先做）
+    <div class="code-wrap"><div class="code-bar">RUN · 编排下游 skill + 本 skill 切片</div><pre class="code"><code># 源数据归档（推荐先做）
 uv run python skills/attendance/attendance-data-prep/scripts/prepare_attendance_data.py \
   "${SOURCE_DIR}" "${OUTPUT_DIR}" \
   --base-table &lt;花名册.xlsx&gt;
@@ -212,7 +212,13 @@ uv run python skills/attendance/attendance-remarks/scripts/build_attendance_rema
   "${OUTPUT_DIR}/attachments" "${PAY_PERIOD}" \
   "${OUTPUT_DIR}/attendance_remarks.xlsx" \
   --config &lt;attendance_config.json&gt; \
-  --reference-summary "${OUTPUT_DIR}/reference_roster.xlsx"</code></pre></div>
+  --reference-summary "${OUTPUT_DIR}/reference_roster.xlsx"
+
+# 阶段 4 · 按员工生成 HTML 切片包（默认脱敏身份证/工资等敏感列）
+uv run python skills/attendance/attendance-monthly-reconcile/scripts/split_employee_slices.py \
+  &lt;整理后的数据员考勤宽表.xlsx&gt; \
+  "${OUTPUT_DIR}/employee_slices" \
+  --id-column &lt;员工标识列名&gt;</code></pre></div>
   </section>
 
   <section class="sec"><div class="sec-h"><span class="sec-glyph">◷</span><h2>BENCHMARK</h2><span class="sec-zh">耗时基准</span><span class="meta">追觅 320 人 / 2 人</span></div>
@@ -228,7 +234,7 @@ uv run python skills/attendance/attendance-remarks/scripts/build_attendance_rema
     <div class="out-list">
       <div class="out-item road-item"><div class="on">normalize_attendance_workbook.py<span class="st p0t">P0 · 待实现</span></div><div class="od">数据员表规范化。</div></div>
       <div class="out-item road-item"><div class="on">roster_headcount_diff.py<span class="st p0t">P0 · 待实现</span></div><div class="od">花名册与考勤表人头差异比对。</div></div>
-      <div class="out-item road-item"><div class="on">split_employee_slices.py<span class="st p1t">P1 · 待实现</span></div><div class="od">按人切片自动截图发放。</div></div>
+      <div class="out-item road-item"><div class="on">split_employee_slices.py<span class="st p1t">P1 · 已实现首版</span></div><div class="od">宽表按员工输出到「总计」列的 HTML 切片 + 索引；默认脱敏身份证/工资/银行卡等敏感列（<code>--drop-keyword</code> 可追加），表头不匹配 / 0 切片时告警并非零退出。</div></div>
       <div class="out-item road-item"><div class="on">加班规则验算<span class="st p1t">P1 · 扩展现有</span></div><div class="od">扩展现有 exception-review，自动验算加班/关联调休。</div></div>
     </div>
   </section>
@@ -247,6 +253,7 @@ uv run python skills/attendance/attendance-remarks/scripts/build_attendance_rema
       <li><span class="ck">✓</span><span>花名册每人有考勤部门。</span></li>
       <li><span class="ck">✓</span><span>人头核对记录无未解释差异。</span></li>
       <li><span class="ck">✓</span><span>首次发放前已完成阶段 3 三项整理。</span></li>
+      <li><span class="ck">✓</span><span><code>employee_slices_index.xlsx</code> 覆盖本次需发放的员工。</span></li>
       <li><span class="ck">✓</span><span>每名员工有「核对无误」或完整问题处理链。</span></li>
       <li><span class="ck">✓</span><span>有问题员工审核包含改表 + 凭证 + 确认。</span></li>
     </ul>
@@ -258,6 +265,7 @@ uv run python skills/attendance/attendance-remarks/scripts/build_attendance_rema
       <div class="fail-item"><span class="ico">✗</span><div>把链接打卡员工（约 20%）硬套飞书打卡流程，不单独分支。</div></div>
       <div class="fail-item"><span class="ico">✗</span><div>数据员表未统一格式就跳过阶段 3 整理。</div></div>
       <div class="fail-item"><span class="ico">✗</span><div>员工反馈问题后只改表、不收集凭证或未记录处理链。</div></div>
+      <div class="fail-item"><span class="ico">✗</span><div>个人切片把身份证号/工资等内部列直接发给员工（应保留默认脱敏或用 <code>--drop-keyword</code> 追加）。</div></div>
     </div>
     <div class="rule-block">
       <div class="rb-h">失败重试</div>
