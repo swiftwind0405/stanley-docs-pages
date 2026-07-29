@@ -1,0 +1,1586 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <link rel="icon" href="data:," />
+    <title>五家客户考勤决策树｜才到 Attendance 领域模型</title>
+    <style>
+      :root {
+        --ink: #172033;
+        --muted: #607086;
+        --line: #d9e1eb;
+        --soft: #f3f6fa;
+        --panel: #ffffff;
+        --navy: #163a64;
+        --blue: #2f70c9;
+        --green: #14816b;
+        --amber: #b96d0c;
+        --red: #c44743;
+        --autoliv: #df5b57;
+        --lenovo: #3478d4;
+        --fuhong: #8b5bb5;
+        --qiyunfang: #198a73;
+        --zhuimei: #c98213;
+        --shadow: 0 12px 34px rgba(28, 52, 82, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 10% 0%, rgba(52, 120, 212, 0.08), transparent 28rem),
+          linear-gradient(180deg, #f8fafc 0, #eef2f7 100%);
+        font-family:
+          Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      code {
+        color: #244f7c;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.92em;
+      }
+
+      .page {
+        width: min(1260px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 64px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 38px 42px;
+        color: #fff;
+        border-radius: 22px;
+        background: linear-gradient(120deg, #112d50, #1a4978);
+        box-shadow: var(--shadow);
+      }
+
+      .hero::after {
+        position: absolute;
+        top: -180px;
+        right: -100px;
+        width: 480px;
+        height: 480px;
+        content: "";
+        border: 78px solid rgba(255, 255, 255, 0.055);
+        border-radius: 50%;
+      }
+
+      .eyebrow {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 9px;
+        color: #b8d2ec;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        position: relative;
+        z-index: 1;
+        max-width: 980px;
+        margin: 0;
+        font-size: clamp(32px, 5vw, 54px);
+        line-height: 1.12;
+        letter-spacing: -0.045em;
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 1;
+        max-width: 940px;
+        margin: 17px 0 0;
+        color: #d9e8f6;
+        font-size: 16px;
+      }
+
+      .hero-meta {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .hero-meta span {
+        padding: 5px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+        color: #e7f1fb;
+        background: rgba(255, 255, 255, 0.075);
+        font-size: 12px;
+      }
+
+      .jumpbar {
+        position: sticky;
+        z-index: 30;
+        top: 0;
+        display: flex;
+        gap: 7px;
+        max-width: 100%;
+        overflow-x: auto;
+        margin-top: 14px;
+        padding: 9px;
+        border: 1px solid rgba(217, 225, 235, 0.92);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 7px 24px rgba(28, 52, 82, 0.06);
+        backdrop-filter: blur(12px);
+        overscroll-behavior-x: contain;
+      }
+
+      .jumpbar a {
+        flex: 0 0 auto;
+        padding: 7px 11px;
+        color: #40536b;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .jumpbar a:hover {
+        color: var(--navy);
+        background: #eaf1f8;
+      }
+
+      .jumpbar .client-link::before {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 6px;
+        border-radius: 50%;
+        background: var(--client);
+        content: "";
+      }
+
+      section {
+        scroll-margin-top: 72px;
+        margin-top: 32px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 13px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        color: #142f51;
+        font-size: clamp(23px, 3vw, 31px);
+        letter-spacing: -0.03em;
+      }
+
+      .section-head p {
+        max-width: 590px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: right;
+      }
+
+      .panel {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .verdict {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 18px;
+        align-items: center;
+        padding: 23px 26px;
+        border: 1px solid #bcd1e7;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #edf6ff, #fff);
+        box-shadow: var(--shadow);
+      }
+
+      .verdict-mark {
+        display: grid;
+        width: 64px;
+        height: 64px;
+        place-items: center;
+        color: #fff;
+        border-radius: 17px;
+        background: var(--navy);
+        font-size: 27px;
+        font-weight: 850;
+      }
+
+      .verdict strong {
+        display: block;
+        color: #16385f;
+        font-size: 21px;
+        line-height: 1.45;
+      }
+
+      .verdict p {
+        margin: 5px 0 0;
+        color: #536a82;
+        font-size: 14px;
+      }
+
+      .exec-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .metric {
+        padding: 17px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fff;
+      }
+
+      .metric strong {
+        display: block;
+        color: var(--navy);
+        font-size: 27px;
+        line-height: 1.2;
+      }
+
+      .metric b {
+        display: block;
+        margin-top: 6px;
+        color: #294663;
+        font-size: 13px;
+      }
+
+      .metric p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .replay-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+        margin-top: 12px;
+      }
+
+      .replay-card {
+        --replay: var(--navy);
+        padding: 17px;
+        border: 1px solid var(--line);
+        border-top: 4px solid var(--replay);
+        border-radius: 13px;
+        background: #fff;
+      }
+
+      .replay-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .replay-card.autoliv {
+        --replay: var(--autoliv);
+      }
+
+      .replay-card.lenovo {
+        --replay: var(--lenovo);
+      }
+
+      .replay-card.fuhong {
+        --replay: var(--fuhong);
+      }
+
+      .replay-card.qiyunfang {
+        --replay: var(--qiyunfang);
+      }
+
+      .replay-card.zhuimei {
+        --replay: var(--zhuimei);
+      }
+
+      .replay-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .replay-head h3 {
+        margin: 0;
+        color: #203f63;
+        font-size: 16px;
+      }
+
+      .pass {
+        flex: 0 0 auto;
+        padding: 3px 8px;
+        color: #0f715b;
+        border-radius: 999px;
+        background: #e7f6f1;
+        font-size: 9px;
+        font-weight: 850;
+      }
+
+      .sample {
+        margin: 9px 0 0;
+        padding: 9px 10px;
+        color: #53677d;
+        border-radius: 8px;
+        background: #f5f8fb;
+        font-size: 10px;
+      }
+
+      .route-line {
+        margin: 9px 0 0;
+        color: #53677d;
+        font-size: 11px;
+      }
+
+      .route-line b,
+      .replay-result b {
+        color: #294663;
+      }
+
+      .replay-result {
+        margin-top: 9px;
+        padding: 10px 11px;
+        border-left: 4px solid var(--replay);
+        border-radius: 7px;
+        color: #4e6379;
+        background: color-mix(in srgb, var(--replay) 6%, white);
+        font-size: 11px;
+      }
+
+      .replay-note {
+        margin-top: 10px;
+        color: #718096;
+        font-size: 10px;
+      }
+
+      .engine {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 11px;
+      }
+
+      .engine article {
+        position: relative;
+        min-height: 142px;
+        padding: 17px 15px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fff;
+      }
+
+      .engine article:not(:last-child)::after {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        right: -17px;
+        content: "→";
+        color: #8a9db1;
+        font-size: 19px;
+        font-weight: 850;
+        transform: translateY(-50%);
+      }
+
+      .engine .num {
+        display: inline-grid;
+        width: 25px;
+        height: 25px;
+        place-items: center;
+        color: #fff;
+        border-radius: 7px;
+        background: var(--navy);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .engine h3 {
+        margin: 9px 0 4px;
+        color: #21476f;
+        font-size: 14px;
+      }
+
+      .engine p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .model-map {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .model-map div {
+        padding: 11px 13px;
+        border: 1px solid #dbe3ed;
+        border-radius: 10px;
+        color: #53667c;
+        background: #f8fafc;
+        font-size: 11px;
+      }
+
+      .model-map b {
+        display: block;
+        color: #25496f;
+        font-size: 12px;
+      }
+
+      .tree-card {
+        --client: var(--navy);
+        overflow: hidden;
+        scroll-margin-top: 72px;
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .tree-card.autoliv {
+        --client: var(--autoliv);
+      }
+
+      .tree-card.lenovo {
+        --client: var(--lenovo);
+      }
+
+      .tree-card.fuhong {
+        --client: var(--fuhong);
+      }
+
+      .tree-card.qiyunfang {
+        --client: var(--qiyunfang);
+      }
+
+      .tree-card.zhuimei {
+        --client: var(--zhuimei);
+      }
+
+      .tree-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 22px;
+        color: #fff;
+        background: var(--client);
+      }
+
+      .tree-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .tree-no {
+        display: inline-grid;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.52);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.13);
+        font-weight: 850;
+      }
+
+      .tree-head h3 {
+        margin: 0;
+        font-size: 21px;
+      }
+
+      .tree-head p {
+        margin: 1px 0 0;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 12px;
+      }
+
+      .tree-status {
+        padding: 5px 9px;
+        border: 1px solid rgba(255, 255, 255, 0.52);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        font-size: 11px;
+        font-weight: 750;
+        white-space: nowrap;
+      }
+
+      .tree-scroll {
+        overflow-x: auto;
+        padding: 22px;
+        overscroll-behavior-x: contain;
+      }
+
+      .scroll-hint {
+        display: none;
+      }
+
+      .decision-map {
+        display: grid;
+        min-width: 1130px;
+        grid-template-columns:
+          minmax(150px, 1fr) 34px minmax(150px, 1fr) 34px minmax(150px, 1fr) 34px
+          minmax(150px, 1fr) 34px minmax(150px, 1fr) 34px minmax(150px, 1fr);
+        grid-template-rows: minmax(154px, auto) 28px minmax(112px, auto);
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .node {
+        position: relative;
+        padding: 14px;
+        border: 1px solid #d6dfe9;
+        border-radius: 12px;
+        color: #3f536b;
+        background: #f8fafc;
+        font-size: 12px;
+      }
+
+      .node.source,
+      .node.output {
+        border-color: color-mix(in srgb, var(--client) 48%, #d6dfe9);
+        background: color-mix(in srgb, var(--client) 7%, white);
+      }
+
+      .node.decision {
+        border: 2px solid var(--client);
+        background: color-mix(in srgb, var(--client) 6%, white);
+      }
+
+      .node .stage {
+        display: inline-block;
+        margin-bottom: 8px;
+        padding: 3px 7px;
+        color: #53677d;
+        border: 1px solid #d5dfe9;
+        border-radius: 999px;
+        background: #fff;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .node.decision .stage {
+        color: var(--client);
+        border-color: color-mix(in srgb, var(--client) 35%, white);
+      }
+
+      .node h4 {
+        margin: 0 0 6px;
+        color: #203f63;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .node p {
+        margin: 0;
+        color: #607188;
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .connector {
+        display: grid;
+        place-items: center;
+        color: var(--client);
+        font-size: 11px;
+        font-weight: 850;
+        text-align: center;
+      }
+
+      .branch-arrow {
+        display: grid;
+        place-items: center;
+        color: #7b8fa5;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .branch {
+        padding: 11px 12px;
+        border: 1px solid #e3b874;
+        border-radius: 10px;
+        color: #78501a;
+        background: #fff8ec;
+        font-size: 10px;
+        line-height: 1.5;
+      }
+
+      .branch b {
+        display: block;
+        margin-bottom: 3px;
+        color: #86540f;
+        font-size: 11px;
+      }
+
+      .branch.block {
+        border-color: #e7aaa6;
+        color: #7d4441;
+        background: #fff4f3;
+      }
+
+      .branch.block b {
+        color: #9a3e39;
+      }
+
+      .tree-foot {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr 1fr;
+        gap: 10px;
+        padding: 0 22px 22px;
+      }
+
+      .tree-note {
+        padding: 12px 13px;
+        border-left: 4px solid var(--client);
+        border-radius: 8px;
+        color: #53667b;
+        background: #f7f9fc;
+        font-size: 11px;
+      }
+
+      .tree-note b {
+        color: #294663;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      th,
+      td {
+        padding: 11px 12px;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: top;
+        text-align: left;
+      }
+
+      th {
+        color: #314c6a;
+        background: #f5f8fb;
+        font-weight: 780;
+      }
+
+      td {
+        color: #53667b;
+      }
+
+      .fit {
+        color: #14705b;
+        font-weight: 750;
+      }
+
+      .gap {
+        color: #a45e08;
+        font-weight: 750;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        counter-reset: phase;
+      }
+
+      .phase {
+        position: relative;
+        padding: 17px 15px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        counter-increment: phase;
+      }
+
+      .phase::before {
+        display: inline-grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        margin-bottom: 8px;
+        color: #fff;
+        border-radius: 7px;
+        background: var(--navy);
+        content: counter(phase);
+        font-size: 11px;
+        font-weight: 850;
+      }
+
+      .phase h3 {
+        margin: 0 0 5px;
+        color: #294663;
+        font-size: 14px;
+      }
+
+      .phase p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .proof-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .proof {
+        padding: 15px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .proof b {
+        color: #294663;
+        font-size: 13px;
+      }
+
+      .proof p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .proof span {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 3px 7px;
+        color: #15705e;
+        border-radius: 999px;
+        background: #eaf7f3;
+        font-size: 9px;
+        font-weight: 800;
+      }
+
+      .sources {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .sources li {
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        color: #53667b;
+        background: #fff;
+        font-size: 11px;
+      }
+
+      .sources a {
+        color: #265f98;
+        font-weight: 750;
+      }
+
+      .next {
+        padding: 25px 27px;
+        color: #fff;
+        border-radius: 18px;
+        background: linear-gradient(115deg, #132f51, #1e507e);
+        box-shadow: var(--shadow);
+      }
+
+      .next h2 {
+        margin: 0;
+        font-size: 21px;
+      }
+
+      .next p {
+        margin: 7px 0 0;
+        color: #d7e6f5;
+      }
+
+      .decision-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .decision-list article {
+        padding: 13px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .decision-list b {
+        display: block;
+        color: #fff;
+        font-size: 12px;
+      }
+
+      .decision-list span {
+        display: block;
+        margin-top: 4px;
+        color: #d7e6f5;
+        font-size: 10px;
+      }
+
+      footer {
+        margin-top: 30px;
+        color: #738297;
+        font-size: 10px;
+        text-align: center;
+      }
+
+      .c1 {
+        grid-column: 1;
+      }
+      .c2 {
+        grid-column: 2;
+      }
+      .c3 {
+        grid-column: 3;
+      }
+      .c4 {
+        grid-column: 4;
+      }
+      .c5 {
+        grid-column: 5;
+      }
+      .c6 {
+        grid-column: 6;
+      }
+      .c7 {
+        grid-column: 7;
+      }
+      .c8 {
+        grid-column: 8;
+      }
+      .c9 {
+        grid-column: 9;
+      }
+      .c10 {
+        grid-column: 10;
+      }
+      .c11 {
+        grid-column: 11;
+      }
+      .r1 {
+        grid-row: 1;
+      }
+      .r2 {
+        grid-row: 2;
+      }
+      .r3 {
+        grid-row: 3;
+      }
+
+      @media (max-width: 960px) {
+        .exec-metrics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .engine {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .engine article::after {
+          display: none;
+        }
+
+        .model-map {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .tree-foot,
+        .proof-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .timeline {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .page {
+          width: min(100% - 20px, 1260px);
+          padding-top: 10px;
+        }
+
+        .hero {
+          padding: 28px 22px;
+          border-radius: 16px;
+        }
+
+        .hero-copy {
+          font-size: 14px;
+        }
+
+        .section-head {
+          display: block;
+        }
+
+        .section-head p {
+          margin-top: 4px;
+          text-align: left;
+        }
+
+        .verdict {
+          grid-template-columns: 1fr;
+          padding: 20px;
+        }
+
+        .verdict-mark {
+          width: 50px;
+          height: 50px;
+          font-size: 22px;
+        }
+
+        .engine,
+        .exec-metrics,
+        .replay-grid,
+        .model-map,
+        .timeline,
+        .sources,
+        .decision-list {
+          grid-template-columns: 1fr;
+        }
+
+        .replay-card:last-child {
+          grid-column: auto;
+        }
+
+        .panel {
+          padding: 17px;
+        }
+
+        .tree-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .tree-status {
+          margin-left: 48px;
+          white-space: normal;
+        }
+
+        .tree-scroll {
+          padding: 16px 10px;
+        }
+
+        .scroll-hint {
+          position: sticky;
+          z-index: 4;
+          left: 0;
+          display: block;
+          width: max-content;
+          margin: 0 0 10px;
+          padding: 4px 8px;
+          color: #52677d;
+          border: 1px solid #d7e0ea;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.95);
+          font-size: 9px;
+          font-weight: 800;
+        }
+
+        .tree-foot {
+          padding: 0 16px 16px;
+        }
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+
+        .page {
+          width: 100%;
+          padding: 0;
+        }
+
+        .jumpbar {
+          display: none;
+        }
+
+        .hero,
+        .panel,
+        .tree-card,
+        .verdict,
+        .next {
+          box-shadow: none;
+        }
+
+        section,
+        .tree-card {
+          break-inside: avoid;
+        }
+
+        .tree-scroll {
+          overflow: visible;
+        }
+
+        .decision-map {
+          min-width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">Caidao Attendance · Client Decision Trees · 2026-07-29</p>
+        <h1>五家客户考勤决策树</h1>
+        <p class="hero-copy">
+          以才到 Attendance 的资格分组、周期、排班、打卡与审批、日核算、周期结算为主干，
+          参考 Workday 的 Time Block、Oracle 的有效期 Rule Set、SAP 的事件配对以及国内
+          HR SaaS 的排班—异常—薪资闭环，把五家客户规则画成可执行、可暂停、可回退的决策树。
+        </p>
+      </header>
+
+      <nav class="jumpbar" aria-label="页面目录">
+        <a href="#verdict">结论</a>
+        <a href="#replay">回放结果</a>
+        <a href="#backbone">才到主干</a>
+        <a class="client-link" style="--client: var(--autoliv)" href="#autoliv">奥托立夫</a>
+        <a class="client-link" style="--client: var(--lenovo)" href="#lenovo">联想深圳</a>
+        <a class="client-link" style="--client: var(--fuhong)" href="#fuhong">复宏汉霖</a>
+        <a class="client-link" style="--client: var(--qiyunfang)" href="#qiyunfang">启云方</a>
+        <a class="client-link" style="--client: var(--zhuimei)" href="#zhuimei">追觅</a>
+      </nav>
+
+      <section id="verdict">
+        <div class="verdict">
+          <div class="verdict-mark">树</div>
+          <div>
+            <strong>五棵客户树已完成匿名样本回放：统一主干成立，差异可以收敛为五类通用能力。</strong>
+            <p>
+              共同部分是“资格 → 周期/排班 → 打卡归属 → 日核算 → 期间结算 → 复核交付”；
+              回放证明客户差异不需要拆成五套引擎，应优先建设 Time Block、Period Account、
+              Decision Case、Evidence/Reconcile 和可重放 Calc Run。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="replay">
+        <div class="section-head">
+          <h2>匿名月度样本回放：5/5 命中关键路径</h2>
+          <p>使用同一 Canonical Schema 的五个匿名变体；验证规则路径与结果表达能力，不读取生产员工数据。</p>
+        </div>
+
+        <div class="exec-metrics">
+          <article class="metric">
+            <strong>5 / 5</strong>
+            <b>客户树完整跑通</b>
+            <p>每棵树均产出命中路径、状态或数值结果。</p>
+          </article>
+          <article class="metric">
+            <strong>3</strong>
+            <b>数值核算场景</b>
+            <p>联想、复宏汉霖、启云方得到可复核数值。</p>
+          </article>
+          <article class="metric">
+            <strong>2</strong>
+            <b>人工状态机场景</b>
+            <p>奥托立夫二次核算、追觅二次确认可显式闭环。</p>
+          </article>
+          <article class="metric">
+            <strong>5</strong>
+            <b>应沉淀的通用能力</b>
+            <p>不是新增五套客户代码，而是五类共享对象。</p>
+          </article>
+        </div>
+
+        <div class="replay-grid">
+          <article class="replay-card autoliv">
+            <div class="replay-head">
+              <h3>奥托立夫 · ANON-A01</h3>
+              <span class="pass">路径通过</span>
+            </div>
+            <p class="sample">研发人员｜21–20 周期｜班次概率相近｜审批“同意且办结”</p>
+            <p class="route-line"><b>命中路径：</b>资料齐套 → 研发班次拟合 → 候选冲突 → 人工确认 → 第二次核算 → 审批计入</p>
+            <div class="replay-result"><b>回放结果：</b><code>FIRST_RUN_REVIEW_REQUIRED → SECOND_RUN_READY → CLOSED</code>；未复核的第一次结果不会进入月汇总。</div>
+          </article>
+
+          <article class="replay-card lenovo">
+            <div class="replay-head">
+              <h3>联想深圳 · ANON-L01</h3>
+              <span class="pass">数值通过</span>
+            </div>
+            <p class="sample">1 天在岗不足 15 分钟｜当月 4 次忘卡｜4 次均有确认邮件</p>
+            <p class="route-line"><b>命中路径：</b>日工时不足 → 0.5H 向上取整 → 忘卡账户累计 → 第 4 次触发 4H 扣减</p>
+            <div class="replay-result"><b>回放结果：</b>日异常扣除 <b>0.5H</b> + 月账户扣除 <b>4H</b> = 当月合计扣除 <b>4.5H</b>。</div>
+          </article>
+
+          <article class="replay-card fuhong">
+            <div class="replay-head">
+              <h3>复宏汉霖 · ANON-F01</h3>
+              <span class="pass">数值通过</span>
+            </div>
+            <p class="sample">部分月综合工时｜10 个应出勤日｜出勤 80H｜填报加班 4H｜OCR 已复核</p>
+            <p class="route-line"><b>命中路径：</b>当月配置完整 → 来源归属 → 视觉门禁通过 → 综合工时重算 → 计薪闭合</p>
+            <div class="replay-result"><b>回放结果：</b><code>80 + 4 − 10 × 8 = +4H</code>，输出综合工时加班 <b>4H</b>；账单仅做后验核对。</div>
+          </article>
+
+          <article class="replay-card qiyunfang">
+            <div class="replay-head">
+              <h3>启云方 · ANON-Q01</h3>
+              <span class="pass">数值通过</span>
+            </div>
+            <p class="sample">09:00–20:00 打卡｜午休 1H｜晚休 0.5H｜18:00–20:00 已批加班</p>
+            <p class="route-line"><b>命中路径：</b>Profile 完整 → 独立排班 → Time Block 配对 → 扣休 → 加班交集 → 双队列清零</p>
+            <div class="replay-result"><b>回放结果：</b>有效正常工时 <b>8H</b>；有效加班 <b>1.5H</b>；没有日弹欠工时，可以进入封存。</div>
+          </article>
+
+          <article class="replay-card zhuimei">
+            <div class="replay-head">
+              <h3>追觅 / MOVA · ANON-Z01</h3>
+              <span class="pass">状态通过</span>
+            </div>
+            <p class="sample">当月确认夜班名单｜20:00 上班｜次日 07:00 下班｜数据员表缺下班卡｜截图已复核</p>
+            <p class="route-line"><b>命中路径：</b>人头一致 → 部门×岗位资格 → 夜班状态机 → 员工反馈 → 证据修正 → 二次确认</p>
+            <div class="replay-result"><b>回放结果：</b>跨日 Time Block 闭合为 <b>20:00 → 次日 07:00</b>；确认状态 <code>CORRECTED → RECONFIRMED → CLOSED</code>，进入 HR 审核包。</div>
+          </article>
+        </div>
+
+        <p class="replay-note">
+          回放结论针对匿名规则样本，不等同于生产租户数据验收；生产上线仍需历史月份双跑和结果差异归零。
+        </p>
+      </section>
+
+      <section id="backbone">
+        <div class="section-head">
+          <h2>才到统一主干：五棵树共享的七个决策层</h2>
+          <p>行业实践提供结构；才到现有对象提供落点。客户规则只改变节点参数和分支，不改变主干。</p>
+        </div>
+        <div class="engine">
+          <article>
+            <span class="num">1</span>
+            <h3>资格 Eligibility</h3>
+            <p>员工、组织、岗位、工时制和有效期命中哪套规则。</p>
+          </article>
+          <article>
+            <span class="num">2</span>
+            <h3>周期与排班</h3>
+            <p>账套周期、法定日、工作日、班次、休息段和应出勤。</p>
+          </article>
+          <article>
+            <span class="num">3</span>
+            <h3>打卡归属与配对</h3>
+            <p>同日、跨日、跨月、单卡、重复卡与班次归属。</p>
+          </article>
+          <article>
+            <span class="num">4</span>
+            <h3>区间核算</h3>
+            <p>交集、扣休、阈值、舍入、加班与缺勤区间。</p>
+          </article>
+          <article>
+            <span class="num">5</span>
+            <h3>异常分类</h3>
+            <p>迟到、早退、缺卡、旷工、冲突与未识别审批。</p>
+          </article>
+          <article>
+            <span class="num">6</span>
+            <h3>期间累计与结算</h3>
+            <p>次数、余额、欠工时、综合工时、调休和薪资代码。</p>
+          </article>
+          <article>
+            <span class="num">7</span>
+            <h3>证据与人工流程</h3>
+            <p>复核、确认、重跑、锁定、账单核对与交付。</p>
+          </article>
+        </div>
+
+        <div class="model-map">
+          <div><b>资格</b><code>wa_group</code> / <code>wa_emp_group</code> / <code>wa_parse_group</code></div>
+          <div><b>计划时间</b><code>wa_sob</code> / <code>wa_shift_def</code> / <code>wa_emp_schedule_detail</code></div>
+          <div><b>原始事件</b><code>wa_register_record</code> + 请假 / 加班 / 出差 / 调整</div>
+          <div><b>当前日结果</b><code>wa_analyze</code>，适合作为当前态 Projection</div>
+          <div><b>期间结算</b><code>wa_emp_working_hours_settlement</code> + 统计报表</div>
+        </div>
+      </section>
+
+      <section id="trees">
+        <div class="section-head">
+          <h2>五家客户决策树</h2>
+          <p>主行是继续计算的路径；下方分支是人工门禁、阻断、候选路线或回退动作。</p>
+        </div>
+
+        <article class="tree-card autoliv" id="autoliv">
+          <div class="tree-head">
+            <div class="tree-title">
+              <span class="tree-no">1</span>
+              <div>
+                <h3>奥托立夫</h3>
+                <p>21–20 周期 · 班次候选 · 人工确认后二次核算</p>
+              </div>
+            </div>
+            <span class="tree-status">已沉淀：流程规则 + 班次门禁</span>
+          </div>
+          <div class="tree-scroll">
+            <span class="scroll-hint">← 左右滑动查看完整决策树 →</span>
+            <div class="decision-map" role="img" aria-label="奥托立夫考勤决策树">
+              <div class="node source c1 r1">
+                <span class="stage">INPUT / PERIOD</span>
+                <h4>21–20 周期资料齐套？</h4>
+                <p>钉钉、发薪名单、补卡、出差、加班、请假、外出、日历和班次来源。</p>
+              </div>
+              <div class="connector c2 r1">是 →</div>
+              <div class="node decision c3 r1">
+                <span class="stage">ELIGIBILITY</span>
+                <h4>属于研发部门？</h4>
+                <p>非指定研发组织固定走“奥托立夫上海”班次；研发人员进入班次拟合。</p>
+              </div>
+              <div class="connector c4 r1">进入班次 →</div>
+              <div class="node decision c5 r1">
+                <span class="stage">SHIFT CANDIDATE</span>
+                <h4>班次判断可直接接受？</h4>
+                <p>≤06:30 早卡固定早班；概率相近、班次抖动、有工时单无排班均不可直通。</p>
+              </div>
+              <div class="connector c6 r1">候选已出 →</div>
+              <div class="node decision c7 r1">
+                <span class="stage">MANUAL GATE</span>
+                <h4>第一次结果已人工复核？</h4>
+                <p>只有显式确认“已复核”并传入第一次文件，才能生成第二次结果。</p>
+              </div>
+              <div class="connector c8 r1">是 →</div>
+              <div class="node decision c9 r1">
+                <span class="stage">APPROVAL</span>
+                <h4>审批“同意且办结”？</h4>
+                <p>拒绝、撤销、审批中不计入；未知组合进入审批复核，保留同日多条请假。</p>
+              </div>
+              <div class="connector c10 r1">是 →</div>
+              <div class="node output c11 r1">
+                <span class="stage">RESULT / SETTLEMENT</span>
+                <h4>日核算 → 发薪核验 → 月汇总</h4>
+                <p>第二次班次结果驱动工时、备注、差异、明细汇总与月度汇总。</p>
+              </div>
+
+              <div class="branch-arrow c1 r2">↓ 否</div>
+              <div class="branch-arrow c3 r2">↓ 否</div>
+              <div class="branch-arrow c5 r2">↓ 异常</div>
+              <div class="branch-arrow c7 r2">↓ 否</div>
+              <div class="branch-arrow c9 r2">↓ 否 / 未知</div>
+
+              <div class="branch block c1 r3"><b>阻断</b>缺任何必需输入，不生成“0 差异”或假完整结果。</div>
+              <div class="branch c3 r3"><b>固定路线</b>非研发组织使用固定上海班次后，重新汇入班次结果。</div>
+              <div class="branch c5 r3"><b>人工修正</b>输出候选与证据，不直接覆盖；修正后进入第一次复核门禁。</div>
+              <div class="branch block c7 r3"><b>必须暂停</b>禁止同一次运行连续生成第一次和第二次结果。</div>
+              <div class="branch c9 r3"><b>不计入 / 待复核</b>审批未知不猜测，加班在首轮班次为空时保持 0。</div>
+            </div>
+          </div>
+          <div class="tree-foot">
+            <div class="tree-note"><b>关键决策：</b>班次不是常量，而是“算法候选 → 人工确认 → 二次核算”。</div>
+            <div class="tree-note"><b>才到映射：</b>排班与审批可复用；需补 <code>attendance_decision_case</code>。</div>
+            <div class="tree-note"><b>验收证据：</b>第一次与第二次结果分开、审批复核保留、差异可追到员工/日期/原值。</div>
+          </div>
+        </article>
+
+        <article class="tree-card lenovo" id="lenovo">
+          <div class="tree-head">
+            <div class="tree-title">
+              <span class="tree-no">2</span>
+              <div>
+                <h3>联想深圳</h3>
+                <p>弹性 09:00–18:00 · 忘卡月账户 · 邮件审批</p>
+              </div>
+            </div>
+            <span class="tree-status">已沉淀：核算规则 + 两阶段交付</span>
+          </div>
+          <div class="tree-scroll">
+            <span class="scroll-hint">← 左右滑动查看完整决策树 →</span>
+            <div class="decision-map" role="img" aria-label="联想深圳考勤决策树">
+              <div class="node source c1 r1">
+                <span class="stage">IMMUTABLE INPUT</span>
+                <h4>原始打卡与截止日有效？</h4>
+                <p>按姓名+日期复制原文；当天尚未结束或未来日期不判全天异常。</p>
+              </div>
+              <div class="connector c2 r1">是 →</div>
+              <div class="node decision c3 r1">
+                <span class="stage">DAILY ATTENDANCE</span>
+                <h4>9 小时在岗且边界合格？</h4>
+                <p>首卡≤09:30、末卡≥18:00、总在岗≥9H；多种不足按实际缺失区间去重。</p>
+              </div>
+              <div class="connector c4 r1">继续 →</div>
+              <div class="node decision c5 r1">
+                <span class="stage">MISSING PUNCH</span>
+                <h4>存在忘打卡？</h4>
+                <p>先识别缺卡，再查与员工、月份、具体日期匹配的确认邮件。</p>
+              </div>
+              <div class="connector c6 r1">是 →</div>
+              <div class="node decision c7 r1">
+                <span class="stage">EVIDENCE</span>
+                <h4>有确认邮件？</h4>
+                <p>邮件表格明确字段优先；无确认不得把补卡当已审批事实。</p>
+              </div>
+              <div class="connector c8 r1">有 →</div>
+              <div class="node decision c9 r1">
+                <span class="stage">PERIOD ACCOUNT</span>
+                <h4>当月忘卡次数 ≤ 3？</h4>
+                <p>3 次机会仍要求审批；第 4 次起，每次扣 4H 出勤。</p>
+              </div>
+              <div class="connector c10 r1">汇总 →</div>
+              <div class="node output c11 r1">
+                <span class="stage">OT / DELIVERY</span>
+                <h4>加班核验与复核草稿</h4>
+                <p>工作日/周末按不同规则核算；无审批潜在加班只标绿，不进确认汇总。</p>
+              </div>
+
+              <div class="branch-arrow c1 r2">↓ 无效 / 未完日</div>
+              <div class="branch-arrow c3 r2">↓ 否</div>
+              <div class="branch-arrow c5 r2">↓ 否</div>
+              <div class="branch-arrow c7 r2">↓ 无</div>
+              <div class="branch-arrow c9 r2">↓ 超过 3 次</div>
+
+              <div class="branch c1 r3"><b>保留原值</b>数据截止日未结束不提前判错；原始记录始终只读。</div>
+              <div class="branch c3 r3"><b>异常扣除</b>迟到、早退、时长不足按 0.5H 向上取整，重叠区间不重复扣。</div>
+              <div class="branch c5 r3"><b>无忘卡</b>直接进入请假、加班与其他审批核验。</div>
+              <div class="branch block c7 r3"><b>缺勤 8H</b>无确认邮件时，每次忘打卡按缺勤 8H 并标记无审批。</div>
+              <div class="branch c9 r3"><b>月账户扣减</b>超过 3 次后每次扣 4H；这是期间累计，不是单日 if/else。</div>
+            </div>
+          </div>
+          <div class="tree-foot">
+            <div class="tree-note"><b>关键决策：</b>日异常先算区间，忘卡免费次数与扣减再按月累计。</div>
+            <div class="tree-note"><b>才到映射：</b>日结果可复用；需把“3 次机会”落成 <code>attendance_period_account</code>。</div>
+            <div class="tree-note"><b>交付边界：</b>跨平台先出复核草稿；Windows Excel 只负责嵌入原始 .msg，嵌入前后数据必须零变化。</div>
+          </div>
+        </article>
+
+        <article class="tree-card fuhong" id="fuhong">
+          <div class="tree-head">
+            <div class="tree-title">
+              <span class="tree-no">3</span>
+              <div>
+                <h3>复宏汉霖</h3>
+                <p>多来源证据 · 标准/综合工时路由 · 计薪闭合</p>
+              </div>
+            </div>
+            <span class="tree-status">流程已沉淀；业务口径按月确认</span>
+          </div>
+          <div class="tree-scroll">
+            <span class="scroll-hint">← 左右滑动查看完整决策树 →</span>
+            <div class="decision-map" role="img" aria-label="复宏汉霖考勤决策树">
+              <div class="node source c1 r1">
+                <span class="stage">MONTH CONFIG</span>
+                <h4>当月口径完整？</h4>
+                <p>周期、计薪天、法定日/休息日/补班日、工时制、假别属性、加班去向。</p>
+              </div>
+              <div class="connector c2 r1">是 →</div>
+              <div class="node decision c3 r1">
+                <span class="stage">SOURCE NORMALIZE</span>
+                <h4>每份来源已归属员工？</h4>
+                <p>.msg、Excel、PDF、图片和扫描件先归一；同级冲突不自动选有利结果。</p>
+              </div>
+              <div class="connector c4 r1">是 →</div>
+              <div class="node decision c5 r1">
+                <span class="stage">VISUAL GATE</span>
+                <h4>视觉来源已结构化并复核？</h4>
+                <p>能读到汇总时必须写出 attendance_hours / pay_days；低置信先人工复核。</p>
+              </div>
+              <div class="connector c6 r1">是 →</div>
+              <div class="node decision c7 r1">
+                <span class="stage">WORK TIME SYSTEM</span>
+                <h4>标准工时还是综合工时？</h4>
+                <p>不同工时制进入不同规则包；部分月综合工时仅在配置明确启用时重算。</p>
+              </div>
+              <div class="connector c8 r1">核算 →</div>
+              <div class="node decision c9 r1">
+                <span class="stage">PAY CLOSURE</span>
+                <h4>计薪天可闭合？</h4>
+                <p>出勤 + 适用法定带薪日 + 已确认带薪假，对照标准计薪天与任职区间。</p>
+              </div>
+              <div class="connector c10 r1">是 →</div>
+              <div class="node output c11 r1">
+                <span class="stage">REMARK / RECONCILE</span>
+                <h4>备注、模板回填与账单核对</h4>
+                <p>生成可追溯草稿；付款通知书只能后验核对，不能反向覆盖来源事实。</p>
+              </div>
+
+              <div class="branch-arrow c1 r2">↓ 否</div>
+              <div class="branch-arrow c3 r2">↓ 否 / 冲突</div>
+              <div class="branch-arrow c5 r2">↓ 否 / 低置信</div>
+              <div class="branch-arrow c7 r2">↓ 综合工时</div>
+              <div class="branch-arrow c9 r2">↓ 否</div>
+
+              <div class="branch block c1 r3"><b>只出草稿</b>不得沿用历史月份或付款通知书推断当月法定日、计薪天和加班去向。</div>
+              <div class="branch c3 r3"><b>待追问</b>保留原文件、员工候选和冲突明细，不按姓名猜测合并。</div>
+              <div class="branch block c5 r3"><b>视觉门禁</b>未复核不得生成全勤；无法结构化时标记待补充。</div>
+              <div class="branch c7 r3"><b>总工时差额</b>配置启用时，按实际工时与任职区间应出勤工时差额算加班/缺勤。</div>
+              <div class="branch c9 r3"><b>保留计薪天</b>部分月员工或来源不完整时显式输出“计薪X天/待补充”，不省略。</div>
+            </div>
+          </div>
+          <div class="tree-foot">
+            <div class="tree-note"><b>关键决策：</b>先判断证据是否足以进入核算，再按工时制路由；账单永远是核对层。</div>
+            <div class="tree-note"><b>才到映射：</b>工时制与结算可复用；OCR/邮件证据需要 <code>evidence_ref</code> 与复核状态。</div>
+            <div class="tree-note"><b>事实边界：</b>流程规则稳定；具体假别、加班去向和计薪日历仍需当月配置。</div>
+          </div>
+        </article>
+
+        <article class="tree-card qiyunfang" id="qiyunfang">
+          <div class="tree-head">
+            <div class="tree-title">
+              <span class="tree-no">4</span>
+              <div>
+                <h3>启云方</h3>
+                <p>多段班次 · 跨日 Time Block · 日弹/月弹 · 双队列门禁</p>
+              </div>
+            </div>
+            <span class="tree-status">已沉淀：qiyunfang_c_v2 + 当月变量</span>
+          </div>
+          <div class="tree-scroll">
+            <span class="scroll-hint">← 左右滑动查看完整决策树 →</span>
+            <div class="decision-map" role="img" aria-label="启云方考勤决策树">
+              <div class="node source c1 r1">
+                <span class="stage">RULE VERSION</span>
+                <h4>Profile、班次和当月变量齐全？</h4>
+                <p><code>qiyunfang_c_v2</code>、班次配置、周期、法定日、休息日、补班日、小周六与月弹名单。</p>
+              </div>
+              <div class="connector c2 r1">是 →</div>
+              <div class="node decision c3 r1">
+                <span class="stage">SCHEDULE</span>
+                <h4>有独立排班？</h4>
+                <p>独立排班优先；每日统计中的班次只做一致性校验和兜底。</p>
+              </div>
+              <div class="connector c4 r1">定班次 →</div>
+              <div class="node decision c5 r1">
+                <span class="stage">TIME BLOCK</span>
+                <h4>打卡可配对并正确跨日归属？</h4>
+                <p>原始卡形成有效区间；跨日加班继承到次日，单卡/冲突保留异常。</p>
+              </div>
+              <div class="connector c6 r1">是 →</div>
+              <div class="node decision c7 r1">
+                <span class="stage">INTERVAL CALC</span>
+                <h4>工作与加班区间如何相交？</h4>
+                <p>工作时长 = 有效打卡 − 班次休息 − 加班交集 + 有效外出/出差。</p>
+              </div>
+              <div class="connector c8 r1">得到日结果 →</div>
+              <div class="node decision c9 r1">
+                <span class="stage">DAILY / MONTHLY</span>
+                <h4>日弹还是月弹？</h4>
+                <p>日弹逐日核不足；月弹按期间总工时与 8H×天数求欠工时，多出不自动转加班。</p>
+              </div>
+              <div class="connector c10 r1">审计 →</div>
+              <div class="node output c11 r1">
+                <span class="stage">DUAL GATE</span>
+                <h4>双队列关闭后封存唯一终版</h4>
+                <p>目标差异队列与人工门禁队列独立；账单联动只核字段，不推断账单公式。</p>
+              </div>
+
+              <div class="branch-arrow c1 r2">↓ 否</div>
+              <div class="branch-arrow c3 r2">↓ 无</div>
+              <div class="branch-arrow c5 r2">↓ 否 / 冲突</div>
+              <div class="branch-arrow c7 r2">↓ 特殊日期</div>
+              <div class="branch-arrow c9 r2">↓ 归属未知</div>
+
+              <div class="branch block c1 r3"><b>硬阻断</b>当月变量或 Profile 缺失时，不从 docx 或历史终版现场猜规则。</div>
+              <div class="branch c3 r3"><b>兜底并标记</b>使用每日统计班次，但进入排班一致性与人工门禁。</div>
+              <div class="branch c5 r3"><b>人工门禁</b>单卡、跨日归属、重复键和晚休边界不能被字典覆盖。</div>
+              <div class="branch c7 r3"><b>小周六</b>月末小周六按确认配置处理休息扣减，不沿用普通日期默认值。</div>
+              <div class="branch block c9 r3"><b>不能封存</b>日弹/月弹未知必须补配置并重跑，手工改终表不构成闭环。</div>
+            </div>
+          </div>
+          <div class="tree-foot">
+            <div class="tree-note"><b>关键决策：</b>最终工时来自区间集合运算，不直接采用钉钉“工作时长”字段。</div>
+            <div class="tree-note"><b>才到映射：</b>排班、打卡、审批可复用；需补一等 <code>attendance_time_block</code> 和 step trace。</div>
+            <div class="tree-note"><b>验收证据：</b>每个员工日期键都参加范围/数值审计，两张队列分别关闭后才能封存。</div>
+          </div>
+        </article>
+
+        <article class="tree-card zhuimei" id="zhuimei">
+          <div class="tree-head">
+            <div class="tree-title">
+              <span class="tree-no">5</span>
+              <div>
+                <h3>追觅 / MOVA</h3>
+                <p>花名册基线 · 部门×岗位资格 · 夜班状态机 · 员工二次确认</p>
+              </div>
+            </div>
+            <span class="tree-status">流程已沉淀；名单与口径按月确认</span>
+          </div>
+          <div class="tree-scroll">
+            <span class="scroll-hint">← 左右滑动查看完整决策树 →</span>
+            <div class="decision-map" role="img" aria-label="追觅考勤决策树">
+              <div class="node source c1 r1">
+                <span class="stage">ROSTER BASELINE</span>
+                <h4>花名册、数据员表和当月配置一致？</h4>
+                <p>应发薪人员每人一个考勤部门；身份证、职位、重复/缺失人员均先闭环。</p>
+              </div>
+              <div class="connector c2 r1">是 →</div>
+              <div class="node decision c3 r1">
+                <span class="stage">ELIGIBILITY</span>
+                <h4>部门 × 岗位命中哪套加班规则？</h4>
+                <p>工程师、测试中心工程师、技术员适用范围不同，不能只看考勤部门。</p>
+              </div>
+              <div class="connector c4 r1">路由 →</div>
+              <div class="node decision c5 r1">
+                <span class="stage">SHIFT ROUTE</span>
+                <h4>在当月确认夜班名单？</h4>
+                <p>只有确认名单进入夜班审核；MOVA/测试中心可有夜班，其他按当月确认。</p>
+              </div>
+              <div class="connector c6 r1">得到班次结果 →</div>
+              <div class="node decision c7 r1">
+                <span class="stage">FIRST CONFIRM</span>
+                <h4>员工首次核对有问题？</h4>
+                <p>先发个人切片；原始值保留。问题按加班、公出、迟到、假别、夜班路由。</p>
+              </div>
+              <div class="connector c8 r1">有 →</div>
+              <div class="node decision c9 r1">
+                <span class="stage">EVIDENCE / CORRECT</span>
+                <h4>证据足够且已二次确认？</h4>
+                <p>每次修正记录原值、修改值、依据、处理人和日期，再发员工确认。</p>
+              </div>
+              <div class="connector c10 r1">是 →</div>
+              <div class="node output c11 r1">
+                <span class="stage">HR REVIEW PACK</span>
+                <h4>生成 HR 审核包并关闭</h4>
+                <p>有问题员工保留“原始值→证据→修改值→确认”；无问题员工保留核对无误。</p>
+              </div>
+
+              <div class="branch-arrow c1 r2">↓ 否</div>
+              <div class="branch-arrow c3 r2">↓ 未命中</div>
+              <div class="branch-arrow c5 r2">↓ 否</div>
+              <div class="branch-arrow c7 r2">↓ 无问题</div>
+              <div class="branch-arrow c9 r2">↓ 否 / 未回复</div>
+
+              <div class="branch block c1 r3"><b>阻断发放</b>人头集合不一致时，先解释新增、缺失和重复人员，不改任何考勤值。</div>
+              <div class="branch c3 r3"><b>待确认分支</b>链接打卡、新格式或未覆盖岗位显式列出，不并入已有规则。</div>
+              <div class="branch c5 r3"><b>白班路线</b>同日首末卡配对；夜班不能仅凭“时间很晚”猜测。</div>
+              <div class="branch c7 r3"><b>首次即无误</b>直接归档确认记录，仍进入 HR 审核包覆盖范围。</div>
+              <div class="branch block c9 r3"><b>循环 / 待跟进</b>回到证据处理；未最终确认人员不得标记完成。</div>
+            </div>
+          </div>
+          <div class="tree-foot">
+            <div class="tree-note"><b>关键决策：</b>资格路由和夜班状态机之后，还必须经过员工反馈闭环。</div>
+            <div class="tree-note"><b>才到映射：</b>人员分组、跨日配卡可复用；需补 <code>confirmation_state</code> 与 Decision Case。</div>
+            <div class="tree-note"><b>验收证据：</b>花名册、发放索引、审核包员工集合一致；未回复人员保持未闭环。</div>
+          </div>
+        </article>
+      </section>
+
+    </main>
+  </body>
+</html>
