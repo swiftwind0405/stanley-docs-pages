@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iPhone / iPad 终端快捷键配置说明</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f3ee;
+      --paper: #fffdf9;
+      --ink: #24201a;
+      --muted: #6f675c;
+      --line: #ded6c9;
+      --accent: #176b72;
+      --accent-soft: #dceff1;
+      --group: #e5f4ec;
+      --group-line: #a8d6bd;
+      --session: #fff0cf;
+      --session-line: #e4c171;
+      --code: #f0ebe3;
+      --warn: #8a4b18;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .page {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 40px 24px 72px;
+    }
+
+    .crumb {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero,
+    .section,
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+    }
+
+    .hero {
+      padding: 32px;
+      box-shadow: 0 10px 28px rgba(45, 36, 24, .06);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 6vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -.02em;
+    }
+
+    h2 {
+      margin: 34px 0 12px;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin: 22px 0 8px;
+      font-size: 17px;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .lede {
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border: 1px solid #bfdcdf;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #174f56;
+      font-size: 13px;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 22px;
+    }
+
+    .section h2:first-child,
+    .card h2:first-child,
+    .card h3:first-child { margin-top: 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .card { padding: 20px; }
+
+    ul,
+    ol {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+
+    li { margin: 7px 0; }
+
+    code,
+    kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: var(--code);
+    }
+
+    kbd {
+      display: inline-block;
+      min-width: 30px;
+      padding: 2px 7px;
+      border: 1px solid #cfc6b8;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 1px 0 #cfc6b8;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .layout-scroll {
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .key-layout {
+      display: grid;
+      gap: 8px;
+      min-width: 720px;
+    }
+
+    .key-layout.iphone { grid-template-columns: repeat(8, minmax(72px, 1fr)); }
+
+    .key-layout.ipad {
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      min-width: 480px;
+      max-width: 620px;
+    }
+
+    .key {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f4f1eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .key.group {
+      border-color: var(--group-line);
+      background: var(--group);
+    }
+
+    .key.session {
+      border-color: var(--session-line);
+      background: var(--session);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 13px;
+      height: 13px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #f4f1eb;
+    }
+
+    .swatch.group { border-color: var(--group-line); background: var(--group); }
+    .swatch.session { border-color: var(--session-line); background: var(--session); }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 680px;
+      border-collapse: collapse;
+      background: var(--paper);
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f4f1eb;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .steps {
+      counter-reset: steps;
+      list-style: none;
+      padding: 0;
+    }
+
+    .steps li {
+      counter-increment: steps;
+      position: relative;
+      min-height: 34px;
+      padding-left: 42px;
+    }
+
+    .steps li::before {
+      content: counter(steps);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .callout {
+      margin-top: 14px;
+      padding: 12px 0 12px 16px;
+      border-left: 4px solid var(--warn);
+      color: #4f331f;
+    }
+
+    .muted { color: var(--muted); }
+
+    @media (max-width: 720px) {
+      .page { padding: 24px 16px 48px; }
+      .hero { padding: 24px; }
+      .section { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="crumb"><a href="../">README 目录</a> / mobile-terminal-shortcuts</div>
+
+    <section class="hero">
+      <h1>iPhone / iPad 终端快捷键配置</h1>
+      <p class="lede">这套布局配合当前的 Agent Tracker、tmux、Vim 和 Zsh 使用。按键名称完全来自终端应用的固定键池；页面里的中文只解释用途，不是自定义键名。</p>
+      <div class="meta">
+        <span class="pill">固定键池</span>
+        <span class="pill">tmux prefix：^S</span>
+        <span class="pill">Agent 三 pane 布局</span>
+        <span class="pill">Zsh vi mode</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>配置原则</h2>
+      <p>手机主要用来查看任务状态、切换 session、聚焦 pane 和临时接管命令。最高频的方向键、回车、<code>esc</code>、<code>tab</code>、退格、<code>paste</code>、<code>^C</code> 放在最前面，并把方向键围绕回车排成十字。符号键与 F6–F24 可以从常用区移走。</p>
+      <div class="legend" aria-label="按键颜色说明">
+        <span><i class="swatch"></i>直接选择</span>
+        <span><i class="swatch group"></i>New Group 组合</span>
+        <span><i class="swatch session"></i>session 切换</span>
+      </div>
+      <p class="muted">绿色键沿用现有 <code>Alt-r</code> 的组合方式。创建后以应用预览栏显示的结果为准，不要手工输入键名。</p>
+    </section>
+
+    <section class="section">
+      <h2>iPhone 排列</h2>
+      <p>每行 8 个，共 5 行。左侧 4 列的前三行是高频区，<code>▲</code>、<code>◀</code>、回车、<code>▶</code>、<code>▼</code> 组成方向十字，其余位置放 <code>tab</code>、退格、<code>paste</code>、<code>esc</code>、<code>^C</code> 和修饰键。</p>
+      <div class="layout-scroll" aria-label="iPhone 八列快捷键布局">
+        <div class="key-layout iphone">
+          <div class="key">tab</div><div class="key">⌫</div><div class="key">▲</div><div class="key">paste</div><div class="key">^S</div><div class="key">^Q</div><div class="key">^R</div><div class="key">^L</div>
+          <div class="key">esc</div><div class="key">◀</div><div class="key">↵</div><div class="key">▶</div><div class="key group">Alt-s</div><div class="key group">Alt-a</div><div class="key group">Alt-g</div><div class="key group">Alt-r</div>
+          <div class="key">^C</div><div class="key">ctrl</div><div class="key">▼</div><div class="key">alt</div><div class="key group">Alt-f</div><div class="key group">Alt-l</div><div class="key group">Alt-w</div><div class="key group">Alt-b</div>
+          <div class="key">home</div><div class="key">pgUp</div><div class="key">pgDn</div><div class="key">end</div><div class="key">^N</div><div class="key">^P</div><div class="key">^W</div><div class="key">shift tab</div>
+          <div class="key session">F1</div><div class="key session">F2</div><div class="key session">F3</div><div class="key session">F4</div><div class="key session">F5</div><div class="key">?</div><div class="key">/</div><div class="key">|</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>iPad 排列</h2>
+      <p>侧栏每行 4 个。最上面的三行完整保留高频区：回车在方向十字中心，常用控制键分布在周围。</p>
+      <div class="layout-scroll" aria-label="iPad 四列快捷键布局">
+        <div class="key-layout ipad">
+          <div class="key">tab</div><div class="key">⌫</div><div class="key">▲</div><div class="key">paste</div>
+          <div class="key">esc</div><div class="key">◀</div><div class="key">↵</div><div class="key">▶</div>
+          <div class="key">^C</div><div class="key">ctrl</div><div class="key">▼</div><div class="key">alt</div>
+          <div class="key">^S</div><div class="key">^Q</div><div class="key">^R</div><div class="key">^L</div>
+          <div class="key">^N</div><div class="key">^P</div><div class="key">^W</div><div class="key">shift tab</div>
+          <div class="key group">Alt-s</div><div class="key group">Alt-a</div><div class="key group">Alt-g</div><div class="key group">Alt-r</div>
+          <div class="key group">Alt-f</div><div class="key group">Alt-l</div><div class="key group">Alt-w</div><div class="key group">Alt-b</div>
+          <div class="key">home</div><div class="key">pgUp</div><div class="key">pgDn</div><div class="key">end</div>
+          <div class="key session">F1</div><div class="key session">F2</div><div class="key session">F3</div><div class="key session">F4</div>
+          <div class="key session">F5</div><div class="key">?</div><div class="key">/</div><div class="key">|</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>New Group 怎么建</h2>
+      <ol class="steps">
+        <li>打开 Additional keyboard，进入 Customize，新增一个 Group。</li>
+        <li>先选 <kbd>alt</kbd>，再选对应的 <kbd>^X</kbd>。比如 <code>Alt-r</code> 使用 <kbd>alt</kbd> + <kbd>^R</kbd>。</li>
+        <li>检查顶部预览栏。只有预览结果与目标组合一致时才保存。</li>
+        <li>把新 Group 拖到推荐位置。绿色区的 8 个组合依次是 <code>Alt-s</code>、<code>Alt-a</code>、<code>Alt-g</code>、<code>Alt-r</code>、<code>Alt-f</code>、<code>Alt-l</code>、<code>Alt-w</code>、<code>Alt-b</code>。</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>按键用途</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>键</th><th>用途</th><th>使用方式</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><kbd>^S</kbd></td><td>tmux prefix</td><td>后面继续按 tmux prefix 表里的键。</td></tr>
+            <tr><td><kbd>^N</kbd> / <kbd>^P</kbd></td><td>下一个 / 上一个 window</td><td>依次按 <kbd>^S</kbd>、<kbd>^N</kbd>，或 <kbd>^S</kbd>、<kbd>^P</kbd>。</td></tr>
+            <tr><td><kbd>F1</kbd>–<kbd>F5</kbd></td><td>切换 session 1–5</td><td>tmux 已配置为全局键，单击即可切换。</td></tr>
+            <tr><td><kbd>Alt-s</kbd></td><td>打开 Agent Palette</td><td>查看任务、启动 Agent 或进入 Tracker。</td></tr>
+            <tr><td><kbd>Alt-a</kbd> / <kbd>Alt-g</kbd> / <kbd>Alt-r</kbd></td><td>聚焦 AI / Git / 运行 pane</td><td>适合当前左侧 AI、右上 Git、右下运行的布局。</td></tr>
+            <tr><td><kbd>Alt-f</kbd></td><td>缩放当前 pane</td><td>再次按下恢复原布局。</td></tr>
+            <tr><td><kbd>Alt-l</kbd></td><td>上一个 window</td><td>需要向后切换时直接按；向前切换用 <kbd>^S</kbd>、<kbd>^N</kbd>。</td></tr>
+            <tr><td><kbd>Alt-w</kbd></td><td>切换 pane 监看</td><td>用状态栏标记需要持续观察的进程。</td></tr>
+            <tr><td><kbd>Alt-b</kbd></td><td>切换未读标记</td><td>手动标记或清除当前 window 的未读状态。</td></tr>
+            <tr><td><kbd>^R</kbd></td><td>Zsh 历史搜索</td><td>打开当前配置里的 fzf history widget。</td></tr>
+            <tr><td><kbd>esc</kbd></td><td>退出 Vim insert mode / 返回</td><td>Zsh 使用 vi mode，Agent Tracker 也用它返回上一层。</td></tr>
+            <tr><td><kbd>?</kbd></td><td>显示帮助</td><td>Agent Tracker 和部分 TUI 中可查看当前键位。</td></tr>
+            <tr><td><kbd>^Q</kbd></td><td>恢复终端输出</td><td>在 tmux 外误按 <kbd>^S</kbd> 后，如果终端像卡住了就按它。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Agent Tracker 操作</h2>
+        <ul>
+          <li><kbd>Alt-s</kbd> 打开 Agent Palette。</li>
+          <li>使用箭头选择项目，<kbd>↵</kbd> 打开。</li>
+          <li><kbd>esc</kbd> 返回，<kbd>?</kbd> 查看帮助。</li>
+          <li>进入具体 pane 后，用 <kbd>Alt-a</kbd>、<kbd>Alt-g</kbd>、<kbd>Alt-r</kbd> 在三块区域间跳转。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Vim / Zsh 操作</h2>
+        <ul>
+          <li><kbd>esc</kbd> 是最常用的模式切换键。</li>
+          <li><kbd>^C</kbd> 中断命令，<kbd>^W</kbd> 删除前一个单词，<kbd>^L</kbd> 清屏。</li>
+          <li><kbd>^R</kbd> 搜索历史命令。</li>
+          <li>长命令和代码仍用 ABC 键盘输入，快捷面板只负责控制动作。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>固定键池的限制</h2>
+      <p>当前选择器没有普通的 <code>m</code>、<code>e</code>、<code>u</code>、<code>i</code>、<code>y</code>、<code>v</code>，因此不能从快捷面板做出一键 <code>Alt-m</code>、<code>Alt-M</code>、<code>Alt-e</code>、<code>Alt-u</code>、<code>Alt-i</code>、<code>Alt-y</code>、<code>Alt-v</code> Group。</p>
+      <p>这些键仍可通过 <kbd>alt</kbd> 修饰键配合 ABC 键盘输入，只是不能占用一个单独的自定义按钮。<code>Alt-m</code> 和 <code>Alt-M</code> 对应 Agent Tracker 的最近通知与返回来源，需要时用这种方式操作。</p>
+      <div class="callout"><kbd>^S</kbd> 在 tmux 内是 prefix，在普通终端里可能触发软件流控。终端停止输出时按 <kbd>^Q</kbd> 恢复。</div>
+    </section>
+
+    <section class="section">
+      <h2>可以移除的键</h2>
+      <p>常用区不需要重复的 <code>esc</code>、<code>tab</code>、<code>paste</code>、<code>^C</code>、<code>home</code>、<code>end</code>，也不需要 F6–F24、<code>ins</code>、<code>del</code> 和整块符号键。<code>/</code> 与 <code>|</code> 留在最后一行，方便临时输入路径和管道。</p>
+    </section>
+  </main>
+</body>
+</html>
